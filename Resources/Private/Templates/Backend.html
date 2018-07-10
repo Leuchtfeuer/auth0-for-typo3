@@ -6,28 +6,35 @@
 			<f:then>
 				<f:if condition="{userInfo}">
 					<f:then>
-						<p class="info text-center">You are currently logged in to Auth0 as:<br/><strong>{userInfo.nickname}</strong></p>
+						<p class="info text-center">
+							<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.logged-in-as" />
+							<br/><strong>{userInfo.nickname}</strong>
+						</p>
 						<div class="form-group" id="t3-login-submit-section">
 							<button class="btn btn-block btn-login t3js-login-submit" id="t3-login-submit" type="submit" name="commandLI" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> {f:translate(key: 'login.process')}">
-								Login to TYPO3
+								<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.login.typo3" />
 							</button>
 							<a class="btn btn-block btn-auth0 btn-success" href="/typo3/?loginProvider=1526966635&logout=1">
-								Logout from Auth0
+								<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.logout.auth0" />
 							</a>
 						</div>
 					</f:then>
 					<f:else>
-						<p class="info text-center">You are currently <strong>not</strong> logged in to Auth0.</p>
+						<p class="info text-center">
+								<f:format.html><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.not-logged-in" /></f:format.html>
+						</p>
 						<div class="form-group">
 							<a class="btn btn-block btn-auth0 btn-login" href="/typo3/?loginProvider=1526966635&login=1">
-								Login to Auth0
+								<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.login.auth0" />
 							</a>
 						</div>
 					</f:else>
 				</f:if>
 			</f:then>
 			<f:else>
-				<f:be.infobox title="No Application" state="2">Please choose an application, which should be used for login to TYPO3.</f:be.infobox>
+				<f:be.infobox title="No Application" state="2">
+					<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.no-application" />
+				</f:be.infobox>
 			</f:else>
 		</f:if>
 
