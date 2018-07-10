@@ -9,7 +9,7 @@
         "User"
     ],
     "type": "typo3-cms-extension",
-    "license": "GPL-2.0-or-later",
+    "license": "GPL-3.0-or-later",
     "homepage": "https://www.bitmotion.de",
     "support": {
         "issues": "https://github.com/bitmotion/auth0-for-typo3/issues"
