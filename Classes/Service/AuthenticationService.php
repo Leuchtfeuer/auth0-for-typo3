@@ -19,6 +19,7 @@ use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Utility\UpdateUtility;
+use Bitmotion\Auth0\Utility\UserUtility;
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Crypto\Random;
@@ -59,7 +60,7 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
     protected $tableName = 'fe_users';
 
     /**
-     * @var \stdClass
+     * @var array
      */
     protected $auth0User = null;
 
@@ -118,7 +119,7 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
         if (TYPO3_MODE === 'FE') {
             $GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(PageRepository::class);
             $GLOBALS['TSFE']->sys_page->init(false);
-            $applicationUid = 1;
+            $applicationUid = GeneralUtility::_GP('application');
         } else {
             $emConfiguration = new EmAuth0Configuration();
             $applicationUid = $emConfiguration->getBackendConnection();
