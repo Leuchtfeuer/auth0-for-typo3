@@ -22,6 +22,7 @@ use Bitmotion\Auth0\Service\RedirectService;
 use Bitmotion\Auth0\Utility\UpdateUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 
 /**
  * Class LoginController
@@ -88,7 +89,7 @@ class LoginController extends ActionController
     public function formAction()
     {
         $this->uri = GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
-        $this->authenticationApi = new AuthenticationApi($this->application, $this->uri . 'index.php?id=5&logintype=login', 'openid profile read:current_user', []);
+        $this->authenticationApi = new AuthenticationApi($this->application, $this->getUri(), 'openid profile read:current_user', []);
 
         try {
             $userInfo = $this->authenticationApi->getUser();
@@ -125,7 +126,7 @@ class LoginController extends ActionController
     {
         try {
             $this->uri = GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
-            $this->authenticationApi = new AuthenticationApi($this->application, $this->uri . 'index.php?id=5&logintype=login', 'openid profile read:current_user', []);
+            $this->authenticationApi = new AuthenticationApi($this->application, $this->getUri(), 'openid profile read:current_user', []);
 
             $userInfo = $this->authenticationApi->getUser();
             if (!$userInfo) {
@@ -148,7 +149,7 @@ class LoginController extends ActionController
     public function logoutAction()
     {
         $this->uri = GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
-        $this->authenticationApi = new AuthenticationApi($this->application, $this->uri . 'index.php?id=5&logintype=login', 'openid profile read:current_user', []);
+        $this->authenticationApi = new AuthenticationApi($this->application, $this->getUri(), 'openid profile read:current_user', []);
         $this->authenticationApi->logout();
         $this->redirect('form');
     }
@@ -165,5 +166,22 @@ class LoginController extends ActionController
                 header('Location: '. $redirectService->getUri($redirectUris), false, 307);
             }
         }
+    }
+
+    /**
+     * @return string
+     */
+    protected function getUri()
+    {
+        return
+            $this->objectManager->get(UriBuilder::class)
+                ->reset()
+                ->setTargetPageUid($GLOBALS['TSFE']->id)
+                ->setArguments([
+                    'logintype' => 'login',
+                    'application' => $this->application->getUid()
+                ])->setCreateAbsoluteUri(true)
+                ->setUseCacheHash(false)
+                ->buildFrontendUri();
     }
 }
