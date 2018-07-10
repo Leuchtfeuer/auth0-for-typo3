@@ -1,0 +1,27 @@
+.btn-auth0 {
+	padding: 12px;
+	font-weight: normal;
+	line-height: 1.3rem;
+	border-radius: 2px;
+	font-size: 12px;
+}
+
+a.btn-auth0 {
+	font-weight: normal;
+}
+
+.btn-auth0.btn-success {
+	background-color: #EB5425;
+	border-color: #e14615;
+	color: #fff;
+}
+
+.btn-auth0.btn-success:hover {
+	color: #fff;
+	background-color: #ca3f12;
+	border-color: #a93510;
+}
+
+.c-auth0 .form-group {
+	margin-top: 35px;
+}

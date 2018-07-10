@@ -40,6 +40,7 @@ class Auth0Provider implements LoginProviderInterface
     public function render(StandaloneView $standaloneView, PageRenderer $pageRenderer, LoginController $loginController)
     {
         $standaloneView->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:auth0/Resources/Private/Templates/Backend.html'));
+        $pageRenderer->addCssFile('EXT:auth0/Resources/Public/Styles/backend.css');
 
         $configuration = new EmAuth0Configuration();
         $applicationRepository = GeneralUtility::makeInstance(ObjectManager::class)->get(ApplicationRepository::class);
