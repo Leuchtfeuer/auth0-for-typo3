@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<T3DataStructure>
+	<meta>
+		<langDisable>1</langDisable>
+	</meta>
+	<sheets>
+		<sDEF>
+			<ROOT>
+				<TCEforms>
+					<sheetTitle>LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.sheet_general</sheetTitle>
+				</TCEforms>
+				<type>array</type>
+				<el>
+					<settings.application>
+						<TCEforms>
+							<label>LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_application</label>
+							<config>
+								<type>select</type>
+								<foreign_table>tx_auth0_domain_model_application</foreign_table>
+								<maxitems>1</maxitems>
+								<minitems>1</minitems>
+								<show_thumbs>1</show_thumbs>
+							</config>
+						</TCEforms>
+					</settings.application>
+				</el>
+			</ROOT>
+		</sDEF>
+
+		<s_redirect>
+			<ROOT>
+				<TCEforms>
+					<sheetTitle>LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.sheet_redirect</sheetTitle>
+				</TCEforms>
+				<type>array</type>
+				<el>
+					<settings.redirectMode>
+						<TCEforms>
+							<label>LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode</label>
+							<config>
+								<type>select</type>
+								<renderType>selectMultipleSideBySide</renderType>
+								<items type="array">
+									<numIndex index="0" type="array">
+										<numIndex index="0">LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.0</numIndex>
+										<numIndex index="1">groupLogin</numIndex>
+									</numIndex>
+									<numIndex index="1" type="array">
+										<numIndex index="0">LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.1</numIndex>
+										<numIndex index="1">userLogin</numIndex>
+									</numIndex>
+
+									<numIndex index="2" type="array">
+										<numIndex index="0">LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.2</numIndex>
+										<numIndex index="1">login</numIndex>
+									</numIndex>
+									<numIndex index="3" type="array">
+										<numIndex index="0">LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.3</numIndex>
+										<numIndex index="1">logout</numIndex>
+									</numIndex>
+									<numIndex index="4" type="array">
+										<numIndex index="0">LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.4</numIndex>
+										<numIndex index="1">loginError</numIndex>
+									</numIndex>
+									<numIndex index="5" type="array">
+										<numIndex index="0">LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.5</numIndex>
+										<numIndex index="1">getpost</numIndex>
+									</numIndex>
+									<numIndex index="6" type="array">
+										<numIndex index="0">LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.6</numIndex>
+										<numIndex index="1">referrer</numIndex>
+									</numIndex>
+								</items>
+								<size>8</size>
+								<minitems>0</minitems>
+								<maxitems>8</maxitems>
+							</config>
+						</TCEforms>
+					</settings.redirectMode>
+					<settings.redirectFirstMethod>
+						<TCEforms>
+							<label>LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectFirstMethod</label>
+							<config>
+								<type>check</type>
+								<items type="array">
+									<numIndex index="1" type="array">
+										<numIndex index="0">LLL:EXT:lang/locallang_core.xlf:labels.enabled</numIndex>
+										<numIndex index="1">1</numIndex>
+									</numIndex>
+								</items>
+							</config>
+						</TCEforms>
+					</settings.redirectFirstMethod>
+					<settings.redirectPageLogin>
+						<TCEforms>
+							<label>LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectPageLogin</label>
+							<config>
+								<type>group</type>
+								<internal_type>db</internal_type>
+								<allowed>pages</allowed>
+								<size>1</size>
+								<maxitems>1</maxitems>
+								<minitems>0</minitems>
+								<show_thumbs>1</show_thumbs>
+								<wizards>
+									<suggest>
+										<type>suggest</type>
+									</suggest>
+								</wizards>
+							</config>
+						</TCEforms>
+					</settings.redirectPageLogin>
+					<settings.redirectPageLoginError>
+						<TCEforms>
+							<label>LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectPageLoginError</label>
+							<config>
+								<type>group</type>
+								<internal_type>db</internal_type>
+								<allowed>pages</allowed>
+								<size>1</size>
+								<maxitems>1</maxitems>
+								<minitems>0</minitems>
+								<show_thumbs>1</show_thumbs>
+								<wizards>
+									<suggest>
+										<type>suggest</type>
+									</suggest>
+								</wizards>
+							</config>
+						</TCEforms>
+					</settings.redirectPageLoginError>
+					<settings.redirectPageLogout>
+						<TCEforms>
+							<label>LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectPageLogout</label>
+							<config>
+								<type>group</type>
+								<internal_type>db</internal_type>
+								<allowed>pages</allowed>
+								<size>1</size>
+								<maxitems>1</maxitems>
+								<minitems>0</minitems>
+								<show_thumbs>1</show_thumbs>
+								<wizards>
+									<suggest>
+										<type>suggest</type>
+									</suggest>
+								</wizards>
+							</config>
+						</TCEforms>
+					</settings.redirectPageLogout>
+					<settings.redirectDisable>
+						<TCEforms>
+							<label>LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectDisable</label>
+							<config>
+								<type>check</type>
+								<items type="array">
+									<numIndex index="1" type="array">
+										<numIndex index="0">LLL:EXT:lang/locallang_common.xlf:disable</numIndex>
+										<numIndex index="1">1</numIndex>
+									</numIndex>
+								</items>
+							</config>
+						</TCEforms>
+					</settings.redirectDisable>
+				</el>
+			</ROOT>
+		</s_redirect>
+
+	</sheets>
+</T3DataStructure>

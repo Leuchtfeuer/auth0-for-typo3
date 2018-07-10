@@ -1,0 +1,16 @@
+<f:layout name="Default"/>
+
+<f:section name="main">
+	<f:if condition="{userInfo}">
+		<f:then>
+			<f:link.action action="logout" class="btn btn-block btn-secondary" additionalParams="{logintype: 'logout'}">
+				<f:translate key="plugin.login.logout" />
+			</f:link.action>
+		</f:then>
+		<f:else>
+			<f:link.action action="login" class="btn btn-block btn-primary">
+				<f:translate key="plugin.login.login" />
+			</f:link.action>
+		</f:else>
+	</f:if>
+</f:section>

@@ -1,0 +1,45 @@
+plugin.tx_auth0 {
+    view {
+        templateRootPaths.0 = {$plugin.tx_auth0.view.templateRootPath}
+        partialRootPaths.0 = {$plugin.tx_auth0.view.partialRootPath}
+        layoutRootPaths.0 = {$plugin.tx_auth0.view.layoutRootPath}
+    }
+
+    persistence {
+        storagePid = {$general.tx_auth0.persistence.storagePid}
+    }
+
+    settings {
+        propertyMapping {
+            be_users {
+                username = nickname
+
+                crdate = created_at
+                crdate.parseFunc = strtotime
+
+                tstamp = updated_at
+                tstamp.parseFunc = strtotime
+
+                disable = email_verified
+                disable.parseFunc = bool|negate
+
+                admin = user_metadata.admin
+                admin.parseFunc = bool
+
+                description = user_metadata.foo
+            }
+
+            fe_users {
+                crdate = created_at
+                crdate.parseFunc = strtotime
+
+                tstamp = updated_at
+                tstamp.parseFunc = strtotime
+
+                first_name = user_metadata.foo
+            }
+        }
+    }
+}
+
+module.tx_auth0 < plugin.tx_auth0

@@ -1,0 +1,11 @@
+plugin.tx_auth0 {
+    view {
+        templateRootPaths = 'EXT:auth0/Resources/Private/Templates/'
+        partialRootPaths = 'EXT:auth0/Resources/Private/Partials/'
+        layoutRootPaths = 'EXT:auth0/Resources/Private/Layouts/'
+    }
+
+    persistence {
+        storagePid = ''
+    }
+}

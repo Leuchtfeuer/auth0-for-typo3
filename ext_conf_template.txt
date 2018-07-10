@@ -1,0 +1,8 @@
+# cat=Backend/10; type=boolean; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.enable
+enableBackendLogin = 0
+
+# cat=Backend/20; type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.connection
+backendConnection = 1
+
+# cat=Frontend/10 type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:frontend.pid
+userStoragePage = 0

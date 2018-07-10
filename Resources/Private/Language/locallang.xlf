@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2018-06-05T08:42:01Z" product-name="auth0">
+		<header/>
+		<body>
+			<trans-unit id="backendLogin.switch.label" xml:space="preserve">
+				<source>Login with Auth0</source>
+			</trans-unit>
+
+			<trans-unit id="plugin.login.login" xml:space="preserve">
+				<source>Login</source>
+			</trans-unit>
+			<trans-unit id="plugin.login.logout" xml:space="preserve">
+				<source>Logout</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

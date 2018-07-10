@@ -1,0 +1,25 @@
+<?php
+
+/////////////////
+//   PLUGINS   //
+/////////////////
+
+// Register LoginForm PlugIn
+\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
+    'Bitmotion.auth0',
+    'LoginForm',
+    'Auth0: Login form'
+);
+
+
+///////////////////
+//   FLEXFORMS   //
+///////////////////
+
+// LoginForm
+$GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist']['auth0_loginform'] = 'pi_flexform';
+$GLOBALS['TCA']['tt_content']['types']['list']['subtypes_excludelist']['auth0_loginform'] = 'layout,select_key,pages,recursive';
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPiFlexFormValue(
+    'auth0_loginform',
+    'FILE:EXT:auth0/Configuration/FlexForms/LoginForm.xml'
+);

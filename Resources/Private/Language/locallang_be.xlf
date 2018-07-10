@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2017-09-12T18:29:16Z"
+		  product-name="auth0">
+		<header/>
+		<body>
+			<trans-unit id="plugin.loginForm.title" xml:space="preserve">
+				<source>Login form</source>
+			</trans-unit>
+			<trans-unit id="plugin.loginForm.description" xml:space="preserve">
+				<source>Login form for Auth0 and TYPO3</source>
+			</trans-unit>
+
+			<trans-unit id="tx_auth0_backend_layout_wizard_label">
+				<source>Auth0</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

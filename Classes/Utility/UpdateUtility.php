@@ -1,0 +1,161 @@
+<?php
+declare(strict_types=1);
+
+namespace Bitmotion\Auth0\Utility;
+
+/***
+ *
+ * This file is part of the "Auth0 for TYPO3" Extension for TYPO3 CMS.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ *  (c) 2018 Florian Wessels <f.wessels@bitmotion.de>, Bitmotion GmbH
+ *
+ ***/
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
+/**
+ * Class UpdateUtility
+ * @package Bitmotion\Auth0\Utility
+ */
+class UpdateUtility implements SingletonInterface {
+
+    /**
+     * @var string
+     */
+    protected $tableName = '';
+
+    /**
+     * @var array 
+     */
+    protected $user = [];
+
+    public function __construct(string $tableName, array $user)
+    {
+        $this->tableName = $tableName;
+        $this->user = $user;
+    }
+
+    /**
+     * @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
+     */
+    public function updateUser()
+    {
+        // Get mapping configuration
+        $mappingConfiguration = ConfigurationUtility::getSetting('propertyMapping', $this->tableName);
+
+        if (!empty($mappingConfiguration)) {
+            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableName);
+            $queryBuilder->update($this->tableName);
+
+            foreach ($mappingConfiguration as $typo3FieldName => $auth0FieldName) {
+
+                if (!is_array($auth0FieldName)) {
+                    // Update without procFuncs
+                    if (isset($this->user[$auth0FieldName])) {
+                        $queryBuilder->set(
+                            $typo3FieldName,
+                            $this->user[$auth0FieldName]
+                        );
+                    } elseif (strpos($auth0FieldName, 'user_metadata') !== false) {
+                        $queryBuilder->set(
+                            $typo3FieldName,
+                            $this->getAuth0ValueRecursive($this->user, explode('.', $auth0FieldName))
+                        );
+                    }
+                } elseif (is_array($auth0FieldName) && isset($auth0FieldName['_typoScriptNodeValue'])) {
+
+                    // Update with procFuncs
+                    $fieldName = $auth0FieldName['_typoScriptNodeValue'];
+                    if (isset($this->user[$fieldName])) {
+                        if (isset($auth0FieldName['parseFunc'])) {
+                            $queryBuilder->set(
+                                $typo3FieldName,
+                                $this->handleParseFunc($auth0FieldName['parseFunc'], $this->user[$fieldName])
+                            );
+                        }
+                    } elseif (strpos($auth0FieldName['_typoScriptNodeValue'], 'user_metadata') !== false) {
+                        $queryBuilder->set(
+                            $typo3FieldName,
+                            $this->handleParseFunc(
+                                $auth0FieldName['parseFunc'],
+                                $this->getAuth0ValueRecursive(
+                                    $this->user,
+                                    explode('.', $auth0FieldName['_typoScriptNodeValue'])
+                                )
+                            )
+                        );
+                    }
+                }
+            }
+
+            $queryBuilder->where($queryBuilder->expr()->eq('auth0_user_id', $queryBuilder->createNamedParameter($this->user['user_id'])));
+            $queryBuilder->execute();
+        }
+    }
+
+    /**
+     * @param array $user
+     * @param array $properties
+     *
+     * @return string
+     */
+    protected function getAuth0ValueRecursive(array $user, array $properties): string
+    {
+        $property = array_shift($properties);
+        if (isset($user[$property])) {
+            $value = $user[$property];
+            if (is_array($properties) && ($value instanceof \stdClass || (is_array($value) && !empty($value)))) {
+                return $this->getAuth0ValueRecursive($value, $properties);
+            }
+
+            return (string)$value;
+        }
+
+        return '';
+    }
+
+
+    /**
+     * @param $function
+     * @param $value
+     *
+     * @return bool|false|int
+     */
+    protected function handleParseFunc($function, $value)
+    {
+        $parseFunctions = explode('|', $function);
+
+        foreach ($parseFunctions as $function) {
+            $value = $this->transformValue($function, $value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * @param $function
+     * @param $value
+     *
+     * @return bool|false|int
+     */
+    protected function transformValue($function, $value)
+    {
+        switch ($function) {
+            case 'strtotime':
+                return strtotime($value);
+
+            case 'bool':
+                return (bool)$value;
+
+            case 'negate':
+                return (bool)$value ? 0 : 1;
+        }
+
+        return $value;
+    
+    }
+}

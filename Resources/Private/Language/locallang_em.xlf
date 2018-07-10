@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2018-07-10T08:04:31Z"
+		  product-name="auth0">
+		<header/>
+		<body>
+			<trans-unit id="backend.enable" xml:space="preserve">
+				<source>Enable Auth0 Backend Login</source>
+			</trans-unit>
+			<trans-unit id="backend.connection" xml:space="preserve">
+				<source>Application ID for Backend Login</source>
+			</trans-unit>
+			<trans-unit id="frontend.pid" xml:space="preserve">
+				<source>fe_user pid</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
