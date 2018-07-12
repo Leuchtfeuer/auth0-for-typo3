@@ -19,7 +19,7 @@
 				<source>Login to TYPO3</source>
 			</trans-unit>
 			<trans-unit id="form.logout.auth0">
-				<source>Logout from Auth0</source>
+				<source>logout</source>
 			</trans-unit>
 			<trans-unit id="form.login.auth0">
 				<source>Login to Auth0</source>
