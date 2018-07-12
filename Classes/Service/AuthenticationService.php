@@ -82,40 +82,40 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
         $this->mode = $mode;
         $this->login = $loginData;
         $this->authInfo = $authInfo;
+        $this->pObj = $pObj;
 
-        $this->initializeAuth0Connections();
-
-        if ($mode === 'getUserFE' && !empty($loginData)) {
-            // Handle FE Login
-            $this->tableName = 'fe_users';
-            $this->user = UserUtility::checkIfUserExists($this->tableName, $this->tokenInfo['sub']);
-            if (!$this->user) {
-                UserUtility::insertFeUser($this->tableName, $this->auth0User);
-            }
-        } elseif ($mode === 'getUserBE' && !empty($loginData)) {
-            // Handle BE Login
-            $this->tableName = 'be_users';
-            $this->user = UserUtility::checkIfUserExists($this->tableName, $this->tokenInfo['sub']);
-            $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User);
-            if (!$this->user) {
-                // Insert new BE User
-                UserUtility::insertBeUser($this->tableName, $this->auth0User);
-                $updateUtility->updateUser();
-            } elseif (strtotime($this->auth0User['updated_at']) > $this->user['tstamp']) {
-                // Update existing user
-                $updateUtility->updateUser();
+        if ($this->initializeAuth0Connections()) {
+            if ($mode === 'getUserFE' && !empty($loginData)) {
+                // Handle FE Login
+                $this->tableName = 'fe_users';
+                $this->user = UserUtility::checkIfUserExists($this->tableName, $this->tokenInfo['sub']);
+                if (!$this->user) {
+                    UserUtility::insertFeUser($this->tableName, $this->auth0User);
+                }
+            } elseif ($mode === 'getUserBE' && !empty($loginData)) {
+                // Handle BE Login
+                $this->tableName = 'be_users';
+                $this->user = UserUtility::checkIfUserExists($this->tableName, $this->tokenInfo['sub']);
+                $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User);
+                if (!$this->user) {
+                    // Insert new BE User
+                    UserUtility::insertBeUser($this->tableName, $this->auth0User);
+                    $updateUtility->updateUser();
+                } elseif (strtotime($this->auth0User['updated_at']) > $this->user['tstamp']) {
+                    // Update existing user
+                    $updateUtility->updateUser();
+                }
             }
         }
-        $this->pObj = $pObj;
     }
 
     /**
+     * @return bool
      * @throws \Auth0\SDK\Exception\ApiException
      * @throws \Auth0\SDK\Exception\CoreException
      * @throws \Exception
-     * @todo: Make Application UID dynamic
      */
-    protected function initializeAuth0Connections()
+    protected function initializeAuth0Connections():bool
     {
         if (TYPO3_MODE === 'FE') {
             $GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(PageRepository::class);
@@ -126,17 +126,25 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
             $applicationUid = $emConfiguration->getBackendConnection();
         }
 
+
         /** @var Application $application */
         $applicationRepository = GeneralUtility::makeInstance(ObjectManager::class)->get(ApplicationRepository::class);
         $application = $applicationRepository->findByUid($applicationUid);
-        $authenticationApi = new AuthenticationApi(
-            $application,
-            'http://auth0.test/typo3/?loginProvider=1526966635&login=1',
-            'read:user read:current_user update:current_user_metadata delete:current_user_metadata create:current_user_metadata create:current_user_device_credentials delete:current_user_device_credentials update:current_user_identities openid'
-        );
-        $this->tokenInfo = $authenticationApi->getUser();
-        $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $application);
-        $this->auth0User = $managementApi->getUserById($this->tokenInfo['sub']);
+
+        if ($application instanceof Application) {
+            $authenticationApi = new AuthenticationApi(
+                $application,
+                GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/typo3/?loginProvider=1526966635&login=1',
+                'read:current_user openid profile'
+            );
+            $this->tokenInfo = $authenticationApi->getUser();
+            $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $application);
+            $this->auth0User = $managementApi->getUserById($this->tokenInfo['sub']);
+
+            return true;
+        }
+
+        return false;
     }
 
 
