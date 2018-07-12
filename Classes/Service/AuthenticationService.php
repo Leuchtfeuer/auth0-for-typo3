@@ -118,7 +118,7 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
      */
     protected function initializeAuth0Connections():bool
     {
-        if (GeneralUtility::_GP('loginProvider') != '1526966635') {
+        if (TYPO3_MODE === 'BE' && GeneralUtility::_GP('loginProvider') != '1526966635') {
             // Not an Auth0 login
             return false;
         }
