@@ -64,13 +64,15 @@ class Auth0Provider implements LoginProviderInterface
                     $authenticationApi->login();
                 } else {
                     // Show login form
+                    $standaloneView->assign('auth0Error', GeneralUtility::_GP('error'));
+                    $standaloneView->assign('auth0ErrorDescription', GeneralUtility::_GP('error_description'));
                     $standaloneView->assign('userInfo', $userInfo);
                 }
             } catch (\Exception $exception) {
                 $authenticationApi->deleteAllPersistentData();
             }
         } else {
-            $standaloneView->assign('error', 'application');
+            $standaloneView->assign('error', 'No Application');
         }
     }
 }
