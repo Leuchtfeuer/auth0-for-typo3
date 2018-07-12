@@ -47,13 +47,15 @@ class ConfigurationUtility implements SingletonInterface
      * @param string ...$keys
      *
      * @return array|string
-     * @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
      * @throws \Exception
      */
     public static function getSetting(string ...$keys)
     {
         if (empty(self::$settings)) {
             self::makeInstance();
+            if (empty(self::$settings)) {
+                throw new \Exception('No settings found. TypoScript included?', 1531381794);
+            }
         }
 
         if (!empty($keys)) {

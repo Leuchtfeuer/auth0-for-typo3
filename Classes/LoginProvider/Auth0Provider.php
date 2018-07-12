@@ -17,6 +17,7 @@ use Bitmotion\Auth0\Api\AuthenticationApi;
 use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
+use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use TYPO3\CMS\Backend\Controller\LoginController;
 use TYPO3\CMS\Backend\LoginProvider\LoginProviderInterface;
 use TYPO3\CMS\Core\Page\PageRenderer;
@@ -41,16 +42,23 @@ class Auth0Provider implements LoginProviderInterface
     {
         $standaloneView->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:auth0/Resources/Private/Templates/Backend.html'));
         $pageRenderer->addCssFile('EXT:auth0/Resources/Public/Styles/backend.css');
+        $standaloneView->setLayoutRootPaths(['EXT:auth0/Resources/Private/Layouts']);
 
         $configuration = new EmAuth0Configuration();
         $applicationRepository = GeneralUtility::makeInstance(ObjectManager::class)->get(ApplicationRepository::class);
         $application = $applicationRepository->findByUid($configuration->getBackendConnection());
 
+        try {
+            ConfigurationUtility::getSetting('propertyMapping');
+        } catch (\Exception $exception) {
+            $standaloneView->assign('error', 'no_typoscript');
+            return;
+        }
+
         if ($application instanceof Application) {
-            $standaloneView->setLayoutRootPaths(['EXT:auth0/Resources/Private/Layouts']);
             $authenticationApi = new AuthenticationApi($application, GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL') . '&login=1', 'openid profile read:current_user');
 
-            // Logout user
+            // Logout user from Auth0
             if (GeneralUtility::_GP('logout') == 1) {
                 $authenticationApi->logout();
                 $authenticationApi->deleteAllPersistentData();
@@ -72,7 +80,7 @@ class Auth0Provider implements LoginProviderInterface
                 $authenticationApi->deleteAllPersistentData();
             }
         } else {
-            $standaloneView->assign('error', 'No Application');
+            $standaloneView->assign('error', 'no_application');
         }
     }
 }

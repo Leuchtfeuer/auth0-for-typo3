@@ -35,8 +35,8 @@
 				</f:if>
 			</f:then>
 			<f:else>
-				<f:be.infobox title="No Application" state="2">
-					<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.no-application" />
+				<f:be.infobox title="{f:translate(key:'LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.error.{error}.title')}" state="2">
+					<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.error.{error}.description" />
 				</f:be.infobox>
 			</f:else>
 		</f:if>
