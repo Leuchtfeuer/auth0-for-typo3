@@ -96,12 +96,13 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
             // Handle BE Login
             $this->tableName = 'be_users';
             $this->user = UserUtility::checkIfUserExists($this->tableName, $this->tokenInfo['sub']);
+            $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User);
             if (!$this->user) {
                 // Insert new BE User
                 UserUtility::insertBeUser($this->tableName, $this->auth0User);
+                $updateUtility->updateUser();
             } elseif (strtotime($this->auth0User['updated_at']) > $this->user['tstamp']) {
                 // Update existing user
-                $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User);
                 $updateUtility->updateUser();
             }
         }
