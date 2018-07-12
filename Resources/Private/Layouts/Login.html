@@ -22,8 +22,7 @@
 							<div class="hidden t3js-login-error-nocookies">
 								<f:be.infobox message="{f:translate(key: 'login.error.cookies')}" state="2" />
 							</div>
-
-							<f:if condition="{userInfo}">
+							<f:if condition="{loginProviderIdentifier} == '1526966635'">
 								<f:then>
 									<div class="typo3-login-form t3js-login-formfields">
 										<form action="?loginProvider={loginProviderIdentifier}" method="post" name="loginform" id="typo3-login-form">
