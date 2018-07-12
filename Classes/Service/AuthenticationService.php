@@ -76,15 +76,16 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
      */
     public function initAuth($mode, $loginData, $authInfo, $pObj)
     {
-        $authInfo['db_user']['check_pid_clause'] = false;
-        $this->db_user = $authInfo['db_user'];
-        $this->db_groups = $authInfo['db_groups'];
-        $this->mode = $mode;
-        $this->login = $loginData;
-        $this->authInfo = $authInfo;
-        $this->pObj = $pObj;
-
         if ($this->initializeAuth0Connections()) {
+
+            $authInfo['db_user']['check_pid_clause'] = false;
+            $this->db_user = $authInfo['db_user'];
+            $this->db_groups = $authInfo['db_groups'];
+            $this->mode = $mode;
+            $this->login = $loginData;
+            $this->authInfo = $authInfo;
+            $this->pObj = $pObj;
+
             if ($mode === 'getUserFE' && !empty($loginData)) {
                 // Handle FE Login
                 $this->tableName = 'fe_users';
@@ -117,6 +118,11 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
      */
     protected function initializeAuth0Connections():bool
     {
+        if (GeneralUtility::_GP('loginProvider') != '1526966635') {
+            // Not an Auth0 login
+            return false;
+        }
+
         if (TYPO3_MODE === 'FE') {
             $GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(PageRepository::class);
             $GLOBALS['TSFE']->sys_page->init(false);
