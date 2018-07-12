@@ -42,10 +42,12 @@ class EmAuth0Configuration implements SingletonInterface
      */
     public function __construct()
     {
-        $settings = (array)unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['auth0']);
-        foreach ($settings as $key => $value) {
-            if (property_exists(__CLASS__, $key)) {
-                $this->$key = $value;
+        if (!empty($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['auth0'])) {
+            $settings = (array)unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['auth0']);
+            foreach ($settings as $key => $value) {
+                if (property_exists(__CLASS__, $key)) {
+                    $this->$key = $value;
+                }
             }
         }
     }
