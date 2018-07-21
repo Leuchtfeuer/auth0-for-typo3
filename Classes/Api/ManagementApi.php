@@ -41,7 +41,13 @@ class ManagementApi extends Management implements SingletonInterface
     public function __construct(Application $application)
     {
         /** @var Application $application */
-        $authenticationApi = new Authentication($application->getDomain());
+        $authenticationApi = new Authentication(
+            $application->getDomain(),
+            $application->getId(),
+            $application->getSecret(),
+            'https://' . $application->getDomain() . '/' . $application->getAudience()
+        );
+
         try {
             $result = $authenticationApi->client_credentials([
                 'client_secret' => $application->getSecret(),
@@ -52,7 +58,13 @@ class ManagementApi extends Management implements SingletonInterface
             $this->application = $application;
             $this->authenticationApi = $authenticationApi;
 
-            parent::__construct($result['access_token'], $application->getDomain());
+            parent::__construct(
+                $result['access_token'],
+                $application->getDomain(),
+                [
+                    'http_errors' => false
+                ]
+            );
         } catch (ClientException $clientException) {
             // TODO: Handle
             DebuggerUtility::var_dump($clientException, __CLASS__ . ':' . __LINE__);
