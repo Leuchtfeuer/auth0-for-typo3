@@ -13,6 +13,7 @@ namespace Bitmotion\Auth0\LoginProvider;
  *  (c) 2018 Florian Wessels <f.wessels@bitmotion.de>, Bitmotion GmbH
  *
  ***/
+use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\AuthenticationApi;
 use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
@@ -32,6 +33,11 @@ use TYPO3\CMS\Fluid\View\StandaloneView;
 class Auth0Provider implements LoginProviderInterface
 {
     /**
+     * @var AuthenticationApi
+     */
+    protected $authentication = null;
+
+    /**
      * @param StandaloneView  $standaloneView
      * @param PageRenderer    $pageRenderer
      * @param LoginController $loginController
@@ -40,14 +46,11 @@ class Auth0Provider implements LoginProviderInterface
      */
     public function render(StandaloneView $standaloneView, PageRenderer $pageRenderer, LoginController $loginController)
     {
+        $standaloneView->setLayoutRootPaths(['EXT:auth0/Resources/Private/Layouts']);
         $standaloneView->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:auth0/Resources/Private/Templates/Backend.html'));
         $pageRenderer->addCssFile('EXT:auth0/Resources/Public/Styles/backend.css');
-        $standaloneView->setLayoutRootPaths(['EXT:auth0/Resources/Private/Layouts']);
 
-        $configuration = new EmAuth0Configuration();
-        $applicationRepository = GeneralUtility::makeInstance(ObjectManager::class)->get(ApplicationRepository::class);
-        $application = $applicationRepository->findByUid($configuration->getBackendConnection());
-
+        // Figure out whether TypoScript is loaded
         try {
             ConfigurationUtility::getSetting('propertyMapping');
         } catch (\Exception $exception) {
@@ -55,32 +58,68 @@ class Auth0Provider implements LoginProviderInterface
             return;
         }
 
-        if ($application instanceof Application) {
-            $authenticationApi = new AuthenticationApi($application, GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL') . '&login=1', 'openid profile read:current_user');
+        // Try to get user info from session storage
+        $store = new SessionStore();
+        $userInfo = $store->get('user');
+
+        if (($userInfo === null && GeneralUtility::_GP('login') == 1) || GeneralUtility::_GP('logout') == 1) {
+
+            $application = $this->getApplication();
+            if (!$application instanceof Application) {
+                $standaloneView->assign('error', 'no_application');
+                return;
+            }
+
+            $this->setAuthenticationApi($application);
+
+            // Try to get user via authentication API
+            if ($userInfo === null) {
+                try {
+                    $userInfo = $this->authentication->getUser();
+                } catch (\Exception $exception) {
+                    $this->authentication->deleteAllPersistentData();
+                }
+            }
 
             // Logout user from Auth0
             if (GeneralUtility::_GP('logout') == 1) {
-                $authenticationApi->logout();
-                $authenticationApi->deleteAllPersistentData();
+                $this->authentication->logout();
+                $userInfo = null;
             }
 
-            try {
-                $userInfo = $authenticationApi->getUser();
-
-                if (!$userInfo && GeneralUtility::_GP('login') == 1) {
-                    // Try to login user to Auth0
-                    $authenticationApi->login();
-                } else {
-                    // Show login form
-                    $standaloneView->assign('auth0Error', GeneralUtility::_GP('error'));
-                    $standaloneView->assign('auth0ErrorDescription', GeneralUtility::_GP('error_description'));
-                    $standaloneView->assign('userInfo', $userInfo);
-                }
-            } catch (\Exception $exception) {
-                $authenticationApi->deleteAllPersistentData();
+            // Login user to Auth0
+            if ($userInfo === null && GeneralUtility::_GP('login') == 1) {
+                $this->authentication->login();
             }
-        } else {
-            $standaloneView->assign('error', 'no_application');
         }
+
+        // Assign variables and Auth0 response to view
+        $standaloneView->assign('auth0Error', GeneralUtility::_GP('error'));
+        $standaloneView->assign('auth0ErrorDescription', GeneralUtility::_GP('error_description'));
+        $standaloneView->assign('userInfo', $userInfo);
+    }
+
+    /**
+     * @return Application|null
+     */
+    protected function getApplication()
+    {
+        $configuration = new EmAuth0Configuration();
+        $applicationRepository = GeneralUtility::makeInstance(ObjectManager::class)->get(ApplicationRepository::class);
+
+        return $applicationRepository->findByUid($configuration->getBackendConnection());
+    }
+    /**
+     * @param Application $application
+     *
+     * @throws \Auth0\SDK\Exception\CoreException
+     */
+    protected function setAuthenticationApi(Application $application)
+    {
+        $this->authentication = new AuthenticationApi(
+            $application,
+            GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'),
+            'openid profile read:current_user'
+        );
     }
 }

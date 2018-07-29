@@ -49,6 +49,7 @@ class LoginController extends ActionController
 
     /**
      * @throws \Exception
+     * TODO: Move this into dedicated class... not in use for every action
      */
     public function initializeAction()
     {
@@ -147,7 +148,7 @@ class LoginController extends ActionController
     /**
      * @return string
      */
-    protected function getUri()
+    protected function getUri(): string
     {
         return
             $this->objectManager->get(UriBuilder::class)
