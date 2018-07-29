@@ -13,14 +13,17 @@ namespace Bitmotion\Auth0\Service;
  *  (c) 2018 Florian Wessels <f.wessels@bitmotion.de>, Bitmotion GmbH
  *
  ***/
+use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\Restriction\FrontendRestrictionContainer;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /**
  * Class RedirectService
  * @package Bitmotion\Auth0\Service
+ * @see https://github.com/TYPO3/TYPO3.CMS/blob/master/typo3/sysext/felogin/Classes/Controller/FrontendLoginController.php
  */
 class RedirectService implements SingletonInterface
 {
@@ -48,7 +51,6 @@ class RedirectService implements SingletonInterface
     {
         $redirect_url = [];
 
-        DebuggerUtility::var_dump($this->settings);
         if ($this->settings['redirectMode']) {
             $redirectMethods = GeneralUtility::trimExplode(',', $this->settings['redirectMode'], true);
             foreach ($redirectMethods as $redirMethod) {
@@ -59,14 +61,29 @@ class RedirectService implements SingletonInterface
                         case 'groupLogin':
                             // taken from dkd_redirect_at_login written by Ingmar Schlecht; database-field changed
                             $groupData = $GLOBALS['TSFE']->fe_user->groupData;
-                            DebuggerUtility::var_dump($groupData, 'GROUP');
                             if (!empty($groupData['uid'])) {
                                 // take the first group with a redirect page
-                                $row = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow(
-                                    'felogin_redirectPid',
-                                    $GLOBALS['TSFE']->fe_user->usergroup_table,
-                                    'felogin_redirectPid<>\'\' AND uid IN (' . implode(',', $groupData['uid']) . ')'
-                                );
+                                $userGroupTable = $GLOBALS['TSFE']->fe_user->usergroup_table;
+                                $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($userGroupTable);
+                                $queryBuilder->getRestrictions()->removeAll();
+                                $row = $queryBuilder
+                                    ->select('felogin_redirectPid')
+                                    ->from($userGroupTable)
+                                    ->where(
+                                        $queryBuilder->expr()->neq(
+                                            'felogin_redirectPid',
+                                            $queryBuilder->createNamedParameter('', \PDO::PARAM_STR)
+                                        ),
+                                        $queryBuilder->expr()->in(
+                                            'uid',
+                                            $queryBuilder->createNamedParameter(
+                                                $groupData['uid'],
+                                                Connection::PARAM_INT_ARRAY
+                                            )
+                                        )
+                                    )
+                                    ->execute()
+                                    ->fetch();
                                 if ($row) {
                                     $redirect_url[] = $this->pi_getPageLink($row['felogin_redirectPid']);
                                 }
@@ -74,11 +91,27 @@ class RedirectService implements SingletonInterface
                             break;
 
                         case 'userLogin':
-                            $row = $GLOBALS['TYPO3_DB']->exec_SELECTgetSingleRow(
-                                'felogin_redirectPid',
-                                $GLOBALS['TSFE']->fe_user->user_table,
-                                $GLOBALS['TSFE']->fe_user->userid_column . '=' . $this->userManagement->getLastLoggedInUserId() . ' AND felogin_redirectPid<>\'\''
-                            );
+                            $userTable = $GLOBALS['TSFE']->fe_user->user_table;
+                            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($userTable);
+                            $queryBuilder->getRestrictions()->removeAll();
+                            $row = $queryBuilder
+                                ->select('felogin_redirectPid')
+                                ->from($userTable)
+                                ->where(
+                                    $queryBuilder->expr()->neq(
+                                        'felogin_redirectPid',
+                                        $queryBuilder->createNamedParameter('', \PDO::PARAM_STR)
+                                    ),
+                                    $queryBuilder->expr()->eq(
+                                        $GLOBALS['TSFE']->fe_user->userid_column,
+                                        $queryBuilder->createNamedParameter(
+                                            $GLOBALS['TSFE']->fe_user->user['uid'],
+                                            \PDO::PARAM_INT
+                                        )
+                                    )
+                                )
+                                ->execute()
+                                ->fetch();
 
                             if ($row) {
                                 $redirect_url[] = $this->pi_getPageLink($row['felogin_redirectPid']);
@@ -124,6 +157,7 @@ class RedirectService implements SingletonInterface
         if (!empty($redirect_url)) {
             return array_filter($redirect_url, 'strlen');
         }
+
         return [];
     }
 
@@ -224,8 +258,14 @@ class RedirectService implements SingletonInterface
                 $host = $parsedUrl['host'];
                 // Removes the last path segment and slash sequences like /// (if given):
                 $path = preg_replace('#/+[^/]*$#', '', $parsedUrl['path']);
-                $localDomains = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('domainName', 'sys_domain',
-                    '1=1' . $GLOBALS['TSFE']->cObj->enableFields('sys_domain'));
+
+                $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_domain');
+                $queryBuilder->setRestrictions(GeneralUtility::makeInstance(FrontendRestrictionContainer::class));
+                $localDomains = $queryBuilder->select('domainName')
+                    ->from('sys_domain')
+                    ->execute()
+                    ->fetchAll();
+
                 if (is_array($localDomains)) {
                     foreach ($localDomains as $localDomain) {
                         // strip trailing slashes (if given)
