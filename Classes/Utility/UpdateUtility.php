@@ -40,60 +40,117 @@ class UpdateUtility implements SingletonInterface {
     }
 
     /**
-     * @throws \Exception
+     *
+     */
+    public function updateGroups()
+    {
+        if (!empty($this->user['app_metadata']['roles'])) {
+            $userRoles = $this->user['app_metadata']['roles'];
+
+            try {
+                $groupMapping = ConfigurationUtility::getSetting('roles', $this->tableName);
+                if (!empty($groupMapping)) {
+                    $groupsToAssign = [];
+                    $isBeAdmin = false;
+                    $shouldUpdate = false;
+
+                    // Map Auth0 roles on TYPO3 usergroups
+                    foreach ($userRoles as $role) {
+                        if (isset($groupMapping[$role])) {
+                            if ($this->tableName === 'be_users' && $groupMapping[$role] === 'admin') {
+                                $isBeAdmin = true;
+                            } else {
+                                $groupsToAssign[] = $groupMapping[$role];
+                            }
+                            $shouldUpdate = true;
+
+                        }
+                    }
+
+                    // Update user only if necessary
+                    if ($shouldUpdate === true) {
+                        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableName);
+                        $queryBuilder->update($this->tableName);
+
+                        // Update usergroup in database
+                        if (!empty($groupsToAssign)) {
+                            $queryBuilder->set('usergroup', implode(',', $groupsToAssign));
+                        }
+
+                        // Set admin flag for backend users
+                        if ($this->tableName === 'be_users') {
+                            $queryBuilder->set('admin', (int)$isBeAdmin);
+                        }
+
+                        $queryBuilder
+                            ->where($queryBuilder->expr()->eq('auth0_user_id', $queryBuilder->createNamedParameter($this->user['user_id'])))
+                            ->execute();
+                    }
+                }
+            } catch (\Exception $e) {
+                // TODO: Log exception
+            }
+        }
+    }
+
+    /**
      */
     public function updateUser()
     {
-        // Get mapping configuration
-        $mappingConfiguration = ConfigurationUtility::getSetting('propertyMapping', $this->tableName);
+        try {
+            // Get mapping configuration
+            $mappingConfiguration = ConfigurationUtility::getSetting('propertyMapping', $this->tableName);
 
-        if (!empty($mappingConfiguration)) {
-            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableName);
-            $queryBuilder->update($this->tableName);
+            if (!empty($mappingConfiguration)) {
+                $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableName);
+                $queryBuilder->update($this->tableName);
 
-            foreach ($mappingConfiguration as $typo3FieldName => $auth0FieldName) {
+                foreach ($mappingConfiguration as $typo3FieldName => $auth0FieldName) {
 
-                if (!is_array($auth0FieldName)) {
-                    // Update without procFuncs
-                    if (isset($this->user[$auth0FieldName])) {
-                        $queryBuilder->set(
-                            $typo3FieldName,
-                            $this->user[$auth0FieldName]
-                        );
-                    } elseif (strpos($auth0FieldName, 'user_metadata') !== false) {
-                        $queryBuilder->set(
-                            $typo3FieldName,
-                            $this->getAuth0ValueRecursive($this->user, explode('.', $auth0FieldName))
-                        );
-                    }
-                } elseif (is_array($auth0FieldName) && isset($auth0FieldName['_typoScriptNodeValue'])) {
-
-                    // Update with procFuncs
-                    $fieldName = $auth0FieldName['_typoScriptNodeValue'];
-                    if (isset($this->user[$fieldName])) {
-                        if (isset($auth0FieldName['parseFunc'])) {
+                    if (!is_array($auth0FieldName)) {
+                        // Update without procFuncs
+                        if (isset($this->user[$auth0FieldName])) {
                             $queryBuilder->set(
                                 $typo3FieldName,
-                                $this->handleParseFunc($auth0FieldName['parseFunc'], $this->user[$fieldName])
+                                $this->user[$auth0FieldName]
+                            );
+                        } elseif (strpos($auth0FieldName, 'user_metadata') !== false) {
+                            $queryBuilder->set(
+                                $typo3FieldName,
+                                $this->getAuth0ValueRecursive($this->user, explode('.', $auth0FieldName))
                             );
                         }
-                    } elseif (strpos($auth0FieldName['_typoScriptNodeValue'], 'user_metadata') !== false) {
-                        $queryBuilder->set(
-                            $typo3FieldName,
-                            $this->handleParseFunc(
-                                $auth0FieldName['parseFunc'],
-                                $this->getAuth0ValueRecursive(
-                                    $this->user,
-                                    explode('.', $auth0FieldName['_typoScriptNodeValue'])
+                    } elseif (is_array($auth0FieldName) && isset($auth0FieldName['_typoScriptNodeValue'])) {
+
+                        // Update with procFuncs
+                        $fieldName = $auth0FieldName['_typoScriptNodeValue'];
+                        if (isset($this->user[$fieldName])) {
+                            if (isset($auth0FieldName['parseFunc'])) {
+                                $queryBuilder->set(
+                                    $typo3FieldName,
+                                    $this->handleParseFunc($auth0FieldName['parseFunc'], $this->user[$fieldName])
+                                );
+                            }
+                        } elseif (strpos($auth0FieldName['_typoScriptNodeValue'], 'user_metadata') !== false) {
+                            $queryBuilder->set(
+                                $typo3FieldName,
+                                $this->handleParseFunc(
+                                    $auth0FieldName['parseFunc'],
+                                    $this->getAuth0ValueRecursive(
+                                        $this->user,
+                                        explode('.', $auth0FieldName['_typoScriptNodeValue'])
+                                    )
                                 )
-                            )
-                        );
+                            );
+                        }
                     }
                 }
-            }
 
-            $queryBuilder->where($queryBuilder->expr()->eq('auth0_user_id', $queryBuilder->createNamedParameter($this->user['user_id'])));
-            $queryBuilder->execute();
+                $queryBuilder->where($queryBuilder->expr()->eq('auth0_user_id', $queryBuilder->createNamedParameter($this->user['user_id'])));
+                $queryBuilder->execute();
+            }
+        } catch (\Exception $exception) {
+            // TODO: Log exception
         }
     }
 

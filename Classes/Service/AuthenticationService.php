@@ -69,7 +69,8 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
      *
      * @throws \Auth0\SDK\Exception\ApiException
      * @throws \Auth0\SDK\Exception\CoreException
-     * @throws \Exception
+     * @throws \TYPO3\CMS\Core\Error\Http\PageNotFoundException
+     * @throws \TYPO3\CMS\Core\Error\Http\ServiceUnavailableException
      */
     public function initAuth($mode, $loginData, $authInfo, $pObj)
     {
@@ -97,21 +98,20 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
 
     /**
      * Insert or updates user data in TYPO3 database
-     *
-     * @throws \Exception
      */
     protected function insertOrUpdateUser()
     {
         $this->user = UserUtility::checkIfUserExists($this->tableName, $this->tokenInfo['sub']);
-        $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User);
+
+        // Insert new BE User and update properties
         if (!$this->user) {
-            // Insert new BE User and update properties
             UserUtility::insertBeUser($this->tableName, $this->auth0User);
-            $updateUtility->updateUser();
-        } elseif (strtotime($this->auth0User['updated_at']) > $this->user['tstamp']) {
-            // Update existing user
-            $updateUtility->updateUser();
         }
+
+        // Update existing user on every login
+        $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User);
+        $updateUtility->updateUser();
+        $updateUtility->updateGroups();
     }
 
     /**
@@ -121,6 +121,8 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
      *
      * @throws \Auth0\SDK\Exception\ApiException
      * @throws \Auth0\SDK\Exception\CoreException
+     * @throws \TYPO3\CMS\Core\Error\Http\PageNotFoundException
+     * @throws \TYPO3\CMS\Core\Error\Http\ServiceUnavailableException
      * @throws \Exception
      */
     protected function initializeAuth0Connections():bool
@@ -152,6 +154,7 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
         if ($application instanceof Application) {
             $authenticationApi = new AuthenticationApi(
                 $application,
+                // TODO: Use proper redirect uri for FE requests
                 GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/typo3/?loginProvider=1526966635&login=1',
                 'read:current_user openid profile'
             );
