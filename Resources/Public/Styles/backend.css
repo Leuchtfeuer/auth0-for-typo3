@@ -6,6 +6,17 @@
 	font-size: 12px;
 }
 
+.auth0-login-logo {
+	margin-bottom: 30px;
+}
+
+.auth0-login-logo .auth0-login-image {
+	max-width: 150px;
+	height: auto;
+	display: block;
+	margin: 0 auto;
+}
+
 a.btn-auth0 {
 	font-weight: normal;
 }
