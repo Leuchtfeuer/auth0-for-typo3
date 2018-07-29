@@ -84,6 +84,8 @@ class LoginController extends ActionController
     }
 
     /**
+     * form action
+     *
      * @throws \Auth0\SDK\Exception\CoreException
      */
     public function formAction()
@@ -94,7 +96,6 @@ class LoginController extends ActionController
         try {
             $userInfo = $this->authenticationApi->getUser();
             if (GeneralUtility::_GP('logintype') === 'login' && !empty($GLOBALS['TSFE']->fe_user->user)) {
-                $this->updateUser($userInfo);
                 $this->handleRedirect(['groupLogin', 'userLogin', 'login', 'getpost', 'referrer']);
             }
             $this->view->assign('userInfo', $userInfo);
@@ -105,22 +106,7 @@ class LoginController extends ActionController
     }
 
     /**
-     * @param array $userInfo
-     *
-     * @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
-     * @throws \Exception
-     */
-    protected function updateUser(array $userInfo)
-    {
-        $auth0User = $this->managementApi->getUserById($userInfo['sub']);
-
-        if (strtotime($auth0User['updated_at']) > $GLOBALS['TSFE']->fe_user->user['tstamp']) {
-            $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, 'fe_users', $auth0User);
-            $updateUtility->updateUser();
-        }
-    }
-
-    /**
+     * login action
      */
     public function loginAction()
     {
