@@ -14,12 +14,11 @@ namespace Bitmotion\Auth0\Controller;
  *
  ***/
 
+use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\AuthenticationApi;
-use Bitmotion\Auth0\Api\ManagementApi;
 use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Service\RedirectService;
-use Bitmotion\Auth0\Utility\UpdateUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
@@ -36,24 +35,9 @@ class LoginController extends ActionController
     protected $applicationRepository = null;
 
     /**
-     * @var AuthenticationApi
-     */
-    protected $authenticationApi = null;
-
-    /**
-     * @var ManagementApi
-     */
-    protected $managementApi = null;
-
-    /**
      * @var Application
      */
     protected $application = null;
-
-    /**
-     * @var string
-     */
-    protected $uri = '';
 
     /**
      * @param ApplicationRepository $applicationRepository
@@ -74,7 +58,6 @@ class LoginController extends ActionController
 
             if ($application instanceof Application) {
                 $this->application = $application;
-                $this->managementApi = GeneralUtility::makeInstance(ManagementApi::class, $application);
             } else {
                 throw new \Exception(sprintf('No Application found for given id %s', $applicationUid), 1526046354);
             }
@@ -85,24 +68,19 @@ class LoginController extends ActionController
 
     /**
      * form action
-     *
-     * @throws \Auth0\SDK\Exception\CoreException
      */
     public function formAction()
     {
-        $this->uri = GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
-        $this->authenticationApi = new AuthenticationApi($this->application, $this->getUri(), 'openid profile read:current_user', []);
+        // Get Auth0 user from session storage
+        $store = new SessionStore();
+        $userInfo = $store->get('user');
 
-        try {
-            $userInfo = $this->authenticationApi->getUser();
-            if (GeneralUtility::_GP('logintype') === 'login' && !empty($GLOBALS['TSFE']->fe_user->user)) {
-                $this->handleRedirect(['groupLogin', 'userLogin', 'login', 'getpost', 'referrer']);
-            }
-            $this->view->assign('userInfo', $userInfo);
-            $this->view->assign('user', $GLOBALS['TSFE']->fe_user->user);
-        } catch (\Exception $exception) {
-            $this->authenticationApi->deleteAllPersistentData();
+        // Redirect user on login
+        if (GeneralUtility::_GP('logintype') === 'login' && !empty($GLOBALS['TSFE']->fe_user->user) && $userInfo !== null) {
+            $this->handleRedirect(['groupLogin', 'userLogin', 'login', 'getpost', 'referrer']);
         }
+
+        $this->view->assign('userInfo', $userInfo);
     }
 
     /**
@@ -110,20 +88,27 @@ class LoginController extends ActionController
      */
     public function loginAction()
     {
-        try {
-            $this->uri = GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
-            $this->authenticationApi = new AuthenticationApi($this->application, $this->getUri(), 'openid profile read:current_user', []);
+        // Get Auth0 user from session storage
+        $store = new SessionStore();
+        $userInfo = $store->get('user');
 
-            $userInfo = $this->authenticationApi->getUser();
-            if (!$userInfo) {
-                // Try to login user to Auth0
-                $this->authenticationApi->login();
-            } else {
-                // Show login form
-                $this->view->assign('userInfo', $userInfo);
+        if ($userInfo === null) {
+            try {
+                $authenticationApi = new AuthenticationApi($this->application, $this->getUri(), 'openid profile read:current_user', []);
+                $userInfo = $authenticationApi->getUser();
+
+                if (!$userInfo) {
+                    // Try to login user to Auth0
+                    $authenticationApi->login();
+                } else {
+                    // Show login form
+                    $this->redirect('form');
+                }
+            } catch (\Exception $exception) {
+                if (isset($authenticationApi) && $authenticationApi instanceof AuthenticationApi) {
+                    $authenticationApi->deleteAllPersistentData();
+                }
             }
-        } catch (\Exception $exception) {
-            $this->authenticationApi->deleteAllPersistentData();
         }
     }
 
@@ -134,9 +119,14 @@ class LoginController extends ActionController
      */
     public function logoutAction()
     {
-        $this->uri = GeneralUtility::getIndpEnv('TYPO3_SITE_URL');
-        $this->authenticationApi = new AuthenticationApi($this->application, $this->getUri(), 'openid profile read:current_user', []);
-        $this->authenticationApi->logout();
+        $authenticationApi = new AuthenticationApi(
+            $this->application,
+            $this->getUri(),
+            'openid profile read:current_user',
+            []
+        );
+
+        $authenticationApi->logout();
         $this->redirect('form');
     }
 
