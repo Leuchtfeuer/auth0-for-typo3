@@ -5,5 +5,4 @@ Extension is still under developement.
 - Clean up task erweitern für FE User
 - Trigger auth0 update bei jedem seitenaufruf????
 - Tests schreiben
-- Gruppenzugehörigkeiten klären
 - Vorschlag zur Aktivierung von ```[BE][showRefreshLoginPopup]```??

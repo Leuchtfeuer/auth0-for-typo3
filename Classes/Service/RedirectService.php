@@ -19,11 +19,12 @@ use TYPO3\CMS\Core\Database\Query\Restriction\FrontendRestrictionContainer;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
+use TYPO3\CMS\Felogin\Controller\FrontendLoginController;
 
 /**
  * Class RedirectService
  * @package Bitmotion\Auth0\Service
- * @see https://github.com/TYPO3/TYPO3.CMS/blob/master/typo3/sysext/felogin/Classes/Controller/FrontendLoginController.php
+ * @see FrontendLoginController
  */
 class RedirectService implements SingletonInterface
 {
