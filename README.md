@@ -7,3 +7,4 @@ Extension is still under developement.
 - Tests schreiben
 - Auf eindeutige Benutzernamen (FE and BE) prüfen.
 - Vorschlag zur Aktivierung von ```[BE][showRefreshLoginPopup]```??
+- Auth0 Authentication Extension anbinden

@@ -96,7 +96,7 @@ class UserUtility
                     'pid' => $emConfiguration->getUserStoragePage(),
                     'tstamp' => time(),
                     'username' => $auth0User['email'],
-                    'password' => GeneralUtility::makeInstance(Random::class)->generateRandomHexString(50),
+                    'password' => self::getPassword(),
                     'email' => $auth0User['email'],
                     'crdate' => time(),
                     'auth0_user_id' => $auth0User['user_id'],
@@ -121,11 +121,22 @@ class UserUtility
                     'pid' => 0,
                     'tstamp' => time(),
                     'username' => $auth0User['email'],
-                    'password' => GeneralUtility::makeInstance(Random::class)->generateRandomHexString(50),
+                    'password' => self::getPassword(),
                     'email' => $auth0User['email'],
                     'crdate' => time(),
                     'auth0_user_id' => $auth0User['user_id'],
                 ]
             )->execute();
+    }
+
+    /**
+     * @return string
+     */
+    protected static function getPassword(): string
+    {
+        $saltFactory = \TYPO3\CMS\Saltedpasswords\Salt\SaltFactory::getSaltingInstance(null);
+
+        return $saltFactory->getHashedPassword(GeneralUtility::makeInstance(Random::class)->generateRandomHexString(50));
+
     }
 }
