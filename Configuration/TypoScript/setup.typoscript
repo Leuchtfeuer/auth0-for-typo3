@@ -10,6 +10,25 @@ plugin.tx_auth0 {
     }
 
     settings {
+        reactivateUsers {
+            be_users {
+                # if active, sets the disable flag to 0 when user tries to login again
+                disabled = 0
+
+                # if active, sets the deleted flag to 0 when user tries to login again
+                deleted = 0
+            }
+
+            fe_users {
+                # if active, sets the disable flag to 0 when user tries to login again
+                disabled = 1
+
+                # if active, sets the deleted flag to 0 when user tries to login again
+                deleted = 1
+            }
+        }
+
+
         # maps auth0 roles to TYPO3 fe_groups or be_groups
         roles {
 

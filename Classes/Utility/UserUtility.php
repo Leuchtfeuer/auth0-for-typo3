@@ -16,6 +16,8 @@ namespace Bitmotion\Auth0\Utility;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use TYPO3\CMS\Core\Crypto\Random;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
+use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -34,6 +36,21 @@ class UserUtility
     public static function checkIfUserExists(string $tableName, string $auth0UserId, bool $returnUserObject = true)
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
+
+        try {
+            // Find also disabled users
+            if (ConfigurationUtility::getSetting('reactivateUsers', $tableName, 'disabled') == 1) {
+                $queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
+            }
+
+            // Find also deleted users
+            if (ConfigurationUtility::getSetting('reactivateUsers', $tableName, 'deleted') == 1) {
+                $queryBuilder->getRestrictions()->removeByType(DeletedRestriction::class);
+            }
+        } catch (\Exception $exception) {
+            // TODO: Log this?
+        }
+
         $user = $queryBuilder
             ->select('*')
             ->from($tableName)

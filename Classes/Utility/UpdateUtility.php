@@ -146,6 +146,10 @@ class UpdateUtility implements SingletonInterface {
                     }
                 }
 
+                // Fixed values
+                $queryBuilder->set('disable', 0);
+                $queryBuilder->set('deleted', 0);
+
                 $queryBuilder->where($queryBuilder->expr()->eq('auth0_user_id', $queryBuilder->createNamedParameter($this->user['user_id'])));
                 $queryBuilder->execute();
             }
