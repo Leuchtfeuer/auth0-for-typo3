@@ -18,6 +18,7 @@ use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 use TYPO3\CMS\Extbase\Mvc\Exception\CommandException;
@@ -33,17 +34,10 @@ class CleanUpCommandController extends CommandController
     /**
      * @var array
      */
-    protected $allowedContexts = [
-        'BE',
-        'FE'
-    ];
-
-    /**
-     * @var array
-     */
     protected $allowedMethods = [
         'disable',
-        'delete'
+        'delete',
+        'deleteIrrevocable'
     ];
 
     /**
@@ -72,18 +66,8 @@ class CleanUpCommandController extends CommandController
      *
      * @throws CommandException
      */
-    protected function initialize(string $context, string $method)
+    protected function initialize(string $method)
     {
-        // Unknown context
-        if (!in_array($context, $this->allowedContexts)) {
-            $message = 'Unknown context: %s';
-            $this->outputLine(
-                '<error>' . $message . '</error>',
-                [$context]
-            );
-            throw new CommandException(sprintf($message, $context));
-        }
-
         // Unknown method
         if (!in_array($method, $this->allowedMethods)) {
             $message = 'Unknown method: %s';
@@ -94,11 +78,7 @@ class CleanUpCommandController extends CommandController
             throw new CommandException(sprintf($message, $method));
         }
 
-        if ($context === 'BE') {
-            $this->initializeBackend();
-        } else {
-            $this->initializeFrontend();
-        }
+        $this->initializeBackend();
 
         $this->method = $method;
         $this->users = $this->getUsers();
@@ -139,29 +119,14 @@ class CleanUpCommandController extends CommandController
     }
 
     /**
-     * @throws CommandException
-     */
-    protected function initializeFrontend()
-    {
-        $this->tableNames = [
-            'users' => 'fe_users',
-            'sessions' => 'fe_sessions'
-        ];
-
-        // TODO: Get all applications and remove users by application
-        throw new CommandException('FE Stuff not implemented properly.');
-    }
-
-    /**
-     * @param string $context "BE" for backend, "FE" for frontend (not supported right now)
-     * @param string $method "disable" or "delete"
+     * @param string $method "disable", "delete" or "deleteIrrevocable"
      *
      * @throws CommandException
      * @throws \Exception
      */
-    public function cleanUpUsersCommand(string $context = 'BE', string $method = 'disable')
+    public function cleanUpUsersCommand(string $method = 'disable')
     {
-        $this->initialize($context, $method);
+        $this->initialize($method);
         $management = GeneralUtility::makeInstance(ManagementApi::class, $this->application);
         $userCount = 0;
 
@@ -170,7 +135,6 @@ class CleanUpCommandController extends CommandController
             if (isset($auth0User['statusCode']) && $auth0User['statusCode'] === 404) {
                 $this->handleUser($user);
                 $this->clearSessionData($user);
-                // TODO: Clear Further data? Logs, ...?
                 $userCount++;
             }
         }
@@ -195,6 +159,10 @@ class CleanUpCommandController extends CommandController
     {
         $queryBuilder = $this->getQueryBuilder('users');
 
+        if ($this->method === 'delete') {
+            $queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
+        }
+
         return $queryBuilder
             ->select('uid', 'auth0_user_id')
             ->from($this->tableNames['users'])
@@ -210,15 +178,21 @@ class CleanUpCommandController extends CommandController
     {
         $queryBuilder = $this->getQueryBuilder('users');
 
-        if ($this->method === 'disable') {
+        switch ($this->method) {
             // Set disable flag to 1
-            $queryBuilder
-                ->update($this->tableNames['users'])
-                ->set('disable', 1);
-        } elseif ($this->method === 'delete') {
-            // Remove user from database
-            $queryBuilder
-                ->delete($this->tableNames['users']);
+            case 'disable':
+                $queryBuilder->update($this->tableNames['users'])->set('disable', 1);
+                break;
+
+            // Set deleted flag to 1
+            case 'delete':
+                $queryBuilder->update($this->tableNames['users'])->set('deleted', 1);
+                break;
+
+            // Remove record from database
+            case 'deleteIrrevocable':
+                $queryBuilder->delete($this->tableNames['users']);
+                break;
         }
 
         $queryBuilder
@@ -241,9 +215,9 @@ class CleanUpCommandController extends CommandController
      */
     protected function clearSessionData(array $user)
     {
-        $queryBuilder = $this->getQueryBuilder('session');
+        $queryBuilder = $this->getQueryBuilder('sessions');
         $queryBuilder
-            ->delete($this->tableNames['session'])
+            ->delete($this->tableNames['sessions'])
             ->where(
                 $queryBuilder->expr()->eq(
                     'ses_userid',
