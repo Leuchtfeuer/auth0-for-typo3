@@ -20,10 +20,7 @@ use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Utility\UpdateUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
-use GuzzleHttp\Client;
-use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Core\Crypto\Random;
-use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\Page\PageRepository;
@@ -72,12 +69,13 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
      *
      * @throws \Auth0\SDK\Exception\ApiException
      * @throws \Auth0\SDK\Exception\CoreException
-     * @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
+     * @throws \Exception
      */
     public function initAuth($mode, $loginData, $authInfo, $pObj)
     {
         if ($this->initializeAuth0Connections()) {
 
+            // Set default values
             $authInfo['db_user']['check_pid_clause'] = false;
             $this->db_user = $authInfo['db_user'];
             $this->db_groups = $authInfo['db_groups'];
@@ -86,32 +84,41 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
             $this->authInfo = $authInfo;
             $this->pObj = $pObj;
 
+            // Handle login for frontend or backend
             if ($mode === 'getUserFE' && !empty($loginData)) {
-                // Handle FE Login
                 $this->tableName = 'fe_users';
-                $this->user = UserUtility::checkIfUserExists($this->tableName, $this->tokenInfo['sub']);
-                if (!$this->user) {
-                    UserUtility::insertFeUser($this->tableName, $this->auth0User);
-                }
+                $this->insertOrUpdateUser();
             } elseif ($mode === 'getUserBE' && !empty($loginData)) {
-                // Handle BE Login
                 $this->tableName = 'be_users';
-                $this->user = UserUtility::checkIfUserExists($this->tableName, $this->tokenInfo['sub']);
-                $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User);
-                if (!$this->user) {
-                    // Insert new BE User
-                    UserUtility::insertBeUser($this->tableName, $this->auth0User);
-                    $updateUtility->updateUser();
-                } elseif (strtotime($this->auth0User['updated_at']) > $this->user['tstamp']) {
-                    // Update existing user
-                    $updateUtility->updateUser();
-                }
+                $this->insertOrUpdateUser();
             }
         }
     }
 
     /**
+     * Insert or updates user data in TYPO3 database
+     *
+     * @throws \Exception
+     */
+    protected function insertOrUpdateUser()
+    {
+        $this->user = UserUtility::checkIfUserExists($this->tableName, $this->tokenInfo['sub']);
+        $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User);
+        if (!$this->user) {
+            // Insert new BE User and update properties
+            UserUtility::insertBeUser($this->tableName, $this->auth0User);
+            $updateUtility->updateUser();
+        } elseif (strtotime($this->auth0User['updated_at']) > $this->user['tstamp']) {
+            // Update existing user
+            $updateUtility->updateUser();
+        }
+    }
+
+    /**
+     * Initializes the connection to the auth0 server
+     *
      * @return bool
+     *
      * @throws \Auth0\SDK\Exception\ApiException
      * @throws \Auth0\SDK\Exception\CoreException
      * @throws \Exception
@@ -124,14 +131,19 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
         }
 
         if (TYPO3_MODE === 'FE') {
+            // Initialize TSFE so that we can access TypoScript
             $GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(PageRepository::class);
             $GLOBALS['TSFE']->sys_page->init(false);
+            $GLOBALS['TSFE']->getPageAndRootline();
+            $GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance(TemplateService::class);
+            $GLOBALS['TSFE']->tmpl->init();
+            $GLOBALS['TSFE']->tmpl->start($GLOBALS['TSFE']->rootLine);
+
             $applicationUid = GeneralUtility::_GP('application');
         } else {
             $emConfiguration = new EmAuth0Configuration();
             $applicationUid = $emConfiguration->getBackendConnection();
         }
-
 
         /** @var Application $application */
         $applicationRepository = GeneralUtility::makeInstance(ObjectManager::class)->get(ApplicationRepository::class);
@@ -187,13 +199,14 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
     public function authUser(array $user): int
     {
         // Login user
-        if ($user['auth0_user_id'] !== ''  && $user['auth0_user_id'] == $this->tokenInfo['sub']) {
+        if ($user['auth0_user_id'] !== '' && $user['auth0_user_id'] == $this->tokenInfo['sub']) {
 
             // Do not login if email address is not verified
             if ($this->auth0User['email_verified'] === false && ($this->mode === 'getUserBE' || (bool)$this->auth0Data['loginIfMailIsNotVerified'] === false)) {
                 return 0;
             }
 
+            // Success
             return 200;
         }
 

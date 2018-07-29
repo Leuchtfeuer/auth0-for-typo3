@@ -40,7 +40,7 @@ class UpdateUtility implements SingletonInterface {
     }
 
     /**
-     * @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
+     * @throws \Exception
      */
     public function updateUser()
     {
