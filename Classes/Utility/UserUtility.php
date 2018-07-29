@@ -54,6 +54,19 @@ class UserUtility
     }
 
     /**
+     * @param string $tableName
+     * @param array  $auth0User
+     */
+    public static function insertUser(string $tableName, array $auth0User)
+    {
+        if ($tableName === 'fe_users') {
+            self::insertFeUser($tableName, $auth0User);
+        } elseif ($tableName === 'be_users') {
+            self::insertBeUser($tableName, $auth0User);
+        }
+    }
+
+    /**
      * Inserts a new frontend user
      *
      * @param string $tableName
