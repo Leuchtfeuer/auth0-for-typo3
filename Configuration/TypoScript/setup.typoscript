@@ -10,6 +10,23 @@ plugin.tx_auth0 {
     }
 
     settings {
+        # maps auth0 roles to TYPO3 fe_groups or be_groups
+        roles {
+
+            # auth0 context
+            typo3_backend {
+                #mapping for auth0 role to be_groups
+
+                # special: sets the admin flag
+                admin = admin
+            }
+
+            typo3_frontend {
+                # mapping for auth0 role to fe_groups
+                admin = 1
+            }
+        }
+
         propertyMapping {
             be_users {
                 username = nickname
