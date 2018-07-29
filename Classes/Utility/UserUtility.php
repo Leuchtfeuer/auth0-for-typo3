@@ -29,11 +29,10 @@ class UserUtility
     /**
      * @param string $tableName
      * @param string $auth0UserId
-     * @param bool   $returnUserObject
      *
      * @return bool|array
      */
-    public static function checkIfUserExists(string $tableName, string $auth0UserId, bool $returnUserObject = true)
+    public static function checkIfUserExists(string $tableName, string $auth0UserId)
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
 
@@ -63,11 +62,7 @@ class UserUtility
             return false;
         }
 
-        if ($returnUserObject === true) {
-            return $user;
-        }
-
-        return true;
+        return $user;
     }
 
     /**
