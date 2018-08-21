@@ -18,7 +18,7 @@ return [
         'showRecordFieldList' => 'hidden, title, id, secret, domain, audience',
     ],
     'types' => [
-        '1' => ['showitem' => 'hidden, title, id, secret, domain, audience'],
+        '1' => ['showitem' => 'hidden, title, domain, id, secret, audience'],
     ],
     'columns' => [
         'hidden' => [
