@@ -153,7 +153,8 @@ class Application extends AbstractEntity
      */
     public function getAudience(): string
     {
-        return $this->audience;
+        // Audience have to look like this: api/v2/
+        return trim($this->audience, '/') . '/';
     }
 
     /**
