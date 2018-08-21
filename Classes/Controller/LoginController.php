@@ -49,26 +49,6 @@ class LoginController extends ActionController
     }
 
     /**
-     * @throws \Exception
-     * TODO: Move this into dedicated class... not in use for every action
-     */
-    public function initializeAction()
-    {
-        if (isset($this->settings['application']) && !empty($this->settings['application'])) {
-            $applicationUid = $this->settings['application'];
-            $application = $this->applicationRepository->findByIdentifier((int)$applicationUid);
-
-            if ($application instanceof Application) {
-                $this->application = $application;
-            } else {
-                throw new \Exception(sprintf('No Application found for given id %s', $applicationUid), 1526046354);
-            }
-        } else {
-            throw new \Exception('No Application configured.', 1526046434);
-        }
-    }
-
-    /**
      * form action
      */
     public function formAction()
@@ -96,6 +76,7 @@ class LoginController extends ActionController
 
         if ($userInfo === null) {
             try {
+                $this->loadApplication();
                 $authenticationApi = new AuthenticationApi($this->application, $this->getUri(), 'openid profile read:current_user', []);
                 $userInfo = $authenticationApi->getUser();
 
@@ -115,20 +96,32 @@ class LoginController extends ActionController
     }
 
     /**
-     * @throws \Auth0\SDK\Exception\CoreException
      * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
      * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
      */
     public function logoutAction()
     {
-        $authenticationApi = new AuthenticationApi(
-            $this->application,
-            $this->getUri(),
-            'openid profile read:current_user',
-            []
-        );
+        try {
+            $this->loadApplication();
+            $authenticationApi = new AuthenticationApi(
+                $this->application,
+                $this->getUri(),
+                'openid profile read:current_user',
+                []
+            );
 
-        $authenticationApi->logout();
+            $authenticationApi->logout();
+
+        } catch (\Exception $exception) {
+
+            // Delete user from SessionStore
+            $store = new SessionStore();
+            if ($store->get('user')) {
+                $store->delete('user');
+            };
+
+        }
+
         $this->redirect('form');
     }
 
@@ -161,5 +154,24 @@ class LoginController extends ActionController
                 ])->setCreateAbsoluteUri(true)
                 ->setUseCacheHash(false)
                 ->buildFrontendUri();
+    }
+
+    /**
+     * @throws InvalidApplicationException
+     */
+    protected function loadApplication()
+    {
+        if (isset($this->settings['application']) && !empty($this->settings['application'])) {
+            $applicationUid = $this->settings['application'];
+            $application = $this->applicationRepository->findByIdentifier((int)$applicationUid);
+
+            if ($application instanceof Application) {
+                $this->application = $application;
+            } else {
+                throw new InvalidApplicationException(sprintf('No Application found for given id %s', $applicationUid), 1526046354);
+            }
+        } else {
+            throw new InvalidApplicationException('No Application configured.', 1526046434);
+        }
     }
 }
