@@ -1,45 +1,50 @@
 {
-    "name": "bitmotion/auth0",
-    "description": "Auth0 is the solution you need for web, mobile, IoT, and internal applications. Loved by developers and trusted by enterprises.",
-    "keywords": [
-        "TYPO3",
-        "auth0",
-        "SSO",
-        "Login",
-        "User"
-    ],
-    "type": "typo3-cms-extension",
-    "license": "GPL-3.0-or-later",
-    "homepage": "https://www.bitmotion.de",
-    "support": {
-        "issues": "https://github.com/bitmotion/auth0-for-typo3/issues"
-    },
-    "authors": [
-        {
-            "name": "Florian Wessels",
-            "email": "f.wessels@bitmotion.de",
-            "role": "Developer",
-            "homepage": "https://www.bitmotion.de"
-        }
-    ],
-    "require": {
-        "php": ">=7.0.0 <7.3",
-        "typo3/cms-backend": "^8.7.0 || ^9.3.0",
-        "typo3/cms-core": "^8.7.0 || ^9.3.0",
-        "typo3/cms-extbase": "^8.7.0 || ^9.3.0",
-        "typo3/cms-extensionmanager": "^8.7.0 || ^9.3.0",
-        "typo3/cms-fluid": "^8.7.0 || ^9.3.0",
-        "typo3/cms-frontend": "^8.7.0 || ^9.3.0",
-        "typo3/cms-scheduler": "^8.7.0 || ^9.3.0",
-        "auth0/auth0-php": "^5.2"
-    },
-    "autoload": {
-        "psr-4": {
-            "Bitmotion\\Auth0\\": "Classes/"
-        }
-    },
-    "replace": {
-        "auth0":  "self.version",
-        "typo3-ter/auth0": "self.version"
+  "name": "bitmotion/auth0",
+  "description": "Auth0 is the solution you need for web, mobile, IoT, and internal applications. Loved by developers and trusted by enterprises.",
+  "keywords": [
+    "TYPO3",
+    "auth0",
+    "SSO",
+    "Login",
+    "User"
+  ],
+  "type": "typo3-cms-extension",
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://www.bitmotion.de",
+  "support": {
+    "issues": "https://github.com/bitmotion/auth0-for-typo3/issues",
+    "source": "https://github.com/bitmotion/auth0-for-typo3",
+    "email": "typo3-ext@bitmotion.de"
+  },
+  "authors": [
+    {
+      "name": "Florian Wessels",
+      "email": "f.wessels@bitmotion.de",
+      "role": "Developer",
+      "homepage": "https://www.bitmotion.de"
     }
+  ],
+  "require": {
+    "php": ">=7.0.0 <7.3",
+    "typo3/cms-core": "^8.7.0 || ^9.3.0",
+    "typo3/cms-backend": "^8.7.0 || ^9.3.0",
+    "typo3/cms-extbase": "^8.7.0 || ^9.3.0",
+    "typo3/cms-extensionmanager": "^8.7.0 || ^9.3.0",
+    "typo3/cms-fluid": "^8.7.0 || ^9.3.0",
+    "typo3/cms-frontend": "^8.7.0 || ^9.3.0",
+    "typo3/cms-saltedpasswords": "^8.7.0 || ^9.3.0",
+    "auth0/auth0-php": "^5.2"
+  },
+  "suggest": {
+    "typo3/cms-scheduler": "TYPO3 Scheduler"
+  },
+  "autoload": {
+    "psr-4": {
+      "Bitmotion\\Auth0\\": "Classes/"
+    }
+  },
+  "replace": {
+    "auth0": "self.version",
+    "typo3-ter/auth0": "self.version"
+  }
 }
