@@ -1,4 +1,3 @@
-Please do not use this code.<br/>
 Extension is still under developement.
 
 # TODO
