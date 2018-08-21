@@ -17,13 +17,13 @@ use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\AuthenticationApi;
 use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
-use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
+use Bitmotion\Auth0\Exception\InvalidApplicationException;
+use Bitmotion\Auth0\Utility\ApplicationUtility;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use TYPO3\CMS\Backend\Controller\LoginController;
 use TYPO3\CMS\Backend\LoginProvider\LoginProviderInterface;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 
 /**
@@ -64,8 +64,10 @@ class Auth0Provider implements LoginProviderInterface
 
         if (($userInfo === null && GeneralUtility::_GP('login') == 1) || GeneralUtility::_GP('logout') == 1) {
 
-            $application = $this->getApplication();
-            if (!$application instanceof Application) {
+            try {
+                $configuration = new EmAuth0Configuration();
+                $application = ApplicationUtility::getApplication($configuration->getBackendConnection());
+            } catch (InvalidApplicationException $exception) {
                 $standaloneView->assign('error', 'no_application');
                 return;
             }
@@ -99,16 +101,6 @@ class Auth0Provider implements LoginProviderInterface
         $standaloneView->assign('userInfo', $userInfo);
     }
 
-    /**
-     * @return Application|null
-     */
-    protected function getApplication()
-    {
-        $configuration = new EmAuth0Configuration();
-        $applicationRepository = GeneralUtility::makeInstance(ObjectManager::class)->get(ApplicationRepository::class);
-
-        return $applicationRepository->findByUid($configuration->getBackendConnection());
-    }
     /**
      * @param Application $application
      *

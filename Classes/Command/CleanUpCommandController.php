@@ -16,7 +16,8 @@ namespace Bitmotion\Auth0\Command;
 use Bitmotion\Auth0\Api\ManagementApi;
 use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
-use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
+use Bitmotion\Auth0\Exception\InvalidApplicationException;
+use Bitmotion\Auth0\Utility\ApplicationUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -98,16 +99,14 @@ class CleanUpCommandController extends CommandController
             throw new CommandException($message);
         }
 
-        $repository = $this->objectManager->get(ApplicationRepository::class);
-        $application = $repository->findByUid($configuration->getBackendConnection());
-
-        if (!$application instanceof Application) {
+        try {
+            $application = ApplicationUtility::getApplication($configuration->getBackendConnection());
+            $this->application = $application;
+        } catch (InvalidApplicationException $exception) {
             $message = 'No Application found.';
             $this->outputLine('<error>' . $message . '</error>');
             throw new CommandException($message);
         }
-
-        $this->application = $application;
 
         $this->tableNames = [
             'users' => 'be_users',

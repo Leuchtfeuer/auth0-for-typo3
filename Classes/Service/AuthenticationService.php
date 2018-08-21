@@ -15,14 +15,13 @@ namespace Bitmotion\Auth0\Service;
  ***/
 use Bitmotion\Auth0\Api\AuthenticationApi;
 use Bitmotion\Auth0\Api\ManagementApi;
-use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
-use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
+use Bitmotion\Auth0\Exception\InvalidApplicationException;
+use Bitmotion\Auth0\Utility\ApplicationUtility;
 use Bitmotion\Auth0\Utility\UpdateUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 
 /**
@@ -147,11 +146,8 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
             $applicationUid = $emConfiguration->getBackendConnection();
         }
 
-        /** @var Application $application */
-        $applicationRepository = GeneralUtility::makeInstance(ObjectManager::class)->get(ApplicationRepository::class);
-        $application = $applicationRepository->findByUid($applicationUid);
-
-        if ($application instanceof Application) {
+        try {
+            $application = ApplicationUtility::getApplication($applicationUid);
             $authenticationApi = new AuthenticationApi(
                 $application,
                 // TODO: Use proper redirect uri for FE requests
@@ -163,6 +159,8 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
             $this->auth0User = $managementApi->getUserById($this->tokenInfo['sub']);
 
             return true;
+        } catch (InvalidApplicationException $exception) {
+            // Do nothing
         }
 
         return false;

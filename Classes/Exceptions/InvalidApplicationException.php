@@ -16,7 +16,7 @@ namespace Bitmotion\Auth0\Exception;
 
 
 /**
- * Class InvalidConfigurationValueException
+ * Class InvalidApplicationException
  *
  * @package Bitmotion\Auth0\Exception
  */

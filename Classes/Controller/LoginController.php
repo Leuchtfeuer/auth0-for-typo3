@@ -17,9 +17,9 @@ namespace Bitmotion\Auth0\Controller;
 use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\AuthenticationApi;
 use Bitmotion\Auth0\Domain\Model\Application;
-use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Service\RedirectService;
+use Bitmotion\Auth0\Utility\ApplicationUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
@@ -31,22 +31,9 @@ use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 class LoginController extends ActionController
 {
     /**
-     * @var \Bitmotion\Auth0\Domain\Repository\ApplicationRepository
-     */
-    protected $applicationRepository = null;
-
-    /**
      * @var Application
      */
     protected $application = null;
-
-    /**
-     * @param ApplicationRepository $applicationRepository
-     */
-    public function injectApplicationRepository(ApplicationRepository $applicationRepository)
-    {
-        $this->applicationRepository = $applicationRepository;
-    }
 
     /**
      * form action
@@ -161,17 +148,6 @@ class LoginController extends ActionController
      */
     protected function loadApplication()
     {
-        if (isset($this->settings['application']) && !empty($this->settings['application'])) {
-            $applicationUid = $this->settings['application'];
-            $application = $this->applicationRepository->findByIdentifier((int)$applicationUid);
-
-            if ($application instanceof Application) {
-                $this->application = $application;
-            } else {
-                throw new InvalidApplicationException(sprintf('No Application found for given id %s', $applicationUid), 1526046354);
-            }
-        } else {
-            throw new InvalidApplicationException('No Application configured.', 1526046434);
-        }
+        $this->application = ApplicationUtility::getApplication((int)$this->settings['application']);
     }
 }
