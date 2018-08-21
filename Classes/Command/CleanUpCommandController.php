@@ -22,8 +22,6 @@ use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 use TYPO3\CMS\Extbase\Mvc\Exception\CommandException;
-use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /**
  * Class CleanUpCommandController
@@ -61,7 +59,6 @@ class CleanUpCommandController extends CommandController
     protected $method = '';
 
     /**
-     * @param string $context
      * @param string $method
      *
      * @throws CommandException

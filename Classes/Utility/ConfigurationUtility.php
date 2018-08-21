@@ -13,9 +13,11 @@ namespace Bitmotion\Auth0\Utility;
  *  (c) 2018 Florian Wessels <f.wessels@bitmotion.de>, Bitmotion GmbH
  *
  ***/
+
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
+use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
@@ -47,14 +49,15 @@ class ConfigurationUtility implements SingletonInterface
      * @param string ...$keys
      *
      * @return array|string
-     * @throws \Exception
+     * @throws InvalidConfigurationTypeException
+     * @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
      */
     public static function getSetting(string ...$keys)
     {
         if (empty(self::$settings)) {
             self::makeInstance();
             if (empty(self::$settings)) {
-                throw new \Exception('No settings found. TypoScript included?', 1531381794);
+                throw new InvalidConfigurationTypeException('No settings found. TypoScript included?', 1531381794);
             }
         }
 
@@ -69,8 +72,8 @@ class ConfigurationUtility implements SingletonInterface
      * @param array $keys
      * @param array $settings
      *
-     * @return array|string
-     * @throws \Exception
+     * @return mixed
+     * @throws InvalidConfigurationTypeException
      */
     protected static function getSettingRecursive(array $keys, array $settings)
     {
@@ -86,6 +89,6 @@ class ConfigurationUtility implements SingletonInterface
             }
         }
 
-        throw new \Exception(sprintf('No Configuration for %s found.', $key), 1528561132);
+        throw new InvalidConfigurationTypeException(sprintf('No Configuration for %s found.', $key), 1528561132);
     }
 }

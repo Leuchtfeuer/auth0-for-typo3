@@ -50,7 +50,7 @@ class PageLayoutViewHook
         $this->listType = $params['row']['list_type'];
         $this->flexFormData = GeneralUtility::xml2array($params['row']['pi_flexform']);
 
-        $header = '<p><strong>' . 'Auth0: ' . $this->getLanguageService()->sL('LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:plugin.' . $this->listTypeLanguageMapping[$this->listType] . '.title') . '</strong></p>';
+        $header = '<p><strong>' . 'Auth0: ' . $this->getLanguageService()->sL('LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:plugin.loginForm.title') . '</strong></p>';
         $content = '';
 
         if (!empty($this->flexFormData)) {
