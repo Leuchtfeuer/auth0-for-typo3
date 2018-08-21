@@ -76,6 +76,7 @@ return [
                 'type' => 'input',
                 'size' => 30,
                 'eval' => 'trim,required',
+                'default' => 'api/v2/'
             ],
         ],
     ],
