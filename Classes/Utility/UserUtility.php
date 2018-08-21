@@ -19,6 +19,7 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Saltedpasswords\Salt\SaltFactory;
 
 /**
  * Class UserUtility
@@ -134,9 +135,10 @@ class UserUtility
      */
     protected static function getPassword(): string
     {
-        $saltFactory = \TYPO3\CMS\Saltedpasswords\Salt\SaltFactory::getSaltingInstance(null);
+        $saltFactory = SaltFactory::getSaltingInstance(null);
+        $password = GeneralUtility::makeInstance(Random::class)->generateRandomHexString(50);
 
-        return $saltFactory->getHashedPassword(GeneralUtility::makeInstance(Random::class)->generateRandomHexString(50));
+        return $saltFactory->getHashedPassword($password);
 
     }
 }
