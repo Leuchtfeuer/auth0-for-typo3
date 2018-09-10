@@ -132,6 +132,13 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
         }
 
         if (TYPO3_MODE === 'FE') {
+            $applicationUid = GeneralUtility::_GP('application');
+
+            // No application uid found in request - skip.
+            if ($applicationUid === null) {
+                return false;
+            }
+
             // Initialize TSFE so that we can access TypoScript
             $GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(PageRepository::class);
             $GLOBALS['TSFE']->sys_page->init(false);
@@ -139,8 +146,6 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
             $GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance(TemplateService::class);
             $GLOBALS['TSFE']->tmpl->init();
             $GLOBALS['TSFE']->tmpl->start($GLOBALS['TSFE']->rootLine);
-
-            $applicationUid = GeneralUtility::_GP('application');
         } else {
             $emConfiguration = new EmAuth0Configuration();
             $applicationUid = $emConfiguration->getBackendConnection();
