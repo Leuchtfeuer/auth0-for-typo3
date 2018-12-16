@@ -1,0 +1,11 @@
+{
+  "config": {
+    "platform": {
+      "php": "7.0.0"
+    },
+    "classmap-authoritative": true
+  },
+  "require": {
+    "auth0/auth0-php": "^5.3.2"
+  }
+}

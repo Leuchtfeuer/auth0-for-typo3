@@ -33,7 +33,7 @@
     "typo3/cms-fluid": "^8.7.0 || ^9.3.0",
     "typo3/cms-frontend": "^8.7.0 || ^9.3.0",
     "typo3/cms-saltedpasswords": "^8.7.0 || ^9.3.0",
-    "auth0/auth0-php": "^5.2"
+    "auth0/auth0-php": "^5.3"
   },
   "suggest": {
     "typo3/cms-scheduler": "TYPO3 Scheduler"

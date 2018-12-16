@@ -20,9 +20,6 @@ $EM_CONF[$_EXTKEY] = [
     'author_email' => 'f.wessels@bitmotion.de',
     'author_company' => 'Bitmotion GmbH',
     'autoload' => [
-        'classmap' => [
-            'Resources/Private/Php/'
-        ],
         'psr-4' => [
             'Bitmotion\\Auth0\\' => 'Classes',
         ],

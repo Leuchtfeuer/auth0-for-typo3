@@ -1,6 +1,10 @@
 <?php
 defined('TYPO3_MODE') || die();
 
+if (!defined('TYPO3_COMPOSER_MODE') || !TYPO3_COMPOSER_MODE) {
+    require \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('auth0') . 'Libraries/vendor/autoload.php';
+}
+
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
     'Bitmotion.' . $_EXTKEY,
     'LoginForm',
