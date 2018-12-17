@@ -6,7 +6,7 @@ plugin.tx_auth0 {
     }
 
     persistence {
-        storagePid = {$general.tx_auth0.persistence.storagePid}
+        storagePid = {$plugin.tx_auth0.persistence.storagePid}
     }
 
     settings {
