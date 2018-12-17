@@ -36,11 +36,13 @@ class UserUtility
             // Find also disabled users
             if (ConfigurationUtility::getSetting('reactivateUsers', $tableName, 'disabled') == 1) {
                 $queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
+                // Todo: Set disabled to 0
             }
 
             // Find also deleted users
             if (ConfigurationUtility::getSetting('reactivateUsers', $tableName, 'deleted') == 1) {
                 $queryBuilder->getRestrictions()->removeByType(DeletedRestriction::class);
+                // Todo: Set deleted to 0
             }
         } catch (\Exception $exception) {
             // TODO: Log this?

@@ -1,8 +1,8 @@
 plugin.tx_auth0 {
     view {
-        templateRootPaths = EXT:auth0/Resources/Private/Templates/
-        partialRootPaths = EXT:auth0/Resources/Private/Partials/
-        layoutRootPaths = EXT:auth0/Resources/Private/Layouts/
+        templateRootPath = EXT:auth0/Resources/Private/Templates/
+        partialRootPath = EXT:auth0/Resources/Private/Partials/
+        layoutRootPath = EXT:auth0/Resources/Private/Layouts/
     }
 
     persistence {
