@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\Utility;
 
 /***
@@ -22,7 +21,6 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Class ConfigurationUtility
- * @package Bitmotion\Auth0\Utility
  */
 class ConfigurationUtility implements SingletonInterface
 {
@@ -48,9 +46,9 @@ class ConfigurationUtility implements SingletonInterface
     /**
      * @param string ...$keys
      *
-     * @return array|string
      * @throws InvalidConfigurationTypeException
      * @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
+     * @return array|string
      */
     public static function getSetting(string ...$keys)
     {
@@ -69,10 +67,6 @@ class ConfigurationUtility implements SingletonInterface
     }
 
     /**
-     * @param array $keys
-     * @param array $settings
-     *
-     * @return mixed
      * @throws InvalidConfigurationTypeException
      */
     protected static function getSettingRecursive(array $keys, array $settings)
@@ -84,9 +78,9 @@ class ConfigurationUtility implements SingletonInterface
 
             if (!empty($keys)) {
                 return self::getSettingRecursive($keys, $setting);
-            } else {
-                return $setting;
             }
+
+            return $setting;
         }
 
         throw new InvalidConfigurationTypeException(sprintf('No Configuration for %s found.', $key), 1528561132);

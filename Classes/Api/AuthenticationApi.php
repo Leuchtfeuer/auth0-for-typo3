@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\Api;
 
 /***
@@ -19,11 +18,9 @@ use Bitmotion\Auth0\Domain\Model\Application;
 
 /**
  * Class AuthenticationApi
- * @package Bitmotion\Auth0\Api
  */
 class AuthenticationApi extends Auth0
 {
-
     /**
      * @var Application
      */
@@ -33,9 +30,6 @@ class AuthenticationApi extends Auth0
      * Auth0Api constructor.
      *
      * @param Application $application
-     * @param string      $redirectUri
-     * @param string      $scope
-     * @param array       $additionalOptions
      *
      * @throws \Auth0\SDK\Exception\CoreException
      */
@@ -58,9 +52,6 @@ class AuthenticationApi extends Auth0
         parent::__construct(array_merge($config, $additionalOptions));
     }
 
-    /**
-     * @return Application
-     */
     public function getApplication(): Application
     {
         return $this->application;

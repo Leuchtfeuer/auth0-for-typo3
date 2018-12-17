@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\Exception;
 
 /***
@@ -14,13 +13,9 @@ namespace Bitmotion\Auth0\Exception;
  *
  ***/
 
-
 /**
  * Class InvalidConfigurationValueException
- *
- * @package Bitmotion\Auth0\Exception
  */
 class InvalidConfigurationValueException extends \Exception
 {
-
 }

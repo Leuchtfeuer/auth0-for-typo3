@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\Domain\Model\Dto;
 
 /***
@@ -18,7 +17,6 @@ use TYPO3\CMS\Core\SingletonInterface;
 
 /**
  * Class EmAuth0Configuration
- * @package Bitmotion\Auth0\Domain\Model\Dto
  */
 class EmAuth0Configuration implements SingletonInterface
 {
@@ -52,25 +50,16 @@ class EmAuth0Configuration implements SingletonInterface
         }
     }
 
-    /**
-     * @return bool
-     */
     public function getEnableBackendLogin(): bool
     {
         return (bool)$this->enableBackendLogin;
     }
 
-    /**
-     * @return int
-     */
     public function getBackendConnection(): int
     {
         return (int)$this->backendConnection;
     }
 
-    /**
-     * @return int
-     */
     public function getUserStoragePage(): int
     {
         return (int)$this->userStoragePage;

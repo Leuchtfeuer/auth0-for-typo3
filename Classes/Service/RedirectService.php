@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\Service;
 
 /***
@@ -23,12 +22,10 @@ use TYPO3\CMS\Felogin\Controller\FrontendLoginController;
 
 /**
  * Class RedirectService
- * @package Bitmotion\Auth0\Service
  * @see FrontendLoginController
  */
 class RedirectService implements SingletonInterface
 {
-
     /**
      * @var array
      */
@@ -36,18 +33,12 @@ class RedirectService implements SingletonInterface
 
     /**
      * RedirectService constructor.
-     *
-     * @param array $redirectSettings
      */
     public function __construct(array $redirectSettings)
     {
         $this->settings = $redirectSettings;
     }
 
-    /**
-     * @param array $allowedRedirects
-     * @return array
-     */
     public function getRedirectUri(array $allowedRedirects): array
     {
         $redirect_url = [];
@@ -56,7 +47,6 @@ class RedirectService implements SingletonInterface
             $redirectMethods = GeneralUtility::trimExplode(',', $this->settings['redirectMode'], true);
             foreach ($redirectMethods as $redirMethod) {
                 if (in_array($redirMethod, $allowedRedirects)) {
-
                     // Logintype is needed because the login-page wouldn't be accessible anymore after a login (would always redirect)
                     switch ($redirMethod) {
                         case 'groupLogin':
@@ -148,11 +138,9 @@ class RedirectService implements SingletonInterface
                             }
                             break;
                     }
-
                 }
             }
         }
-
 
         // Remove empty values, but keep "0" as value (that's why "strlen" is used as second parameter)
         if (!empty($redirect_url)) {
@@ -198,6 +186,7 @@ class RedirectService implements SingletonInterface
         $sanitizedUrl = htmlspecialchars($decodedUrl);
         if ($decodedUrl !== $sanitizedUrl || preg_match('#["<>\\\\]+#', $url)) {
             GeneralUtility::sysLog(sprintf('XSS: %s', $url), 'felogin', GeneralUtility::SYSLOG_SEVERITY_WARNING);
+
             return '';
         }
         // Validate the URL:
@@ -205,8 +194,12 @@ class RedirectService implements SingletonInterface
             return $url;
         }
         // URL is not allowed
-        GeneralUtility::sysLog(sprintf('%s is no valid redirect URL', $url), 'felogin',
-            GeneralUtility::SYSLOG_SEVERITY_WARNING);
+        GeneralUtility::sysLog(
+            sprintf('%s is no valid redirect URL', $url),
+            'felogin',
+            GeneralUtility::SYSLOG_SEVERITY_WARNING
+        );
+
         return '';
     }
 
@@ -222,9 +215,12 @@ class RedirectService implements SingletonInterface
         $parsedUrl = @parse_url($url);
         if ($parsedUrl !== false && !isset($parsedUrl['scheme']) && !isset($parsedUrl['host'])) {
             // If the relative URL starts with a slash, we need to check if it's within the current site path
-            return $parsedUrl['path'][0] !== '/' || GeneralUtility::isFirstPartOfStr($parsedUrl['path'],
-                    GeneralUtility::getIndpEnv('TYPO3_SITE_PATH'));
+            return $parsedUrl['path'][0] !== '/' || GeneralUtility::isFirstPartOfStr(
+                $parsedUrl['path'],
+                    GeneralUtility::getIndpEnv('TYPO3_SITE_PATH')
+            );
         }
+
         return false;
     }
 
@@ -239,6 +235,7 @@ class RedirectService implements SingletonInterface
     {
         $urlWithoutSchema = preg_replace('#^https?://#', '', $url);
         $siteUrlWithoutSchema = preg_replace('#^https?://#', '', GeneralUtility::getIndpEnv('TYPO3_SITE_URL'));
+
         return StringUtility::beginsWith($urlWithoutSchema . '/', GeneralUtility::getIndpEnv('HTTP_HOST') . '/')
             && StringUtility::beginsWith($urlWithoutSchema, $siteUrlWithoutSchema);
     }
@@ -279,6 +276,7 @@ class RedirectService implements SingletonInterface
                 }
             }
         }
+
         return $result;
     }
 }

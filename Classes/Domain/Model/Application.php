@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\Domain\Model;
 
 /***
@@ -18,7 +17,6 @@ use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 /**
  * Class Application
- * @package Bitmotion\Auth0\Domain\Model
  */
 class Application extends AbstractEntity
 {
@@ -75,7 +73,6 @@ class Application extends AbstractEntity
     /**
      * Sets the title
      *
-     * @param string $title
      * @return void
      */
     public function setTitle(string $title)
@@ -96,7 +93,6 @@ class Application extends AbstractEntity
     /**
      * Sets the id
      *
-     * @param string $id
      * @return void
      */
     public function setId(string $id)
@@ -117,7 +113,6 @@ class Application extends AbstractEntity
     /**
      * Sets the secret
      *
-     * @param string $secret
      * @return void
      */
     public function setSecret(string $secret)
@@ -138,7 +133,6 @@ class Application extends AbstractEntity
     /**
      * Sets the domain
      *
-     * @param string $domain
      * @return void
      */
     public function setDomain(string $domain)
@@ -160,7 +154,6 @@ class Application extends AbstractEntity
     /**
      * Sets the audience
      *
-     * @param string $audience
      * @return void
      */
     public function setAudience(string $audience)

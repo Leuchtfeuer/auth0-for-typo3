@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\Service;
 
 /***
@@ -26,7 +25,6 @@ use TYPO3\CMS\Frontend\Page\PageRepository;
 
 /**
  * Class AuthenticationService
- * @package Bitmotion\Auth0\Service
  */
 class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
 {
@@ -74,7 +72,6 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
     public function initAuth($mode, $loginData, $authInfo, $pObj)
     {
         if ($this->initializeAuth0Connections()) {
-
             // Set default values
             $authInfo['db_user']['check_pid_clause'] = false;
             $this->db_user = $authInfo['db_user'];
@@ -116,7 +113,6 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
     /**
      * Initializes the connection to the auth0 server
      *
-     * @return bool
      *
      * @throws \Auth0\SDK\Exception\ApiException
      * @throws \Auth0\SDK\Exception\CoreException
@@ -124,7 +120,7 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
      * @throws \TYPO3\CMS\Core\Error\Http\ServiceUnavailableException
      * @throws \Exception
      */
-    protected function initializeAuth0Connections():bool
+    protected function initializeAuth0Connections(): bool
     {
         if (TYPO3_MODE === 'BE' && GeneralUtility::_GP('loginProvider') != '1526966635') {
             // Not an Auth0 login
@@ -171,7 +167,6 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
         return false;
     }
 
-
     /**
      * @return bool|mixed
      */
@@ -197,16 +192,10 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
         return $user;
     }
 
-    /**
-     * @param array $user
-     *
-     * @return int
-     */
     public function authUser(array $user): int
     {
         // Login user
         if ($user['auth0_user_id'] !== '' && $user['auth0_user_id'] == $this->tokenInfo['sub']) {
-
             // Do not login if email address is not verified
             if ($this->auth0User['email_verified'] === false && ($this->mode === 'getUserBE' || (bool)$this->auth0Data['loginIfMailIsNotVerified'] === false)) {
                 return 0;

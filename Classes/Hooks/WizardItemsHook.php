@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\Hooks;
 
 /***
@@ -19,7 +18,6 @@ use TYPO3\CMS\Lang\LanguageService;
 
 /**
  * Class WizardItemsHook
- * @package Bitmotion\Auth0\Hooks
  */
 class WizardItemsHook implements NewContentElementWizardHookInterface
 {
@@ -31,7 +29,6 @@ class WizardItemsHook implements NewContentElementWizardHookInterface
      */
     public function manipulateWizardItems(&$wizardItems, &$parentObject)
     {
-
         // create auth0 node
         $wizardItems['auth0'] = [];
 
@@ -50,9 +47,6 @@ class WizardItemsHook implements NewContentElementWizardHookInterface
         ];
     }
 
-    /**
-     * @return LanguageService
-     */
     protected function getLanguageService(): LanguageService
     {
         return $GLOBALS['LANG'];

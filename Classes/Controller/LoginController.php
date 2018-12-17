@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\Controller;
 
 /***
@@ -26,7 +25,6 @@ use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 
 /**
  * Class LoginController
- * @package Bitmotion\Auth0\Controller
  */
 class LoginController extends ActionController
 {
@@ -98,37 +96,28 @@ class LoginController extends ActionController
             );
 
             $authenticationApi->logout();
-
         } catch (\Exception $exception) {
-
             // Delete user from SessionStore
             $store = new SessionStore();
             if ($store->get('user')) {
                 $store->delete('user');
-            };
-
+            }
         }
 
         $this->redirect('form');
     }
 
-    /**
-     * @param array $allowedRedirectMethods
-     */
     protected function handleRedirect(array $allowedRedirectMethods)
     {
         if ((bool)$this->settings['redirectDisable'] === false && !empty($this->settings['redirectMode'])) {
             $redirectService = GeneralUtility::makeInstance(RedirectService::class, $this->settings);
             $redirectUris = $redirectService->getRedirectUri($allowedRedirectMethods);
             if (!empty($redirectUris)) {
-                header('Location: '. $redirectService->getUri($redirectUris), false, 307);
+                header('Location: ' . $redirectService->getUri($redirectUris), false, 307);
             }
         }
     }
 
-    /**
-     * @return string
-     */
     protected function getUri(): string
     {
         return
@@ -137,7 +126,7 @@ class LoginController extends ActionController
                 ->setTargetPageUid($GLOBALS['TSFE']->id)
                 ->setArguments([
                     'logintype' => 'login',
-                    'application' => $this->application->getUid()
+                    'application' => $this->application->getUid(),
                 ])->setCreateAbsoluteUri(true)
                 ->setUseCacheHash(false)
                 ->buildFrontendUri();

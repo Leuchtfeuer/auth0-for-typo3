@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /////////////////
 //   PLUGINS   //
@@ -10,7 +11,6 @@
     'LoginForm',
     'Auth0: Login form'
 );
-
 
 ///////////////////
 //   FLEXFORMS   //

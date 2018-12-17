@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\Domain\Model;
 
 /***
@@ -16,11 +15,9 @@ namespace Bitmotion\Auth0\Domain\Model;
 
 /**
  * Class FrontendUser
- * @package Bitmotion\Auth0\Domain\Model
  */
 class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
 {
-
     /**
      * auth0UserId
      *
@@ -57,8 +54,6 @@ class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
 
     /**
      * Returns the auth0UserId
-     *
-     * @return string
      */
     public function getAuth0UserId(): string
     {
@@ -67,8 +62,6 @@ class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
 
     /**
      * Sets the auth0UserId
-     *
-     * @param string $auth0UserId
      */
     public function setAuth0UserId(string $auth0UserId)
     {
@@ -77,8 +70,6 @@ class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
 
     /**
      * Returns the auth0Metadata
-     *
-     * @return array
      */
     public function geAuth0Metadata(): array
     {
@@ -87,8 +78,6 @@ class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
 
     /**
      * Sets the auth0Metadata
-     *
-     * @param array $auth0Metadata
      */
     public function setAuth0Metadata(array $auth0Metadata)
     {
@@ -96,7 +85,6 @@ class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
     }
 
     /**
-     * @return array
      * @internal
      */
     public function getMetadata(): array
@@ -105,7 +93,6 @@ class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
     }
 
     /**
-     * @param array $metadata
      * @internal
      */
     public function setMetadata(array $metadata)
@@ -113,21 +100,13 @@ class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
         $this->metadata = $metadata;
     }
 
-    /**
-     * @return string
-     */
     public function getConnection(): string
     {
         return $this->connection;
     }
 
-    /**
-     * @param string $connection
-     */
     public function setConnection(string $connection)
     {
         $this->connection = $connection;
     }
-
-
 }

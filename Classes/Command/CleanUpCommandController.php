@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\Command;
+
 /***
  *
  * This file is part of the "Auth0 for TYPO3" Extension for TYPO3 CMS.
@@ -26,7 +26,6 @@ use TYPO3\CMS\Extbase\Mvc\Exception\CommandException;
 
 /**
  * Class CleanUpCommandController
- * @package Bitmotion\Auth0\Command
  */
 class CleanUpCommandController extends CommandController
 {
@@ -36,7 +35,7 @@ class CleanUpCommandController extends CommandController
     protected $allowedMethods = [
         'disable',
         'delete',
-        'deleteIrrevocable'
+        'deleteIrrevocable',
     ];
 
     /**
@@ -60,8 +59,6 @@ class CleanUpCommandController extends CommandController
     protected $method = '';
 
     /**
-     * @param string $method
-     *
      * @throws CommandException
      */
     protected function initialize(string $method)
@@ -110,7 +107,7 @@ class CleanUpCommandController extends CommandController
 
         $this->tableNames = [
             'users' => 'be_users',
-            'sessions' => 'be_sessions'
+            'sessions' => 'be_sessions',
         ];
     }
 
@@ -148,9 +145,6 @@ class CleanUpCommandController extends CommandController
         }
     }
 
-    /**
-     * @return array
-     */
     protected function getUsers(): array
     {
         $queryBuilder = $this->getQueryBuilder('users');
@@ -167,9 +161,6 @@ class CleanUpCommandController extends CommandController
             ->fetchAll();
     }
 
-    /**
-     * @param array $user
-     */
     protected function handleUser(array $user)
     {
         $queryBuilder = $this->getQueryBuilder('users');
@@ -197,8 +188,6 @@ class CleanUpCommandController extends CommandController
     }
 
     /**
-     * @param string $type
-     *
      * @return \TYPO3\CMS\Core\Database\Query\QueryBuilder
      */
     protected function getQueryBuilder(string $type)
@@ -206,9 +195,6 @@ class CleanUpCommandController extends CommandController
         return GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableNames[$type]);
     }
 
-    /**
-     * @param array $user
-     */
     protected function clearSessionData(array $user)
     {
         $queryBuilder = $this->getQueryBuilder('sessions');
@@ -221,5 +207,4 @@ class CleanUpCommandController extends CommandController
                 )
             )->execute();
     }
-
 }

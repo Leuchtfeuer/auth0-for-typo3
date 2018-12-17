@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\Domain\Model;
 
 /***
@@ -16,11 +15,9 @@ namespace Bitmotion\Auth0\Domain\Model;
 
 /**
  * Class FrontendUserGroup
- * @package Bitmotion\Auth0\Domain\Model
  */
 class FrontendUserGroup extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUserGroup
 {
-
     /**
      * auth0UserGroup
      *
@@ -42,7 +39,6 @@ class FrontendUserGroup extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUserGrou
     /**
      * Sets the auth0UserGroup
      *
-     * @param string $auth0UserGroup
      *
      * @return void
      */
@@ -50,5 +46,4 @@ class FrontendUserGroup extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUserGrou
     {
         $this->auth0UserGroup = $auth0UserGroup;
     }
-
 }

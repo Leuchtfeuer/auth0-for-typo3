@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\Domain\Repository;
 
 /***
@@ -16,9 +15,7 @@ namespace Bitmotion\Auth0\Domain\Repository;
 
 /**
  * Class FrontendUserGroupRepository
- * @package Bitmotion\Auth0\Domain\Repository
  */
 class FrontendUserGroupRepository extends GeneralRepository
 {
-
 }

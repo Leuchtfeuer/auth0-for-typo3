@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\Domain\Repository;
 
 /***
@@ -18,7 +17,6 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 
 /**
  * Class GeneralRepository
- * @package Bitmotion\Auth0\Domain\Repository
  */
 class GeneralRepository extends Repository
 {

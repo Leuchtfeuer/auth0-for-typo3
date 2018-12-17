@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\Utility;
 
 /***
@@ -23,14 +22,10 @@ use TYPO3\CMS\Saltedpasswords\Salt\SaltFactory;
 
 /**
  * Class UserUtility
- * @package Bitmotion\Auth0\Utility
  */
 class UserUtility
 {
     /**
-     * @param string $tableName
-     * @param string $auth0UserId
-     *
      * @return bool|array
      */
     public static function checkIfUserExists(string $tableName, string $auth0UserId)
@@ -66,10 +61,6 @@ class UserUtility
         return $user;
     }
 
-    /**
-     * @param string $tableName
-     * @param array  $auth0User
-     */
     public static function insertUser(string $tableName, array $auth0User)
     {
         if ($tableName === 'fe_users') {
@@ -81,9 +72,6 @@ class UserUtility
 
     /**
      * Inserts a new frontend user
-     *
-     * @param string $tableName
-     * @param array  $auth0User
      */
     public static function insertFeUser(string $tableName, array $auth0User)
     {
@@ -108,9 +96,6 @@ class UserUtility
 
     /**
      * Inserts a new backend user
-     *
-     * @param string $tableName
-     * @param array  $auth0User
      */
     public static function insertBeUser(string $tableName, array $auth0User)
     {
@@ -130,15 +115,11 @@ class UserUtility
             )->execute();
     }
 
-    /**
-     * @return string
-     */
     protected static function getPassword(): string
     {
         $saltFactory = SaltFactory::getSaltingInstance(null);
         $password = GeneralUtility::makeInstance(Random::class)->generateRandomHexString(50);
 
         return $saltFactory->getHashedPassword($password);
-
     }
 }

@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\Api;
 
 /***
@@ -24,7 +23,6 @@ use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 /**
  * Class ManagementApi
- * @package Bitmotion\Auth0\Api
  */
 class ManagementApi extends Management implements SingletonInterface
 {
@@ -52,7 +50,7 @@ class ManagementApi extends Management implements SingletonInterface
             $result = $authenticationApi->client_credentials([
                 'client_secret' => $application->getSecret(),
                 'client_id' => $application->getId(),
-                'audience' => 'https://' . $application->getDomain() . '/' . $application->getAudience()
+                'audience' => 'https://' . $application->getDomain() . '/' . $application->getAudience(),
             ]);
 
             $this->application = $application;
@@ -62,7 +60,7 @@ class ManagementApi extends Management implements SingletonInterface
                 $result['access_token'],
                 $application->getDomain(),
                 [
-                    'http_errors' => false
+                    'http_errors' => false,
                 ]
             );
         } catch (ClientException $clientException) {
@@ -74,9 +72,6 @@ class ManagementApi extends Management implements SingletonInterface
         }
     }
 
-    /**
-     * @return array
-     */
     public function getConnections(): array
     {
         try {
@@ -88,9 +83,6 @@ class ManagementApi extends Management implements SingletonInterface
         return [];
     }
 
-    /**
-     * @return array
-     */
     public function getConnectionsForApplication(): array
     {
         $allowedConnections = [];
@@ -105,9 +97,6 @@ class ManagementApi extends Management implements SingletonInterface
     }
 
     /**
-     * @param string $userId
-     *
-     * @return mixed
      * @throws \Exception
      */
     public function getUserById(string $userId)

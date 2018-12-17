@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\LoginProvider;
 
 /***
@@ -28,7 +27,6 @@ use TYPO3\CMS\Fluid\View\StandaloneView;
 
 /**
  * Class Auth0Provider
- * @package Bitmotion\Auth0\LoginProvider
  */
 class Auth0Provider implements LoginProviderInterface
 {
@@ -38,10 +36,6 @@ class Auth0Provider implements LoginProviderInterface
     protected $authentication = null;
 
     /**
-     * @param StandaloneView  $standaloneView
-     * @param PageRenderer    $pageRenderer
-     * @param LoginController $loginController
-     *
      * @throws \Auth0\SDK\Exception\CoreException
      */
     public function render(StandaloneView $standaloneView, PageRenderer $pageRenderer, LoginController $loginController)
@@ -55,6 +49,7 @@ class Auth0Provider implements LoginProviderInterface
             ConfigurationUtility::getSetting('propertyMapping');
         } catch (\Exception $exception) {
             $standaloneView->assign('error', 'no_typoscript');
+
             return;
         }
 
@@ -63,12 +58,12 @@ class Auth0Provider implements LoginProviderInterface
         $userInfo = $store->get('user');
 
         if (($userInfo === null && GeneralUtility::_GP('login') == 1) || GeneralUtility::_GP('logout') == 1) {
-
             try {
                 $configuration = new EmAuth0Configuration();
                 $application = ApplicationUtility::getApplication($configuration->getBackendConnection());
             } catch (InvalidApplicationException $exception) {
                 $standaloneView->assign('error', 'no_application');
+
                 return;
             }
 
@@ -102,8 +97,6 @@ class Auth0Provider implements LoginProviderInterface
     }
 
     /**
-     * @param Application $application
-     *
      * @throws \Auth0\SDK\Exception\CoreException
      */
     protected function setAuthenticationApi(Application $application)

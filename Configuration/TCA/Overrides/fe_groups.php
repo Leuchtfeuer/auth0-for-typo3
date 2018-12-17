@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 if (!isset($GLOBALS['TCA']['fe_groups']['ctrl']['type'])) {
     // no type field defined, so we define it here. This will only happen the first time the extension is installed!!
@@ -22,8 +23,12 @@ if (!isset($GLOBALS['TCA']['fe_groups']['ctrl']['type'])) {
     \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('fe_groups', $tempColumnstx_auth0_fe_groups);
 }
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes('fe_groups',
-    $GLOBALS['TCA']['fe_groups']['ctrl']['type'], '', 'after:' . $GLOBALS['TCA']['fe_groups']['ctrl']['label']);
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
+    'fe_groups',
+    $GLOBALS['TCA']['fe_groups']['ctrl']['type'],
+    '',
+    'after:' . $GLOBALS['TCA']['fe_groups']['ctrl']['label']
+);
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('fe_groups', [
     'auth0_user_group' => [

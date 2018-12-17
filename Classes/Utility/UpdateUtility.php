@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\Utility;
 
 /***
@@ -19,17 +18,16 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class UpdateUtility
- * @package Bitmotion\Auth0\Utility
  */
-class UpdateUtility implements SingletonInterface {
-
+class UpdateUtility implements SingletonInterface
+{
     /**
      * @var string
      */
     protected $tableName = '';
 
     /**
-     * @var array 
+     * @var array
      */
     protected $user = [];
 
@@ -39,9 +37,6 @@ class UpdateUtility implements SingletonInterface {
         $this->user = $user;
     }
 
-    /**
-     *
-     */
     public function updateGroups()
     {
         if (!empty($this->user['app_metadata']['roles'])) {
@@ -63,7 +58,6 @@ class UpdateUtility implements SingletonInterface {
                                 $groupsToAssign[] = $groupMapping[$role];
                             }
                             $shouldUpdate = true;
-
                         }
                     }
 
@@ -93,8 +87,6 @@ class UpdateUtility implements SingletonInterface {
         }
     }
 
-    /**
-     */
     public function updateUser()
     {
         try {
@@ -106,7 +98,6 @@ class UpdateUtility implements SingletonInterface {
                 $queryBuilder->update($this->tableName);
 
                 foreach ($mappingConfiguration as $typo3FieldName => $auth0FieldName) {
-
                     if (!is_array($auth0FieldName)) {
                         // Update without procFuncs
                         if (isset($this->user[$auth0FieldName])) {
@@ -121,7 +112,6 @@ class UpdateUtility implements SingletonInterface {
                             );
                         }
                     } elseif (is_array($auth0FieldName) && isset($auth0FieldName['_typoScriptNodeValue'])) {
-
                         // Update with procFuncs
                         $fieldName = $auth0FieldName['_typoScriptNodeValue'];
                         if (isset($this->user[$fieldName])) {
@@ -158,12 +148,6 @@ class UpdateUtility implements SingletonInterface {
         }
     }
 
-    /**
-     * @param array $user
-     * @param array $properties
-     *
-     * @return string
-     */
     protected function getAuth0ValueRecursive(array $user, array $properties): string
     {
         $property = array_shift($properties);
@@ -178,7 +162,6 @@ class UpdateUtility implements SingletonInterface {
 
         return '';
     }
-
 
     /**
      * @param $function
@@ -217,6 +200,5 @@ class UpdateUtility implements SingletonInterface {
         }
 
         return $value;
-    
     }
 }

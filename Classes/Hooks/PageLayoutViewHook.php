@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\Hooks;
 
 /***
@@ -19,7 +18,6 @@ use TYPO3\CMS\Lang\LanguageService;
 
 /**
  * Class PageLayoutViewHook
- * @package Bitmotion\Auth0\Hooks
  */
 class PageLayoutViewHook
 {
@@ -40,11 +38,6 @@ class PageLayoutViewHook
      */
     protected $flexFormData = [];
 
-    /**
-     * @param array $params
-     *
-     * @return string
-     */
     public function getSummary(array $params): string
     {
         $this->listType = $params['row']['list_type'];
@@ -54,29 +47,21 @@ class PageLayoutViewHook
         $content = '';
 
         if (!empty($this->flexFormData)) {
-
             $content = '<strong>';
             $content .= $this->getLanguageService()->sL('LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_application');
             $content .= ':';
             $content .= '</strong>';
             $content .= '<span style="padding-left: 15px">' . $this->getApplicationName() . '</span>';
-
         }
 
         return $header . $content;
     }
 
-    /**
-     * @return LanguageService
-     */
     protected function getLanguageService(): LanguageService
     {
         return $GLOBALS['LANG'];
     }
 
-    /**
-     * @return string
-     */
     protected function getApplicationName(): string
     {
         $applicationUid = $this->getFieldFromFlexForm('settings.application');
@@ -90,19 +75,15 @@ class PageLayoutViewHook
         return $queryBuilder
             ->select('title')
             ->from('tx_auth0_domain_model_application')
-            ->where($queryBuilder->expr()->eq(
+            ->where(
+                $queryBuilder->expr()->eq(
                 'uid',
-                $queryBuilder->createNamedParameter($applicationUid, \PDO::PARAM_INT))
+                $queryBuilder->createNamedParameter($applicationUid, \PDO::PARAM_INT)
+            )
             )->execute()
             ->fetchColumn();
     }
 
-    /**
-     * @param string $key
-     * @param string $sheet
-     *
-     * @return string
-     */
     protected function getFieldFromFlexForm(string $key, string $sheet = 'sDEF'): string
     {
         $flexForm = $this->flexFormData;

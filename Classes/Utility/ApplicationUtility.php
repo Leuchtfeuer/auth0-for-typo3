@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-
 namespace Bitmotion\Auth0\Utility;
 
 /***
@@ -22,16 +21,10 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 /**
  * Class ApplicationUtility
- *
- * @package Bitmotion\Auth0\Utility
  */
 class ApplicationUtility
 {
-
     /**
-     * @param int $applicationUid
-     *
-     * @return Application
      * @throws InvalidApplicationException
      */
     public static function getApplication(int $applicationUid): Application
@@ -42,11 +35,9 @@ class ApplicationUtility
 
             if ($application instanceof Application) {
                 return $application;
-            } else {
-                throw new InvalidApplicationException(sprintf('No Application found for given id %s', $applicationUid), 1526046354);
             }
-        } else {
-            throw new InvalidApplicationException('No Application configured.', 1526046434);
+            throw new InvalidApplicationException(sprintf('No Application found for given id %s', $applicationUid), 1526046354);
         }
+        throw new InvalidApplicationException('No Application configured.', 1526046434);
     }
 }
