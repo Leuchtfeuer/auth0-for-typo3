@@ -132,7 +132,7 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
         }
 
         if (TYPO3_MODE === 'FE') {
-            $applicationUid = GeneralUtility::_GP('application');
+            $applicationUid = (int)GeneralUtility::_GP('application');
 
             // No application uid found in request - skip.
             if ($applicationUid === null) {
