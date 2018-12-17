@@ -1,13 +1,22 @@
 plugin.tx_auth0 {
     view {
-        templateRootPaths.0 = {$plugin.tx_auth0.view.templateRootPath}
-        partialRootPaths.0 = {$plugin.tx_auth0.view.partialRootPath}
-        layoutRootPaths.0 = {$plugin.tx_auth0.view.layoutRootPath}
+        layoutRootPaths {
+            0 = EXT:auth0/Resources/Private/Layouts/
+            1 = {$plugin.tx_auth0.view.layoutRootPath}
+        }
+
+        templateRootPaths {
+            0 = EXT:auth0/Resources/Private/Templates/
+            1 = {$plugin.tx_auth0.view.templateRootPath}
+        }
+
+        partialRootPaths {
+            0 = EXT:auth0/Resources/Private/Partials/
+            1 = {$plugin.tx_auth0.view.partialRootPath}
+        }
     }
 
-    persistence {
-        storagePid = {$plugin.tx_auth0.persistence.storagePid}
-    }
+    persistence.storagePid = {$plugin.tx_auth0.persistence.storagePid}
 
     settings {
         reactivateUsers {
