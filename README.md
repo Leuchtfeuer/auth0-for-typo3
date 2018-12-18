@@ -287,7 +287,8 @@ You can configure the following properties:
 
 ### Plugin ###
 This extensions comes with a login/logout plugin for frontend users.
-It is located in a separate tab when creating a new content element.
+It is located underneath the plugin tab when creating a new content
+element.
 
 #### Configuration ####
 In general there are two configurations you have to care about. First of
