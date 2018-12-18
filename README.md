@@ -83,6 +83,9 @@ plugin.tx_auth0.settings.backend.view {
     stylesheet = EXT:your_key/Resources/Public/Styles/Backend.css
 }
 ```
+Please make also sure that you configure the [mapping](#roles) from
+Auth0 roles to TYPO3 user groups. Maybe you also want to set the admin
+flag for backend users, depending on an Auth0 [property](#properties).
 
 #### Login Behaviour ####
 Configure whether disabled or deleted frontend or backend users should
