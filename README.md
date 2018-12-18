@@ -16,7 +16,7 @@ Currently we only support [TYPO3 8 LTS](https://get.typo3.org/version/8). You al
 
 ## For Administrators ##
 ### Installation ###
-We recommend to require this extension via composer:
+We recommend to get this extension via composer:
 ```
 composer require bitmotion/auth0
 ```
@@ -37,7 +37,7 @@ enable the backend login via Auth0.
   <tr>
     <td>enableBackendLogin</td>
     <td>false</td>
-    <td>Enables or disables Auth0 login in TYPO3 backend.</td>
+    <td>Enables or disables the Auth0 login in the TYPO3 backend.</td>
   </tr>
   <tr>
     <td>backendConnection</td>
@@ -56,7 +56,7 @@ enable the backend login via Auth0.
   <tr>
     <td>userStoragePage</td>
     <td>0</td>
-    <td>Page ID where your (dynamic created) frontend users should be stored.</td>
+    <td>Page ID where your (dynamically created) frontend users should be stored.</td>
   </tr>
 </table>
 
@@ -74,8 +74,8 @@ plugin.tx_auth0.view {
 ```
 
 ##### Backend Login #####
-You have also the possibility to use your own template files for the
-backend login. Just adapt following parameters:
+You have also the option to use your own template files for the
+backend login. Just adapt the following parameters:
 ```
 plugin.tx_auth0.settings.backend.view {
     layoutPath = EXT:your_key/Resources/Private/Layouts/
@@ -90,7 +90,7 @@ Configure `fe_groups` and `be_groups` mappings to match Auth0 roles.
 Use the Auth0 role identifier as key and the TYPO3 frontend or backend
 user group ID as value.<br>
 Keep in mind, that there is one special option for backend users: You
-can set the admin flag by assigning the value admin to an Auth0 role.
+can set the admin flag by assigning the value `admin` to an Auth0 role.
 ```
 plugin.tx_auth0.settings.roles {
     # be_group mappings for be_users
@@ -110,12 +110,12 @@ plugin.tx_auth0.settings.roles {
 ```
 
 ##### Properties #####
-Auth0 properties can be mapped to existing properties of the TYPO3
-backend or frontend user. You can configure this mapping via
+Auth0 properties can be mapped to existing properties of TYPO3
+backend or frontend users. You can configure this mapping via
 TypoScript. In this case, the key is the name of the TYPO3 database
 column and the value is the field key of the Auth0 user.<br>
 You can access the `user_metadata` or `app_metadata` values via dot
-syntax. On the same way you can access arrays or objects within the
+syntax. Using the same way you can access arrays or objects within the
 metadata property (e.g. `user_metadata.address.primary.zip`).
 ```
 plugin.tx_auth0.settings.propertyMapping {
@@ -156,7 +156,7 @@ have set them. For example, a `bool|negate` parseFunc will cast the
 property to a boolean value and then negate it.
 
 
-Following parsing functions are available:
+The following parsing functions are available:
 <table>
   <tr>
     <th>Function</td>
@@ -178,10 +178,10 @@ Following parsing functions are available:
 
 ### Command Controller ###
 There is one command controller available which takes care of your
-backend users. A user, that is removed from Auth0 or which access has
+backend users. A user that is removed from Auth0 or who's access has
 expired will be disabled or removed from the TYPO3 database.
 
-You have following options:
+You have the following options:
 <table>
   <tr>
     <th>Method</th>
@@ -201,21 +201,24 @@ You have following options:
   </tr>
 </table>
 
+You can execute the command controller via CLI:<br>
+`path/to/php bin/typo3 cleanup:cleanupusers --method="disable"`
+
 ### Access ###
 You can grant editors access to the hidden property of the application
-domain model. Every other property is configurable if the editor is
+domain model. All other properties are configurable when the editor is
 allowed to modify the record type (*Tables (modify)*).<br/>
-Editors can crate or update plugins when they are allowed to modify the
+Editors can create or update plugins when they are allowed to modify the
 page content type *Insert Plugin* and the page content plugin
 *Auth0: Login form*.
 
 ## For Editors ##
 ### Application Record ###
-There is one record, called *application*, you can create/edit. It
-contains Auth0 server authorization configuration and it is used to
+There is one record, called *application*, which you can create/edit. It
+contains the Auth0 server authorization configuration and it is used to
 establish a connection with your Auth0-Server.
 
-You can configure following properties:
+You can configure the following properties:
 <table>
   <tr>
     <th>Property</th>
@@ -261,14 +264,14 @@ It is located in a separate tab when creating a new content element.
 #### Configuration ####
 In general there are two configurations you have to care about. First of
 all, you need to select one Auth0 application you want to communicate
-with. Afterwards you can configure, where the user should be redirected
+with. Afterwards you can configure where the user should be redirected
 to. The configuration of that is similar to the standard TYPO3 frontend
 login form plugin. Please take a look into the official TYPO3
 [documentation](https://docs.typo3.org/typo3cms/extensions/felogin/LoginMechanism/RedirectModes/Index.html)
 for more details.
 
 ### Scheduler Tasks ###
-There is one scheduler task available, which takes care of inactive or
+There is one scheduler task available which takes care of inactive or
 removed Auth0 users. Please notice that this task affects only TYPO3
 backend users (for now).<br/>
 Please take a look at the [administration](#command-controller) section.
@@ -276,7 +279,7 @@ Please take a look at the [administration](#command-controller) section.
 
 ## For Developers ##
 You can easily access the data of the current logged in user by calling
-following methods:
+the following methods:
 ```
 $sessionStore = new \Auth0\SDK\Store\SessionStore();
 $userInfo = $sessionStore->get('user');
@@ -284,7 +287,7 @@ $userInfo = $sessionStore->get('user');
 User metadata is also stored as plain JSON in the TYPO3 fe_user field
 `auth0_metadata`.
 
-If you want to enrich the users metadata or remove some information,
+If you want to enrich the user metadata or remove some information,
 you can do it this way:
 ```
 # Get the user Id
