@@ -1,7 +1,9 @@
 <?php
 defined('TYPO3_MODE') || die();
 
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms']['db_new_content_el']['wizardItemsHook'][] = 'EXT:auth0/Classes/Hooks/WizardItemsHook.php:' . \Bitmotion\Auth0\Hooks\WizardItemsHook::class;
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig(
+    '<INCLUDE_TYPOSCRIPT: source="FILE:EXT:auth0/Configuration/TsConfig/Page/ContentElementWizard/setup.tsconfig">'
+);
 
 $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconRegistry::class);
 $iconRegistry->registerIcon(

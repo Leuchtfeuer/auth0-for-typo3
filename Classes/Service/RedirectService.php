@@ -182,24 +182,13 @@ class RedirectService implements SingletonInterface
         if ($url === '') {
             return '';
         }
-        $decodedUrl = rawurldecode($url);
-        $sanitizedUrl = htmlspecialchars($decodedUrl);
-        if ($decodedUrl !== $sanitizedUrl || preg_match('#["<>\\\\]+#', $url)) {
-            GeneralUtility::sysLog(sprintf('XSS: %s', $url), 'felogin', GeneralUtility::SYSLOG_SEVERITY_WARNING);
-
-            return '';
-        }
         // Validate the URL:
         if ($this->isRelativeUrl($url) || $this->isInCurrentDomain($url) || $this->isInLocalDomain($url)) {
             return $url;
         }
         // URL is not allowed
-        GeneralUtility::sysLog(
-            sprintf('%s is no valid redirect URL', $url),
-            'felogin',
-            GeneralUtility::SYSLOG_SEVERITY_WARNING
-        );
-
+        // TODO: Add logger
+        //$this->logger->warning(‘Url “’ . $url . ‘” for redirect was not accepted!‘);
         return '';
     }
 

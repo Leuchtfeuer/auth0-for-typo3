@@ -26,7 +26,7 @@ use TYPO3\CMS\Frontend\Page\PageRepository;
 /**
  * Class AuthenticationService
  */
-class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
+class AuthenticationService extends \TYPO3\CMS\Core\Authentication\AuthenticationService
 {
     /**
      * @var \stdClass
@@ -138,7 +138,7 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
             // Initialize TSFE so that we can access TypoScript
             $GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(PageRepository::class);
             $GLOBALS['TSFE']->sys_page->init(false);
-            $GLOBALS['TSFE']->getPageAndRootline();
+            $GLOBALS['TSFE']->getPageAndRootlineWithDomain(false);
             $GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance(TemplateService::class);
             $GLOBALS['TSFE']->tmpl->init();
             $GLOBALS['TSFE']->tmpl->start($GLOBALS['TSFE']->rootLine);
@@ -186,11 +186,7 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
             // Failed login attempt (no username found)
             $this->writelog(255, 3, 3, 2, 'Login-attempt from %s (%s), username \'%s\' not found!!', [$this->authInfo['REMOTE_ADDR'], $this->authInfo['REMOTE_HOST'], $this->login['uname']]);
             // Logout written to log
-            GeneralUtility::sysLog(sprintf('Login-attempt from %s (%s), username \'%s\' not found!', $this->authInfo['REMOTE_ADDR'], $this->authInfo['REMOTE_HOST'], $this->login['uname']), 'core', GeneralUtility::SYSLOG_SEVERITY_WARNING);
-        } else {
-            if ($this->writeDevLog) {
-                GeneralUtility::devLog('User found: ' . GeneralUtility::arrayToLogString($user, [$this->db_user['userid_column'], $this->db_user['username_column']]), self::class);
-            }
+            $this->logger->warning(sprintf('Login-attempt from %s, for username \'%s\' with an empty password!', $this->authInfo['REMOTE_ADDR'], $this->login['uname']));
         }
 
         return $user;

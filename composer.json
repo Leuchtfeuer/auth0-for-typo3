@@ -26,13 +26,13 @@
   ],
   "require": {
     "php": ">=7.0.0 <7.3",
-    "typo3/cms-core": "^8.7.0",
-    "typo3/cms-backend": "^8.7.0",
-    "typo3/cms-extbase": "^8.7.0",
-    "typo3/cms-extensionmanager": "^8.7.0",
-    "typo3/cms-fluid": "^8.7.0",
-    "typo3/cms-frontend": "^8.7.0",
-    "typo3/cms-saltedpasswords": "^8.7.0",
+    "typo3/cms-core": "^9.5.0",
+    "typo3/cms-backend": "^9.5.0",
+    "typo3/cms-extbase": "^9.5.0",
+    "typo3/cms-extensionmanager": "^9.5.0",
+    "typo3/cms-fluid": "^9.5.0",
+    "typo3/cms-frontend": "^9.5.0",
+    "typo3/cms-saltedpasswords": "^9.5.0",
     "auth0/auth0-php": "^5.3.2"
   },
   "suggest": {

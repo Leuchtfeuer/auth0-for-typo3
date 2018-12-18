@@ -1,0 +1,13 @@
+mod.wizards.newContentElement.wizardItems.plugins {
+    elements {
+        auth0 {
+            iconIdentifier = auth0
+            title = LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:plugin.loginForm.title
+            description = LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:plugin.loginForm.description
+            tt_content_defValues {
+                CType = list
+                list_type = auth0_loginform
+            }
+        }
+    }
+}

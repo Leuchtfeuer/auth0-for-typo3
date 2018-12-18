@@ -13,7 +13,9 @@ namespace Bitmotion\Auth0\Domain\Model\Dto;
  *
  ***/
 
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class EmAuth0Configuration
@@ -37,12 +39,15 @@ class EmAuth0Configuration implements SingletonInterface
 
     /**
      * EmAuth0Configuration constructor.
+     *
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
      */
     public function __construct()
     {
-        if (!empty($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['auth0'])) {
-            $settings = (array)unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['auth0']);
-            foreach ($settings as $key => $value) {
+        $configuration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('auth0');
+        if ($configuration) {
+            foreach ($configuration as $key => $value) {
                 if (property_exists(__CLASS__, $key)) {
                     $this->$key = $value;
                 }
