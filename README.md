@@ -352,6 +352,11 @@ to call your APIs and flow the user identity securely.
 You can contribute by making a **pull request** to the master branch of
 this repository. Or just send us some **beers**...
 
+### Forms ###
+There is a way to update users metadata using the TYPO3 form framework.
+A registration and "password forgotten" form is also available. If
+you are interested in that, do not hesitate to contact us.
+
 ### Sponsors ###
 [![MED-EL](https://www.bitmotion.de/fileadmin/github/auth0-for-typo3/MEDEL-Logo.svg "MED-EL")](https://www.medel.com/uk/)
 
