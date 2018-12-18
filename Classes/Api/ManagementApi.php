@@ -18,8 +18,10 @@ use Auth0\SDK\API\Management;
 use Auth0\SDK\Exception\ApiException;
 use Bitmotion\Auth0\Domain\Model\Application;
 use GuzzleHttp\Exception\ClientException;
+use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * Class ManagementApi
@@ -29,15 +31,22 @@ class ManagementApi extends Management implements SingletonInterface
     /**
      * @var Authentication
      */
-    protected $authenticationApi = null;
+    protected $authenticationApi;
 
     /**
      * @var Application
      */
-    protected $application = null;
+    protected $application;
+
+    /**
+     * @var Logger
+     */
+    protected $logger;
 
     public function __construct(Application $application)
     {
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
+
         /** @var Application $application */
         $authenticationApi = new Authentication(
             $application->getDomain(),
@@ -64,11 +73,13 @@ class ManagementApi extends Management implements SingletonInterface
                 ]
             );
         } catch (ClientException $clientException) {
-            // TODO: Handle
-            DebuggerUtility::var_dump($clientException, __CLASS__ . ':' . __LINE__);
+            $this->logger->error(
+                $clientException->getCode() . ': ' . $clientException->getMessage()
+            );
         } catch (ApiException $apiException) {
-            // TODO: Handle
-            DebuggerUtility::var_dump($apiException, __CLASS__ . ':' . __LINE__);
+            $this->logger->error(
+                $apiException->getCode() . ': ' . $apiException->getMessage()
+            );
         }
     }
 
@@ -77,7 +88,9 @@ class ManagementApi extends Management implements SingletonInterface
         try {
             return $this->connections->getAll();
         } catch (\Exception $exception) {
-            DebuggerUtility::var_dump($exception, __CLASS__ . ':' . __LINE__);
+            $this->logger->error(
+                $exception->getCode() . ': ' . $exception->getMessage()
+            );
         }
 
         return [];
