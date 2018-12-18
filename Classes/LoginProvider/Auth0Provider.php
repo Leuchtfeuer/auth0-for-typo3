@@ -131,9 +131,9 @@ class Auth0Provider implements LoginProviderInterface
      */
     protected function prepareView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer)
     {
-        $backendSettings = ConfigurationUtility::getSetting('backend');
-        $standaloneView->setLayoutRootPaths([$backendSettings['layoutPath']]);
-        $standaloneView->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName($backendSettings['templateFile']));
-        $pageRenderer->addCssFile($backendSettings['stylesheet']);
+        $backendViewSettings = ConfigurationUtility::getSetting('backend', 'view');
+        $standaloneView->setLayoutRootPaths([$backendViewSettings['layoutPath']]);
+        $standaloneView->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName($backendViewSettings['templateFile']));
+        $pageRenderer->addCssFile($backendViewSettings['stylesheet']);
     }
 }

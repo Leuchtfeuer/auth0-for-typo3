@@ -20,10 +20,13 @@ plugin.tx_auth0 {
 
     settings {
         backend {
-            layoutPath = EXT:auth0/Resources/Private/Layouts/
-            templateFile = EXT:auth0/Resources/Private/Templates/Backend.html
-            stylesheet = EXT:auth0/Resources/Public/Styles/backend.css
+            view {
+                layoutPath = EXT:auth0/Resources/Private/Layouts/
+                templateFile = EXT:auth0/Resources/Private/Templates/Backend.html
+                stylesheet = EXT:auth0/Resources/Public/Styles/backend.css
+            }
         }
+
         reactivateUsers {
             be_users {
                 # if active, sets the disable flag to 0 when user tries to login again

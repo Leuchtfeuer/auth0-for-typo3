@@ -73,10 +73,10 @@ plugin.tx_auth0.view {
 You have also the possibility to use your own template files for the
 backend login. Just adapt following parameters:
 ```
-plugin.tx_auth0.settings.backend {
-    layoutPath = EXT:auth0/Resources/Private/Layouts/
-    templateFile = EXT:auth0/Resources/Private/Templates/Backend.html
-    stylesheet = EXT:auth0/Resources/Public/Styles/backend.css
+plugin.tx_auth0.settings.backend.view {
+    layoutPath = EXT:your_key/Resources/Private/Layouts/
+    templateFile = EXT:your_key/Resources/Private/Templates/Backend.html
+    stylesheet = EXT:your_key/Resources/Public/Styles/Backend.css
 }
 ```
 
