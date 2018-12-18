@@ -100,7 +100,7 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
         $this->user = UserUtility::checkIfUserExists($this->tableName, $this->tokenInfo['sub']);
 
         // Insert a new user into database
-        if (!$this->user) {
+        if (!empty($this->user)) {
             UserUtility::insertUser($this->tableName, $this->auth0User);
         }
 
@@ -131,7 +131,7 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
             $applicationUid = (int)GeneralUtility::_GP('application');
 
             // No application uid found in request - skip.
-            if ($applicationUid === null) {
+            if ($applicationUid === 0) {
                 return false;
             }
 

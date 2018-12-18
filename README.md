@@ -1,6 +1,6 @@
 Auth0 for TYPO3
 ===============
-![Auth0TYPO3](https://www.bitmotion.de/fileadmin/github/auth0-for-typo3/TYPO3-Auth0.png "Auth0 for TYPO3")
+[![Auth0TYPO3](https://www.bitmotion.de/fileadmin/github/auth0-for-typo3/TYPO3-Auth0.png "Auth0 for TYPO3")](https://www.bitmotion.de/)
 
 **Attention: This extension is still under development.**
 
@@ -22,7 +22,8 @@ Please make sure that you include all TypoScript files.
 
 ### Extension Configuration ###
 #### Backend ####
-You should create an application (see: [editor section](#for-editors)) before you enable the backend login via Auth0.
+You should create an [application](#applicatioin-record) before you
+enable the backend login via Auth0.
 <table>
   <tr>
     <th>Key</th>
@@ -141,12 +142,13 @@ Please take a look at the [administration](#command-controller) section.
 
 
 ## For Developers ##
+ADD
 
 ## About Auth0 ##
 Auth0 helps you to:
 
-* Add authentication with [multiple authentication sources](https://auth0.com/docs/identityproviders)
-, either social like **Google, Facebook, Microsoft Account, LinkedIn,
+* Add authentication with [multiple authentication sources](https://auth0.com/docs/identityproviders),
+either social like **Google, Facebook, Microsoft Account, LinkedIn,
 GitHub, Twitter, Box, Salesforce, among others**, or enterprise
 identity systems like Windows Azure AD, Google Apps, Active Directory,
 ADFS or any SAML Identity Provider.
@@ -164,6 +166,6 @@ You can contribute by making a **pull request** to the master branch of
 this repository. Or just send us some **beers**...
 
 ### Sponsors ###
-![MED-EL](https://www.bitmotion.de/fileadmin/github/auth0-for-typo3/MEDEL-Logo.svg "MED-EL")
+[![MED-EL](https://www.bitmotion.de/fileadmin/github/auth0-for-typo3/MEDEL-Logo.svg "MED-EL")](https://www.medel.com/uk/)
 
 A big **THANK YOU** to our sponsor [MED-EL](https://www.medel.com/uk/).

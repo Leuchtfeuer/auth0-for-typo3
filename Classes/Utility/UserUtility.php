@@ -33,16 +33,14 @@ class UserUtility
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
 
         try {
-            // Find also disabled users
+            // Find also disabled users. The database update is handled by UpdateUtility.
             if (ConfigurationUtility::getSetting('reactivateUsers', $tableName, 'disabled') == 1) {
                 $queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
-                // Todo: Set disabled to 0
             }
 
-            // Find also deleted users
+            // Find also deleted users. The database update is handled by UpdateUtility.
             if (ConfigurationUtility::getSetting('reactivateUsers', $tableName, 'deleted') == 1) {
                 $queryBuilder->getRestrictions()->removeByType(DeletedRestriction::class);
-                // Todo: Set deleted to 0
             }
         } catch (\Exception $exception) {
             // TODO: Log this?
@@ -56,19 +54,20 @@ class UserUtility
             )->execute()
             ->fetch();
 
-        if ($user === false) {
-            return false;
-        }
-
-        return $user;
+        return $user ? $user : [];
     }
 
     public static function insertUser(string $tableName, array $auth0User)
     {
-        if ($tableName === 'fe_users') {
-            self::insertFeUser($tableName, $auth0User);
-        } elseif ($tableName === 'be_users') {
-            self::insertBeUser($tableName, $auth0User);
+        switch ($tableName) {
+            case 'fe_users':
+                self::insertFeUser($tableName, $auth0User);
+                break;
+            case 'be_users':
+                self::insertBeUser($tableName, $auth0User);
+                break;
+            default:
+                // TODO: Throw exception
         }
     }
 
