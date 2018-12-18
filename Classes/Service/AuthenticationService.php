@@ -100,7 +100,8 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
         $this->user = UserUtility::checkIfUserExists($this->tableName, $this->tokenInfo['sub']);
 
         // Insert a new user into database
-        if (!empty($this->user)) {
+        // TODO: Validate Auth0User
+        if (empty($this->user)) {
             UserUtility::insertUser($this->tableName, $this->auth0User);
         }
 
