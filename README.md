@@ -2,7 +2,11 @@ Auth0 for TYPO3
 ===============
 [![Auth0TYPO3](https://www.bitmotion.de/fileadmin/github/auth0-for-typo3/TYPO3-Auth0.png "Auth0 for TYPO3")](https://www.bitmotion.de/)
 
-**Attention: This extension is still under development.**
+[![Latest Stable Version](https://poser.pugx.org/bitmotion/auth0/v/stable)](https://packagist.org/packages/bitmotion/auth0)
+[![Total Downloads](https://poser.pugx.org/bitmotion/auth0/downloads)](https://packagist.org/packages/bitmotion/auth0)
+[![Latest Unstable Version](https://poser.pugx.org/bitmotion/auth0/v/unstable)](https://packagist.org/packages/bitmotion/auth0)
+[![Code Climate](https://codeclimate.com/github/bitmotion/auth0-for-typo3/badges/gpa.svg)](https://codeclimate.com/github/bitmotion/auth0-for-typo3)
+[![License](https://poser.pugx.org/bitmotion/auth0/license)](https://packagist.org/packages/bitmotion/auth0)
 
 ## About ##
 This extension allows you to log into a TYPO3 backend or frontend via Auth0.
@@ -271,7 +275,31 @@ Please take a look at the [administration](#command-controller) section.
 
 
 ## For Developers ##
-ADD
+You can easily access the data of the current logged in user by calling
+following methods:
+```
+$sessionStore = new \Auth0\SDK\Store\SessionStore();
+$userInfo = $sessionStore->get('user');
+```
+User metadata is also stored as plain JSON in the TYPO3 fe_user field
+`auth0_metadata`.
+
+If you want to enrich the users metadata or remove some information,
+you can do it this way:
+```
+# Get the user Id
+$sessionStore = new SessionStore();
+$user = $store->get('user');
+$userId = $user['sub'];
+
+# Prepare data
+$data = new \stdClass();
+$data->favourite_color = 'blue';
+
+# Update Auth0 user
+$managementApi = GeneralUtility::makeInstance(ManagementApi::class, $application);
+$managementApi->users->update($userId, $data);
+```
 
 ## About Auth0 ##
 Auth0 helps you to:
