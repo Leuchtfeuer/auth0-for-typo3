@@ -73,14 +73,38 @@ plugin.tx_auth0.view {
 }
 ```
 
-##### Backend Login #####
+##### Backend Login ######
 You have also the option to use your own template files for the
-backend login. Just adapt the following parameters:
+backend login. Just adapt the following TypoScript constants:
 ```
 plugin.tx_auth0.settings.backend.view {
     layoutPath = EXT:your_key/Resources/Private/Layouts/
     templateFile = EXT:your_key/Resources/Private/Templates/Backend.html
     stylesheet = EXT:your_key/Resources/Public/Styles/Backend.css
+}
+```
+
+#### Login Behaviour ####
+Configure whether disabled or deleted frontend or backend users should
+be able to login by adapting the following TypoScript constants:
+
+```
+plugin.tx_auth0.settings.reactivateUsers {
+    be_users {
+        # if active, sets the disable flag to 0 when user tries to login again
+        disabled = 0
+
+        # if active, sets the deleted flag to 0 when user tries to login again
+        deleted = 0
+    }
+
+    fe_users {
+        # if active, sets the disable flag to 0 when user tries to login again
+        disabled = 1
+
+        # if active, sets the deleted flag to 0 when user tries to login again
+        deleted = 1
+    }
 }
 ```
 
