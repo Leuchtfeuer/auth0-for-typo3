@@ -27,13 +27,11 @@ class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
 
     /**
      * @var string
-     * @validate \Bitmotion\Auth0\Domain\Validator\EmailValidator
      */
     protected $username = '';
 
     /**
      * @var string
-     * @validate \Bitmotion\Auth0\Domain\Validator\PasswordValidator
      */
     protected $password = '';
 
