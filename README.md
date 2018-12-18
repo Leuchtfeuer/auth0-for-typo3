@@ -82,6 +82,28 @@ plugin.tx_auth0.settings.backend.view {
 
 #### Mapping ####
 ##### Roles #####
+Configure `fe_groups` and `be_groups` mappings to match Auth0 roles.
+Use the Auth0 role identifier as key and the TYPO3 frontend or backend
+user group ID as value.<br>
+Keep in mind, that there is one special option for backend users: You
+can set the admin flag by assigning the value admin to an Auth0 role.
+```
+plugin.tx_auth0.settings.roles {
+    # be_group mappings for be_users
+    be_users {
+        #mapping for auth0 role to be_groups
+
+        # special: sets the admin flag
+        admin = admin
+    }
+
+    # fe_group mappings for fe_users
+    fe_users {
+        # mapping for auth0 role to fe_groups
+        admin = 1
+    }
+}
+```
 
 ##### Properties #####
 Auth0 properties can be mapped to existing properties of the TYPO3
@@ -124,8 +146,8 @@ plugin.tx_auth0.settings.propertyMapping {
 ```
 **Parsing functions** (parseFunc) are used to change properties before
 they are persisted in the database.<br/>
-To apply multiple parsing functions you can simply use the pipe (`|`)
-to delimiter them. These functions will then be applied in the order you
+To apply multiple parsing functions you can simply use the pipe to
+delimiter them. These functions will then be applied in the order you
 have set them. For example, a `bool|negate` parseFunc will cast the
 property to a boolean value and then negate it.
 
