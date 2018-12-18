@@ -12,7 +12,10 @@ Auth0 for TYPO3
 This extension allows you to log into a TYPO3 backend or frontend via Auth0.
 
 ### Requirements ###
-Currently we only support [TYPO3 8 LTS](https://get.typo3.org/version/8). You also need access to an [Auth0](https://auth0.com/) instance.
+We support [TYPO3 8 LTS](https://get.typo3.org/version/8) and
+[TYPO3 9 LTS](https://get.typo3.org/versions/9). Please use the version
+1.x of this extension for TYPO3 8 LTS and version 2.x for TYPO3 9 LTS.
+You also need access to an [Auth0](https://auth0.com/) instance.
 
 ## For Administrators ##
 ### Installation ###
