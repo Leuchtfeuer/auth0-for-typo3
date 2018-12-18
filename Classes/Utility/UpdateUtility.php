@@ -13,6 +13,8 @@ namespace Bitmotion\Auth0\Utility;
  *
  ***/
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -31,10 +33,16 @@ class UpdateUtility implements SingletonInterface
      */
     protected $user = [];
 
+    /**
+     * @var Logger
+     */
+    protected $logger;
+
     public function __construct(string $tableName, array $user)
     {
         $this->tableName = $tableName;
         $this->user = $user;
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
     }
 
     public function updateGroups()
@@ -82,7 +90,7 @@ class UpdateUtility implements SingletonInterface
                     }
                 }
             } catch (\Exception $e) {
-                // TODO: Log exception
+                $this->logger->error($e->getCode() . ': ' . $e->getMessage());
             }
         }
     }
@@ -144,7 +152,7 @@ class UpdateUtility implements SingletonInterface
                 $queryBuilder->execute();
             }
         } catch (\Exception $exception) {
-            // TODO: Log exception
+            $this->logger->error($e->getCode() . ': ' . $e->getMessage());
         }
     }
 
@@ -197,6 +205,9 @@ class UpdateUtility implements SingletonInterface
 
             case 'negate':
                 return (bool)$value ? 0 : 1;
+
+            default:
+                $this->logger->notice(sprintf('"%s" is not a valid parseFunc', $function));
         }
 
         return $value;
