@@ -100,7 +100,6 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
         $this->user = UserUtility::checkIfUserExists($this->tableName, $this->tokenInfo['sub']);
 
         // Insert a new user into database
-        // TODO: Validate Auth0User
         if (empty($this->user)) {
             UserUtility::insertUser($this->tableName, $this->auth0User);
         }
@@ -159,6 +158,10 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
             $this->tokenInfo = $authenticationApi->getUser();
             $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $application);
             $this->auth0User = $managementApi->getUserById($this->tokenInfo['sub']);
+
+            if (isset($this->auth0User['error'])) {
+                return false;
+            }
 
             return true;
         } catch (InvalidApplicationException $exception) {
