@@ -69,11 +69,6 @@ plugin.tx_auth0 {
 
                 disable = email_verified
                 disable.parseFunc = bool|negate
-
-                admin = user_metadata.admin
-                admin.parseFunc = bool
-
-                description = user_metadata.description
             }
 
             fe_users {
@@ -82,8 +77,6 @@ plugin.tx_auth0 {
 
                 tstamp = updated_at
                 tstamp.parseFunc = strtotime
-
-                first_name = user_metadata.description
             }
         }
     }
