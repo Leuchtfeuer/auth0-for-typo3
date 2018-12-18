@@ -84,6 +84,71 @@ plugin.tx_auth0.settings.backend.view {
 ##### Roles #####
 
 ##### Properties #####
+Auth0 properties can be mapped to existing properties of the TYPO3
+backend or frontend user. You can configure this mapping via
+TypoScript. In this case, the key is the name of the TYPO3 database
+column and the value is the field key of the Auth0 user.<br>
+You can access the `user_metadata` or `app_metadata` values via dot
+syntax. On the same way you can access arrays or objects within the
+metadata property (e.g. `user_metadata.address.primary.zip`).
+```
+plugin.tx_auth0.settings.propertyMapping {
+    be_users {
+        username = nickname
+
+        crdate = created_at
+        crdate.parseFunc = strtotime
+
+        tstamp = updated_at
+        tstamp.parseFunc = strtotime
+
+        disable = email_verified
+        disable.parseFunc = bool|negate
+
+        admin = user_metadata.admin
+        admin.parseFunc = bool
+
+        description = user_metadata.description
+    }
+
+    fe_users {
+        crdate = created_at
+        crdate.parseFunc = strtotime
+
+        tstamp = updated_at
+        tstamp.parseFunc = strtotime
+
+        first_name = user_metadata.description
+    }
+}
+```
+**Parsing functions** (parseFunc) are used to change properties before
+they are persisted in the database.<br/>
+To apply multiple parsing functions you can simply use the pipe (`|`)
+to delimiter them. These functions will then be applied in the order you
+have set them. For example, a `bool|negate` parseFunc will cast the
+property to a boolean value and then negate it.
+
+
+Following parsing functions are available:
+<table>
+  <tr>
+    <th>Function</td>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>bool</td>
+    <td>Get the boolean value.</td>
+  </tr>
+  <tr>
+    <td>strtotime</td>
+    <td>Parse about any English textual datetime description into a Unix timestamp.</td>
+  </tr>
+  <tr>
+    <td>negate</td>
+    <td>Negate the value (only for booleans).</td>
+  </tr>
+</table>
 
 ### Command Controller ###
 There is one command controller available which takes care of your
