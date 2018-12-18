@@ -58,12 +58,25 @@ enable the backend login via Auth0.
 
 ### TypoScript ###
 #### Templating ####
-Set alternative Layout/Template/Partial path individually to use your own Fluid templates. There are some TypoScript constants which you can simply override:
+Set alternative Layout/Template/Partial path individually to use your
+own Fluid templates. There are some TypoScript constants which you can
+simply override:
 ```
 plugin.tx_auth0.view {
     templateRootPath = EXT:your_key/Resources/Private/Templates/
     partialRootPath = EXT:your_key/Resources/Private/Partials/
     layoutRootPath = EXT:your_key/Resources/Private/Layouts/
+}
+```
+
+##### Backend Login #####
+You have also the possibility to use your own template files for the
+backend login. Just adapt following parameters:
+```
+plugin.tx_auth0.settings.backend {
+    layoutPath = EXT:auth0/Resources/Private/Layouts/
+    templateFile = EXT:auth0/Resources/Private/Templates/Backend.html
+    stylesheet = EXT:auth0/Resources/Public/Styles/backend.css
 }
 ```
 
