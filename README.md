@@ -358,6 +358,6 @@ A registration and "password forgotten" form is also available. If
 you are interested in that, do not hesitate to contact us.
 
 ### Sponsors ###
-[![MED-EL](https://www.bitmotion.de/fileadmin/github/auth0-for-typo3/MEDEL-Logo.svg "MED-EL")](https://www.medel.com/uk/)
+[![MED-EL](https://www.bitmotion.de/fileadmin/github/auth0-for-typo3/MEDEL-Logo.svg "MED-EL")](https://www.medel.com/)
 
-A big **THANK YOU** to our sponsor [MED-EL](https://www.medel.com/uk/).
+A big **THANK YOU** to our sponsor [MED-EL](https://www.medel.com/).
