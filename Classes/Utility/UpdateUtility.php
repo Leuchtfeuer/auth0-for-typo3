@@ -89,8 +89,8 @@ class UpdateUtility implements SingletonInterface
                             ->execute();
                     }
                 }
-            } catch (\Exception $e) {
-                $this->logger->error($e->getCode() . ': ' . $e->getMessage());
+            } catch (\Exception $exception) {
+                $this->logger->error($exception->getCode() . ': ' . $exception->getMessage());
             }
         }
     }

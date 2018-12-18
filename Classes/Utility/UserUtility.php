@@ -17,6 +17,8 @@ use TYPO3\CMS\Core\Crypto\Random;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
+use TYPO3\CMS\Core\Log\Logger;
+use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Saltedpasswords\Salt\SaltFactory;
 
@@ -25,6 +27,11 @@ use TYPO3\CMS\Saltedpasswords\Salt\SaltFactory;
  */
 class UserUtility
 {
+    /**
+     * @var Logger
+     */
+    protected static $logger;
+
     /**
      * @return bool|array
      */
@@ -43,7 +50,7 @@ class UserUtility
                 $queryBuilder->getRestrictions()->removeByType(DeletedRestriction::class);
             }
         } catch (\Exception $exception) {
-            // TODO: Log this?
+            self::getLogger()->error($exception->getCode() . ': ' . $exception->getMessage());
         }
 
         $user = $queryBuilder
@@ -67,7 +74,7 @@ class UserUtility
                 self::insertBeUser($tableName, $auth0User);
                 break;
             default:
-                // TODO: Throw exception
+                self::getLogger()->error(sprintf('"%s" is not a valid table name.', $tableName));
         }
     }
 
@@ -122,5 +129,14 @@ class UserUtility
         $password = GeneralUtility::makeInstance(Random::class)->generateRandomHexString(50);
 
         return $saltFactory->getHashedPassword($password);
+    }
+
+    protected static function getLogger(): Logger
+    {
+        if (!self::$logger instanceof Logger) {
+            self::$logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
+        }
+
+        return self::$logger;
     }
 }
