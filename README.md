@@ -86,8 +86,37 @@ plugin.tx_auth0.settings.backend.view {
 ##### Properties #####
 
 ### Command Controller ###
+There is one command controller available which takes care of your
+backend users. A user, that is removed from Auth0 or which access has
+expired will be disabled or removed from the TYPO3 database.
+
+You have following options:
+<table>
+  <tr>
+    <th>Method</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>disable</td>
+    <td>Disables the user (sets the disabled flag to true). This is the default value.</td>
+  </tr>
+  <tr>
+    <td>delete</td>
+    <td>Deletes the user (sets the deleted flag to true). The record still exists in the database.</td>
+  </tr>
+  <tr>
+    <td>deleteIrrevocable</td>
+    <td>Removes the user irrevocable from the database.</td>
+  </tr>
+</table>
 
 ### Access ###
+You can grant editors access to the hidden property of the application
+domain model. Every other property is configurable if the editor is
+allowed to modify the record type (*Tables (modify)*).<br/>
+Editors can crate or update plugins when they are allowed to modify the
+page content type *Insert Plugin* and the page content plugin
+*Auth0: Login form*.
 
 ## For Editors ##
 ### Application Record ###
