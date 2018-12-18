@@ -45,15 +45,18 @@ plugin.tx_auth0 {
 
             # table name
             be_users {
-                #mapping for auth0 role to be_groups
+                # mapping for auth0 role to be_groups
+                # add your own mapping here
+                # Example: basic_editor = 1
 
                 # special: sets the admin flag
-                admin = admin
+                # admin = admin
             }
 
             fe_users {
                 # mapping for auth0 role to fe_groups
-                admin = 1
+                # add your own mapping here
+                # Example: admin = 1 or: user = 2
             }
         }
 
@@ -69,6 +72,13 @@ plugin.tx_auth0 {
 
                 disable = email_verified
                 disable.parseFunc = bool|negate
+
+                # Example for mapping metadata:
+                # description = user_metadata.description
+                #
+                # or:
+                # admin = user_metadata.admin
+                # admin.parseFunc = bool
             }
 
             fe_users {
