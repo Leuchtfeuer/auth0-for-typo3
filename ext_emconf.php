@@ -3,7 +3,7 @@
 $EM_CONF[$_EXTKEY] = [
     'title' => 'Auth0 for TYPO3',
     'description' => 'Auth0 for TYPO3',
-    'version' => '1.0.0-dev',
+    'version' => '1.0.0',
     'category' => 'misc',
     'constraints' => [
         'depends' => [
