@@ -17,11 +17,8 @@ use Bitmotion\Auth0\Api\ManagementApi;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Utility\ApplicationUtility;
-use Bitmotion\Auth0\Utility\UpdateUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
-use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Frontend\Page\PageRepository;
 
 /**
  * Class AuthenticationService
@@ -103,11 +100,6 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         if (empty($this->user)) {
             UserUtility::insertUser($this->tableName, $this->auth0User);
         }
-
-        // Update existing user on every login
-        $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User);
-        $updateUtility->updateUser();
-        $updateUtility->updateGroups();
     }
 
     /**
@@ -134,14 +126,6 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
             if ($applicationUid === 0) {
                 return false;
             }
-
-            // Initialize TSFE so that we can access TypoScript
-            $GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(PageRepository::class);
-            $GLOBALS['TSFE']->sys_page->init(false);
-            $GLOBALS['TSFE']->getPageAndRootlineWithDomain(false);
-            $GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance(TemplateService::class);
-            $GLOBALS['TSFE']->tmpl->init();
-            $GLOBALS['TSFE']->tmpl->start($GLOBALS['TSFE']->rootLine);
         } else {
             $emConfiguration = new EmAuth0Configuration();
             $applicationUid = $emConfiguration->getBackendConnection();

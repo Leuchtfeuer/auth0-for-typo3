@@ -152,7 +152,7 @@ class UpdateUtility implements SingletonInterface
                 $queryBuilder->execute();
             }
         } catch (\Exception $exception) {
-            $this->logger->error($e->getCode() . ': ' . $e->getMessage());
+            $this->logger->error($exception->getCode() . ': ' . $exception->getMessage());
         }
     }
 
