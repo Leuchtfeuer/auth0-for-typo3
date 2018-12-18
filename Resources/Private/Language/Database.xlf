@@ -56,6 +56,52 @@
 				<source>Auth0 User Group</source>
 			</trans-unit>
 
+			<trans-unit id="tt_content.pi_flexform.sheet_general">
+				<source>General</source>
+			</trans-unit>
+			<trans-unit id="tt_content.pi_flexform.sheet_redirect">
+				<source>Redirects</source>
+			</trans-unit>
+			<trans-unit id="tt_content.pi_flexform.redirectMode">
+				<source>Redirect Mode</source>
+			</trans-unit>
+			<trans-unit id="tt_content.pi_flexform.redirectMode.I.0">
+				<source>Defined by Usergroup Record</source>
+			</trans-unit>
+			<trans-unit id="tt_content.pi_flexform.redirectMode.I.1">
+				<source>Defined by User Record</source>
+			</trans-unit>
+			<trans-unit id="tt_content.pi_flexform.redirectMode.I.2">
+				<source>After Login (TS or Flexform)</source>
+			</trans-unit>
+			<trans-unit id="tt_content.pi_flexform.redirectMode.I.3">
+				<source>After Logout (TS or Flexform)</source>
+			</trans-unit>
+			<trans-unit id="tt_content.pi_flexform.redirectMode.I.4">
+				<source>After Login Error (TS or Flexform)</source>
+			</trans-unit>
+			<trans-unit id="tt_content.pi_flexform.redirectMode.I.5">
+				<source>Defined by GET/POST Parameters</source>
+			</trans-unit>
+			<trans-unit id="tt_content.pi_flexform.redirectMode.I.6">
+				<source>Defined by Referrer</source>
+			</trans-unit>
+			<trans-unit id="tt_content.pi_flexform.redirectFirstMethod">
+				<source>Use First Supported Mode from Selection</source>
+			</trans-unit>
+			<trans-unit id="tt_content.pi_flexform.redirectPageLogin">
+				<source>After Successful Login Redirect to Page</source>
+			</trans-unit>
+			<trans-unit id="tt_content.pi_flexform.redirectPageLoginError">
+				<source>After Failed Login Redirect to Page</source>
+			</trans-unit>
+			<trans-unit id="tt_content.pi_flexform.redirectPageLogout">
+				<source>After Logout Redirect to Page</source>
+			</trans-unit>
+			<trans-unit id="tt_content.pi_flexform.redirectDisable">
+				<source>Disable Redirect</source>
+			</trans-unit>
+
 		</body>
 	</file>
 </xliff>

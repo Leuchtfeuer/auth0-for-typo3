@@ -7,7 +7,7 @@
 		<sDEF>
 			<ROOT>
 				<TCEforms>
-					<sheetTitle>LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.sheet_general</sheetTitle>
+					<sheetTitle>LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.sheet_general</sheetTitle>
 				</TCEforms>
 				<type>array</type>
 				<el>
@@ -30,44 +30,44 @@
 		<s_redirect>
 			<ROOT>
 				<TCEforms>
-					<sheetTitle>LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.sheet_redirect</sheetTitle>
+					<sheetTitle>LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.sheet_redirect</sheetTitle>
 				</TCEforms>
 				<type>array</type>
 				<el>
 					<settings.redirectMode>
 						<TCEforms>
-							<label>LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode</label>
+							<label>LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode</label>
 							<config>
 								<type>select</type>
 								<renderType>selectMultipleSideBySide</renderType>
 								<items type="array">
 									<numIndex index="0" type="array">
-										<numIndex index="0">LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.0</numIndex>
+										<numIndex index="0">LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.0</numIndex>
 										<numIndex index="1">groupLogin</numIndex>
 									</numIndex>
 									<numIndex index="1" type="array">
-										<numIndex index="0">LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.1</numIndex>
+										<numIndex index="0">LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.1</numIndex>
 										<numIndex index="1">userLogin</numIndex>
 									</numIndex>
 
 									<numIndex index="2" type="array">
-										<numIndex index="0">LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.2</numIndex>
+										<numIndex index="0">LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.2</numIndex>
 										<numIndex index="1">login</numIndex>
 									</numIndex>
 									<numIndex index="3" type="array">
-										<numIndex index="0">LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.3</numIndex>
+										<numIndex index="0">LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.3</numIndex>
 										<numIndex index="1">logout</numIndex>
 									</numIndex>
 									<numIndex index="4" type="array">
-										<numIndex index="0">LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.4</numIndex>
+										<numIndex index="0">LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.4</numIndex>
 										<numIndex index="1">loginError</numIndex>
 									</numIndex>
 									<numIndex index="5" type="array">
-										<numIndex index="0">LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.5</numIndex>
+										<numIndex index="0">LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.5</numIndex>
 										<numIndex index="1">getpost</numIndex>
 									</numIndex>
 									<numIndex index="6" type="array">
-										<numIndex index="0">LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.6</numIndex>
+										<numIndex index="0">LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectMode.I.6</numIndex>
 										<numIndex index="1">referrer</numIndex>
 									</numIndex>
 								</items>
@@ -79,7 +79,7 @@
 					</settings.redirectMode>
 					<settings.redirectFirstMethod>
 						<TCEforms>
-							<label>LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectFirstMethod</label>
+							<label>LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectFirstMethod</label>
 							<config>
 								<type>check</type>
 								<items type="array">
@@ -93,7 +93,7 @@
 					</settings.redirectFirstMethod>
 					<settings.redirectPageLogin>
 						<TCEforms>
-							<label>LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectPageLogin</label>
+							<label>LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectPageLogin</label>
 							<config>
 								<type>group</type>
 								<internal_type>db</internal_type>
@@ -112,7 +112,7 @@
 					</settings.redirectPageLogin>
 					<settings.redirectPageLoginError>
 						<TCEforms>
-							<label>LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectPageLoginError</label>
+							<label>LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectPageLoginError</label>
 							<config>
 								<type>group</type>
 								<internal_type>db</internal_type>
@@ -131,7 +131,7 @@
 					</settings.redirectPageLoginError>
 					<settings.redirectPageLogout>
 						<TCEforms>
-							<label>LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectPageLogout</label>
+							<label>LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectPageLogout</label>
 							<config>
 								<type>group</type>
 								<internal_type>db</internal_type>
@@ -150,7 +150,7 @@
 					</settings.redirectPageLogout>
 					<settings.redirectDisable>
 						<TCEforms>
-							<label>LLL:EXT:felogin/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectDisable</label>
+							<label>LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.redirectDisable</label>
 							<config>
 								<type>check</type>
 								<items type="array">
