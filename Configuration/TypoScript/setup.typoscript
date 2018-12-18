@@ -19,6 +19,11 @@ plugin.tx_auth0 {
     persistence.storagePid = {$plugin.tx_auth0.persistence.storagePid}
 
     settings {
+        backend {
+            layoutPath = EXT:auth0/Resources/Private/Layouts/
+            templateFile = EXT:auth0/Resources/Private/Templates/Backend.html
+            stylesheet = EXT:auth0/Resources/Public/Styles/backend.css
+        }
         reactivateUsers {
             be_users {
                 # if active, sets the disable flag to 0 when user tries to login again

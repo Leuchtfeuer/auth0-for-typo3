@@ -12,9 +12,10 @@ namespace Bitmotion\Auth0\LoginProvider;
  *  (c) 2018 Florian Wessels <f.wessels@bitmotion.de>, Bitmotion GmbH
  *
  ***/
+
+use Auth0\SDK\Exception\CoreException;
 use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\AuthenticationApi;
-use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Utility\ApplicationUtility;
@@ -23,6 +24,7 @@ use TYPO3\CMS\Backend\Controller\LoginController;
 use TYPO3\CMS\Backend\LoginProvider\LoginProviderInterface;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 
 /**
@@ -35,39 +37,35 @@ class Auth0Provider implements LoginProviderInterface
      */
     protected $authentication = null;
 
+    protected $standaloneView = null;
+
+    protected $pageRenderer = null;
+
     /**
-     * @throws \Auth0\SDK\Exception\CoreException
+     * @throws CoreException
+     * @throws InvalidConfigurationTypeException
      */
     public function render(StandaloneView $standaloneView, PageRenderer $pageRenderer, LoginController $loginController)
     {
-        $standaloneView->setLayoutRootPaths(['EXT:auth0/Resources/Private/Layouts']);
-        $standaloneView->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:auth0/Resources/Private/Templates/Backend.html'));
-        $pageRenderer->addCssFile('EXT:auth0/Resources/Public/Styles/backend.css');
-
         // Figure out whether TypoScript is loaded
-        try {
-            ConfigurationUtility::getSetting('propertyMapping');
-        } catch (\Exception $exception) {
+        if (!$this->isTypoScriptLoaded()) {
             $standaloneView->assign('error', 'no_typoscript');
 
             return;
         }
+
+        $this->prepareView($standaloneView, $pageRenderer);
 
         // Try to get user info from session storage
         $store = new SessionStore();
         $userInfo = $store->get('user');
 
         if (($userInfo === null && GeneralUtility::_GP('login') == 1) || GeneralUtility::_GP('logout') == 1) {
-            try {
-                $configuration = new EmAuth0Configuration();
-                $application = ApplicationUtility::getApplication($configuration->getBackendConnection());
-            } catch (InvalidApplicationException $exception) {
+            if (!$this->setAuthenticationApi()) {
                 $standaloneView->assign('error', 'no_application');
 
                 return;
             }
-
-            $this->setAuthenticationApi($application);
 
             // Try to get user via authentication API
             if ($userInfo === null) {
@@ -99,12 +97,43 @@ class Auth0Provider implements LoginProviderInterface
     /**
      * @throws \Auth0\SDK\Exception\CoreException
      */
-    protected function setAuthenticationApi(Application $application)
+    protected function setAuthenticationApi(): bool
     {
-        $this->authentication = new AuthenticationApi(
-            $application,
-            GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'),
-            'openid profile read:current_user'
-        );
+        try {
+            $configuration = new EmAuth0Configuration();
+            $application = ApplicationUtility::getApplication($configuration->getBackendConnection());
+
+            $this->authentication = new AuthenticationApi(
+                $application,
+                GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'),
+                'openid profile read:current_user'
+            );
+        } catch (InvalidApplicationException $exception) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function isTypoScriptLoaded(): bool
+    {
+        try {
+            ConfigurationUtility::getSetting('propertyMapping');
+        } catch (\Exception $exception) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @throws InvalidConfigurationTypeException
+     */
+    protected function prepareView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer)
+    {
+        $backendSettings = ConfigurationUtility::getSetting('backend');
+        $standaloneView->setLayoutRootPaths([$backendSettings['layoutPath']]);
+        $standaloneView->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName($backendSettings['templateFile']));
+        $pageRenderer->addCssFile($backendSettings['stylesheet']);
     }
 }
