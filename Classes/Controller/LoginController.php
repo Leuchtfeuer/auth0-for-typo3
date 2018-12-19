@@ -62,16 +62,8 @@ class LoginController extends ActionController
                     // Try to login user to Auth0
                     $authenticationApi->login();
                 } else {
-                    $tokenInfo = $authenticationApi->getUser();
-                    $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $this->application);
-                    $auth0User = $managementApi->getUserById($tokenInfo['sub']);
-
-                    // Update existing user on every login
-                    $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, 'fe_users', $auth0User);
-                    $updateUtility->updateUser();
-                    $updateUtility->updateGroups();
-
                     // Show login form
+                    $this->updateUser($authenticationApi);
                     $this->redirect('form');
                 }
             } catch (\Exception $exception) {
@@ -140,5 +132,22 @@ class LoginController extends ActionController
     protected function loadApplication()
     {
         $this->application = ApplicationUtility::getApplication((int)$this->settings['application']);
+    }
+
+    /**
+     * @throws \Auth0\SDK\Exception\ApiException
+     * @throws \Auth0\SDK\Exception\CoreException
+     * @throws \Exception
+     */
+    protected function updateUser(AuthenticationApi $authenticationApi)
+    {
+        $tokenInfo = $authenticationApi->getUser();
+        $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $this->application);
+        $auth0User = $managementApi->getUserById($tokenInfo['sub']);
+
+        // Update existing user on every login
+        $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, 'fe_users', $auth0User);
+        $updateUtility->updateUser();
+        $updateUtility->updateGroups();
     }
 }
