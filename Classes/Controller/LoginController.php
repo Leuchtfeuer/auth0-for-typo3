@@ -32,9 +32,6 @@ class LoginController extends ActionController
      */
     protected $application = null;
 
-    /**
-     * form action
-     */
     public function formAction()
     {
         // Get Auth0 user from session storage
@@ -49,9 +46,6 @@ class LoginController extends ActionController
         $this->view->assign('userInfo', $userInfo);
     }
 
-    /**
-     * login action
-     */
     public function loginAction()
     {
         // Get Auth0 user from session storage

@@ -17,12 +17,8 @@ use TYPO3\CMS\Extbase\Persistence\Repository;
 
 class GeneralRepository extends Repository
 {
-    /**
-     * initializeObject
-     */
     public function initializeObject()
     {
-        /** @var Typo3QuerySettings $defaultQuerySettings */
         $defaultQuerySettings = $this->objectManager->get(Typo3QuerySettings::class);
         $defaultQuerySettings->setRespectStoragePage(false);
         $this->setDefaultQuerySettings($defaultQuerySettings);

@@ -27,8 +27,6 @@ class ConfigurationUtility implements SingletonInterface
     protected static $settings = [];
 
     /**
-     * ConfigurationUtility constructor.
-     *
      * @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
      */
     public static function makeInstance()
@@ -41,8 +39,6 @@ class ConfigurationUtility implements SingletonInterface
     }
 
     /**
-     * @param string ...$keys
-     *
      * @throws InvalidConfigurationTypeException
      * @throws \TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException
      * @return array|string

@@ -16,15 +16,11 @@ namespace Bitmotion\Auth0\Domain\Model;
 class FrontendUserGroup extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUserGroup
 {
     /**
-     * auth0UserGroup
-     *
      * @var string
      */
     protected $auth0UserGroup = '';
 
     /**
-     * Returns the auth0UserGroup
-     *
      * @return string $auth0UserGroup
      */
     public function getAuth0UserGroup(): string
@@ -32,12 +28,6 @@ class FrontendUserGroup extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUserGrou
         return $this->auth0UserGroup;
     }
 
-    /**
-     * Sets the auth0UserGroup
-     *
-     *
-     * @return void
-     */
     public function setAuth0Id(string $auth0UserGroup)
     {
         $this->auth0UserGroup = $auth0UserGroup;

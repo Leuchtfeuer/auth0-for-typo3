@@ -16,8 +16,6 @@ namespace Bitmotion\Auth0\Domain\Model;
 class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
 {
     /**
-     * auth0UserId
-     *
      * @var string
      */
     protected $auth0UserId = '';
@@ -47,49 +45,31 @@ class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
      */
     protected $connection = '';
 
-    /**
-     * Returns the auth0UserId
-     */
     public function getAuth0UserId(): string
     {
         return $this->auth0UserId;
     }
 
-    /**
-     * Sets the auth0UserId
-     */
     public function setAuth0UserId(string $auth0UserId)
     {
         $this->auth0UserId = $auth0UserId;
     }
 
-    /**
-     * Returns the auth0Metadata
-     */
     public function geAuth0Metadata(): array
     {
         return json_decode($this->auth0Metadata);
     }
 
-    /**
-     * Sets the auth0Metadata
-     */
     public function setAuth0Metadata(array $auth0Metadata)
     {
         $this->auth0Metadata = json_encode($auth0Metadata);
     }
 
-    /**
-     * @internal
-     */
     public function getMetadata(): array
     {
         return $this->metadata;
     }
 
-    /**
-     * @internal
-     */
     public function setMetadata(array $metadata)
     {
         $this->metadata = $metadata;
