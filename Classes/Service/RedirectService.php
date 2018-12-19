@@ -21,7 +21,6 @@ use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Felogin\Controller\FrontendLoginController;
 
 /**
- * Class RedirectService
  * @see FrontendLoginController
  */
 class RedirectService implements SingletonInterface

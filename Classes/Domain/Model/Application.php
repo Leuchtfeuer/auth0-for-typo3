@@ -15,9 +15,6 @@ namespace Bitmotion\Auth0\Domain\Model;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
-/**
- * Class Application
- */
 class Application extends AbstractEntity
 {
     /**

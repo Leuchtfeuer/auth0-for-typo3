@@ -13,9 +13,6 @@ namespace Bitmotion\Auth0\Domain\Model;
  *
  ***/
 
-/**
- * Class FrontendUser
- */
 class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
 {
     /**

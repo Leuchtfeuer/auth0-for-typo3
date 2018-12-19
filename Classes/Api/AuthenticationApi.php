@@ -16,9 +16,6 @@ namespace Bitmotion\Auth0\Api;
 use Auth0\SDK\Auth0;
 use Bitmotion\Auth0\Domain\Model\Application;
 
-/**
- * Class AuthenticationApi
- */
 class AuthenticationApi extends Auth0
 {
     /**

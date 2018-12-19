@@ -16,9 +16,6 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Lang\LanguageService;
 
-/**
- * Class PageLayoutViewHook
- */
 class PageLayoutViewHook
 {
     /**

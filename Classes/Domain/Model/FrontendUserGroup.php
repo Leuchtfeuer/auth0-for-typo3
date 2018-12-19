@@ -13,9 +13,6 @@ namespace Bitmotion\Auth0\Domain\Model;
  *
  ***/
 
-/**
- * Class FrontendUserGroup
- */
 class FrontendUserGroup extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUserGroup
 {
     /**

@@ -19,9 +19,6 @@ use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
-/**
- * Class ApplicationUtility
- */
 class ApplicationUtility
 {
     /**

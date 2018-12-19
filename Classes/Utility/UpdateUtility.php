@@ -18,9 +18,6 @@ use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class UpdateUtility
- */
 class UpdateUtility implements SingletonInterface
 {
     /**

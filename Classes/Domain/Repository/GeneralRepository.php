@@ -15,9 +15,6 @@ namespace Bitmotion\Auth0\Domain\Repository;
 use TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
-/**
- * Class GeneralRepository
- */
 class GeneralRepository extends Repository
 {
     /**

@@ -21,9 +21,6 @@ use Bitmotion\Auth0\Utility\UpdateUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class AuthenticationService
- */
 class AuthenticationService extends \TYPO3\CMS\Core\Authentication\AuthenticationService
 {
     /**

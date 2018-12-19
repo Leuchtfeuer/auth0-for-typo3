@@ -17,9 +17,6 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class EmAuth0Configuration
- */
 class EmAuth0Configuration implements SingletonInterface
 {
     /**

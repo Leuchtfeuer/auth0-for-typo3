@@ -24,9 +24,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\CommandController;
 use TYPO3\CMS\Extbase\Mvc\Exception\CommandException;
 
-/**
- * Class CleanUpCommandController
- */
 class CleanUpCommandController extends CommandController
 {
     /**
