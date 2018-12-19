@@ -39,12 +39,7 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
     public function __construct(Application $application)
     {
         /** @var Application $application */
-        $authenticationApi = new Authentication(
-            $application->getDomain(),
-            $application->getId(),
-            $application->getSecret(),
-            'https://' . $application->getDomain() . '/' . $application->getAudience()
-        );
+        $authenticationApi = $this->getAuthenticationApi($application);
 
         try {
             $result = $authenticationApi->client_credentials([
@@ -106,5 +101,15 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
     public function getUserById(string $userId)
     {
         return $this->users->get($userId);
+    }
+
+    protected function getAuthenticationApi(Application $application): Authentication
+    {
+        return new Authentication(
+            $application->getDomain(),
+            $application->getId(),
+            $application->getSecret(),
+            'https://' . $application->getDomain() . '/' . $application->getAudience()
+        );
     }
 }
