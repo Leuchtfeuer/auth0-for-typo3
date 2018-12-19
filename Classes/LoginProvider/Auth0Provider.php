@@ -50,10 +50,7 @@ class Auth0Provider implements LoginProviderInterface
         // Figure out whether TypoScript is loaded
         if (!$this->isTypoScriptLoaded()) {
             // In this case we need a default template
-            $standaloneView->setLayoutRootPaths(['EXT:auth0/Resources/Private/Layouts/']);
-            $standaloneView->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:auth0/Resources/Private/Templates/Backend.html'));
-            $standaloneView->assign('error', 'no_typoscript');
-            $pageRenderer->addCssFile('EXT:auth0/Resources/Public/Styles/backend.css');
+            $this->getDefaultView($standaloneView, $pageRenderer);
 
             return;
         }
@@ -80,14 +77,12 @@ class Auth0Provider implements LoginProviderInterface
                 }
             }
 
-            // Logout user from Auth0
             if (GeneralUtility::_GP('logout') == 1) {
+                // Logout user from Auth0
                 $this->authentication->logout();
                 $userInfo = null;
-            }
-
-            // Login user to Auth0
-            if ($userInfo === null && GeneralUtility::_GP('login') == 1) {
+            } elseif ($userInfo === null && GeneralUtility::_GP('login') == 1) {
+                // Login user to Auth0
                 $this->authentication->login();
             }
         }
@@ -139,5 +134,13 @@ class Auth0Provider implements LoginProviderInterface
         $standaloneView->setLayoutRootPaths([$backendViewSettings['layoutPath']]);
         $standaloneView->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName($backendViewSettings['templateFile']));
         $pageRenderer->addCssFile($backendViewSettings['stylesheet']);
+    }
+
+    protected function getDefaultView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer)
+    {
+        $standaloneView->setLayoutRootPaths(['EXT:auth0/Resources/Private/Layouts/']);
+        $standaloneView->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:auth0/Resources/Private/Templates/Backend.html'));
+        $standaloneView->assign('error', 'no_typoscript');
+        $pageRenderer->addCssFile('EXT:auth0/Resources/Public/Styles/backend.css');
     }
 }
