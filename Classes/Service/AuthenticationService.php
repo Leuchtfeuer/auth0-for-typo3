@@ -17,6 +17,7 @@ use Bitmotion\Auth0\Api\ManagementApi;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Utility\ApplicationUtility;
+use Bitmotion\Auth0\Utility\UpdateUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -99,6 +100,13 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         // Insert a new user into database
         if (empty($this->user)) {
             UserUtility::insertUser($this->tableName, $this->auth0User);
+        }
+
+        // Update existing user on every login when we are in BE context
+        if (TYPO3_MODE === 'BE') {
+            $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User);
+            $updateUtility->updateUser();
+            $updateUtility->updateGroups();
         }
     }
 
