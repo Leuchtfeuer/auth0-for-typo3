@@ -20,15 +20,14 @@ use TYPO3\CMS\Core\Crypto\Random;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
+use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class UserUtility implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    public static function checkIfUserExists(string $tableName, string $auth0UserId): array
+    public function checkIfUserExists(string $tableName, string $auth0UserId): array
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
 
@@ -43,7 +42,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
                 $queryBuilder->getRestrictions()->removeByType(DeletedRestriction::class);
             }
         } catch (\Exception $exception) {
-            self::getLogger()->error($exception->getCode() . ': ' . $exception->getMessage());
+            $this->logger->error($exception->getCode() . ': ' . $exception->getMessage());
         }
 
         $user = $queryBuilder
@@ -57,24 +56,33 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         return $user ? $user : [];
     }
 
-    public static function insertUser(string $tableName, array $auth0User)
+    /**
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
+     * @throws \TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException
+     */
+    public function insertUser(string $tableName, array $auth0User)
     {
         switch ($tableName) {
             case 'fe_users':
-                self::insertFeUser($tableName, $auth0User);
+                $this->insertFeUser($tableName, $auth0User);
                 break;
             case 'be_users':
-                self::insertBeUser($tableName, $auth0User);
+                $this->insertBeUser($tableName, $auth0User);
                 break;
             default:
-                self::getLogger()->error(sprintf('"%s" is not a valid table name.', $tableName));
+                $this->logger->error(sprintf('"%s" is not a valid table name.', $tableName));
         }
     }
 
     /**
      * Inserts a new frontend user
+     *
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
+     * @throws \TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException
      */
-    public static function insertFeUser(string $tableName, array $auth0User)
+    public function insertFeUser(string $tableName, array $auth0User)
     {
         $emConfiguration = new EmAuth0Configuration();
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
@@ -86,7 +94,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
                     'pid' => $emConfiguration->getUserStoragePage(),
                     'tstamp' => time(),
                     'username' => $auth0User['email'],
-                    'password' => self::getPassword(),
+                    'password' => $this->getPassword(),
                     'email' => $auth0User['email'],
                     'crdate' => time(),
                     'auth0_user_id' => $auth0User['user_id'],
@@ -97,8 +105,10 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
 
     /**
      * Inserts a new backend user
+     *
+     * @throws \TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException
      */
-    public static function insertBeUser(string $tableName, array $auth0User)
+    public function insertBeUser(string $tableName, array $auth0User)
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
         $queryBuilder
@@ -108,7 +118,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
                     'pid' => 0,
                     'tstamp' => time(),
                     'username' => $auth0User['email'],
-                    'password' => self::getPassword(),
+                    'password' => $this->getPassword(),
                     'email' => $auth0User['email'],
                     'crdate' => time(),
                     'auth0_user_id' => $auth0User['user_id'],
@@ -116,20 +126,14 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             )->execute();
     }
 
-    protected static function getPassword(): string
+    /**
+     * @throws \TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException
+     */
+    protected function getPassword(): string
     {
         $saltFactory = GeneralUtility::makeInstance(PasswordHashFactory::class)->getDefaultHashInstance(TYPO3_MODE);
         $password = GeneralUtility::makeInstance(Random::class)->generateRandomHexString(50);
 
         return $saltFactory->getHashedPassword($password);
-    }
-
-    protected static function getLogger(): Logger
-    {
-        if (!self::$logger instanceof Logger) {
-            self::$logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
-        }
-
-        return self::$logger;
     }
 }

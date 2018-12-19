@@ -89,14 +89,19 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
 
     /**
      * Insert or updates user data in TYPO3 database
+     *
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
+     * @throws \TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException
      */
     protected function insertOrUpdateUser()
     {
-        $this->user = UserUtility::checkIfUserExists($this->tableName, $this->tokenInfo['sub']);
+        $userUtility = GeneralUtility::makeInstance(UserUtility::class);
+        $this->user = $userUtility->checkIfUserExists($this->tableName, $this->tokenInfo['sub']);
 
         // Insert a new user into database
         if (empty($this->user)) {
-            UserUtility::insertUser($this->tableName, $this->auth0User);
+            $userUtility->insertUser($this->tableName, $this->auth0User);
         }
 
         // Update existing user on every login when we are in BE context
