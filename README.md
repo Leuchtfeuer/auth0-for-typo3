@@ -206,8 +206,8 @@ The following parsing functions are available:
   </tr>
 </table>
 
-### Command Controller ###
-There is one command controller available which takes care of your
+### Symfony Command ###
+There is one symfony command available which takes care of your
 backend users. A user that is removed from Auth0 or who's access has
 expired will be disabled or removed from the TYPO3 database.
 
@@ -232,7 +232,7 @@ You have the following options:
 </table>
 
 You can execute the command controller via CLI:<br>
-`path/to/php bin/typo3 cleanup:cleanupusers --method="disable"`
+`path/to/php bin/typo3 auth:cleanupusers disable`
 
 ### Access ###
 You need to allow editors to modify the record type (*Tables (modify)*).<br/>
