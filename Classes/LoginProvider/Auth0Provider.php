@@ -49,7 +49,11 @@ class Auth0Provider implements LoginProviderInterface
     {
         // Figure out whether TypoScript is loaded
         if (!$this->isTypoScriptLoaded()) {
+            // In this case we need a default template
+            $standaloneView->setLayoutRootPaths(['EXT:auth0/Resources/Private/Layouts/']);
+            $standaloneView->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:auth0/Resources/Private/Templates/Backend.html'));
             $standaloneView->assign('error', 'no_typoscript');
+            $pageRenderer->addCssFile('EXT:auth0/Resources/Public/Styles/backend.css');
 
             return;
         }
