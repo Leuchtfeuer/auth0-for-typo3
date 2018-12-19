@@ -12,14 +12,17 @@ namespace Bitmotion\Auth0\Utility;
  *  (c) 2018 Florian Wessels <f.wessels@bitmotion.de>, Bitmotion GmbH
  *
  ***/
+
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class UpdateUtility implements SingletonInterface
+class UpdateUtility implements SingletonInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var string
      */
@@ -30,16 +33,10 @@ class UpdateUtility implements SingletonInterface
      */
     protected $user = [];
 
-    /**
-     * @var Logger
-     */
-    protected $logger;
-
     public function __construct(string $tableName, array $user)
     {
         $this->tableName = $tableName;
         $this->user = $user;
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
     }
 
     public function updateGroups()

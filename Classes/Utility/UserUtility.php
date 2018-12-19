@@ -13,6 +13,8 @@ namespace Bitmotion\Auth0\Utility;
  *
  ***/
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Crypto\Random;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -22,12 +24,9 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class UserUtility
+class UserUtility implements SingletonInterface, LoggerAwareInterface
 {
-    /**
-     * @var Logger
-     */
-    protected static $logger;
+    use LoggerAwareTrait;
 
     public static function checkIfUserExists(string $tableName, string $auth0UserId): array
     {

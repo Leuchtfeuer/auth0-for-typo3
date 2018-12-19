@@ -12,6 +12,9 @@ namespace Bitmotion\Auth0\Service;
  *  (c) 2018 Florian Wessels <f.wessels@bitmotion.de>, Bitmotion GmbH
  *
  ***/
+
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\FrontendRestrictionContainer;
@@ -23,8 +26,10 @@ use TYPO3\CMS\Felogin\Controller\FrontendLoginController;
 /**
  * @see FrontendLoginController
  */
-class RedirectService implements SingletonInterface
+class RedirectService implements SingletonInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var array
      */
@@ -186,8 +191,8 @@ class RedirectService implements SingletonInterface
             return $url;
         }
         // URL is not allowed
-        // TODO: Add logger
-        //$this->logger->warning(‘Url “’ . $url . ‘” for redirect was not accepted!‘);
+        $this->logger->warning('Url "' . $url . '"" for redirect was not accepted!');
+
         return '';
     }
 

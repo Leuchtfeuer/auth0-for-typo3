@@ -18,13 +18,14 @@ use Auth0\SDK\API\Management;
 use Auth0\SDK\Exception\ApiException;
 use Bitmotion\Auth0\Domain\Model\Application;
 use GuzzleHttp\Exception\ClientException;
-use TYPO3\CMS\Core\Log\Logger;
-use TYPO3\CMS\Core\Log\LogManager;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class ManagementApi extends Management implements SingletonInterface
+class ManagementApi extends Management implements SingletonInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var Authentication
      */
@@ -35,15 +36,8 @@ class ManagementApi extends Management implements SingletonInterface
      */
     protected $application;
 
-    /**
-     * @var Logger
-     */
-    protected $logger;
-
     public function __construct(Application $application)
     {
-        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
-
         /** @var Application $application */
         $authenticationApi = new Authentication(
             $application->getDomain(),
