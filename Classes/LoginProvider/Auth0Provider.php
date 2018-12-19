@@ -32,15 +32,13 @@ class Auth0Provider implements LoginProviderInterface
     /**
      * @var AuthenticationApi
      */
-    protected $authentication = null;
-
-    protected $standaloneView = null;
-
-    protected $pageRenderer = null;
+    protected $authentication;
 
     /**
      * @throws CoreException
      * @throws InvalidConfigurationTypeException
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
      */
     public function render(StandaloneView $standaloneView, PageRenderer $pageRenderer, LoginController $loginController)
     {
@@ -91,7 +89,9 @@ class Auth0Provider implements LoginProviderInterface
     }
 
     /**
-     * @throws \Auth0\SDK\Exception\CoreException
+     * @throws CoreException
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
      */
     protected function setAuthenticationApi(): bool
     {

@@ -61,8 +61,9 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      *
      * @throws \Auth0\SDK\Exception\ApiException
      * @throws \Auth0\SDK\Exception\CoreException
-     * @throws \TYPO3\CMS\Core\Error\Http\PageNotFoundException
-     * @throws \TYPO3\CMS\Core\Error\Http\ServiceUnavailableException
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
+     * @throws \TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException
      */
     public function initAuth($mode, $loginData, $authInfo, $pObj)
     {
@@ -115,11 +116,8 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     /**
      * Initializes the connection to the auth0 server
      *
-     *
      * @throws \Auth0\SDK\Exception\ApiException
      * @throws \Auth0\SDK\Exception\CoreException
-     * @throws \TYPO3\CMS\Core\Error\Http\PageNotFoundException
-     * @throws \TYPO3\CMS\Core\Error\Http\ServiceUnavailableException
      * @throws \Exception
      */
     protected function initializeAuth0Connections(): bool
