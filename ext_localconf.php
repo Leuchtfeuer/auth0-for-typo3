@@ -65,10 +65,3 @@ $overrulingPriority = $highestPriority + 10;
         'className' => \Bitmotion\Auth0\Service\AuthenticationService::class
     ]
 );
-
-
-// Add CommandController
-if (TYPO3_MODE === 'BE') {
-    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][$_EXTKEY] =
-        \Bitmotion\Auth0\Command\CleanUpCommandController::class;
-}
