@@ -44,10 +44,15 @@ class EmAuth0Configuration implements SingletonInterface
     {
         $configuration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('auth0');
         if ($configuration) {
-            foreach ($configuration as $key => $value) {
-                if (property_exists(__CLASS__, $key)) {
-                    $this->$key = $value;
-                }
+            $this->setPropertiesFromConfiguration($configuration);
+        }
+    }
+
+    protected function setPropertiesFromConfiguration(array $configuration)
+    {
+        foreach ($configuration as $key => $value) {
+            if (property_exists(__CLASS__, $key)) {
+                $this->$key = $value;
             }
         }
     }
