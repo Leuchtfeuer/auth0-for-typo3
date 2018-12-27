@@ -17,10 +17,9 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
-use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class UpdateUtility implements SingletonInterface, LoggerAwareInterface
+class UpdateUtility implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
