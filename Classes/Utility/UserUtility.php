@@ -19,17 +19,23 @@ use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
+use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Saltedpasswords\Salt\SaltFactory;
 
-class UserUtility
+class UserUtility implements SingletonInterface
 {
     /**
      * @var Logger
      */
-    protected static $logger;
+    protected $logger;
 
-    public static function checkIfUserExists(string $tableName, string $auth0UserId): array
+    public function __construct()
+    {
+        $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
+    }
+
+    public function checkIfUserExists(string $tableName, string $auth0UserId): array
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
 
@@ -44,7 +50,7 @@ class UserUtility
                 $queryBuilder->getRestrictions()->removeByType(DeletedRestriction::class);
             }
         } catch (\Exception $exception) {
-            self::getLogger()->error($exception->getCode() . ': ' . $exception->getMessage());
+            $this->logger->error($exception->getCode() . ': ' . $exception->getMessage());
         }
 
         $user = $queryBuilder
@@ -58,24 +64,24 @@ class UserUtility
         return $user ? $user : [];
     }
 
-    public static function insertUser(string $tableName, array $auth0User)
+    public function insertUser(string $tableName, array $auth0User)
     {
         switch ($tableName) {
             case 'fe_users':
-                self::insertFeUser($tableName, $auth0User);
+                $this->insertFeUser($tableName, $auth0User);
                 break;
             case 'be_users':
-                self::insertBeUser($tableName, $auth0User);
+                $this->insertBeUser($tableName, $auth0User);
                 break;
             default:
-                self::getLogger()->error(sprintf('"%s" is not a valid table name.', $tableName));
+                $this->logger->error(sprintf('"%s" is not a valid table name.', $tableName));
         }
     }
 
     /**
      * Inserts a new frontend user
      */
-    public static function insertFeUser(string $tableName, array $auth0User)
+    public function insertFeUser(string $tableName, array $auth0User)
     {
         $emConfiguration = new EmAuth0Configuration();
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
@@ -87,7 +93,7 @@ class UserUtility
                     'pid' => $emConfiguration->getUserStoragePage(),
                     'tstamp' => time(),
                     'username' => $auth0User['email'],
-                    'password' => self::getPassword(),
+                    'password' => $this->getPassword(),
                     'email' => $auth0User['email'],
                     'crdate' => time(),
                     'auth0_user_id' => $auth0User['user_id'],
@@ -99,7 +105,7 @@ class UserUtility
     /**
      * Inserts a new backend user
      */
-    public static function insertBeUser(string $tableName, array $auth0User)
+    public function insertBeUser(string $tableName, array $auth0User)
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
         $queryBuilder
@@ -109,7 +115,7 @@ class UserUtility
                     'pid' => 0,
                     'tstamp' => time(),
                     'username' => $auth0User['email'],
-                    'password' => self::getPassword(),
+                    'password' => $this->getPassword(),
                     'email' => $auth0User['email'],
                     'crdate' => time(),
                     'auth0_user_id' => $auth0User['user_id'],
@@ -117,20 +123,11 @@ class UserUtility
             )->execute();
     }
 
-    protected static function getPassword(): string
+    protected function getPassword(): string
     {
         $saltFactory = SaltFactory::getSaltingInstance(null);
         $password = GeneralUtility::makeInstance(Random::class)->generateRandomHexString(50);
 
         return $saltFactory->getHashedPassword($password);
-    }
-
-    protected static function getLogger(): Logger
-    {
-        if (!self::$logger instanceof Logger) {
-            self::$logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
-        }
-
-        return self::$logger;
     }
 }

@@ -94,11 +94,12 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
      */
     protected function insertOrUpdateUser()
     {
-        $this->user = UserUtility::checkIfUserExists($this->tableName, $this->tokenInfo['sub']);
+        $userUtility = GeneralUtility::makeInstance(UserUtility::class);
+        $this->user = $userUtility->checkIfUserExists($this->tableName, $this->tokenInfo['sub']);
 
         // Insert a new user into database
         if (empty($this->user)) {
-            UserUtility::insertUser($this->tableName, $this->auth0User);
+            $userUtility->insertUser($this->tableName, $this->auth0User);
         }
 
         // Update existing user on every login when we are in BE context
