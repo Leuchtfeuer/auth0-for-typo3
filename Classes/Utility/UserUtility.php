@@ -29,10 +29,7 @@ class UserUtility
      */
     protected static $logger;
 
-    /**
-     * @return bool|array
-     */
-    public static function checkIfUserExists(string $tableName, string $auth0UserId)
+    public static function checkIfUserExists(string $tableName, string $auth0UserId): array
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
 
