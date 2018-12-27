@@ -139,5 +139,4 @@ class Auth0Provider implements LoginProviderInterface
         $standaloneView->assign('error', 'no_typoscript');
         $pageRenderer->addCssFile('EXT:auth0/Resources/Public/Styles/backend.css');
     }
-
 }

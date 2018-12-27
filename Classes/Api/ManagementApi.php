@@ -116,5 +116,4 @@ class ManagementApi extends Management implements SingletonInterface
             'https://' . $application->getDomain() . '/' . $application->getAudience()
         );
     }
-
 }
