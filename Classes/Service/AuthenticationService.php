@@ -20,6 +20,7 @@ use Bitmotion\Auth0\Utility\ApplicationUtility;
 use Bitmotion\Auth0\Utility\UpdateUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Service\EnvironmentService;
 
 class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
 {
@@ -54,6 +55,11 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
     protected $auth0User = null;
 
     /**
+     * @var EnvironmentService
+     */
+    protected $environmentService = null;
+
+    /**
      * @param string                                                    $mode
      * @param array                                                     $loginData
      * @param array                                                     $authInfo
@@ -75,6 +81,7 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
             $this->login = $loginData;
             $this->authInfo = $authInfo;
             $this->pObj = $pObj;
+            $this->environmentService = GeneralUtility::makeInstance(EnvironmentService::class)
 
             // Handle login for frontend or backend
             if ($mode === 'getUserFE' && !empty($loginData)) {
@@ -101,7 +108,7 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
         }
 
         // Update existing user on every login when we are in BE context
-        if (TYPO3_MODE === 'BE') {
+        if ($this->environmentService->isEnvironmentInBackendMode()) {
             $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User);
             $updateUtility->updateUser();
             $updateUtility->updateGroups();
@@ -120,12 +127,12 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
      */
     protected function initializeAuth0Connections(): bool
     {
-        if (TYPO3_MODE === 'BE' && GeneralUtility::_GP('loginProvider') != '1526966635') {
+        if ($this->environmentService->isEnvironmentInBackendMode() && GeneralUtility::_GP('loginProvider') != '1526966635') {
             // Not an Auth0 login
             return false;
         }
 
-        if (TYPO3_MODE === 'FE') {
+        if ($this->environmentService->isEnvironmentInFrontendMode()) {
             $applicationUid = (int)GeneralUtility::_GP('application');
 
             // No application uid found in request - skip.
