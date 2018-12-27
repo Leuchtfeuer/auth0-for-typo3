@@ -232,9 +232,7 @@ You can execute the command controller via CLI:<br>
 `path/to/php bin/typo3 cleanup:cleanupusers --method="disable"`
 
 ### Access ###
-You can grant editors access to the hidden property of the application
-domain model. All other properties are configurable when the editor is
-allowed to modify the record type (*Tables (modify)*).<br/>
+You need to allow editors to modify the record type (*Tables (modify)*).<br/>
 Editors can create or update plugins when they are allowed to modify the
 page content type *Insert Plugin* and the page content plugin
 *Auth0: Login form*.
