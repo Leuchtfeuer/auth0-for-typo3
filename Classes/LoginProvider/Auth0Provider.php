@@ -13,11 +13,9 @@ namespace Bitmotion\Auth0\LoginProvider;
  *
  ***/
 
-use Auth0\SDK\Exception\CoreException;
 use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\AuthenticationApi;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
-use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Utility\ApplicationUtility;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use TYPO3\CMS\Backend\Controller\LoginController;
@@ -35,10 +33,7 @@ class Auth0Provider implements LoginProviderInterface
     protected $authentication;
 
     /**
-     * @throws CoreException
      * @throws InvalidConfigurationTypeException
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
      */
     public function render(StandaloneView $standaloneView, PageRenderer $pageRenderer, LoginController $loginController)
     {
@@ -50,6 +45,13 @@ class Auth0Provider implements LoginProviderInterface
             return;
         }
 
+        // Throw error if there is no application
+        if (!$this->setAuthenticationApi()) {
+            $standaloneView->assign('error', 'no_application');
+
+            return;
+        }
+
         $this->prepareView($standaloneView, $pageRenderer);
 
         // Try to get user info from session storage
@@ -57,42 +59,17 @@ class Auth0Provider implements LoginProviderInterface
         $userInfo = $store->get('user');
 
         if (($userInfo === null && GeneralUtility::_GP('login') == 1) || GeneralUtility::_GP('logout') == 1) {
-            if (!$this->setAuthenticationApi()) {
-                $standaloneView->assign('error', 'no_application');
-
-                return;
-            }
-
-            // Try to get user via authentication API
-            if ($userInfo === null) {
-                try {
-                    $userInfo = $this->authentication->getUser();
-                } catch (\Exception $exception) {
-                    $this->authentication->deleteAllPersistentData();
-                }
-            }
-
-            if (GeneralUtility::_GP('logout') == 1) {
-                // Logout user from Auth0
-                $this->authentication->logout();
-                $userInfo = null;
-            } elseif ($userInfo === null && GeneralUtility::_GP('login') == 1) {
-                // Login user to Auth0
-                $this->authentication->login();
-            }
+            $this->handleRequest($userInfo);
         }
 
         // Assign variables and Auth0 response to view
-        $standaloneView->assign('auth0Error', GeneralUtility::_GP('error'));
-        $standaloneView->assign('auth0ErrorDescription', GeneralUtility::_GP('error_description'));
-        $standaloneView->assign('userInfo', $userInfo);
+        $standaloneView->assignMultiple([
+            'auth0Error' => GeneralUtility::_GP('error'),
+            'auth0ErrorDescription', GeneralUtility::_GP('error_description'),
+            'userInfo', $userInfo,
+        ]);
     }
 
-    /**
-     * @throws CoreException
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
-     */
     protected function setAuthenticationApi(): bool
     {
         try {
@@ -104,11 +81,32 @@ class Auth0Provider implements LoginProviderInterface
                 GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'),
                 'openid profile read:current_user'
             );
-        } catch (InvalidApplicationException $exception) {
+        } catch (\Exception $exception) {
             return false;
         }
 
         return true;
+    }
+
+    protected function handleRequest($userInfo)
+    {
+        // Try to get user via authentication API
+        if ($userInfo === null) {
+            try {
+                $userInfo = $this->authentication->getUser();
+            } catch (\Exception $exception) {
+                $this->authentication->deleteAllPersistentData();
+            }
+        }
+
+        if (GeneralUtility::_GP('logout') == 1) {
+            // Logout user from Auth0
+            $this->authentication->logout();
+            $userInfo = null;
+        } elseif ($userInfo === null && GeneralUtility::_GP('login') == 1) {
+            // Login user to Auth0
+            $this->authentication->login();
+        }
     }
 
     protected function isTypoScriptLoaded(): bool
@@ -129,14 +127,18 @@ class Auth0Provider implements LoginProviderInterface
     {
         $backendViewSettings = ConfigurationUtility::getSetting('backend', 'view');
         $standaloneView->setLayoutRootPaths([$backendViewSettings['layoutPath']]);
-        $standaloneView->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName($backendViewSettings['templateFile']));
+        $standaloneView->setTemplatePathAndFilename(
+            GeneralUtility::getFileAbsFileName($backendViewSettings['templateFile'])
+        );
         $pageRenderer->addCssFile($backendViewSettings['stylesheet']);
     }
 
     protected function getDefaultView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer)
     {
         $standaloneView->setLayoutRootPaths(['EXT:auth0/Resources/Private/Layouts/']);
-        $standaloneView->setTemplatePathAndFilename(GeneralUtility::getFileAbsFileName('EXT:auth0/Resources/Private/Templates/Backend.html'));
+        $standaloneView->setTemplatePathAndFilename(
+            GeneralUtility::getFileAbsFileName('EXT:auth0/Resources/Private/Templates/Backend.html')
+        );
         $standaloneView->assign('error', 'no_typoscript');
         $pageRenderer->addCssFile('EXT:auth0/Resources/Public/Styles/backend.css');
     }

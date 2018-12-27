@@ -24,6 +24,7 @@ class UpdateUtility implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     const TYPO_SCRIPT_NODE_VALUE = '_typoScriptNodeValue';
+    const PARSING_FUNCTION = 'parseFunc';
 
     /**
      * @var string
@@ -83,7 +84,12 @@ class UpdateUtility implements LoggerAwareInterface
         }
 
         if (empty($mappingConfiguration)) {
-            $this->logger->notice(sprintf('Cannot update user: No mapping configuration for %s found', $this->tableName));
+            $this->logger->notice(
+                sprintf(
+                    'Cannot update user: No mapping configuration for %s found',
+                    $this->tableName
+                )
+            );
 
             return;
         }
@@ -187,8 +193,11 @@ class UpdateUtility implements LoggerAwareInterface
         return (string)$value;
     }
 
-    protected function updateWithoutParseFunc(QueryBuilder &$queryBuilder, string $typo3FieldName, string $auth0FieldName)
-    {
+    protected function updateWithoutParseFunc(
+        QueryBuilder &$queryBuilder,
+        string $typo3FieldName,
+        string $auth0FieldName
+    ) {
         if (isset($this->user[$auth0FieldName])) {
             $queryBuilder->set(
                 $typo3FieldName,
@@ -206,17 +215,17 @@ class UpdateUtility implements LoggerAwareInterface
     {
         $fieldName = $auth0FieldName[self::TYPO_SCRIPT_NODE_VALUE];
         if (isset($this->user[$fieldName])) {
-            if (isset($auth0FieldName['parseFunc'])) {
+            if (isset($auth0FieldName[self::PARSING_FUNCTION])) {
                 $queryBuilder->set(
                     $typo3FieldName,
-                    $this->handleParseFunc($auth0FieldName['parseFunc'], $this->user[$fieldName])
+                    $this->handleParseFunc($auth0FieldName[self::PARSING_FUNCTION], $this->user[$fieldName])
                 );
             }
         } elseif (strpos($auth0FieldName[self::TYPO_SCRIPT_NODE_VALUE], 'user_metadata') !== false) {
             $queryBuilder->set(
                 $typo3FieldName,
                 $this->handleParseFunc(
-                    $auth0FieldName['parseFunc'],
+                    $auth0FieldName[self::PARSING_FUNCTION],
                     $this->getAuth0ValueRecursive(
                         $this->user,
                         explode('.', $auth0FieldName[self::TYPO_SCRIPT_NODE_VALUE])
