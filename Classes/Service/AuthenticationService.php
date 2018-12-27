@@ -19,8 +19,10 @@ use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Utility\ApplicationUtility;
 use Bitmotion\Auth0\Utility\UpdateUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
+use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Service\EnvironmentService;
+use TYPO3\CMS\Frontend\Page\PageRepository;
 
 class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
 {
@@ -72,6 +74,8 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
      */
     public function initAuth($mode, $loginData, $authInfo, $pObj)
     {
+        $this->environmentService = GeneralUtility::makeInstance(EnvironmentService::class);
+
         if ($this->initializeAuth0Connections()) {
             // Set default values
             $authInfo['db_user']['check_pid_clause'] = false;
@@ -81,7 +85,6 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
             $this->login = $loginData;
             $this->authInfo = $authInfo;
             $this->pObj = $pObj;
-            $this->environmentService = GeneralUtility::makeInstance(EnvironmentService::class)
 
             // Handle login for frontend or backend
             if ($mode === 'getUserFE' && !empty($loginData)) {
@@ -107,12 +110,10 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
             $userUtility->insertUser($this->tableName, $this->auth0User);
         }
 
-        // Update existing user on every login when we are in BE context
-        if ($this->environmentService->isEnvironmentInBackendMode()) {
-            $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User);
-            $updateUtility->updateUser();
-            $updateUtility->updateGroups();
-        }
+        // Update existing user on every login
+        $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User);
+        $updateUtility->updateUser();
+        $updateUtility->updateGroups();
     }
 
     /**
@@ -139,6 +140,14 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
             if ($applicationUid === 0) {
                 return false;
             }
+
+            // Initialize TSFE so that we can access TypoScript
+            $GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(PageRepository::class);
+            $GLOBALS['TSFE']->sys_page->init(false);
+            $GLOBALS['TSFE']->getPageAndRootline();
+            $GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance(TemplateService::class);
+            $GLOBALS['TSFE']->tmpl->init();
+            $GLOBALS['TSFE']->tmpl->start($GLOBALS['TSFE']->rootLine);
         } else {
             $emConfiguration = new EmAuth0Configuration();
             $applicationUid = $emConfiguration->getBackendConnection();
