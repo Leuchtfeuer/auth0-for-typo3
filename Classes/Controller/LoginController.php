@@ -13,6 +13,7 @@ namespace Bitmotion\Auth0\Controller;
  *
  ***/
 
+use Auth0\SDK\Exception\CoreException;
 use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\AuthenticationApi;
 use Bitmotion\Auth0\Api\ManagementApi;
@@ -31,6 +32,11 @@ class LoginController extends ActionController implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
+    const SCOPE = 'openid profile read:current_user';
+
+    /**
+     * @var Application
+     */
     protected $application;
 
     public function formAction()
@@ -50,6 +56,10 @@ class LoginController extends ActionController implements LoggerAwareInterface
         $this->view->assign('userInfo', $userInfo);
     }
 
+    /**
+     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
+     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
+     */
     public function loginAction()
     {
         // Get Auth0 user from session storage
@@ -57,24 +67,12 @@ class LoginController extends ActionController implements LoggerAwareInterface
         $userInfo = $store->get('user');
 
         if ($userInfo === null) {
-            try {
-                $this->loadApplication();
-                $authenticationApi = new AuthenticationApi($this->application, $this->getUri(), 'openid profile read:current_user', []);
-                $userInfo = $authenticationApi->getUser();
-
-                if (!$userInfo) {
-                    // Try to login user to Auth0
-                    $authenticationApi->login();
-                } else {
-                    // Show login form
-                    $this->redirect('form');
-                }
-            } catch (\Exception $exception) {
-                if (isset($authenticationApi) && $authenticationApi instanceof AuthenticationApi) {
-                    $authenticationApi->deleteAllPersistentData();
-                }
-            }
+            // Try to login user
+            $this->loginUser();
         }
+
+        // Show login form
+        $this->redirect('form');
     }
 
     /**
@@ -83,24 +81,8 @@ class LoginController extends ActionController implements LoggerAwareInterface
      */
     public function logoutAction()
     {
-        try {
-            $this->loadApplication();
-            $authenticationApi = new AuthenticationApi(
-                $this->application,
-                $this->getUri(),
-                'openid profile read:current_user',
-                []
-            );
-
-            $authenticationApi->logout();
-        } catch (\Exception $exception) {
-            // Delete user from SessionStore
-            $store = new SessionStore();
-            if ($store->get('user')) {
-                $store->delete('user');
-            }
-        }
-
+        $this->loadApplication();
+        $this->logoutUser();
         $this->redirect('form');
     }
 
@@ -129,12 +111,34 @@ class LoginController extends ActionController implements LoggerAwareInterface
                 ->buildFrontendUri();
     }
 
-    /**
-     * @throws InvalidApplicationException
-     */
     protected function loadApplication()
     {
-        $this->application = ApplicationUtility::getApplication((int)$this->settings['application']);
+        try {
+            $this->application = ApplicationUtility::getApplication((int)$this->settings['application']);
+        } catch (InvalidApplicationException $exception) {
+            $this->logger->critical(
+                sprintf(
+                    'Cannot instantiate Auth0 Application: %s (%s)',
+                    $exception->getMessage(),
+                    $exception->getCode()
+                )
+            );
+        }
+    }
+
+    protected function getAuthenticationApi()
+    {
+        try {
+            return new AuthenticationApi($this->application, $this->getUri(), self::SCOPE);
+        } catch (CoreException $exception) {
+            $this->logger->critical(
+                sprintf(
+                    'Cannot instantiate Auth0 Authentication: %s (%s)',
+                    $exception->getMessage(),
+                    $exception->getCode()
+                )
+            );
+        }
     }
 
     protected function updateUser()
@@ -144,7 +148,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
                 $this->loadApplication();
             }
 
-            $authenticationApi = new AuthenticationApi($this->application, $this->getUri(), 'openid profile read:current_user', []);
+            $authenticationApi = $this->getAuthenticationApi();
             $tokenInfo = $authenticationApi->getUser();
             $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $this->application);
             $auth0User = $managementApi->getUserById($tokenInfo['sub']);
@@ -161,6 +165,40 @@ class LoginController extends ActionController implements LoggerAwareInterface
                     $exception->getCode()
                 )
             );
+        }
+    }
+
+    protected function logoutUser()
+    {
+        $authenticationApi = $this->getAuthenticationApi();
+
+        try {
+            $authenticationApi->logout();
+        } catch (\Exception $exception) {
+            // Delete user from SessionStore
+            $store = new SessionStore();
+            if ($store->get('user')) {
+                $store->delete('user');
+            }
+        }
+    }
+
+    protected function loginUser()
+    {
+        $this->loadApplication();
+        $authenticationApi = $this->getAuthenticationApi();
+
+        try {
+            $userInfo = $authenticationApi->getUser();
+
+            if (!$userInfo) {
+                // Try to login user to Auth0
+                $authenticationApi->login();
+            }
+        } catch (\Exception $exception) {
+            if (isset($authenticationApi) && $authenticationApi instanceof AuthenticationApi) {
+                $authenticationApi->deleteAllPersistentData();
+            }
         }
     }
 }
