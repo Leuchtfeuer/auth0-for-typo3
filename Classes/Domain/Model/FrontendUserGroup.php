@@ -22,7 +22,6 @@ class FrontendUserGroup extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUserGrou
      * auth0UserGroup
      *
      * @var string
-     * @validate NotEmpty
      */
     protected $auth0UserGroup = '';
 

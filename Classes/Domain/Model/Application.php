@@ -24,7 +24,6 @@ class Application extends AbstractEntity
      * title
      *
      * @var string
-     * @validate NotEmpty
      */
     protected $title = '';
 
@@ -32,7 +31,6 @@ class Application extends AbstractEntity
      * id
      *
      * @var string
-     * @validate NotEmpty
      */
     protected $id = '';
 
@@ -40,7 +38,6 @@ class Application extends AbstractEntity
      * secret
      *
      * @var string
-     * @validate NotEmpty
      */
     protected $secret = '';
 
@@ -48,7 +45,6 @@ class Application extends AbstractEntity
      * domain
      *
      * @var string
-     * @validate NotEmpty
      */
     protected $domain = '';
 
@@ -56,7 +52,6 @@ class Application extends AbstractEntity
      * audience
      *
      * @var string
-     * @validate NotEmpty
      */
     protected $audience = '';
 
