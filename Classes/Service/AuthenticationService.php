@@ -23,9 +23,6 @@ use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 
-/**
- * Class AuthenticationService
- */
 class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
 {
     /**

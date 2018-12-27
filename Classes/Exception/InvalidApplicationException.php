@@ -13,9 +13,6 @@ namespace Bitmotion\Auth0\Exception;
  *
  ***/
 
-/**
- * Class InvalidApplicationException
- */
 class InvalidApplicationException extends \Exception
 {
 }

@@ -22,9 +22,6 @@ use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Saltedpasswords\Salt\SaltFactory;
 
-/**
- * Class UserUtility
- */
 class UserUtility
 {
     /**

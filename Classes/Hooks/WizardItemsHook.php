@@ -16,9 +16,6 @@ use TYPO3\CMS\Backend\Controller\ContentElement\NewContentElementController;
 use TYPO3\CMS\Backend\Wizard\NewContentElementWizardHookInterface;
 use TYPO3\CMS\Lang\LanguageService;
 
-/**
- * Class WizardItemsHook
- */
 class WizardItemsHook implements NewContentElementWizardHookInterface
 {
     /**

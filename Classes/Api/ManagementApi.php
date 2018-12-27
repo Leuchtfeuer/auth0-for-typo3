@@ -23,9 +23,6 @@ use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * Class ManagementApi
- */
 class ManagementApi extends Management implements SingletonInterface
 {
     /**

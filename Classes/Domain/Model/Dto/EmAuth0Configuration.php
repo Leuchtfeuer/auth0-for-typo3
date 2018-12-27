@@ -15,9 +15,6 @@ namespace Bitmotion\Auth0\Domain\Model\Dto;
 
 use TYPO3\CMS\Core\SingletonInterface;
 
-/**
- * Class EmAuth0Configuration
- */
 class EmAuth0Configuration implements SingletonInterface
 {
     /**

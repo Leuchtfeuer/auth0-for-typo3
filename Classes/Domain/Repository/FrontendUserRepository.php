@@ -13,9 +13,6 @@ namespace Bitmotion\Auth0\Domain\Repository;
  *
  ***/
 
-/**
- * Class FrontendUserRepository
- */
 class FrontendUserRepository extends GeneralRepository
 {
 }

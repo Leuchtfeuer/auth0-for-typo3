@@ -19,9 +19,6 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
-/**
- * Class ConfigurationUtility
- */
 class ConfigurationUtility implements SingletonInterface
 {
     /**
