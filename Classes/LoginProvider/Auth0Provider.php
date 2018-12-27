@@ -32,11 +32,7 @@ class Auth0Provider implements LoginProviderInterface
     /**
      * @var AuthenticationApi
      */
-    protected $authentication = null;
-
-    protected $standaloneView = null;
-
-    protected $pageRenderer = null;
+    protected $authentication;
 
     /**
      * @throws CoreException
@@ -47,7 +43,7 @@ class Auth0Provider implements LoginProviderInterface
         // Figure out whether TypoScript is loaded
         if (!$this->isTypoScriptLoaded()) {
             // In this case we need a default template
-            $this->getDefaultTemplate($standaloneView, $pageRenderer);
+            $this->getDefaultView($standaloneView, $pageRenderer);
             $standaloneView->assign('error', 'no_typoscript');
 
             return;
@@ -94,7 +90,7 @@ class Auth0Provider implements LoginProviderInterface
     }
 
     /**
-     * @throws \Auth0\SDK\Exception\CoreException
+     * @throws CoreException
      */
     protected function setAuthenticationApi(): bool
     {
