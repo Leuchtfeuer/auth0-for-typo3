@@ -40,6 +40,11 @@ class LoginController extends ActionController
 
         // Redirect user on login
         if (GeneralUtility::_GP('logintype') === 'login' && !empty($GLOBALS['TSFE']->fe_user->user) && $userInfo !== null) {
+            try {
+                $this->updateUser();
+            } catch (\Exception $exception) {
+                // TODO: Log this
+            }
             $this->handleRedirect(['groupLogin', 'userLogin', 'login', 'getpost', 'referrer']);
         }
 
@@ -63,7 +68,6 @@ class LoginController extends ActionController
                     $authenticationApi->login();
                 } else {
                     // Show login form
-                    $this->updateUser($authenticationApi);
                     $this->redirect('form');
                 }
             } catch (\Exception $exception) {
@@ -135,12 +139,18 @@ class LoginController extends ActionController
     }
 
     /**
+     * @throws InvalidApplicationException
      * @throws \Auth0\SDK\Exception\ApiException
      * @throws \Auth0\SDK\Exception\CoreException
      * @throws \Exception
      */
-    protected function updateUser(AuthenticationApi $authenticationApi)
+    protected function updateUser()
     {
+        if (!$this->application instanceof Application) {
+            $this->loadApplication();
+        }
+
+        $authenticationApi = new AuthenticationApi($this->application, $this->getUri(), 'openid profile read:current_user', []);
         $tokenInfo = $authenticationApi->getUser();
         $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $this->application);
         $auth0User = $managementApi->getUserById($tokenInfo['sub']);
