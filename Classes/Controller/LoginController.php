@@ -15,10 +15,12 @@ namespace Bitmotion\Auth0\Controller;
 
 use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\AuthenticationApi;
+use Bitmotion\Auth0\Api\ManagementApi;
 use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Service\RedirectService;
 use Bitmotion\Auth0\Utility\ApplicationUtility;
+use Bitmotion\Auth0\Utility\UpdateUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
@@ -70,6 +72,7 @@ class LoginController extends ActionController
                     $authenticationApi->login();
                 } else {
                     // Show login form
+                    $this->updateUser($authenticationApi);
                     $this->redirect('form');
                 }
             } catch (\Exception $exception) {
@@ -138,5 +141,22 @@ class LoginController extends ActionController
     protected function loadApplication()
     {
         $this->application = ApplicationUtility::getApplication((int)$this->settings['application']);
+    }
+
+    /**
+     * @throws \Auth0\SDK\Exception\ApiException
+     * @throws \Auth0\SDK\Exception\CoreException
+     * @throws \Exception
+     */
+    protected function updateUser(AuthenticationApi $authenticationApi)
+    {
+        $tokenInfo = $authenticationApi->getUser();
+        $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $this->application);
+        $auth0User = $managementApi->getUserById($tokenInfo['sub']);
+
+        // Update existing user on every login
+        $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, 'fe_users', $auth0User);
+        $updateUtility->updateUser();
+        $updateUtility->updateGroups();
     }
 }
