@@ -43,14 +43,7 @@ class ManagementApi extends Management implements SingletonInterface
     public function __construct(Application $application)
     {
         $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
-
-        /** @var Application $application */
-        $authenticationApi = new Authentication(
-            $application->getDomain(),
-            $application->getId(),
-            $application->getSecret(),
-            'https://' . $application->getDomain() . '/' . $application->getAudience()
-        );
+        $authenticationApi = $this->getAuthenticationApi($application);
 
         try {
             $result = $authenticationApi->client_credentials([
@@ -113,4 +106,15 @@ class ManagementApi extends Management implements SingletonInterface
     {
         return $this->users->get($userId);
     }
+
+    protected function getAuthenticationApi(Application $application): Authentication
+    {
+        return new Authentication(
+            $application->getDomain(),
+            $application->getId(),
+            $application->getSecret(),
+            'https://' . $application->getDomain() . '/' . $application->getAudience()
+        );
+    }
+
 }

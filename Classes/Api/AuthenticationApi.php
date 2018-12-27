@@ -21,16 +21,12 @@ class AuthenticationApi extends Auth0
     /**
      * @var Application
      */
-    protected $application = null;
+    protected $application;
 
     /**
-     * Auth0Api constructor.
-     *
-     * @param Application $application
-     *
      * @throws \Auth0\SDK\Exception\CoreException
      */
-    public function __construct($application, string $redirectUri = '', string $scope = '', array $additionalOptions = [])
+    public function __construct(Application $application, string $redirectUri = '', string $scope = '', array $additionalOptions = [])
     {
         $this->application = $application;
 
