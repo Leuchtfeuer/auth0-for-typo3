@@ -21,16 +21,17 @@ use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Service\RedirectService;
 use Bitmotion\Auth0\Utility\ApplicationUtility;
 use Bitmotion\Auth0\Utility\UpdateUtility;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 
-class LoginController extends ActionController
+class LoginController extends ActionController implements LoggerAwareInterface
 {
-    /**
-     * @var Application
-     */
-    protected $application = null;
+    use LoggerAwareTrait;
+
+    protected $application;
 
     public function formAction()
     {
@@ -38,13 +39,11 @@ class LoginController extends ActionController
         $store = new SessionStore();
         $userInfo = $store->get('user');
 
-        // Redirect user on login
         if (GeneralUtility::_GP('logintype') === 'login' && !empty($GLOBALS['TSFE']->fe_user->user) && $userInfo !== null) {
-            try {
-                $this->updateUser();
-            } catch (\Exception $exception) {
-                // TODO: Log this
-            }
+            // Try to update user
+            $this->updateUser();
+
+            // Redirect user on login
             $this->handleRedirect(['groupLogin', 'userLogin', 'login', 'getpost', 'referrer']);
         }
 
@@ -138,26 +137,30 @@ class LoginController extends ActionController
         $this->application = ApplicationUtility::getApplication((int)$this->settings['application']);
     }
 
-    /**
-     * @throws InvalidApplicationException
-     * @throws \Auth0\SDK\Exception\ApiException
-     * @throws \Auth0\SDK\Exception\CoreException
-     * @throws \Exception
-     */
     protected function updateUser()
     {
-        if (!$this->application instanceof Application) {
-            $this->loadApplication();
+        try {
+            if (!$this->application instanceof Application) {
+                $this->loadApplication();
+            }
+
+            $authenticationApi = new AuthenticationApi($this->application, $this->getUri(), 'openid profile read:current_user', []);
+            $tokenInfo = $authenticationApi->getUser();
+            $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $this->application);
+            $auth0User = $managementApi->getUserById($tokenInfo['sub']);
+
+            // Update existing user on every login
+            $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, 'fe_users', $auth0User);
+            $updateUtility->updateUser();
+            $updateUtility->updateGroups();
+        } catch (\Exception $exception) {
+            $this->logger->warning(
+                sprintf(
+                    'Updating user failed with following message: %s (%s)',
+                    $exception->getMessage(),
+                    $exception->getCode()
+                )
+            );
         }
-
-        $authenticationApi = new AuthenticationApi($this->application, $this->getUri(), 'openid profile read:current_user', []);
-        $tokenInfo = $authenticationApi->getUser();
-        $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $this->application);
-        $auth0User = $managementApi->getUserById($tokenInfo['sub']);
-
-        // Update existing user on every login
-        $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, 'fe_users', $auth0User);
-        $updateUtility->updateUser();
-        $updateUtility->updateGroups();
     }
 }
