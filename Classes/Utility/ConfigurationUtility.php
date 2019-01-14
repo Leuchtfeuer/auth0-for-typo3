@@ -21,9 +21,6 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 class ConfigurationUtility implements SingletonInterface
 {
-    /**
-     * @var array
-     */
     protected static $settings = [];
 
     /**
@@ -77,5 +74,10 @@ class ConfigurationUtility implements SingletonInterface
         }
 
         throw new InvalidConfigurationTypeException(sprintf('No Configuration for %s found.', $key), 1528561132);
+    }
+
+    public static function isLoaded(): bool
+    {
+        return (empty(self::$settings)) ? false : true;
     }
 }
