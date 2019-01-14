@@ -14,12 +14,11 @@ namespace Bitmotion\Auth0\Utility\Database;
  ***/
 
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
+use Bitmotion\Auth0\Domain\Repository\UserRepository;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use Bitmotion\Auth0\Utility\ParseFuncUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class UpdateUtility implements LoggerAwareInterface
@@ -126,55 +125,44 @@ class UpdateUtility implements LoggerAwareInterface
 
     protected function performGroupUpdate(array $groupsToAssign, bool $isBeAdmin)
     {
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableName);
-        $queryBuilder->update($this->tableName);
+        $updates = [];
 
         // Update usergroup in database
         if (!empty($groupsToAssign)) {
-            $queryBuilder->set('usergroup', implode(',', $groupsToAssign));
+            $updates['usergroup'] = implode(',', $groupsToAssign);
         }
 
         // Set admin flag for backend users
         if ($this->tableName === 'be_users') {
-            $queryBuilder->set('admin', (int)$isBeAdmin);
+            $updates['admin'] = (int)$isBeAdmin;
         }
 
-        $queryBuilder
-            ->andWhere(
-                $queryBuilder->expr()->eq(
-                    'auth0_user_id',
-                    $queryBuilder->createNamedParameter($this->user['user_id'])
-                )
-            )->execute();
+        if (!empty($updates)) {
+            $userRepository = GeneralUtility::makeInstance(UserRepository::class, $this->tableName);
+            $userRepository->updateUserByAuth0Id($updates, $this->user['user_id']);
+        }
     }
 
     protected function performUserUpdate(array $mappingConfiguration, bool $reactivateUser)
     {
         $this->logger->debug(sprintf('%s: Prepare update for Auth0 user "%s"', $this->tableName, $this->user['user_id']));
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableName);
-        $queryBuilder->update($this->tableName);
 
-        $this->mapUserData($queryBuilder, $mappingConfiguration);
+        $updates = [];
+        $userRepository = GeneralUtility::makeInstance(UserRepository::class, $this->tableName);
+
+        $this->mapUserData($updates, $mappingConfiguration);
 
         // Fixed values
         if ($reactivateUser) {
-            $queryBuilder->set('disable', 0);
-            $queryBuilder->set('deleted', 0);
+            $updates['disable'] = 0;
+            $updates['deleted'] = 0;
         }
 
-        $queryBuilder->where(
-            $queryBuilder->expr()->eq(
-                'auth0_user_id',
-                $queryBuilder->createNamedParameter($this->user['user_id'])
-            )
-        );
-
-        $this->checkForRestrictions($queryBuilder);
-        $this->logger->debug(sprintf('%s: Executing query: %s', $this->tableName, $queryBuilder->getSQL()));
-        $queryBuilder->execute();
+        $this->addRestrictions($userRepository);
+        $userRepository->updateUserByAuth0Id($updates, $this->user['user_id']);
     }
 
-    protected function checkForRestrictions(QueryBuilder &$queryBuilder)
+    protected function addRestrictions(UserRepository &$userRepository)
     {
         $emConfiguration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
         $reactivateDeleted = false;
@@ -190,43 +178,31 @@ class UpdateUtility implements LoggerAwareInterface
             $this->logger->notice('Undefined environment');
         }
 
-        $this->addRestrictions($queryBuilder, $reactivateDisabled, $reactivateDeleted);
-    }
-
-    protected function addRestrictions(QueryBuilder &$queryBuilder, bool $reactivateDisabled, bool $reactivateDeleted)
-    {
-        $expressionBuilder = $queryBuilder->expr();
-
         if ($reactivateDeleted === false) {
-            $queryBuilder->andWhere(
-                $expressionBuilder->eq(
-                    'deleted',
-                    $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
-                )
-            );
+            $userRepository->addDeletedRestriction();
         }
 
         if ($reactivateDisabled === false) {
-            $queryBuilder->andWhere(
-                $expressionBuilder->eq(
-                    'disable',
-                    $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
-                )
-            );
+            $userRepository->addDisabledRestriction();
         }
     }
 
-    protected function mapUserData(QueryBuilder &$queryBuilder, array $mappingConfiguration)
+    protected function mapUserData(array &$updates, array $mappingConfiguration)
     {
         $this->parseFuncUtility = $parseFuncUtility = GeneralUtility::makeInstance(ParseFuncUtility::class);
+        $value = false;
 
         foreach ($mappingConfiguration as $typo3FieldName => $auth0FieldName) {
             if (!is_array($auth0FieldName)) {
                 // Update without parsing function
-                $this->parseFuncUtility->updateWithoutParseFunc($queryBuilder, $typo3FieldName, $auth0FieldName, $this->user);
+                $value = $this->parseFuncUtility->updateWithoutParseFunc($auth0FieldName, $this->user);
             } elseif (is_array($auth0FieldName) && isset($auth0FieldName[self::TYPO_SCRIPT_NODE_VALUE])) {
                 // Update with parsing function
-                $this->parseFuncUtility->updateWithParseFunc($queryBuilder, $typo3FieldName, $auth0FieldName, $this->user);
+                $value = $this->parseFuncUtility->updateWithParseFunc($typo3FieldName, $auth0FieldName, $this->user);
+            }
+
+            if ($value !== false) {
+                $updates[$typo3FieldName] = $value;
             }
         }
     }

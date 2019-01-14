@@ -5,7 +5,6 @@ namespace Bitmotion\Auth0\Utility;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\SingletonInterface;
 
 class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
@@ -14,46 +13,38 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
 
     const PARSING_FUNCTION = 'parseFunc';
 
-    public function updateWithParseFunc(QueryBuilder &$queryBuilder, string $typo3FieldName, array $auth0FieldName, array $user)
+    public function updateWithParseFunc(string $typo3FieldName, array $auth0FieldName, array $user)
     {
         $fieldName = $auth0FieldName[UpdateUtility::TYPO_SCRIPT_NODE_VALUE];
         $value = '';
-        $debugMessage = '';
-        $update = false;
 
         if (isset($user[$fieldName]) && isset($auth0FieldName[self::PARSING_FUNCTION])) {
             $value = $this->handleParseFunc($auth0FieldName[self::PARSING_FUNCTION], $user[$fieldName]);
-            $debugMessage = sprintf('Set dynamic value "%s" for "%s"', $value, $typo3FieldName);
-            $update = true;
+            $this->logger->debug(sprintf('Set dynamic value "%s" for "%s"', $value, $typo3FieldName));
         } elseif (strpos($auth0FieldName[UpdateUtility::TYPO_SCRIPT_NODE_VALUE], 'user_metadata') !== false) {
             $value = $this->getValueFromMetadata($auth0FieldName, $user);
-            $debugMessage = sprintf('Set dynamic value "%s" for "%s" from metadata.', $value, $typo3FieldName);
-            $update = true;
+            $this->logger->debug(sprintf('Set dynamic value "%s" for "%s" from metadata.', $value, $typo3FieldName));
         } elseif (isset($user[$typo3FieldName]) && isset($auth0FieldName[self::PARSING_FUNCTION]) && $auth0FieldName[self::PARSING_FUNCTION] === 'const') {
             $value = $auth0FieldName[UpdateUtility::TYPO_SCRIPT_NODE_VALUE];
-            $debugMessage = sprintf('Set static value "%s" for "%s"', $value, $typo3FieldName);
-            $update = true;
+            $this->logger->debug(sprintf('Set static value "%s" for "%s"', $value, $typo3FieldName));
         }
 
-        if ($update === true) {
-            $this->logger->debug($debugMessage);
-            $queryBuilder->set($typo3FieldName, $value);
+        if ($value !== '') {
+            return $value;
         }
+
+        return false;
     }
 
-    public function updateWithoutParseFunc(QueryBuilder &$queryBuilder, string $typo3FieldName, string $auth0FieldName, array $user)
+    public function updateWithoutParseFunc(string $auth0FieldName, array $user)
     {
         if (isset($user[$auth0FieldName])) {
-            $queryBuilder->set(
-                $typo3FieldName,
-                $user[$auth0FieldName]
-            );
+            return $user[$auth0FieldName];
         } elseif (strpos($auth0FieldName, 'user_metadata') !== false) {
-            $queryBuilder->set(
-                $typo3FieldName,
-                $this->getAuth0ValueRecursive($user, explode('.', $auth0FieldName))
-            );
+            return $this->getAuth0ValueRecursive($user, explode('.', $auth0FieldName));
         }
+
+        return false;
     }
 
     protected function getAuth0ValueRecursive(array $user, array $properties): string
@@ -91,7 +82,7 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
                 break;
 
             case 'bool':
-                $value = (bool)$value;
+                $value = (int)(bool)$value;
                 break;
 
             case 'negate':

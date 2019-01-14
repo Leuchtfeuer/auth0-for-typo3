@@ -13,17 +13,13 @@ namespace Bitmotion\Auth0\Utility;
  *
  ***/
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
+use Bitmotion\Auth0\Domain\Repository\UserRepository;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Crypto\Random;
-use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Database\Query\QueryBuilder;
-use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
-use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Service\EnvironmentService;
 
 class UserUtility implements SingletonInterface, LoggerAwareInterface
 {
@@ -31,13 +27,8 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
 
     public function checkIfUserExists(string $tableName, string $auth0UserId): array
     {
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
-        $user = $queryBuilder
-            ->select('*')
-            ->from($tableName)
-            ->where($queryBuilder->expr()->eq('auth0_user_id', $queryBuilder->createNamedParameter($auth0UserId)))
-            ->execute()
-            ->fetch();
+        $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
+        $user = $userRepository->getUserByAuth0Id($auth0UserId);
 
         return (empty($user)) ? $this->findUserWithoutRestrictions($tableName, $auth0UserId) : $user;
     }
@@ -45,60 +36,20 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     protected function findUserWithoutRestrictions(string $tableName, string $auth0UserId)
     {
         $this->logger->notice('Try to find user without restrictions.');
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
-
-        try {
-            $this->removeRestrictions($queryBuilder);
-        } catch (\Exception $exception) {
-            $this->logger->warning($exception->getCode() . ': ' . $exception->getMessage());
-        }
-
-        $user = $queryBuilder
-            ->select('*')
-            ->from($tableName)
-            ->where(
-                $queryBuilder->expr()->eq('auth0_user_id', $queryBuilder->createNamedParameter($auth0UserId))
-            )->orderBy('uid', 'DESC')
-            ->setMaxResults(1)
-            ->execute()
-            ->fetch();
+        $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
+        $userRepository->removeRestrictions();
+        $userRepository->setOrdering('uid', 'DESC');
+        $userRepository->setMaxResults(1);
+        $user = $userRepository->getUserByAuth0Id($auth0UserId);
 
         if (!empty($user)) {
-            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
-            $queryBuilder
-                ->update($tableName)
-                ->set('deleted', 0)
-                ->set('disable', 0)
-                ->where($queryBuilder->expr()->eq('uid', $user['uid']))
-                ->execute();
+            $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
+            $userRepository->updateUserByUid(['disable' => 0, 'deleted' => 0], (int)$user['uid']);
+
             $this->logger->notice(sprintf('Reactivated user with ID %s.', $user['uid']));
         }
 
         return $user;
-    }
-
-    protected function removeRestrictions(QueryBuilder &$queryBuilder)
-    {
-        $environmentService = GeneralUtility::makeInstance(EnvironmentService::class);
-        $emConfiguration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
-
-        if ($environmentService->isEnvironmentInFrontendMode()) {
-            if ($emConfiguration->getReactivateDeletedFrontendUsers()) {
-                $queryBuilder->getRestrictions()->removeByType(DeletedRestriction::class);
-            }
-            if ($emConfiguration->getReactivateDisabledFrontendUsers()) {
-                $queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
-            }
-        } elseif ($environmentService->isEnvironmentInBackendMode()) {
-            if ($emConfiguration->getReactivateDeletedBackendUsers()) {
-                $queryBuilder->getRestrictions()->removeByType(DeletedRestriction::class);
-            }
-            if ($emConfiguration->getReactivateDisabledBackendUsers()) {
-                $queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
-            }
-        } else {
-            $this->logger->notice('Undefined environment');
-        }
     }
 
     /**
@@ -130,22 +81,18 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     public function insertFeUser(string $tableName, array $auth0User)
     {
         $emConfiguration = new EmAuth0Configuration();
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
-        $queryBuilder
-            ->insert($tableName)
-            ->values(
-                [
-                    'tx_extbase_type' => 'Tx_Auth0_FrontendUser',
-                    'pid' => $emConfiguration->getUserStoragePage(),
-                    'tstamp' => time(),
-                    'username' => $auth0User['email'],
-                    'password' => $this->getPassword(),
-                    'email' => $auth0User['email'],
-                    'crdate' => time(),
-                    'auth0_user_id' => $auth0User['user_id'],
-                    'auth0_metadata' => \GuzzleHttp\json_encode($auth0User['user_metadata']),
-                ]
-            )->execute();
+        $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
+        $userRepository->insertUser([
+            'tx_extbase_type' => 'Tx_Auth0_FrontendUser',
+            'pid' => $emConfiguration->getUserStoragePage(),
+            'tstamp' => time(),
+            'username' => $auth0User['email'],
+            'password' => $this->getPassword(),
+            'email' => $auth0User['email'],
+            'crdate' => time(),
+            'auth0_user_id' => $auth0User['user_id'],
+            'auth0_metadata' => \GuzzleHttp\json_encode($auth0User['user_metadata']),
+        ]);
     }
 
     /**
@@ -155,20 +102,16 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      */
     public function insertBeUser(string $tableName, array $auth0User)
     {
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
-        $queryBuilder
-            ->insert($tableName)
-            ->values(
-                [
-                    'pid' => 0,
-                    'tstamp' => time(),
-                    'username' => $auth0User['email'],
-                    'password' => $this->getPassword(),
-                    'email' => $auth0User['email'],
-                    'crdate' => time(),
-                    'auth0_user_id' => $auth0User['user_id'],
-                ]
-            )->execute();
+        $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
+        $userRepository->insertUser([
+            'pid' => 0,
+            'tstamp' => time(),
+            'username' => $auth0User['email'],
+            'password' => $this->getPassword(),
+            'email' => $auth0User['email'],
+            'crdate' => time(),
+            'auth0_user_id' => $auth0User['user_id'],
+        ]);
     }
 
     /**
