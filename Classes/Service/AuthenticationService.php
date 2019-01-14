@@ -61,6 +61,11 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     protected $environmentService;
 
     /**
+     * @var AuthenticationApi
+     */
+    protected $authenticationApi;
+
+    /**
      * @param string                                                    $mode
      * @param array                                                     $loginData
      * @param array                                                     $authInfo
@@ -88,9 +93,11 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
 
             // Handle login for frontend or backend
             if ($mode === 'getUserFE' && !empty($loginData)) {
+                $this->logger->notice('Handle Auth0 login for frontend users');
                 $this->tableName = 'fe_users';
                 $this->insertOrUpdateUser();
             } elseif ($mode === 'getUserBE' && !empty($loginData)) {
+                $this->logger->notice('Handle Auth0 login for backend users');
                 $this->tableName = 'be_users';
                 $this->insertOrUpdateUser();
             }
@@ -111,6 +118,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
 
         // Insert a new user into database
         if (empty($this->user)) {
+            $this->logger->notice('Insert new user.');
             $userUtility->insertUser($this->tableName, $this->auth0User);
         }
 
@@ -133,43 +141,65 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     {
         if ($this->environmentService->isEnvironmentInBackendMode() && GeneralUtility::_GP('loginProvider') != '1526966635') {
             // Not an Auth0 login
+            $this->logger->notice('Not an Auth0 login. Skip.');
+
             return false;
         }
 
-        if ($this->environmentService->isEnvironmentInFrontendMode()) {
-            $applicationUid = (int)GeneralUtility::_GP('application');
-
-            // No application uid found in request - skip.
-            if ($applicationUid === 0) {
-                return false;
-            }
-        } else {
-            $emConfiguration = new EmAuth0Configuration();
-            $applicationUid = $emConfiguration->getBackendConnection();
+        $applicationUid = $this->getApplicationUid();
+        if ($applicationUid === 0) {
+            return false;
         }
 
         try {
             $application = ApplicationUtility::getApplication($applicationUid);
-            $authenticationApi = new AuthenticationApi(
-                $application,
-                // TODO: Use proper redirect uri for FE requests
-                GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/typo3/?loginProvider=1526966635&login=1',
-                'read:current_user openid profile'
-            );
-            $this->tokenInfo = $authenticationApi->getUser();
+            $this->authenticationApi = new AuthenticationApi(
+                    $application,
+                    // TODO: Use proper redirect uri for FE requests
+                    GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/typo3/?loginProvider=1526966635&login=1',
+                    'read:current_user openid profile'
+                );
+            $this->tokenInfo = $this->authenticationApi->getUser();
             $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $application);
             $this->auth0User = $managementApi->getUserById($this->tokenInfo['sub']);
 
             if (isset($this->auth0User['error'])) {
+                $this->logger->error('No Auth0 user found.');
+
                 return false;
             }
 
+            $this->logger->notice(sprintf('User found: %s', $this->auth0User['email']));
+
             return true;
         } catch (InvalidApplicationException $exception) {
-            // Do nothing
+            $this->logger->emergency(sprintf('Error %s: %s', $exception->getCode(), $exception->getMessage()));
         }
 
         return false;
+    }
+
+    protected function getApplicationUid()
+    {
+        $applicationUid = 0;
+
+        if ($this->environmentService->isEnvironmentInFrontendMode()) {
+            $this->logger->notice('Handle frontend login.');
+            $applicationUid = (int)GeneralUtility::_GP('application');
+
+            // No application uid found in request - skip.
+            if ($applicationUid === 0) {
+                $this->logger->error('No Auth0 application UID given.');
+            }
+        } elseif ($this->environmentService->isEnvironmentInBackendMode()) {
+            $this->logger->notice('Handle backend login.');
+            $emConfiguration = new EmAuth0Configuration();
+            $applicationUid = $emConfiguration->getBackendConnection();
+        } else {
+            $this->logger->error('Environment is neither in frontend nor in backend Mode');
+        }
+
+        return $applicationUid;
     }
 
     /**
@@ -184,10 +214,14 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         $user = $this->fetchUserRecord($this->login['uname'], 'auth0_user_id = "' . $this->tokenInfo['sub'] . '"');
 
         if (!is_array($user)) {
-            // Failed login attempt (no username found)
-            $this->writelog(255, 3, 3, 2, 'Login-attempt from %s (%s), username \'%s\' not found!!', [$this->authInfo['REMOTE_ADDR'], $this->authInfo['REMOTE_HOST'], $this->login['uname']]);
-            // Logout written to log
-            $this->logger->warning(sprintf('Login-attempt from %s, for username \'%s\' with an empty password!', $this->authInfo['REMOTE_ADDR'], $this->login['uname']));
+            if ($this->auth0User !== null) {
+                $this->authenticationApi->deleteAllPersistentData();
+            }
+
+            $this->writelog(255, 3, 3, 2, 'Login-attempt from ###IP###, username \'%s\' not found!!', [$this->login['uname']]);
+            $this->logger->info('Login-atttttttempt from username \'' . $this->login['uname'] . '\' not found!', [
+                'REMOTE_ADDR' => $this->authInfo['REMOTE_ADDR'],
+            ]);
         }
 
         return $user;
@@ -199,14 +233,20 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         if ($user['auth0_user_id'] !== '' && $user['auth0_user_id'] == $this->tokenInfo['sub']) {
             // Do not login if email address is not verified
             if ($this->auth0User['email_verified'] === false && ($this->mode === 'getUserBE' || (bool)$this->auth0Data['loginIfMailIsNotVerified'] === false)) {
+                $this->logger->notice('Email not verified. Do not login user.');
+
                 return 0;
             }
 
             // Success
+            $this->logger->notice(sprintf('Auth0 User %s (UID: %s) successfully logged in.', $user['auth0_user_id'], $user['uid']));
+
             return 200;
         }
 
         // Service is not responsible for login request
+        $this->logger->notice('Auth0 service is not responsible for this request.');
+
         return 100;
     }
 }

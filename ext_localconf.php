@@ -54,8 +54,8 @@ $overrulingPriority = $highestPriority + 10;
     'auth',
     \Bitmotion\Auth0\Service\AuthenticationService::class,
     [
-        'title' => 'Auth0 Authorization',
-        'description' => 'Authorizes the auth0 user to access protected pages.',
+        'title' => 'Auth0 Authentication',
+        'description' => 'Authenticates with Auth0 credentials.',
         'subtype' => $subtypes,
         'available' => true,
         'priority' => $overrulingPriority,
