@@ -17,24 +17,5 @@ plugin.tx_auth0 {
                 stylesheet = EXT:auth0/Resources/Public/Styles/backend.css
             }
         }
-
-        reactivateUsers {
-            be_users {
-                # if active, sets the disable flag to 0 when user tries to login again
-                disabled = 0
-
-                # if active, sets the deleted flag to 0 when user tries to login again
-                deleted = 0
-            }
-
-            fe_users {
-                # if active, sets the disable flag to 0 when user tries to login again
-                disabled = 1
-
-                # if active, sets the deleted flag to 0 when user tries to login again
-                deleted = 1
-            }
-        }
-
     }
 }

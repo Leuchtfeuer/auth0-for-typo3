@@ -4,5 +4,17 @@ enableBackendLogin = 0
 # cat=Backend/20; type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.connection
 backendConnection = 1
 
+# cat=Backend/30; type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.connection
+reactivateDisabledBackendUsers = 0
+
+# cat=Backend/40; type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.connection
+reactivateDeletedBackendUsers = 0
+
 # cat=Frontend/10 type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:frontend.pid
 userStoragePage = 0
+
+# cat=Frontend/20; type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.connection
+reactivateDisabledFrontendUsers = 1
+
+# cat=Frontend/30; type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.connection
+reactivateDeletedFrontendUsers = 1

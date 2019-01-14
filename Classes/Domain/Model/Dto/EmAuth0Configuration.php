@@ -35,6 +35,26 @@ class EmAuth0Configuration implements SingletonInterface
     protected $userStoragePage = 0;
 
     /**
+     * @var int
+     */
+    protected $reactivateDisabledBackendUsers = 0;
+
+    /**
+     * @var int
+     */
+    protected $reactivateDeletedBackendUsers = 0;
+
+    /**
+     * @var int
+     */
+    protected $reactivateDisabledFrontendUsers = 1;
+
+    /**
+     * @var int
+     */
+    protected $reactivateDeletedFrontendUsers = 1;
+
+    /**
      * EmAuth0Configuration constructor.
      *
      * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
@@ -70,5 +90,25 @@ class EmAuth0Configuration implements SingletonInterface
     public function getUserStoragePage(): int
     {
         return (int)$this->userStoragePage;
+    }
+
+    public function getReactivateDisabledBackendUsers(): bool
+    {
+        return (bool)$this->reactivateDisabledBackendUsers;
+    }
+
+    public function getReactivateDeletedBackendUsers(): bool
+    {
+        return (bool)$this->reactivateDeletedBackendUsers;
+    }
+
+    public function getReactivateDisabledFrontendUsers(): bool
+    {
+        return (bool)$this->reactivateDisabledFrontendUsers;
+    }
+
+    public function getReactivateDeletedFrontendUsers(): bool
+    {
+        return (bool)$this->reactivateDeletedFrontendUsers;
     }
 }

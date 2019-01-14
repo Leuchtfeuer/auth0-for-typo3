@@ -12,6 +12,7 @@ namespace Bitmotion\Auth0\Service;
  *  (c) 2018 Florian Wessels <f.wessels@bitmotion.de>, Bitmotion GmbH
  *
  ***/
+
 use Bitmotion\Auth0\Api\AuthenticationApi;
 use Bitmotion\Auth0\Api\ManagementApi;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;

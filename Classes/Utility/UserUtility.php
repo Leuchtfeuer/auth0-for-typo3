@@ -18,10 +18,12 @@ use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Crypto\Random;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Service\EnvironmentService;
 
 class UserUtility implements SingletonInterface, LoggerAwareInterface
 {
@@ -32,17 +34,9 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
 
         try {
-            // Find also disabled users. The database update is handled by UpdateUtility.
-            if (ConfigurationUtility::getSetting('reactivateUsers', $tableName, 'disabled') == 1) {
-                $queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
-            }
-
-            // Find also deleted users. The database update is handled by UpdateUtility.
-            if (ConfigurationUtility::getSetting('reactivateUsers', $tableName, 'deleted') == 1) {
-                $queryBuilder->getRestrictions()->removeByType(DeletedRestriction::class);
-            }
+            $this->removeRestrictions($queryBuilder);
         } catch (\Exception $exception) {
-            $this->logger->error($exception->getCode() . ': ' . $exception->getMessage());
+            $this->logger->warning($exception->getCode() . ': ' . $exception->getMessage());
         }
 
         $user = $queryBuilder
@@ -54,6 +48,30 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             ->fetch();
 
         return $user ? $user : [];
+    }
+
+    protected function removeRestrictions(QueryBuilder &$queryBuilder)
+    {
+        $environmentService = GeneralUtility::makeInstance(EnvironmentService::class);
+        $emConfiguration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
+
+        if ($environmentService->isEnvironmentInFrontendMode()) {
+            if ($emConfiguration->getReactivateDeletedFrontendUsers()) {
+                $queryBuilder->getRestrictions()->removeByType(DeletedRestriction::class);
+            }
+            if ($emConfiguration->getReactivateDisabledFrontendUsers()) {
+                $queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
+            }
+        } elseif ($environmentService->isEnvironmentInBackendMode()) {
+            if ($emConfiguration->getReactivateDeletedBackendUsers()) {
+                $queryBuilder->getRestrictions()->removeByType(DeletedRestriction::class);
+            }
+            if ($emConfiguration->getReactivateDisabledBackendUsers()) {
+                $queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
+            }
+        } else {
+            $this->logger->notice('Undefined environment');
+        }
     }
 
     /**

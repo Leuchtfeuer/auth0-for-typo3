@@ -27,19 +27,6 @@ plugin.tx_auth0 {
             }
         }
 
-        reactivateUsers {
-            be_users {
-                disabled = {$plugin.tx_auth0.settings.reactivateUsers.be_users.disabled}
-                deleted = {$plugin.tx_auth0.settings.reactivateUsers.be_users.deleted}
-            }
-
-            fe_users {
-                disabled = {$plugin.tx_auth0.settings.reactivateUsers.fe_users.disabled}
-                deleted = {$plugin.tx_auth0.settings.reactivateUsers.fe_users.deleted}
-            }
-        }
-
-
         # maps auth0 roles to TYPO3 fe_groups or be_groups
         roles {
 
