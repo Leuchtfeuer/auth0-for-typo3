@@ -76,8 +76,15 @@ class ConfigurationUtility implements SingletonInterface
         throw new InvalidConfigurationTypeException(sprintf('No Configuration for %s found.', $key), 1528561132);
     }
 
+    /**
+     * @throws InvalidConfigurationTypeException
+     */
     public static function isLoaded(): bool
     {
+        if (empty(self::$settings)) {
+            self::makeInstance();
+        }
+
         return (empty(self::$settings)) ? false : true;
     }
 }

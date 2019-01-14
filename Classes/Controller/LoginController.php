@@ -19,7 +19,6 @@ use Bitmotion\Auth0\Api\AuthenticationApi;
 use Bitmotion\Auth0\Api\ManagementApi;
 use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
-use Bitmotion\Auth0\Exception\InvalidConfigurationValueException;
 use Bitmotion\Auth0\Service\RedirectService;
 use Bitmotion\Auth0\Utility\ApplicationUtility;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
@@ -27,6 +26,7 @@ use Bitmotion\Auth0\Utility\UpdateUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 
@@ -42,12 +42,12 @@ class LoginController extends ActionController implements LoggerAwareInterface
     protected $application;
 
     /**
-     * @throws InvalidConfigurationValueException
+     * @throws InvalidConfigurationTypeException
      */
     public function initializeAction()
     {
         if (!ConfigurationUtility::isLoaded()) {
-            throw new InvalidConfigurationValueException('No TypoScript found.', 1547449321);
+            throw new InvalidConfigurationTypeException('No TypoScript found.', 1547449321);
         }
     }
 

@@ -65,3 +65,11 @@ $overrulingPriority = $highestPriority + 10;
         'className' => \Bitmotion\Auth0\Service\AuthenticationService::class
     ]
 );
+
+$signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
+$signalSlotDispatcher->connect(
+    \TYPO3\CMS\Extensionmanager\Utility\InstallUtility::class,
+    'afterExtensionInstall',
+    \Bitmotion\Auth0\Slots\ConfigurationSlot::class,
+    'addCacheHashExcludedParameters'
+);

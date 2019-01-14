@@ -27,6 +27,12 @@ If your TYPO3 is not in composer mode, you can install this extension in your ex
 
 Please make sure that you include all TypoScript files.
 
+### Global Configuration ###
+You have to add following parameters to the
+`['FE][cacheHash][excludedParameters]` option: `code` and `state`.<br/>
+On the first installation, the extension will do that for you.
+
+
 ### Extension Configuration ###
 #### Backend ####
 You should create an [application](#applicatioin-record) before you
