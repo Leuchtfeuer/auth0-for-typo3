@@ -53,21 +53,21 @@ class UpdateUtility implements LoggerAwareInterface
         }
 
         if (empty($groupMapping)) {
-            $this->logger->notice(sprintf('Cannot update user groups: No role mapping for %s found', $this->tableName));
+            $this->logger->error(sprintf('Cannot update user groups: No role mapping for %s found', $this->tableName));
 
             return;
         }
 
+        $shouldUpdate = false;
+        $isBeAdmin = false;
+        $groupsToAssign = [];
+
         // Map Auth0 roles on TYPO3 user groups
-        $this->mapRoles(
-            $groupMapping,
-            $groupsToAssign = [],
-            $isBeAdmin = false,
-            $shouldUpdate = false
-        );
+        $this->mapRoles($groupMapping, $groupsToAssign, $isBeAdmin, $shouldUpdate);
 
         // Update user only if necessary
         if ($shouldUpdate === true) {
+            $this->logger->notice('Update user groups.');
             $this->performGroupUpdate($groupsToAssign, $isBeAdmin);
         }
     }
@@ -84,7 +84,7 @@ class UpdateUtility implements LoggerAwareInterface
         }
 
         if (empty($mappingConfiguration)) {
-            $this->logger->notice(
+            $this->logger->error(
                 sprintf(
                     'Cannot update user: No mapping configuration for %s found',
                     $this->tableName
@@ -112,9 +112,12 @@ class UpdateUtility implements LoggerAwareInterface
                 if ($this->tableName === 'be_users' && $groupMapping[$role] === 'admin') {
                     $isBeAdmin = true;
                 } else {
+                    $this->logger->notice(sprintf('Assign group "%s" to user.', $groupMapping[$role]));
                     $groupsToAssign[] = $groupMapping[$role];
                 }
                 $shouldUpdate = true;
+            } else {
+                $this->logger->warning(sprintf('No mapping for Auth0 role "%s" found.', $role));
             }
         }
     }
@@ -148,7 +151,7 @@ class UpdateUtility implements LoggerAwareInterface
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableName);
         $queryBuilder->update($this->tableName);
 
-        $this->mapUserData($mappingConfiguration);
+        $this->mapUserData($queryBuilder, $mappingConfiguration);
 
         // Fixed values
         $queryBuilder->set('disable', 0);
@@ -164,7 +167,7 @@ class UpdateUtility implements LoggerAwareInterface
         $queryBuilder->execute();
     }
 
-    protected function mapUserData(array $mappingConfiguration)
+    protected function mapUserData(QueryBuilder &$queryBuilder, array $mappingConfiguration)
     {
         foreach ($mappingConfiguration as $typo3FieldName => $auth0FieldName) {
             if (!is_array($auth0FieldName)) {
@@ -214,6 +217,7 @@ class UpdateUtility implements LoggerAwareInterface
     protected function updateWithParseFunc(QueryBuilder &$queryBuilder, string $typo3FieldName, array $auth0FieldName)
     {
         $fieldName = $auth0FieldName[self::TYPO_SCRIPT_NODE_VALUE];
+
         if (isset($this->user[$fieldName])) {
             if (isset($auth0FieldName[self::PARSING_FUNCTION])) {
                 $queryBuilder->set(
@@ -231,6 +235,11 @@ class UpdateUtility implements LoggerAwareInterface
                         explode('.', $auth0FieldName[self::TYPO_SCRIPT_NODE_VALUE])
                     )
                 )
+            );
+        } elseif (isset($this->user[$typo3FieldName]) && isset($auth0FieldName[self::PARSING_FUNCTION]) && $auth0FieldName[self::PARSING_FUNCTION] === 'const') {
+            $queryBuilder->set(
+                $typo3FieldName,
+                $auth0FieldName[self::TYPO_SCRIPT_NODE_VALUE]
             );
         }
     }
