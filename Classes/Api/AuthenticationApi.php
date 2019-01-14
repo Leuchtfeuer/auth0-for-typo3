@@ -19,17 +19,10 @@ use Bitmotion\Auth0\Domain\Model\Application;
 class AuthenticationApi extends Auth0
 {
     /**
-     * @var Application
-     */
-    protected $application;
-
-    /**
      * @throws \Auth0\SDK\Exception\CoreException
      */
     public function __construct(Application $application, string $redirectUri = '', string $scope = '', array $additionalOptions = [])
     {
-        $this->application = $application;
-
         $config = [
             'domain' => $application->getDomain(),
             'client_id' => $application->getId(),
@@ -43,10 +36,5 @@ class AuthenticationApi extends Auth0
         ];
 
         parent::__construct(array_merge($config, $additionalOptions));
-    }
-
-    public function getApplication(): Application
-    {
-        return $this->application;
     }
 }

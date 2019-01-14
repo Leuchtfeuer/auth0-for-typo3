@@ -13,12 +13,10 @@ namespace Bitmotion\Auth0\Utility;
  *
  ***/
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
-use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Crypto\Random;
-use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
