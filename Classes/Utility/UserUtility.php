@@ -13,10 +13,12 @@ namespace Bitmotion\Auth0\Utility;
  *
  ***/
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
+use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Crypto\Random;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
@@ -32,6 +34,20 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     public function checkIfUserExists(string $tableName, string $auth0UserId): array
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
+        $user = $queryBuilder
+            ->select('*')
+            ->from($tableName)
+            ->where($queryBuilder->expr()->eq('auth0_user_id', $queryBuilder->createNamedParameter($auth0UserId)))
+            ->execute()
+            ->fetch();
+
+        return (empty($user)) ? $this->findUserWithoutRestrictions($tableName, $auth0UserId) : $user;
+    }
+
+    protected function findUserWithoutRestrictions(string $tableName, string $auth0UserId)
+    {
+        $this->logger->notice('Try to find user without restrictions.');
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
 
         try {
             $this->removeRestrictions($queryBuilder);
@@ -44,10 +60,23 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             ->from($tableName)
             ->where(
                 $queryBuilder->expr()->eq('auth0_user_id', $queryBuilder->createNamedParameter($auth0UserId))
-            )->execute()
+            )->orderBy('uid', 'DESC')
+            ->setMaxResults(1)
+            ->execute()
             ->fetch();
 
-        return $user ? $user : [];
+        if (!empty($user)) {
+            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
+            $queryBuilder
+                ->update($tableName)
+                ->set('deleted', 0)
+                ->set('disable', 0)
+                ->where($queryBuilder->expr()->eq('uid', $user['uid']))
+                ->execute();
+            $this->logger->notice(sprintf('Reactivated user with ID %s.', $user['uid']));
+        }
+
+        return $user;
     }
 
     protected function removeRestrictions(QueryBuilder &$queryBuilder)

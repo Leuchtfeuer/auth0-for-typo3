@@ -79,7 +79,7 @@ class UpdateUtility implements LoggerAwareInterface
         }
     }
 
-    public function updateUser()
+    public function updateUser(bool $reactivateUser = false)
     {
         try {
             // Get mapping configuration
@@ -96,7 +96,7 @@ class UpdateUtility implements LoggerAwareInterface
             return;
         }
 
-        $this->performUserUpdate($mappingConfiguration);
+        $this->performUserUpdate($mappingConfiguration, $reactivateUser);
     }
 
     protected function mapRoles(array $groupMapping, array &$groupsToAssign, bool &$isBeAdmin, bool &$shouldUpdate)
@@ -148,7 +148,7 @@ class UpdateUtility implements LoggerAwareInterface
             )->execute();
     }
 
-    protected function performUserUpdate(array $mappingConfiguration)
+    protected function performUserUpdate(array $mappingConfiguration, bool $reactivateUser)
     {
         $this->logger->debug(sprintf('%s: Prepare update for Auth0 user "%s"', $this->tableName, $this->user['user_id']));
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableName);
@@ -157,8 +157,10 @@ class UpdateUtility implements LoggerAwareInterface
         $this->mapUserData($queryBuilder, $mappingConfiguration);
 
         // Fixed values
-        $queryBuilder->set('disable', 0);
-        $queryBuilder->set('deleted', 0);
+        if ($reactivateUser) {
+            $queryBuilder->set('disable', 0);
+            $queryBuilder->set('deleted', 0);
+        }
 
         $queryBuilder->where(
             $queryBuilder->expr()->eq(
