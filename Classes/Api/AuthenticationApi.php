@@ -14,20 +14,25 @@ namespace Bitmotion\Auth0\Api;
  ***/
 
 use Auth0\SDK\Auth0;
-use Bitmotion\Auth0\Domain\Model\Application;
+use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class AuthenticationApi extends Auth0
 {
     /**
      * @throws \Auth0\SDK\Exception\CoreException
+     * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
      */
-    public function __construct(Application $application, string $redirectUri = '', string $scope = '', array $additionalOptions = [])
+    public function __construct(int $applicationUid, string $redirectUri = '', string $scope = '', array $additionalOptions = [])
     {
+        $applicationRepository = GeneralUtility::makeInstance(ApplicationRepository::class);
+        $application = $applicationRepository->findByUid($applicationUid);
+
         $config = [
-            'domain' => $application->getDomain(),
-            'client_id' => $application->getId(),
-            'client_secret' => $application->getSecret(),
-            'audience' => 'https://' . $application->getDomain() . '/' . $application->getAudience(),
+            'domain' => $application['domain'],
+            'client_id' => $application['id'],
+            'client_secret' => $application['secret'],
+            'audience' => 'https://' . $application['domain'] . '/' . $application['audience'],
             'scope' => $scope,
             'redirect_uri' => $redirectUri,
             'persist_access_token' => true,

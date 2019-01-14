@@ -14,10 +14,7 @@ namespace Bitmotion\Auth0\Command;
  ***/
 
 use Bitmotion\Auth0\Api\ManagementApi;
-use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
-use Bitmotion\Auth0\Exception\InvalidApplicationException;
-use Bitmotion\Auth0\Utility\ApplicationUtility;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -50,11 +47,6 @@ class CleanUpCommand extends Command
      * @var array
      */
     protected $users = [];
-
-    /**
-     * @var Application
-     */
-    protected $application;
 
     /**
      * @var string
@@ -98,12 +90,6 @@ class CleanUpCommand extends Command
             return;
         }
 
-        if (!$this->setAuth0Application()) {
-            $output->writeln('<error>No Application found.</error>');
-
-            return;
-        }
-
         if ($this->setUsers()) {
             $output->writeln('<info>No users found.</info>');
         }
@@ -141,18 +127,6 @@ class CleanUpCommand extends Command
         }
 
         $this->configuration = $configuration;
-
-        return true;
-    }
-
-    protected function setAuth0Application(): bool
-    {
-        try {
-            $application = ApplicationUtility::getApplication($this->configuration->getBackendConnection());
-            $this->application = $application;
-        } catch (InvalidApplicationException $exception) {
-            return false;
-        }
 
         return true;
     }
@@ -224,7 +198,7 @@ class CleanUpCommand extends Command
      */
     protected function updateUsers(): int
     {
-        $management = GeneralUtility::makeInstance(ManagementApi::class, $this->application);
+        $management = GeneralUtility::makeInstance(ManagementApi::class, $this->configuration->getBackendConnection());
         $userCount = 0;
 
         foreach ($this->users as $user) {

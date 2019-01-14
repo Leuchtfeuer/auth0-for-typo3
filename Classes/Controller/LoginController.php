@@ -18,9 +18,7 @@ use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\AuthenticationApi;
 use Bitmotion\Auth0\Api\ManagementApi;
 use Bitmotion\Auth0\Domain\Model\Application;
-use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Service\RedirectService;
-use Bitmotion\Auth0\Utility\ApplicationUtility;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Psr\Log\LoggerAwareInterface;
@@ -80,6 +78,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
         if ($userInfo === null) {
             // Try to login user
+            $this->logger->notice('Try to login user.');
             $this->loginUser();
         }
 
@@ -93,7 +92,6 @@ class LoginController extends ActionController implements LoggerAwareInterface
      */
     public function logoutAction()
     {
-        $this->loadApplication();
         $this->logoutUser();
         $this->redirect('form');
     }
@@ -117,31 +115,16 @@ class LoginController extends ActionController implements LoggerAwareInterface
                 ->setTargetPageUid($GLOBALS['TSFE']->id)
                 ->setArguments([
                     'logintype' => 'login',
-                    'application' => $this->application->getUid(),
+                    'application' => (int)$this->settings['application'],
                 ])->setCreateAbsoluteUri(true)
                 ->setUseCacheHash(false)
                 ->buildFrontendUri();
     }
 
-    protected function loadApplication()
-    {
-        try {
-            $this->application = ApplicationUtility::getApplication((int)$this->settings['application']);
-        } catch (InvalidApplicationException $exception) {
-            $this->logger->critical(
-                sprintf(
-                    'Cannot instantiate Auth0 Application: %s (%s)',
-                    $exception->getMessage(),
-                    $exception->getCode()
-                )
-            );
-        }
-    }
-
     protected function getAuthenticationApi()
     {
         try {
-            return new AuthenticationApi($this->application, $this->getUri(), self::SCOPE);
+            return new AuthenticationApi((int)$this->settings['application'], $this->getUri(), self::SCOPE);
         } catch (CoreException $exception) {
             $this->logger->critical(
                 sprintf(
@@ -156,13 +139,9 @@ class LoginController extends ActionController implements LoggerAwareInterface
     protected function updateUser()
     {
         try {
-            if (!$this->application instanceof Application) {
-                $this->loadApplication();
-            }
-
             $authenticationApi = $this->getAuthenticationApi();
             $tokenInfo = $authenticationApi->getUser();
-            $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $this->application);
+            $managementApi = GeneralUtility::makeInstance(ManagementApi::class, (int)$this->settings['application']);
             $auth0User = $managementApi->getUserById($tokenInfo['sub']);
 
             // Update existing user on every login
@@ -197,7 +176,6 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
     protected function loginUser()
     {
-        $this->loadApplication();
         $authenticationApi = $this->getAuthenticationApi();
 
         try {
@@ -205,6 +183,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
             if (!$userInfo) {
                 // Try to login user to Auth0
+                $this->logger->notice('Try to login user to Auth0.');
                 $authenticationApi->login();
             }
         } catch (\Exception $exception) {

@@ -16,11 +16,12 @@ namespace Bitmotion\Auth0\Api;
 use Auth0\SDK\API\Authentication;
 use Auth0\SDK\API\Management;
 use Auth0\SDK\Exception\ApiException;
-use Bitmotion\Auth0\Domain\Model\Application;
+use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use GuzzleHttp\Exception\ClientException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ManagementApi extends Management implements SingletonInterface, LoggerAwareInterface
 {
@@ -32,28 +33,28 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
     protected $authenticationApi;
 
     /**
-     * @var Application
+     * @var array
      */
     protected $application;
 
-    public function __construct(Application $application)
+    public function __construct(int $applicationUid)
     {
-        /** @var Application $application */
-        $authenticationApi = $this->getAuthenticationApi($application);
+        $applicationRepository = GeneralUtility::makeInstance(ApplicationRepository::class);
+        $this->application = $applicationRepository->findByUid($applicationUid);
+        $authenticationApi = $this->getAuthenticationApi();
 
         try {
             $result = $authenticationApi->client_credentials([
-                'client_secret' => $application->getSecret(),
-                'client_id' => $application->getId(),
-                'audience' => 'https://' . $application->getDomain() . '/' . $application->getAudience(),
+                'client_secret' => $this->application['secret'],
+                'client_id' => $this->application['id'],
+                'audience' => 'https://' . $this->application['domain'] . '/' . $this->application['audience'],
             ]);
 
-            $this->application = $application;
             $this->authenticationApi = $authenticationApi;
 
             parent::__construct(
                 $result['access_token'],
-                $application->getDomain(),
+                $this->application['domain'],
                 [
                     'http_errors' => false,
                 ]
@@ -87,7 +88,7 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
         $allowedConnections = [];
 
         foreach ($this->getConnections() as $connection) {
-            if (in_array($this->application->getId(), $connection['enabled_clients'])) {
+            if (in_array($this->application['id'], $connection['enabled_clients'])) {
                 $allowedConnections[] = $connection;
             }
         }
@@ -103,13 +104,13 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
         return $this->users->get($userId);
     }
 
-    protected function getAuthenticationApi(Application $application): Authentication
+    protected function getAuthenticationApi(): Authentication
     {
         return new Authentication(
-            $application->getDomain(),
-            $application->getId(),
-            $application->getSecret(),
-            'https://' . $application->getDomain() . '/' . $application->getAudience()
+            $this->application['domain'],
+            $this->application['id'],
+            $this->application['secret'],
+            'https://' . $this->application['domain'] . '/' . $this->application['audience']
         );
     }
 }

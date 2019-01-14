@@ -16,7 +16,6 @@ namespace Bitmotion\Auth0\LoginProvider;
 use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\AuthenticationApi;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
-use Bitmotion\Auth0\Utility\ApplicationUtility;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use TYPO3\CMS\Backend\Controller\LoginController;
 use TYPO3\CMS\Backend\LoginProvider\LoginProviderInterface;
@@ -74,10 +73,9 @@ class Auth0Provider implements LoginProviderInterface
     {
         try {
             $configuration = new EmAuth0Configuration();
-            $application = ApplicationUtility::getApplication($configuration->getBackendConnection());
 
             $this->authentication = new AuthenticationApi(
-                $application,
+                (int)$configuration->getBackendConnection(),
                 GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'),
                 'openid profile read:current_user'
             );
