@@ -67,6 +67,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
     }
 
     /**
+     * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
      * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
      * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
      */
@@ -121,6 +122,9 @@ class LoginController extends ActionController implements LoggerAwareInterface
                 ->buildFrontendUri();
     }
 
+    /**
+     * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
+     */
     protected function getAuthenticationApi()
     {
         try {
@@ -139,8 +143,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
     protected function updateUser()
     {
         try {
-            $authenticationApi = $this->getAuthenticationApi();
-            $tokenInfo = $authenticationApi->getUser();
+            $tokenInfo = $this->getAuthenticationApi()->getUser();
             $managementApi = GeneralUtility::makeInstance(ManagementApi::class, (int)$this->settings['application']);
             $auth0User = $managementApi->getUserById($tokenInfo['sub']);
 
@@ -161,10 +164,8 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
     protected function logoutUser()
     {
-        $authenticationApi = $this->getAuthenticationApi();
-
         try {
-            $authenticationApi->logout();
+            $this->getAuthenticationApi()->logout();
         } catch (\Exception $exception) {
             // Delete user from SessionStore
             $store = new SessionStore();
@@ -174,6 +175,9 @@ class LoginController extends ActionController implements LoggerAwareInterface
         }
     }
 
+    /**
+     * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
+     */
     protected function loginUser()
     {
         $authenticationApi = $this->getAuthenticationApi();

@@ -2,6 +2,8 @@
 declare(strict_types=1);
 namespace Bitmotion\Auth0\Domain\Repository;
 
+use TYPO3\CMS\Extbase\Persistence\Repository;
+
 /***
  *
  * This file is part of the "Auth0 for TYPO3" Extension for TYPO3 CMS.
@@ -13,6 +15,6 @@ namespace Bitmotion\Auth0\Domain\Repository;
  *
  ***/
 
-class FrontendUserGroupRepository extends GeneralRepository
+class FrontendUserGroupRepository extends Repository
 {
 }

@@ -37,6 +37,9 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
      */
     protected $application;
 
+    /**
+     * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
+     */
     public function __construct(int $applicationUid)
     {
         $applicationRepository = GeneralUtility::makeInstance(ApplicationRepository::class);

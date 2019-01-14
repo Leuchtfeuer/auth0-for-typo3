@@ -44,7 +44,7 @@ class UserRepository implements LoggerAwareInterface
      */
     public function getUserByAuth0Id(string $auth0UserId): array
     {
-        return $this->queryBuilder
+        $this->queryBuilder
             ->select('*')
             ->from($this->tableName)
             ->where(
@@ -52,8 +52,9 @@ class UserRepository implements LoggerAwareInterface
                     'auth0_user_id',
                     $this->queryBuilder->createNamedParameter($auth0UserId)
                 )
-            )->execute()
-            ->fetch();
+            );
+        $this->logger->debug(sprintf('[%s] Executed SELECT query: %s', $this->tableName, $this->queryBuilder->getSQL()));
+        return $this->queryBuilder->execute()->fetch();
     }
 
     /**
@@ -67,21 +68,31 @@ class UserRepository implements LoggerAwareInterface
 
         if ($environmentService->isEnvironmentInFrontendMode()) {
             if ($emConfiguration->getReactivateDeletedFrontendUsers()) {
-                $this->queryBuilder->getRestrictions()->removeByType(DeletedRestriction::class);
+                $this->removeDeletedRestriction();
             }
             if ($emConfiguration->getReactivateDisabledFrontendUsers()) {
-                $this->queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
+                $this->removeHiddenRestriction();
             }
         } elseif ($environmentService->isEnvironmentInBackendMode()) {
             if ($emConfiguration->getReactivateDeletedBackendUsers()) {
-                $this->queryBuilder->getRestrictions()->removeByType(DeletedRestriction::class);
+                $this->removeDeletedRestriction();
             }
             if ($emConfiguration->getReactivateDisabledBackendUsers()) {
-                $this->queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
+                $this->removeHiddenRestriction();
             }
         } else {
             $this->logger->notice('Undefined environment');
         }
+    }
+
+    protected function removeHiddenRestriction() {
+        $this->queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
+        $this->logger->debug('Removed HiddenRestriction.');
+    }
+
+    protected function removeDeletedRestriction() {
+        $this->queryBuilder->getRestrictions()->removeByType(DeletedRestriction::class);
+        $this->logger->debug('Removed DeletedRestriction.');
     }
 
     /**
@@ -158,6 +169,7 @@ class UserRepository implements LoggerAwareInterface
     protected function resolveSets(array $sets)
     {
         foreach ($sets as $key => $value) {
+            $this->logger->debug(sprintf('Set property "%s" to: "%s"', $key, $value));
             $this->queryBuilder->set($key, $value);
         }
     }
@@ -167,7 +179,9 @@ class UserRepository implements LoggerAwareInterface
      */
     protected function updateUser()
     {
-        $this->queryBuilder->update($this->tableName)->execute();
+        $this->queryBuilder->update($this->tableName);
+        $this->logger->debug(sprintf('[%s] Executed UPDATE query: %s', $this->tableName, $this->queryBuilder->getSQL()));
+        $this->queryBuilder->execute();
     }
 
     /**
@@ -175,9 +189,8 @@ class UserRepository implements LoggerAwareInterface
      */
     public function insertUser(array $values)
     {
-        $this->queryBuilder
-            ->insert($this->tableName)
-            ->values($values)
-            ->execute();
+        $this->queryBuilder->insert($this->tableName)->values($values);
+        $this->logger->debug(sprintf('[%s] Executed INSERT query: %s', $this->tableName, $this->queryBuilder->getSQL()));
+        $this->queryBuilder->execute();
     }
 }
