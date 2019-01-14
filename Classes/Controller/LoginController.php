@@ -22,7 +22,7 @@ use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Service\RedirectService;
 use Bitmotion\Auth0\Utility\ApplicationUtility;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
-use Bitmotion\Auth0\Utility\UpdateUtility;
+use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;

@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Bitmotion\Auth0\Utility;
+namespace Bitmotion\Auth0\Utility\Database;
 
 /***
  *
@@ -13,6 +13,9 @@ namespace Bitmotion\Auth0\Utility;
  *
  ***/
 
+use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
+use Bitmotion\Auth0\Utility\ConfigurationUtility;
+use Bitmotion\Auth0\Utility\ParseFuncUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -24,7 +27,6 @@ class UpdateUtility implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     const TYPO_SCRIPT_NODE_VALUE = '_typoScriptNodeValue';
-    const PARSING_FUNCTION = 'parseFunc';
 
     /**
      * @var string
@@ -35,6 +37,11 @@ class UpdateUtility implements LoggerAwareInterface
      * @var array
      */
     protected $user = [];
+
+    /**
+     * @var ParseFuncUtility
+     */
+    protected $parseFuncUtility;
 
     public function __construct(string $tableName, array $user)
     {
@@ -84,12 +91,7 @@ class UpdateUtility implements LoggerAwareInterface
         }
 
         if (empty($mappingConfiguration)) {
-            $this->logger->error(
-                sprintf(
-                    'Cannot update user: No mapping configuration for %s found',
-                    $this->tableName
-                )
-            );
+            $this->logger->error(sprintf('Cannot update user: No mapping configuration for %s found', $this->tableName));
 
             return;
         }
@@ -138,7 +140,7 @@ class UpdateUtility implements LoggerAwareInterface
         }
 
         $queryBuilder
-            ->where(
+            ->andWhere(
                 $queryBuilder->expr()->eq(
                     'auth0_user_id',
                     $queryBuilder->createNamedParameter($this->user['user_id'])
@@ -148,6 +150,7 @@ class UpdateUtility implements LoggerAwareInterface
 
     protected function performUserUpdate(array $mappingConfiguration)
     {
+        $this->logger->debug(sprintf('%s: Prepare update for Auth0 user "%s"', $this->tableName, $this->user['user_id']));
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableName);
         $queryBuilder->update($this->tableName);
 
@@ -164,116 +167,65 @@ class UpdateUtility implements LoggerAwareInterface
             )
         );
 
+        $this->checkForRestrictions($queryBuilder);
+        $this->logger->debug(sprintf('%s: Executing query: %s', $this->tableName, $queryBuilder->getSQL()));
         $queryBuilder->execute();
+    }
+
+    protected function checkForRestrictions(QueryBuilder &$queryBuilder)
+    {
+        $emConfiguration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
+        $reactivateDeleted = false;
+        $reactivateDisabled = false;
+
+        if ($this->tableName === 'fe_users') {
+            $reactivateDeleted = $emConfiguration->getReactivateDeletedFrontendUsers();
+            $reactivateDisabled = $emConfiguration->getReactivateDisabledFrontendUsers();
+        } elseif ($this->tableName === 'be_users') {
+            $reactivateDeleted = $emConfiguration->getReactivateDeletedBackendUsers();
+            $reactivateDisabled = $emConfiguration->getReactivateDisabledBackendUsers();
+        } else {
+            $this->logger->notice('Undefined environment');
+        }
+
+        $this->addRestrictions($queryBuilder, $reactivateDisabled, $reactivateDeleted);
+    }
+
+    protected function addRestrictions(QueryBuilder &$queryBuilder, bool $reactivateDisabled, bool $reactivateDeleted)
+    {
+        $expressionBuilder = $queryBuilder->expr();
+
+        if ($reactivateDeleted === false) {
+            $queryBuilder->andWhere(
+                $expressionBuilder->eq(
+                    'deleted',
+                    $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
+                )
+            );
+        }
+
+        if ($reactivateDisabled === false) {
+            $queryBuilder->andWhere(
+                $expressionBuilder->eq(
+                    'disable',
+                    $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
+                )
+            );
+        }
     }
 
     protected function mapUserData(QueryBuilder &$queryBuilder, array $mappingConfiguration)
     {
+        $this->parseFuncUtility = $parseFuncUtility = GeneralUtility::makeInstance(ParseFuncUtility::class);
+
         foreach ($mappingConfiguration as $typo3FieldName => $auth0FieldName) {
             if (!is_array($auth0FieldName)) {
                 // Update without parsing function
-                $this->updateWithoutParseFunc($queryBuilder, $typo3FieldName, $auth0FieldName);
+                $this->parseFuncUtility->updateWithoutParseFunc($queryBuilder, $typo3FieldName, $auth0FieldName, $this->user);
             } elseif (is_array($auth0FieldName) && isset($auth0FieldName[self::TYPO_SCRIPT_NODE_VALUE])) {
                 // Update with parsing function
-                $this->updateWithParseFunc($queryBuilder, $typo3FieldName, $auth0FieldName);
+                $this->parseFuncUtility->updateWithParseFunc($queryBuilder, $typo3FieldName, $auth0FieldName, $this->user);
             }
         }
-    }
-
-    protected function getAuth0ValueRecursive(array $user, array $properties): string
-    {
-        $value = '';
-        $property = array_shift($properties);
-
-        if (isset($user[$property])) {
-            $value = $user[$property];
-
-            if (is_array($properties) && ($value instanceof \stdClass || (is_array($value) && !empty($value)))) {
-                return $this->getAuth0ValueRecursive($value, $properties);
-            }
-        }
-
-        return (string)$value;
-    }
-
-    protected function updateWithoutParseFunc(
-        QueryBuilder &$queryBuilder,
-        string $typo3FieldName,
-        string $auth0FieldName
-    ) {
-        if (isset($this->user[$auth0FieldName])) {
-            $queryBuilder->set(
-                $typo3FieldName,
-                $this->user[$auth0FieldName]
-            );
-        } elseif (strpos($auth0FieldName, 'user_metadata') !== false) {
-            $queryBuilder->set(
-                $typo3FieldName,
-                $this->getAuth0ValueRecursive($this->user, explode('.', $auth0FieldName))
-            );
-        }
-    }
-
-    protected function updateWithParseFunc(QueryBuilder &$queryBuilder, string $typo3FieldName, array $auth0FieldName)
-    {
-        $fieldName = $auth0FieldName[self::TYPO_SCRIPT_NODE_VALUE];
-
-        if (isset($this->user[$fieldName])) {
-            if (isset($auth0FieldName[self::PARSING_FUNCTION])) {
-                $queryBuilder->set(
-                    $typo3FieldName,
-                    $this->handleParseFunc($auth0FieldName[self::PARSING_FUNCTION], $this->user[$fieldName])
-                );
-            }
-        } elseif (strpos($auth0FieldName[self::TYPO_SCRIPT_NODE_VALUE], 'user_metadata') !== false) {
-            $queryBuilder->set(
-                $typo3FieldName,
-                $this->handleParseFunc(
-                    $auth0FieldName[self::PARSING_FUNCTION],
-                    $this->getAuth0ValueRecursive(
-                        $this->user,
-                        explode('.', $auth0FieldName[self::TYPO_SCRIPT_NODE_VALUE])
-                    )
-                )
-            );
-        } elseif (isset($this->user[$typo3FieldName]) && isset($auth0FieldName[self::PARSING_FUNCTION]) && $auth0FieldName[self::PARSING_FUNCTION] === 'const') {
-            $queryBuilder->set(
-                $typo3FieldName,
-                $auth0FieldName[self::TYPO_SCRIPT_NODE_VALUE]
-            );
-        }
-    }
-
-    protected function handleParseFunc(string $function, $value)
-    {
-        $parseFunctions = explode('|', $function);
-
-        foreach ($parseFunctions as $function) {
-            $value = $this->transformValue($function, $value);
-        }
-
-        return $value;
-    }
-
-    protected function transformValue(string $function, $value)
-    {
-        switch ($function) {
-            case 'strtotime':
-                $value = strtotime($value);
-                break;
-
-            case 'bool':
-                $value = (bool)$value;
-                break;
-
-            case 'negate':
-                $value = (bool)$value ? 0 : 1;
-                break;
-
-            default:
-                $this->logger->notice(sprintf('"%s" is not a valid parseFunc', $function));
-        }
-
-        return $value;
     }
 }

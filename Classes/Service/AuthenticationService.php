@@ -18,7 +18,7 @@ use Bitmotion\Auth0\Api\ManagementApi;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Utility\ApplicationUtility;
-use Bitmotion\Auth0\Utility\UpdateUtility;
+use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Service\EnvironmentService;
