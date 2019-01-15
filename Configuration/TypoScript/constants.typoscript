@@ -17,6 +17,13 @@ plugin.tx_auth0 {
                 stylesheet = EXT:auth0/Resources/Public/Styles/backend.css
             }
         }
+
+        frontend {
+            callback {
+                targetPageType = 1547536919
+                targetPageUid = 1
+            }
+        }
     }
 }
 

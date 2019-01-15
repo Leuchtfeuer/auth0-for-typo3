@@ -27,6 +27,13 @@ plugin.tx_auth0 {
             }
         }
 
+        frontend {
+            callback {
+                targetPageUid = {$plugin.tx_auth0.settings.frontend.callback.targetPageUid}
+                targetPageType = {$plugin.tx_auth0.settings.frontend.callback.targetPageType}
+            }
+        }
+
         # maps auth0 roles to TYPO3 fe_groups or be_groups
         roles {
 
@@ -77,6 +84,20 @@ plugin.tx_auth0 {
             }
         }
     }
+}
+
+auth0_callback = PAGE
+auth0_callback {
+    typeNum = 1547536919
+
+    config {
+        disableAllHeaderCode = 1
+        no_cache = 1
+        debug = 0
+        admPanel = 0
+    }
+
+    10 =< tt_content.list.20.auth0_loginform
 }
 
 module.tx_auth0 < plugin.tx_auth0

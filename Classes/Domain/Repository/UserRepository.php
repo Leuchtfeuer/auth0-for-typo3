@@ -54,6 +54,7 @@ class UserRepository implements LoggerAwareInterface
                 )
             );
         $this->logger->debug(sprintf('[%s] Executed SELECT query: %s', $this->tableName, $this->queryBuilder->getSQL()));
+
         return $this->queryBuilder->execute()->fetch();
     }
 
@@ -85,12 +86,14 @@ class UserRepository implements LoggerAwareInterface
         }
     }
 
-    protected function removeHiddenRestriction() {
+    protected function removeHiddenRestriction()
+    {
         $this->queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
         $this->logger->debug('Removed HiddenRestriction.');
     }
 
-    protected function removeDeletedRestriction() {
+    protected function removeDeletedRestriction()
+    {
         $this->queryBuilder->getRestrictions()->removeByType(DeletedRestriction::class);
         $this->logger->debug('Removed DeletedRestriction.');
     }

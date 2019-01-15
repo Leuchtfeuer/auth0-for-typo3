@@ -21,12 +21,12 @@ use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Service\RedirectService;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
+use Bitmotion\Auth0\Utility\RoutingUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 
 class LoginController extends ActionController implements LoggerAwareInterface
 {
@@ -56,11 +56,20 @@ class LoginController extends ActionController implements LoggerAwareInterface
         $userInfo = $store->get('user');
 
         if (GeneralUtility::_GP('logintype') === 'login' && !empty($GLOBALS['TSFE']->fe_user->user) && $userInfo !== null) {
+            if (!empty(GeneralUtility::_GP('referrer'))) {
+                $this->logger->notice('Handle referrer redirect prior to updating user.');
+                $this->settings['redirectDisable'] = false;
+                $this->settings['redirectMode'] = 'referrer';
+                $this->handleRedirect(['referrer'], true);
+            }
+
             // Try to update user
+            $this->logger->notice('Update User due to login.');
             $this->updateUser();
 
             // Redirect user on login
             $this->handleRedirect(['groupLogin', 'userLogin', 'login', 'getpost', 'referrer']);
+            $this->logger->notice('No redirect configured. Showing form.');
         }
 
         $this->view->assign('userInfo', $userInfo);
@@ -97,29 +106,56 @@ class LoginController extends ActionController implements LoggerAwareInterface
         $this->redirect('form');
     }
 
-    protected function handleRedirect(array $allowedRedirectMethods)
+    protected function handleRedirect(array $allowedRedirectMethods, bool $bypassLoginType = false)
     {
         if ((bool)$this->settings['redirectDisable'] === false && !empty($this->settings['redirectMode'])) {
+            $this->logger->notice('Try to redirect user.');
             $redirectService = GeneralUtility::makeInstance(RedirectService::class, $this->settings);
             $redirectUris = $redirectService->getRedirectUri($allowedRedirectMethods);
+
             if (!empty($redirectUris)) {
-                header('Location: ' . $redirectService->getUri($redirectUris), false, 307);
+                $redirectUri = ($bypassLoginType) ? $redirectService->getUri($redirectUris) . '?logintype=login' : $redirectService->getUri($redirectUris);
+                $this->logger->notice(sprintf('Redirect to: %s', $redirectUri));
+                header('Location: ' . $redirectUri, false, 307);
+                die;
             }
+
+            $this->logger->warning('Redirect failed.');
         }
     }
 
-    protected function getUri(): string
+    protected function getRedirectUri(): string
     {
-        return
-            $this->objectManager->get(UriBuilder::class)
-                ->reset()
-                ->setTargetPageUid($GLOBALS['TSFE']->id)
-                ->setArguments([
-                    'logintype' => 'login',
-                    'application' => (int)$this->settings['application'],
-                ])->setCreateAbsoluteUri(true)
-                ->setUseCacheHash(false)
-                ->buildFrontendUri();
+        $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
+        $redirectUri = $routingUtility->getUri();
+        $this->logger->notice(sprintf('Set redirect URI to: %s', $redirectUri));
+
+        return $redirectUri;
+    }
+
+    protected function getCallbackUri(): string
+    {
+        $pageType = $this->settings['frontend']['callback']['targetPageType'];
+        $pageUid = $this->settings['frontend']['callback']['targetPageUid'];
+        $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
+        $routingUtility->setArguments([
+            'logintype' => 'login',
+            'application' => (int)$this->settings['application'],
+            'referrer' => $this->getRedirectUri(),
+        ]);
+
+        if (!empty($pageUid)) {
+            $routingUtility->setTargetPage((int)$pageUid);
+        }
+
+        if (!empty($pageType)) {
+            $routingUtility->setTargetPageType((int)$pageType);
+        }
+
+        $uri = $routingUtility->getUri();
+        $this->logger->notice(sprintf('Set callback URI to: %s', $uri));
+
+        return $uri;
     }
 
     /**
@@ -128,7 +164,11 @@ class LoginController extends ActionController implements LoggerAwareInterface
     protected function getAuthenticationApi()
     {
         try {
-            return new AuthenticationApi((int)$this->settings['application'], $this->getUri(), self::SCOPE);
+            return new AuthenticationApi(
+                (int)$this->settings['application'],
+                $this->getCallbackUri(),
+                self::SCOPE
+            );
         } catch (CoreException $exception) {
             $this->logger->critical(
                 sprintf(
@@ -165,6 +205,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
     protected function logoutUser()
     {
         try {
+            $this->logger->notice('Log out user');
             $this->getAuthenticationApi()->logout();
         } catch (\Exception $exception) {
             // Delete user from SessionStore
