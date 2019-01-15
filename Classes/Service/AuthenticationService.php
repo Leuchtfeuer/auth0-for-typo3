@@ -124,7 +124,9 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         // Update existing user on every login when we are in BE context
         if ($this->environmentService->isEnvironmentInBackendMode()) {
             $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User);
+            $this->logger->notice('Update user.');
             $updateUtility->updateUser();
+            $this->logger->notice('Update user groups.');
             $updateUtility->updateGroups();
         }
     }

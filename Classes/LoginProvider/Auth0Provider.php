@@ -17,6 +17,8 @@ use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\AuthenticationApi;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\Controller\LoginController;
 use TYPO3\CMS\Backend\LoginProvider\LoginProviderInterface;
 use TYPO3\CMS\Core\Page\PageRenderer;
@@ -24,8 +26,10 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 
-class Auth0Provider implements LoginProviderInterface
+class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var AuthenticationApi
      */
@@ -36,6 +40,8 @@ class Auth0Provider implements LoginProviderInterface
      */
     public function render(StandaloneView $standaloneView, PageRenderer $pageRenderer, LoginController $loginController)
     {
+        $this->logger->notice('Auth0 login is used.');
+
         // Figure out whether TypoScript is loaded
         if (!$this->isTypoScriptLoaded()) {
             // In this case we need a default template
@@ -64,8 +70,8 @@ class Auth0Provider implements LoginProviderInterface
         // Assign variables and Auth0 response to view
         $standaloneView->assignMultiple([
             'auth0Error' => GeneralUtility::_GP('error'),
-            'auth0ErrorDescription', GeneralUtility::_GP('error_description'),
-            'userInfo', $userInfo,
+            'auth0ErrorDescription' => GeneralUtility::_GP('error_description'),
+            'userInfo' => $userInfo,
         ]);
     }
 
@@ -91,6 +97,7 @@ class Auth0Provider implements LoginProviderInterface
         // Try to get user via authentication API
         if ($userInfo === null) {
             try {
+                $this->logger->notice('Try to get user via authentication API');
                 $userInfo = $this->authentication->getUser();
             } catch (\Exception $exception) {
                 $this->authentication->deleteAllPersistentData();
@@ -99,10 +106,12 @@ class Auth0Provider implements LoginProviderInterface
 
         if (GeneralUtility::_GP('logout') == 1) {
             // Logout user from Auth0
+            $this->logger->notice('Logout user.');
             $this->authentication->logout();
             $userInfo = null;
         } elseif ($userInfo === null && GeneralUtility::_GP('login') == 1) {
             // Login user to Auth0
+            $this->logger->notice('Handle backend login.');
             $this->authentication->login();
         }
     }
