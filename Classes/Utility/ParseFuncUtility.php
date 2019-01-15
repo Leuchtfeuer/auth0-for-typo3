@@ -27,6 +27,8 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
         } elseif (isset($user[$typo3FieldName]) && isset($auth0FieldName[self::PARSING_FUNCTION]) && $auth0FieldName[self::PARSING_FUNCTION] === 'const') {
             $value = $auth0FieldName[UpdateUtility::TYPO_SCRIPT_NODE_VALUE];
             $this->logger->debug(sprintf('Set static value "%s" for "%s"', $value, $typo3FieldName));
+        } else {
+            $this->logger->warning(sprintf('Could not update property %s.', $typo3FieldName));
         }
 
         if ($value !== '') {
