@@ -27,6 +27,7 @@ use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Frontend\Page\PageRepository;
 
 class LoginController extends ActionController implements LoggerAwareInterface
 {
@@ -145,7 +146,14 @@ class LoginController extends ActionController implements LoggerAwareInterface
         ]);
 
         if (!empty($pageUid)) {
-            $routingUtility->setTargetPage((int)$pageUid);
+            // Check whether page exists
+            $page = $this->objectManager->get(PageRepository::class)->checkRecord('pages', $pageUid);
+
+            if (!empty($page)) {
+                $routingUtility->setTargetPage((int)$pageUid);
+            } else {
+                $this->logger->warning(sprintf('No page found for given uid "%s".', $pageUid));
+            }
         }
 
         if (!empty($pageType)) {
