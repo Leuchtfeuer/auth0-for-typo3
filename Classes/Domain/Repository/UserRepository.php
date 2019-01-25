@@ -54,8 +54,9 @@ class UserRepository implements LoggerAwareInterface
                 )
             );
         $this->logger->debug(sprintf('[%s] Executed SELECT query: %s', $this->tableName, $this->queryBuilder->getSQL()));
+        $user = $this->queryBuilder->execute()->fetch();
 
-        return $this->queryBuilder->execute()->fetch();
+        return ($user !== false) ? $user : [];
     }
 
     /**
