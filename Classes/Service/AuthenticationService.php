@@ -20,6 +20,7 @@ use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
+use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Service\EnvironmentService;
 
@@ -84,19 +85,15 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      */
     public function initAuth($mode, $loginData, $authInfo, $pObj)
     {
+        if ($this->getAuth0ResponseCode() === 403) {
+            return;
+        }
+
         $this->environmentService = GeneralUtility::makeInstance(EnvironmentService::class);
-        $this->logger->notice(__LINE__);
         $this->initSessionStore();
-        $this->logger->notice(__LINE__);
 
         // Set default values
-        $authInfo['db_user']['check_pid_clause'] = false;
-        $this->db_user = $authInfo['db_user'];
-        $this->db_groups = $authInfo['db_groups'];
-        $this->authInfo = $authInfo;
-        $this->mode = $mode;
-        $this->login = $loginData;
-        $this->pObj = $pObj;
+        $this->setDefaults($authInfo, $mode, $loginData, $pObj);
 
         if ($this->loginViaSession === true) {
             $this->login['status'] = 'login';
@@ -104,6 +101,22 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         } elseif ($this->initializeAuth0Connections()) {
             $this->handleLogin($loginData);
         }
+    }
+
+    protected function getAuth0ResponseCode(): int
+    {
+        return (int)GeneralUtility::_GET('error_description');
+    }
+
+    protected function setDefaults(array $authInfo, string $mode, array $loginData, AbstractUserAuthentication $pObj)
+    {
+        $authInfo['db_user']['check_pid_clause'] = false;
+        $this->db_user = $authInfo['db_user'];
+        $this->db_groups = $authInfo['db_groups'];
+        $this->authInfo = $authInfo;
+        $this->mode = $mode;
+        $this->login = $loginData;
+        $this->pObj = $pObj;
     }
 
     protected function initSessionStore()
