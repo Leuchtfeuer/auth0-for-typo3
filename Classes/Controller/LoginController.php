@@ -55,8 +55,9 @@ class LoginController extends ActionController implements LoggerAwareInterface
         // Get Auth0 user from session storage
         $store = new SessionStore();
         $userInfo = $store->get('user');
+        $feUserAuthentication = $GLOBALS['TSFE']->fe_user;
 
-        if (GeneralUtility::_GP('logintype') === 'login' && !empty($GLOBALS['TSFE']->fe_user->user) && $userInfo !== null) {
+        if (GeneralUtility::_GP('logintype') === 'login' && $feUserAuthentication->user !== null && $userInfo !== null) {
             if (!empty(GeneralUtility::_GP('referrer'))) {
                 $this->logger->notice('Handle referrer redirect prior to updating user.');
                 $this->settings['redirectDisable'] = false;
@@ -73,7 +74,35 @@ class LoginController extends ActionController implements LoggerAwareInterface
             $this->logger->notice('No redirect configured. Showing form.');
         }
 
+        if ($userInfo === null && $feUserAuthentication->user !== null) {
+            $this->logger->notice('Found active TYPO3 session but no active Auth0 session.');
+            $applicationUid = (!empty(GeneralUtility::_GP('application'))) ? GeneralUtility::_GP('application') : $this->settings['application'];
+            $managementApi = GeneralUtility::makeInstance(ManagementApi::class, (int)$applicationUid);
+            $auth0User = $managementApi->getUserById($feUserAuthentication->user['auth0_user_id']);
+
+            if (isset($auth0User['blocked']) && $auth0User['blocked'] === true) {
+                $this->logger->notice('Logoff user as it is blocked in Auth0.');
+            } else {
+                $this->logger->debug('Map raw auth0 user to token info array.');
+                $userInfo = $this->convertAuth0UserToUserInfo($auth0User);
+            }
+        }
+
         $this->view->assign('userInfo', $userInfo);
+    }
+
+    protected function convertAuth0UserToUserInfo(array $auth0User): array
+    {
+        return [
+            'sub' => $auth0User['user_id'],
+            'given_name' => $auth0User['given_name'],
+            'family_name' => $auth0User['family_name'],
+            'nickname' => $auth0User['nickname'],
+            'name' => $auth0User['name'],
+            'picture' => $auth0User['picture'],
+            'locale' => $auth0User['locale'],
+            'updated_at' => $auth0User['updated_at'],
+        ];
     }
 
     /**
