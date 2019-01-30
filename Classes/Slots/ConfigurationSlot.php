@@ -27,5 +27,13 @@ class ConfigurationSlot
         if (!in_array('state', $excludeParameters)) {
             $excludeParameters[] = 'state';
         }
+
+        if (!in_array('error_description', $excludeParameters)) {
+            $excludeParameters[] = 'error_description';
+        }
+
+        if (!in_array('error', $excludeParameters)) {
+            $excludeParameters[] = 'error';
+        }
     }
 }
