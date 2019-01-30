@@ -20,7 +20,6 @@ use Bitmotion\Auth0\Api\ManagementApi;
 use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Service\RedirectService;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
-use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Bitmotion\Auth0\Utility\RoutingUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
 use Psr\Log\LoggerAwareInterface;
@@ -150,9 +149,9 @@ class LoginController extends ActionController implements LoggerAwareInterface
     }
 
     /**
-     * @return AuthenticationApi
      * @throws Exception
      * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
+     * @return AuthenticationApi
      */
     protected function getAuthenticationApi()
     {
@@ -168,7 +167,8 @@ class LoginController extends ActionController implements LoggerAwareInterface
                     'Cannot instantiate Auth0 Authentication: %s (%s)',
                     $exception->getMessage(),
                     $exception->getCode()
-                ), 1548845756
+                ),
+                1548845756
             );
         }
     }

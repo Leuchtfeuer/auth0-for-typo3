@@ -17,7 +17,6 @@ use Auth0\SDK\API\Authentication;
 use Auth0\SDK\API\Management;
 use Auth0\SDK\Exception\ApiException;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
-use GuzzleHttp\Exception\ClientException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\SingletonInterface;
