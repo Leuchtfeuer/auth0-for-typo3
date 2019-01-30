@@ -66,7 +66,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
                 $this->logger->notice('Handle referrer redirect prior to updating user.');
                 $this->settings['redirectDisable'] = false;
                 $this->settings['redirectMode'] = 'referrer';
-                $this->handleRedirect(['referrer'], true);
+                $this->handleRedirect(['referrer'], ['logintype' => 'login']);
             }
 
             // Try to update user
@@ -94,17 +94,23 @@ class LoginController extends ActionController implements LoggerAwareInterface
         }
 
         $auth0ErrorCode = GeneralUtility::_GET('error');
-        if (!empty(GeneralUtility::_GET('referrer')) && $auth0ErrorCode === AuthenticationApi::ERROR_403) {
+        if (!empty(GeneralUtility::_GET('referrer')) && $auth0ErrorCode === AuthenticationApi::ERROR_UNAUTHORIZED) {
             $this->logger->notice('Handle referrer redirect prior to updating user.');
             $this->settings['redirectDisable'] = false;
             $this->settings['redirectMode'] = 'referrer';
-            $this->handleRedirect(['referrer'], false, true);
+            $this->handleRedirect(
+                ['referrer'],
+                [
+                    'error' => GeneralUtility::_GET('error'),
+                    'error_description' => GeneralUtility::_GET('error_description')
+                ]
+            );
         }
 
         $this->view->assignMultiple([
             'userInfo' => $userInfo,
             'auth0Error' => (string)GeneralUtility::_GET('error'),
-            'auth0Description' => (string)GeneralUtility::_GET('error_description'),
+            'auth0ErrorDescription' => (string)GeneralUtility::_GET('error_description'),
         ]);
     }
 
@@ -142,7 +148,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
         $this->redirect('form');
     }
 
-    protected function handleRedirect(array $allowedMethods, bool $bypassLoginType = false, $bypassAuth0Error = false)
+    protected function handleRedirect(array $allowedMethods, array $additionalParameters = [])
     {
         if ((bool)$this->settings['redirectDisable'] === false && !empty($this->settings['redirectMode'])) {
             $this->logger->notice('Try to redirect user.');
@@ -150,7 +156,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
             $redirectUris = $redirectService->getRedirectUri($allowedMethods);
 
             if (!empty($redirectUris)) {
-                $redirectUri = $this->addAdditionalParamsToRedirectUri($redirectService->getUri($redirectUris), $bypassLoginType, $bypassAuth0Error);
+                $redirectUri = $this->addAdditionalParamsToRedirectUri($redirectService->getUri($redirectUris), $additionalParameters);
                 $this->logger->notice(sprintf('Redirect to: %s', $redirectUri));
                 header('Location: ' . $redirectUri, false, 307);
                 die;
@@ -160,19 +166,8 @@ class LoginController extends ActionController implements LoggerAwareInterface
         }
     }
 
-    protected function addAdditionalParamsToRedirectUri(string $uri, bool $bypassLoginType, bool $bypassAuth0Error): string
+    protected function addAdditionalParamsToRedirectUri(string $uri, array $additionalParams): string
     {
-        $additionalParams = [];
-
-        if ($bypassLoginType === true) {
-            $additionalParams['logintype'] = 'login';
-        }
-
-        if ($bypassAuth0Error === true) {
-            $additionalParams['error_description'] = GeneralUtility::_GET('error_description');
-            $additionalParams['error'] = GeneralUtility::_GET('error');
-        }
-
         if (!empty($additionalParams)) {
             $uri .= '?';
         }
