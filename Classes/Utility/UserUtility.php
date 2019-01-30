@@ -12,8 +12,13 @@ namespace Bitmotion\Auth0\Utility;
  *  (c) 2018 Florian Wessels <f.wessels@bitmotion.de>, Bitmotion GmbH
  *
  ***/
+
+use Auth0\SDK\Store\SessionStore;
+use Bitmotion\Auth0\Api\AuthenticationApi;
+use Bitmotion\Auth0\Api\ManagementApi;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Domain\Repository\UserRepository;
+use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
@@ -137,5 +142,58 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             'locale' => $auth0User['locale'],
             'updated_at' => $auth0User['updated_at'],
         ];
+    }
+
+    public function loginUser(AuthenticationApi $authenticationApi)
+    {
+        try {
+            $userInfo = $authenticationApi->getUser();
+
+            if (!$userInfo) {
+                // Try to login user to Auth0
+                $this->logger->notice('Try to login user to Auth0.');
+                $authenticationApi->login();
+            }
+        } catch (\Exception $exception) {
+            if (isset($authenticationApi) && $authenticationApi instanceof AuthenticationApi) {
+                $authenticationApi->deleteAllPersistentData();
+            }
+        }
+    }
+
+    public function logoutUser(AuthenticationApi $authenticationApi)
+    {
+        try {
+            $this->logger->notice('Log out user');
+            $authenticationApi->logout();
+        } catch (\Exception $exception) {
+            // Delete user from SessionStore
+            $store = new SessionStore();
+            if ($store->get('user')) {
+                $store->delete('user');
+            }
+        }
+    }
+
+    public function updateUser(AuthenticationApi $authenticationApi, int $applicationUid)
+    {
+        try {
+            $tokenInfo = $authenticationApi->getUser();
+            $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $applicationUid);
+            $auth0User = $managementApi->getUserById($tokenInfo['sub']);
+
+            // Update existing user on every login
+            $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, 'fe_users', $auth0User);
+            $updateUtility->updateUser();
+            $updateUtility->updateGroups();
+        } catch (\Exception $exception) {
+            $this->logger->warning(
+                sprintf(
+                    'Updating user failed with following message: %s (%s)',
+                    $exception->getMessage(),
+                    $exception->getCode()
+                )
+            );
+        }
     }
 }

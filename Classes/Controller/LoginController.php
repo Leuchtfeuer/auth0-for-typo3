@@ -25,6 +25,7 @@ use Bitmotion\Auth0\Utility\RoutingUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use TYPO3\CMS\Core\Exception;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -50,6 +51,10 @@ class LoginController extends ActionController implements LoggerAwareInterface
         }
     }
 
+    /**
+     * @throws Exception
+     * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
+     */
     public function formAction()
     {
         // Get Auth0 user from session storage
@@ -67,7 +72,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
             // Try to update user
             $this->logger->notice('Update User due to login.');
-            $this->updateUser();
+            GeneralUtility::makeInstance(UserUtility::class)->updateUser($this->getAuthenticationApi(), (int)$this->settings['application']);
 
             // Redirect user on login
             $this->handleRedirect(['groupLogin', 'userLogin', 'login', 'getpost', 'referrer']);
@@ -93,6 +98,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
     }
 
     /**
+     * @throws Exception
      * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
      * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
      * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
@@ -106,7 +112,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
         if ($userInfo === null) {
             // Try to login user
             $this->logger->notice('Try to login user.');
-            $this->loginUser();
+            GeneralUtility::makeInstance(UserUtility::class)->loginUser($this->getAuthenticationApi());
         }
 
         // Show login form
@@ -114,12 +120,14 @@ class LoginController extends ActionController implements LoggerAwareInterface
     }
 
     /**
+     * @throws Exception
+     * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
      * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
      * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
      */
     public function logoutAction()
     {
-        $this->logoutUser();
+        GeneralUtility::makeInstance(UserUtility::class)->logoutUser($this->getAuthenticationApi());
         $this->redirect('form');
     }
 
@@ -142,6 +150,8 @@ class LoginController extends ActionController implements LoggerAwareInterface
     }
 
     /**
+     * @return AuthenticationApi
+     * @throws Exception
      * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
      */
     protected function getAuthenticationApi()
@@ -153,71 +163,13 @@ class LoginController extends ActionController implements LoggerAwareInterface
                 self::SCOPE
             );
         } catch (CoreException $exception) {
-            $this->logger->critical(
+            throw new Exception(
                 sprintf(
                     'Cannot instantiate Auth0 Authentication: %s (%s)',
                     $exception->getMessage(),
                     $exception->getCode()
-                )
+                ), 1548845756
             );
-        }
-    }
-
-    protected function updateUser()
-    {
-        try {
-            $tokenInfo = $this->getAuthenticationApi()->getUser();
-            $managementApi = GeneralUtility::makeInstance(ManagementApi::class, (int)$this->settings['application']);
-            $auth0User = $managementApi->getUserById($tokenInfo['sub']);
-
-            // Update existing user on every login
-            $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, 'fe_users', $auth0User);
-            $updateUtility->updateUser();
-            $updateUtility->updateGroups();
-        } catch (\Exception $exception) {
-            $this->logger->warning(
-                sprintf(
-                    'Updating user failed with following message: %s (%s)',
-                    $exception->getMessage(),
-                    $exception->getCode()
-                )
-            );
-        }
-    }
-
-    protected function logoutUser()
-    {
-        try {
-            $this->logger->notice('Log out user');
-            $this->getAuthenticationApi()->logout();
-        } catch (\Exception $exception) {
-            // Delete user from SessionStore
-            $store = new SessionStore();
-            if ($store->get('user')) {
-                $store->delete('user');
-            }
-        }
-    }
-
-    /**
-     * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
-     */
-    protected function loginUser()
-    {
-        $authenticationApi = $this->getAuthenticationApi();
-
-        try {
-            $userInfo = $authenticationApi->getUser();
-
-            if (!$userInfo) {
-                // Try to login user to Auth0
-                $this->logger->notice('Try to login user to Auth0.');
-                $authenticationApi->login();
-            }
-        } catch (\Exception $exception) {
-            if (isset($authenticationApi) && $authenticationApi instanceof AuthenticationApi) {
-                $authenticationApi->deleteAllPersistentData();
-            }
         }
     }
 }
