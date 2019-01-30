@@ -19,13 +19,6 @@ use TYPO3\CMS\Lang\LanguageService;
 class PageLayoutViewHook
 {
     /**
-     * @var array
-     */
-    protected $listTypeLanguageMapping = [
-        'auth0_loginform' => 'loginForm',
-    ];
-
-    /**
      * @var string
      */
     protected $listType = '';

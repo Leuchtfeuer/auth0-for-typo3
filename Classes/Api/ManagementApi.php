@@ -38,39 +38,50 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
     protected $application;
 
     /**
+     * @throws ApiException
      * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
      */
-    public function __construct(int $applicationUid)
+    public function __construct(int $applicationUid = 0)
     {
-        $applicationRepository = GeneralUtility::makeInstance(ApplicationRepository::class);
-        $this->application = $applicationRepository->findByUid($applicationUid);
-        $authenticationApi = $this->getAuthenticationApi();
-
-        try {
-            $result = $authenticationApi->client_credentials([
-                'client_secret' => $this->application['secret'],
-                'client_id' => $this->application['id'],
-                'audience' => 'https://' . $this->application['domain'] . '/' . $this->application['audience'],
-            ]);
-
-            $this->authenticationApi = $authenticationApi;
+        if (!$this->authenticationApi instanceof Authentication) {
+            $authentication = $this->getAuthentication($applicationUid);
+            $credentials = $this->connect($authentication);
 
             parent::__construct(
-                $result['access_token'],
+                $credentials['access_token'],
                 $this->application['domain'],
                 [
                     'http_errors' => false,
                 ]
             );
-        } catch (ClientException $clientException) {
-            $this->logger->error(
-                $clientException->getCode() . ': ' . $clientException->getMessage()
-            );
-        } catch (ApiException $apiException) {
-            $this->logger->error(
-                $apiException->getCode() . ': ' . $apiException->getMessage()
-            );
         }
+    }
+
+    /**
+     * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
+     */
+    protected function getAuthentication(int $applicationUid): Authentication
+    {
+        $applicationRepository = GeneralUtility::makeInstance(ApplicationRepository::class);
+        $this->application = $applicationRepository->findByUid($applicationUid);
+
+        return $this->getAuthenticationApi();
+    }
+
+    /**
+     * @throws ApiException
+     */
+    protected function connect(Authentication $authentication): array
+    {
+        $result = $authentication->client_credentials([
+            'client_secret' => $this->application['secret'],
+            'client_id' => $this->application['id'],
+            'audience' => 'https://' . $this->application['domain'] . '/' . $this->application['audience'],
+        ]);
+
+        $this->authenticationApi = $authentication;
+
+        return $result ?: [];
     }
 
     public function getConnections(): array

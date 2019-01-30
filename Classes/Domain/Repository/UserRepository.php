@@ -69,21 +69,31 @@ class UserRepository implements LoggerAwareInterface
         $emConfiguration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
 
         if ($environmentService->isEnvironmentInFrontendMode()) {
-            if ($emConfiguration->getReactivateDeletedFrontendUsers()) {
-                $this->removeDeletedRestriction();
-            }
-            if ($emConfiguration->getReactivateDisabledFrontendUsers()) {
-                $this->removeHiddenRestriction();
-            }
+            $this->removeFrontendRestrictions($emConfiguration);
         } elseif ($environmentService->isEnvironmentInBackendMode()) {
-            if ($emConfiguration->getReactivateDeletedBackendUsers()) {
-                $this->removeDeletedRestriction();
-            }
-            if ($emConfiguration->getReactivateDisabledBackendUsers()) {
-                $this->removeHiddenRestriction();
-            }
+            $this->removeBackendRestrictions($emConfiguration);
         } else {
             $this->logger->notice('Undefined environment');
+        }
+    }
+
+    protected function removeFrontendRestrictions(EmAuth0Configuration $emConfiguration)
+    {
+        if ($emConfiguration->getReactivateDeletedFrontendUsers()) {
+            $this->removeDeletedRestriction();
+        }
+        if ($emConfiguration->getReactivateDisabledFrontendUsers()) {
+            $this->removeHiddenRestriction();
+        }
+    }
+
+    protected function removeBackendRestrictions(EmAuth0Configuration $emConfiguration)
+    {
+        if ($emConfiguration->getReactivateDeletedBackendUsers()) {
+            $this->removeDeletedRestriction();
+        }
+        if ($emConfiguration->getReactivateDisabledBackendUsers()) {
+            $this->removeHiddenRestriction();
         }
     }
 

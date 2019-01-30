@@ -35,9 +35,6 @@ class RedirectService implements SingletonInterface, LoggerAwareInterface
      */
     protected $settings = [];
 
-    /**
-     * RedirectService constructor.
-     */
     public function __construct(array $redirectSettings)
     {
         $this->settings = $redirectSettings;

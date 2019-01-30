@@ -131,12 +131,12 @@ class LoginController extends ActionController implements LoggerAwareInterface
         $this->redirect('form');
     }
 
-    protected function handleRedirect(array $allowedRedirectMethods, bool $bypassLoginType = false)
+    protected function handleRedirect(array $allowedMethods, bool $bypassLoginType = false)
     {
         if ((bool)$this->settings['redirectDisable'] === false && !empty($this->settings['redirectMode'])) {
             $this->logger->notice('Try to redirect user.');
             $redirectService = GeneralUtility::makeInstance(RedirectService::class, $this->settings);
-            $redirectUris = $redirectService->getRedirectUri($allowedRedirectMethods);
+            $redirectUris = $redirectService->getRedirectUri($allowedMethods);
 
             if (!empty($redirectUris)) {
                 $redirectUri = ($bypassLoginType) ? $redirectService->getUri($redirectUris) . '?logintype=login' : $redirectService->getUri($redirectUris);
