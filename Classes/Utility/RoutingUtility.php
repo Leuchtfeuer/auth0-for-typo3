@@ -7,6 +7,7 @@ use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Frontend\Page\PageRepository;
 
 class RoutingUtility implements LoggerAwareInterface
 {
@@ -27,6 +28,46 @@ class RoutingUtility implements LoggerAwareInterface
         $this->targetPage = (int)$GLOBALS['TSFE']->id;
     }
 
+    public function getCallbackUri(array $callbackSettings, int $applicationUid): string
+    {
+        $pageType = $callbackSettings['targetPageType'];
+        $pageUid = $callbackSettings['targetPageUid'];
+
+        $this->setArguments([
+            'logintype' => 'login',
+            'application' => $applicationUid,
+            'referrer' => $this->getUri(),
+        ]);
+
+        if (!empty($pageUid)) {
+            // Check whether page exists
+            $page = GeneralUtility::makeInstance(ObjectManager::class)->get(PageRepository::class)->checkRecord('pages', $pageUid);
+
+            if (!empty($page)) {
+                $this->setTargetPage((int)$pageUid);
+            } else {
+                $this->logger->warning(sprintf('No page found for given uid "%s".', $pageUid));
+            }
+        }
+
+        if (!empty($pageType)) {
+            $this->setTargetPageType((int)$pageType);
+        }
+
+        $uri = $this->getUri();
+        $this->logger->notice(sprintf('Set callback URI to: %s', $uri));
+
+        return $uri;
+    }
+
+    protected function getRedirectUri(): string
+    {
+        $routingUtility = GeneralUtility::makeInstance(self::class);
+        $redirectUri = $routingUtility->getUri();
+
+        return $redirectUri;
+    }
+
     public function getUri(): string
     {
         $uriBuilder = GeneralUtility::makeInstance(ObjectManager::class)->get(UriBuilder::class);
@@ -41,7 +82,10 @@ class RoutingUtility implements LoggerAwareInterface
         }
 
         if ($this->buildFrontendUri) {
-            return $uriBuilder->buildFrontendUri();
+            $uri = $uriBuilder->buildFrontendUri();
+            $this->logger->notice(sprintf('Set URI to: %s', $uri));
+
+            return $uri;
         }
 
         return '';

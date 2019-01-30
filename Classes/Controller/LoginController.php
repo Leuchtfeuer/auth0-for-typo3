@@ -22,12 +22,12 @@ use Bitmotion\Auth0\Service\RedirectService;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Bitmotion\Auth0\Utility\RoutingUtility;
+use Bitmotion\Auth0\Utility\UserUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Frontend\Page\PageRepository;
 
 class LoginController extends ActionController implements LoggerAwareInterface
 {
@@ -84,26 +84,12 @@ class LoginController extends ActionController implements LoggerAwareInterface
                 $this->logger->notice('Logoff user as it is blocked in Auth0.');
             } else {
                 $this->logger->debug('Map raw auth0 user to token info array.');
-                $userInfo = $this->convertAuth0UserToUserInfo($auth0User);
+                $userInfo = GeneralUtility::makeInstance(UserUtility::class)->convertAuth0UserToUserInfo($auth0User);
                 $sessionStore->set('user', $userInfo);
             }
         }
 
         $this->view->assign('userInfo', $userInfo);
-    }
-
-    protected function convertAuth0UserToUserInfo(array $auth0User): array
-    {
-        return [
-            'sub' => $auth0User['user_id'],
-            'given_name' => $auth0User['given_name'],
-            'family_name' => $auth0User['family_name'],
-            'nickname' => $auth0User['nickname'],
-            'name' => $auth0User['name'],
-            'picture' => $auth0User['picture'],
-            'locale' => $auth0User['locale'],
-            'updated_at' => $auth0User['updated_at'],
-        ];
     }
 
     /**
@@ -155,47 +141,6 @@ class LoginController extends ActionController implements LoggerAwareInterface
         }
     }
 
-    protected function getRedirectUri(): string
-    {
-        $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
-        $redirectUri = $routingUtility->getUri();
-        $this->logger->notice(sprintf('Set redirect URI to: %s', $redirectUri));
-
-        return $redirectUri;
-    }
-
-    protected function getCallbackUri(): string
-    {
-        $pageType = $this->settings['frontend']['callback']['targetPageType'];
-        $pageUid = $this->settings['frontend']['callback']['targetPageUid'];
-        $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
-        $routingUtility->setArguments([
-            'logintype' => 'login',
-            'application' => (int)$this->settings['application'],
-            'referrer' => $this->getRedirectUri(),
-        ]);
-
-        if (!empty($pageUid)) {
-            // Check whether page exists
-            $page = $this->objectManager->get(PageRepository::class)->checkRecord('pages', $pageUid);
-
-            if (!empty($page)) {
-                $routingUtility->setTargetPage((int)$pageUid);
-            } else {
-                $this->logger->warning(sprintf('No page found for given uid "%s".', $pageUid));
-            }
-        }
-
-        if (!empty($pageType)) {
-            $routingUtility->setTargetPageType((int)$pageType);
-        }
-
-        $uri = $routingUtility->getUri();
-        $this->logger->notice(sprintf('Set callback URI to: %s', $uri));
-
-        return $uri;
-    }
-
     /**
      * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
      */
@@ -204,7 +149,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
         try {
             return new AuthenticationApi(
                 (int)$this->settings['application'],
-                $this->getCallbackUri(),
+                GeneralUtility::makeInstance(RoutingUtility::class)->getCallbackUri($this->settings['frontend']['callback'], (int)$this->settings['application']),
                 self::SCOPE
             );
         } catch (CoreException $exception) {
