@@ -146,7 +146,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
             $redirectUris = $redirectService->getRedirectUri($allowedMethods);
 
             if (!empty($redirectUris)) {
-                $redirectUri = $this->addAditionalParamsToRedirectUri($redirectService->getUri($redirectUris), $bypassLoginType, $bypassAuth0Error);
+                $redirectUri = $this->addAdditionalParamsToRedirectUri($redirectService->getUri($redirectUris), $bypassLoginType, $bypassAuth0Error);
                 $this->logger->notice(sprintf('Redirect to: %s', $redirectUri));
                 header('Location: ' . $redirectUri, false, 307);
                 die;
@@ -156,7 +156,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
         }
     }
 
-    protected function addAditionalParamsToRedirectUri(string $uri, bool $bypassLoginType, bool $bypassAuth0Error): string
+    protected function addAdditionalParamsToRedirectUri(string $uri, bool $bypassLoginType, bool $bypassAuth0Error): string
     {
         $additionalParams = [];
 
@@ -166,6 +166,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
         if ($bypassAuth0Error === true) {
             $additionalParams['error_description'] = GeneralUtility::_GET('error_description');
+            $additionalParams['error'] = GeneralUtility::_GET('error');
         }
 
         if (!empty($additionalParams)) {
