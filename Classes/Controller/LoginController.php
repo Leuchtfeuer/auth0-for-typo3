@@ -76,13 +76,12 @@ class LoginController extends ActionController implements LoggerAwareInterface
         $sessionStore = new SessionStore();
         $userInfo = $sessionStore->get('user');
         $feUserAuthentication = $GLOBALS['TSFE']->fe_user;
+        $redirectService = GeneralUtility::makeInstance(RedirectService::class, $this->settings);
 
         if (GeneralUtility::_GP('logintype') === 'login' && $feUserAuthentication->user !== null && $userInfo !== null) {
             if (!empty(GeneralUtility::_GP('referrer'))) {
                 $this->logger->notice('Handle referrer redirect prior to updating user.');
-                $this->settings['redirectDisable'] = false;
-                $this->settings['redirectMode'] = 'referrer';
-                $this->handleRedirect(['referrer'], ['logintype' => 'login']);
+                $redirectService->forceRedirectByReferrer(['logintype' => 'login']);
             }
 
             // Try to update user
@@ -90,7 +89,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
             GeneralUtility::makeInstance(UserUtility::class)->updateUser($this->getAuthenticationApi(), (int)$this->settings['application']);
 
             // Redirect user on login
-            $this->handleRedirect(['groupLogin', 'userLogin', 'login', 'getpost', 'referrer']);
+            $redirectService->handleRedirect(['groupLogin', 'userLogin', 'login', 'getpost', 'referrer']);
             $this->logger->notice('No redirect configured. Showing form.');
         }
 
@@ -109,13 +108,9 @@ class LoginController extends ActionController implements LoggerAwareInterface
             }
         }
 
-        $auth0ErrorCode = GeneralUtility::_GET('error');
-        if (!empty(GeneralUtility::_GET('referrer')) && $auth0ErrorCode === AuthenticationApi::ERROR_UNAUTHORIZED) {
-            $this->logger->notice('Handle referrer redirect prior to updating user.');
-            $this->settings['redirectDisable'] = false;
-            $this->settings['redirectMode'] = 'referrer';
-            $this->handleRedirect(
-                ['referrer'],
+        if (!empty(GeneralUtility::_GET('referrer')) && $this->error === AuthenticationApi::ERROR_UNAUTHORIZED) {
+            $this->logger->notice('Handle referrer redirect because of Auth0 errors.');
+            $redirectService->forceRedirectByReferrer(
                 [
                     'error' => $this->error,
                     'error_description' => $this->errorDescription,
@@ -162,43 +157,6 @@ class LoginController extends ActionController implements LoggerAwareInterface
     {
         GeneralUtility::makeInstance(UserUtility::class)->logoutUser($this->getAuthenticationApi());
         $this->redirect('form');
-    }
-
-    /**
-     * @todo: Move into other class
-     */
-    protected function handleRedirect(array $allowedMethods, array $additionalParameters = [])
-    {
-        if ((bool)$this->settings['redirectDisable'] === false && !empty($this->settings['redirectMode'])) {
-            $this->logger->notice('Try to redirect user.');
-            $redirectService = GeneralUtility::makeInstance(RedirectService::class, $this->settings);
-            $redirectUris = $redirectService->getRedirectUri($allowedMethods);
-
-            if (!empty($redirectUris)) {
-                $redirectUri = $this->addAdditionalParamsToRedirectUri($redirectService->getUri($redirectUris), $additionalParameters);
-                $this->logger->notice(sprintf('Redirect to: %s', $redirectUri));
-                header('Location: ' . $redirectUri, false, 307);
-                die;
-            }
-
-            $this->logger->warning('Redirect failed.');
-        }
-    }
-
-    /**
-     * @todo: Move into other class
-     */
-    protected function addAdditionalParamsToRedirectUri(string $uri, array $additionalParams): string
-    {
-        if (!empty($additionalParams)) {
-            $uri .= '?';
-        }
-
-        foreach ($additionalParams as $key => $value) {
-            $uri .= $key . '=' . $value . '&';
-        }
-
-        return rtrim($uri, '&');
     }
 
     /**

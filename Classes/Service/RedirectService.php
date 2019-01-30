@@ -40,6 +40,30 @@ class RedirectService implements SingletonInterface, LoggerAwareInterface
         $this->settings = $redirectSettings;
     }
 
+    public function handleRedirect(array $allowedMethods, array $additionalParameters = [])
+    {
+        if ((bool)$this->settings['redirectDisable'] === false && !empty($this->settings['redirectMode'])) {
+            $this->logger->notice('Try to redirect user.');
+            $redirectUris = $this->getRedirectUri($allowedMethods);
+
+            if (!empty($redirectUris)) {
+                $redirectUri = $this->addAdditionalParamsToRedirectUri($this->getUri($redirectUris), $additionalParameters);
+                $this->logger->notice(sprintf('Redirect to: %s', $redirectUri));
+                header('Location: ' . $redirectUri, false, 307);
+                die;
+            }
+
+            $this->logger->warning('Redirect failed.');
+        }
+    }
+
+    public function forceRedirectByReferrer($additionalParameters = [])
+    {
+        $this->setRedirectDisable(false);
+        $this->setRedirectMode('referrer');
+        $this->handleRedirect(['referrer'], $additionalParameters);
+    }
+
     public function getRedirectUri(array $allowedRedirects): array
     {
         $redirect_url = [];
@@ -158,6 +182,29 @@ class RedirectService implements SingletonInterface, LoggerAwareInterface
     public function getUri($redirectUris)
     {
         return ((bool)$this->settings['redirectFirstMethod']) ? array_shift($redirectUris) : array_pop($redirectUris);
+    }
+
+    public function setRedirectDisable(bool $value)
+    {
+        $this->settings['redirectDisable'] = $value;
+    }
+
+    public function setRedirectMode(string $value)
+    {
+        $this->settings['redirectMode'] = $value;
+    }
+
+    protected function addAdditionalParamsToRedirectUri(string $uri, array $additionalParams): string
+    {
+        if (!empty($additionalParams)) {
+            $uri .= '?';
+        }
+
+        foreach ($additionalParams as $key => $value) {
+            $uri .= $key . '=' . $value . '&';
+        }
+
+        return rtrim($uri, '&');
     }
 
     /**
