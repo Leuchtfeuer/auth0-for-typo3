@@ -7,6 +7,13 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ConfigurationSlot
 {
+    protected $excludedParameters = [
+        'code',
+        'state',
+        'error_description',
+        'error',
+    ];
+
     public function addCacheHashExcludedParameters()
     {
         $path = ['FE', 'cacheHash', 'excludedParameters'];
@@ -20,20 +27,10 @@ class ConfigurationSlot
 
     protected function setValues(array &$excludeParameters)
     {
-        if (!in_array('code', $excludeParameters)) {
-            $excludeParameters[] = 'code';
-        }
-
-        if (!in_array('state', $excludeParameters)) {
-            $excludeParameters[] = 'state';
-        }
-
-        if (!in_array('error_description', $excludeParameters)) {
-            $excludeParameters[] = 'error_description';
-        }
-
-        if (!in_array('error', $excludeParameters)) {
-            $excludeParameters[] = 'error';
+        foreach ($this->excludedParameters as $excludedParameter) {
+            if (!in_array($excludedParameter, $excludeParameters)) {
+                $excludeParameters[] = $excludedParameter;
+            }
         }
     }
 }
