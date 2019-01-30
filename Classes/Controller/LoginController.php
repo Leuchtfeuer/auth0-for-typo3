@@ -53,8 +53,8 @@ class LoginController extends ActionController implements LoggerAwareInterface
     public function formAction()
     {
         // Get Auth0 user from session storage
-        $store = new SessionStore();
-        $userInfo = $store->get('user');
+        $sessionStore = new SessionStore();
+        $userInfo = $sessionStore->get('user');
         $feUserAuthentication = $GLOBALS['TSFE']->fe_user;
 
         if (GeneralUtility::_GP('logintype') === 'login' && $feUserAuthentication->user !== null && $userInfo !== null) {
@@ -85,6 +85,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
             } else {
                 $this->logger->debug('Map raw auth0 user to token info array.');
                 $userInfo = $this->convertAuth0UserToUserInfo($auth0User);
+                $sessionStore->set('user', $userInfo);
             }
         }
 
