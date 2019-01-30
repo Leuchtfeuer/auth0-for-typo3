@@ -16,10 +16,10 @@ namespace Bitmotion\Auth0\Controller;
 use Auth0\SDK\Exception\CoreException;
 use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\AuthenticationApi;
-use Bitmotion\Auth0\Api\ManagementApi;
 use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Service\RedirectService;
+use Bitmotion\Auth0\Service\SessionService;
 use Bitmotion\Auth0\Utility\ApiUtility;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use Bitmotion\Auth0\Utility\RoutingUtility;
@@ -78,44 +78,31 @@ class LoginController extends ActionController implements LoggerAwareInterface
         $feUserAuthentication = $GLOBALS['TSFE']->fe_user;
         $redirectService = GeneralUtility::makeInstance(RedirectService::class, $this->settings);
 
+        // Redirect when user just logged in (and update him)
         if (GeneralUtility::_GP('logintype') === 'login' && $feUserAuthentication->user !== null && $userInfo !== null) {
             if (!empty(GeneralUtility::_GP('referrer'))) {
                 $this->logger->notice('Handle referrer redirect prior to updating user.');
                 $redirectService->forceRedirectByReferrer(['logintype' => 'login']);
             }
 
-            // Try to update user
-            $this->logger->notice('Update User due to login.');
             GeneralUtility::makeInstance(UserUtility::class)->updateUser($this->getAuthenticationApi(), (int)$this->settings['application']);
-
-            // Redirect user on login
             $redirectService->handleRedirect(['groupLogin', 'userLogin', 'login', 'getpost', 'referrer']);
-            $this->logger->notice('No redirect configured. Showing form.');
         }
 
+        // "Fake" Auth0 session when user is still logged into TYPO3 but not to Auth0
         if ($userInfo === null && $feUserAuthentication->user !== null) {
-            $this->logger->notice('Found active TYPO3 session but no active Auth0 session.');
             $applicationUid = (!empty(GeneralUtility::_GP('application'))) ? GeneralUtility::_GP('application') : $this->settings['application'];
-            $managementApi = GeneralUtility::makeInstance(ManagementApi::class, (int)$applicationUid);
-            $auth0User = $managementApi->getUserById($feUserAuthentication->user['auth0_user_id']);
-
-            if (isset($auth0User['blocked']) && $auth0User['blocked'] === true) {
-                $this->logger->notice('Logoff user as it is blocked in Auth0.');
-            } else {
-                $this->logger->debug('Map raw auth0 user to token info array.');
-                $userInfo = GeneralUtility::makeInstance(UserUtility::class)->convertAuth0UserToUserInfo($auth0User);
-                $sessionStore->set('user', $userInfo);
-            }
+            $sessionService = GeneralUtility::makeInstance(SessionService::class);
+            $userInfo = $sessionService->createAuth0Session($feUserAuthentication, $sessionStore, $applicationUid);
         }
 
+        // Force redirect due to Auth0 sign up or log in errors
         if (!empty(GeneralUtility::_GET('referrer')) && $this->error === AuthenticationApi::ERROR_UNAUTHORIZED) {
             $this->logger->notice('Handle referrer redirect because of Auth0 errors.');
-            $redirectService->forceRedirectByReferrer(
-                [
-                    'error' => $this->error,
-                    'error_description' => $this->errorDescription,
-                ]
-            );
+            $redirectService->forceRedirectByReferrer([
+                'error' => $this->error,
+                'error_description' => $this->errorDescription,
+            ]);
         }
 
         $this->view->assignMultiple([

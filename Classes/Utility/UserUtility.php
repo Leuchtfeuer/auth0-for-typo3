@@ -178,6 +178,8 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     public function updateUser(AuthenticationApi $authenticationApi, int $applicationUid)
     {
         try {
+            $this->logger->notice('Try to update user.');
+
             $tokenInfo = $authenticationApi->getUser();
             $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $applicationUid);
             $auth0User = $managementApi->getUserById($tokenInfo['sub']);
