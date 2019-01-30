@@ -19,6 +19,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class AuthenticationApi extends Auth0
 {
+    /**
+     * Error codes provided by Auth0
+     * @see: https://auth0.com/docs/libraries/error-messages
+     */
+
     // Sign up errors
     const ERROR_INVALID_PASSWORD = 'invalid_password';
     const ERROR_PASSWORD_DICTIONARY = 'password_dictionary_error';

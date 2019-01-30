@@ -18,6 +18,7 @@ use Bitmotion\Auth0\Api\AuthenticationApi;
 use Bitmotion\Auth0\Api\ManagementApi;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
+use Bitmotion\Auth0\Utility\ApiUtility;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
 use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;
@@ -202,12 +203,10 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         }
 
         try {
-            $this->authenticationApi = new AuthenticationApi(
-                $applicationUid,
-                // TODO: Use proper redirect uri for FE requests
-                GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/typo3/?loginProvider=1526966635&login=1',
-                'read:current_user openid profile'
-            );
+            $apiUtility = GeneralUtility::makeInstance(ApiUtility::class);
+            $callback = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/typo3/?loginProvider=1526966635&login=1';
+            $this->authenticationApi = $apiUtility->getAuthenticationApi($applicationUid, $callback);
+
             $this->tokenInfo = $this->authenticationApi->getUser();
             $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $applicationUid);
             $this->auth0User = $managementApi->getUserById($this->tokenInfo['sub']);

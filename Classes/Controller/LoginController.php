@@ -18,22 +18,23 @@ use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\AuthenticationApi;
 use Bitmotion\Auth0\Api\ManagementApi;
 use Bitmotion\Auth0\Domain\Model\Application;
+use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Service\RedirectService;
+use Bitmotion\Auth0\Utility\ApiUtility;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use Bitmotion\Auth0\Utility\RoutingUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Exception;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
+use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 
 class LoginController extends ActionController implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
-
-    const SCOPE = 'openid profile read:current_user';
 
     /**
      * @var Application
@@ -51,8 +52,11 @@ class LoginController extends ActionController implements LoggerAwareInterface
     }
 
     /**
-     * @throws Exception
-     * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
+     * @todo: Refactor
+     *
+     * @throws \Exception
+     * @throws CoreException
+     * @throws InvalidApplicationException
      */
     public function formAction()
     {
@@ -102,7 +106,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
                 ['referrer'],
                 [
                     'error' => GeneralUtility::_GET('error'),
-                    'error_description' => GeneralUtility::_GET('error_description')
+                    'error_description' => GeneralUtility::_GET('error_description'),
                 ]
             );
         }
@@ -115,10 +119,10 @@ class LoginController extends ActionController implements LoggerAwareInterface
     }
 
     /**
-     * @throws Exception
-     * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
+     * @throws CoreException
+     * @throws InvalidApplicationException
+     * @throws StopActionException
+     * @throws UnsupportedRequestTypeException
      */
     public function loginAction()
     {
@@ -137,10 +141,10 @@ class LoginController extends ActionController implements LoggerAwareInterface
     }
 
     /**
-     * @throws Exception
-     * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\StopActionException
-     * @throws \TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException
+     * @throws CoreException
+     * @throws InvalidApplicationException
+     * @throws StopActionException
+     * @throws UnsupportedRequestTypeException
      */
     public function logoutAction()
     {
@@ -148,6 +152,9 @@ class LoginController extends ActionController implements LoggerAwareInterface
         $this->redirect('form');
     }
 
+    /**
+     * @todo: Move into other class
+     */
     protected function handleRedirect(array $allowedMethods, array $additionalParameters = [])
     {
         if ((bool)$this->settings['redirectDisable'] === false && !empty($this->settings['redirectMode'])) {
@@ -166,6 +173,9 @@ class LoginController extends ActionController implements LoggerAwareInterface
         }
     }
 
+    /**
+     * @todo: Move into other class
+     */
     protected function addAdditionalParamsToRedirectUri(string $uri, array $additionalParams): string
     {
         if (!empty($additionalParams)) {
@@ -180,27 +190,15 @@ class LoginController extends ActionController implements LoggerAwareInterface
     }
 
     /**
-     * @throws Exception
-     * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
-     * @return AuthenticationApi
+     * @throws CoreException
+     * @throws InvalidApplicationException
      */
-    protected function getAuthenticationApi()
+    protected function getAuthenticationApi(): AuthenticationApi
     {
-        try {
-            return new AuthenticationApi(
-                (int)$this->settings['application'],
-                GeneralUtility::makeInstance(RoutingUtility::class)->getCallbackUri($this->settings['frontend']['callback'], (int)$this->settings['application']),
-                self::SCOPE
-            );
-        } catch (CoreException $exception) {
-            throw new Exception(
-                sprintf(
-                    'Cannot instantiate Auth0 Authentication: %s (%s)',
-                    $exception->getMessage(),
-                    $exception->getCode()
-                ),
-                1548845756
-            );
-        }
+        $apiUtility = GeneralUtility::makeInstance(ApiUtility::class);
+        $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
+        $callbackUri = $routingUtility->getCallbackUri($this->settings['frontend']['callback'], (int)$this->settings['application']);
+
+        return $apiUtility->getAuthenticationApi((int)$this->settings['application'], $callbackUri);
     }
 }
