@@ -146,7 +146,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
             $redirectUris = $redirectService->getRedirectUri($allowedMethods);
 
             if (!empty($redirectUris)) {
-                $redirectUri = $this->addAditionalParamsToRedirectUri($redirectService->getUri($redirectUris), false, true);
+                $redirectUri = $this->addAditionalParamsToRedirectUri($redirectService->getUri($redirectUris), $bypassLoginType, $bypassAuth0Error);
                 $this->logger->notice(sprintf('Redirect to: %s', $redirectUri));
                 header('Location: ' . $redirectUri, false, 307);
                 die;
