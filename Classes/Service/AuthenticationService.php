@@ -13,6 +13,7 @@ namespace Bitmotion\Auth0\Service;
  *
  ***/
 
+use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\AuthenticationApi;
 use Bitmotion\Auth0\Api\ManagementApi;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
@@ -65,6 +66,11 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     protected $authenticationApi;
 
     /**
+     * @var bool
+     */
+    protected $loginViaSession = false;
+
+    /**
      * @param string                                                    $mode
      * @param array                                                     $loginData
      * @param array                                                     $authInfo
@@ -79,27 +85,57 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     public function initAuth($mode, $loginData, $authInfo, $pObj)
     {
         $this->environmentService = GeneralUtility::makeInstance(EnvironmentService::class);
+        $this->logger->notice(__LINE__);
+        $this->initSessionStore();
+        $this->logger->notice(__LINE__);
 
-        if ($this->initializeAuth0Connections()) {
-            // Set default values
-            $authInfo['db_user']['check_pid_clause'] = false;
-            $this->db_user = $authInfo['db_user'];
-            $this->db_groups = $authInfo['db_groups'];
-            $this->mode = $mode;
-            $this->login = $loginData;
-            $this->authInfo = $authInfo;
-            $this->pObj = $pObj;
+        // Set default values
+        $authInfo['db_user']['check_pid_clause'] = false;
+        $this->db_user = $authInfo['db_user'];
+        $this->db_groups = $authInfo['db_groups'];
+        $this->authInfo = $authInfo;
+        $this->mode = $mode;
+        $this->login = $loginData;
+        $this->pObj = $pObj;
 
-            // Handle login for frontend or backend
-            if ($mode === 'getUserFE' && !empty($loginData)) {
-                $this->logger->notice('Handle Auth0 login for frontend users');
-                $this->tableName = 'fe_users';
-                $this->insertOrUpdateUser();
-            } elseif ($mode === 'getUserBE' && !empty($loginData)) {
-                $this->logger->notice('Handle Auth0 login for backend users');
-                $this->tableName = 'be_users';
-                $this->insertOrUpdateUser();
-            }
+        if ($this->loginViaSession === true) {
+            $this->login['status'] = 'login';
+            $this->handleLogin($loginData);
+        } elseif ($this->initializeAuth0Connections()) {
+            $this->handleLogin($loginData);
+        }
+    }
+
+    protected function initSessionStore()
+    {
+        $sessionStore = new SessionStore();
+        $tokenInfo = $sessionStore->get('user');
+
+        if (is_array($tokenInfo) && isset($tokenInfo['sub'])) {
+            $this->logger->debug('Try to login user via Auth0 session');
+            $this->tokenInfo = $tokenInfo;
+            $this->loginViaSession = true;
+        }
+    }
+
+    /**
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
+     * @throws \TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException
+     */
+    protected function handleLogin(array $loginData)
+    {
+        // Handle login for frontend or backend
+        if ($this->mode === 'getUserFE' && !empty($loginData)) {
+            $this->logger->notice('Handle Auth0 login for frontend users');
+            $this->tableName = 'fe_users';
+            $this->insertOrUpdateUser();
+        } elseif ($this->mode === 'getUserBE' && !empty($loginData)) {
+            $this->logger->notice('Handle Auth0 login for backend users');
+            $this->tableName = 'be_users';
+            $this->insertOrUpdateUser();
+        } else {
+            $this->logger->notice('Login data is empty. Could not login user.');
         }
     }
 
@@ -196,7 +232,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
             $emConfiguration = new EmAuth0Configuration();
             $applicationUid = $emConfiguration->getBackendConnection();
         } else {
-            $this->logger->error('Environment is neither in frontend nor in backend Mode');
+            $this->logger->error('Environment is neither in frontend nor in backend mode');
         }
 
         return $applicationUid;
