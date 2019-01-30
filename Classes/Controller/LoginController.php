@@ -98,7 +98,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
             $this->logger->notice('Handle referrer redirect prior to updating user.');
             $this->settings['redirectDisable'] = false;
             $this->settings['redirectMode'] = 'referrer';
-            $this->handleRedirect(['referrer'], true);
+            $this->handleRedirect(['referrer'], false, true);
         }
 
         $this->view->assign('userInfo', $userInfo);
@@ -138,7 +138,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
         $this->redirect('form');
     }
 
-    protected function handleRedirect(array $allowedMethods, bool $bypassLoginType = false)
+    protected function handleRedirect(array $allowedMethods, bool $bypassLoginType = false, $bypassAuth0Error = false)
     {
         if ((bool)$this->settings['redirectDisable'] === false && !empty($this->settings['redirectMode'])) {
             $this->logger->notice('Try to redirect user.');
@@ -146,7 +146,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
             $redirectUris = $redirectService->getRedirectUri($allowedMethods);
 
             if (!empty($redirectUris)) {
-                $redirectUri = ($bypassLoginType) ? $redirectService->getUri($redirectUris) . '?logintype=login' : $redirectService->getUri($redirectUris);
+                $redirectUri = $this->addAditionalParamsToRedirectUri($redirectService->getUri($redirectUris), false, true);
                 $this->logger->notice(sprintf('Redirect to: %s', $redirectUri));
                 header('Location: ' . $redirectUri, false, 307);
                 die;
@@ -154,6 +154,29 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
             $this->logger->warning('Redirect failed.');
         }
+    }
+
+    protected function addAditionalParamsToRedirectUri(string $uri, bool $bypassLoginType, bool $bypassAuth0Error): string
+    {
+        $additionalParams = [];
+
+        if ($bypassLoginType === true) {
+            $additionalParams['logintype'] = 'login';
+        }
+
+        if ($bypassAuth0Error === true) {
+            $additionalParams['error_description'] = GeneralUtility::_GET('error_description');
+        }
+
+        if (!empty($additionalParams)) {
+            $uri .= '?';
+        }
+
+        foreach ($additionalParams as $key => $value) {
+            $uri .= $key . '=' . $value . '&';
+        }
+
+        return rtrim('&', $uri);
     }
 
     /**
