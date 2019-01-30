@@ -41,6 +41,10 @@ class LoginController extends ActionController implements LoggerAwareInterface
      */
     protected $application;
 
+    protected $error = '';
+
+    protected $errorDescription = '';
+
     /**
      * @throws InvalidConfigurationTypeException
      */
@@ -48,6 +52,14 @@ class LoginController extends ActionController implements LoggerAwareInterface
     {
         if (!ConfigurationUtility::isLoaded()) {
             throw new InvalidConfigurationTypeException('No TypoScript found.', 1547449321);
+        }
+
+        if (!empty(GeneralUtility::_GET('error'))) {
+            $this->error = htmlspecialchars((string)GeneralUtility::_GET('error'));
+        }
+
+        if (!empty(GeneralUtility::_GET('error_description'))) {
+            $this->errorDescription = htmlspecialchars((string)GeneralUtility::_GET('error_description'));
         }
     }
 
@@ -105,16 +117,16 @@ class LoginController extends ActionController implements LoggerAwareInterface
             $this->handleRedirect(
                 ['referrer'],
                 [
-                    'error' => GeneralUtility::_GET('error'),
-                    'error_description' => GeneralUtility::_GET('error_description'),
+                    'error' => $this->error,
+                    'error_description' => $this->errorDescription,
                 ]
             );
         }
 
         $this->view->assignMultiple([
             'userInfo' => $userInfo,
-            'auth0Error' => (string)GeneralUtility::_GET('error'),
-            'auth0ErrorDescription' => (string)GeneralUtility::_GET('error_description'),
+            'auth0Error' => $this->error,
+            'auth0ErrorDescription' => $this->errorDescription,
         ]);
     }
 
