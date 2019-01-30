@@ -7,6 +7,10 @@
 				<source>Login with Auth0</source>
 			</trans-unit>
 
+			<trans-unit id="auth0.alert.label.close" xml:space="preserve">
+				<source>Close</source>
+			</trans-unit>
+
 			<trans-unit id="plugin.login.login" xml:space="preserve">
 				<source>Login</source>
 			</trans-unit>

@@ -101,7 +101,11 @@ class LoginController extends ActionController implements LoggerAwareInterface
             $this->handleRedirect(['referrer'], false, true);
         }
 
-        $this->view->assign('userInfo', $userInfo);
+        $this->view->assignMultiple([
+            'userInfo' => $userInfo,
+            'auth0Error' => (string)GeneralUtility::_GET('error'),
+            'auth0Description' => (string)GeneralUtility::_GET('error_description'),
+        ]);
     }
 
     /**
@@ -177,7 +181,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
             $uri .= $key . '=' . $value . '&';
         }
 
-        return rtrim('&', $uri);
+        return rtrim($uri, '&');
     }
 
     /**

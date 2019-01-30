@@ -1,6 +1,14 @@
 <f:layout name="Default"/>
 
 <f:section name="main">
+	<f:if condition="{auth0Error}">
+		<div class="alert alert-dismissible fade show alert-danger" role="alert">
+			<p><f:translate key="auth0.error.{auth0Error}">{auth0ErrorDescription}</f:translate></p>
+			<button class="close" type="button" data-dismiss="alert" aria-labelledby="{f:translate(key: 'auth0.alert.label.close')}">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+	</f:if>
 	<f:if condition="{userInfo}">
 		<f:then>
 			<f:link.action action="logout" class="btn btn-block btn-secondary" additionalParams="{logintype: 'logout'}">
