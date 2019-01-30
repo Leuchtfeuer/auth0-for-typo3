@@ -19,6 +19,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class AuthenticationApi extends Auth0
 {
+    const ERROR_403 = 'unauthorized';
+
     /**
      * @throws \Auth0\SDK\Exception\CoreException
      * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException

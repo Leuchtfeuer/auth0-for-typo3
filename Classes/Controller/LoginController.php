@@ -93,6 +93,14 @@ class LoginController extends ActionController implements LoggerAwareInterface
             }
         }
 
+        $auth0ErrorCode = GeneralUtility::_GET('error');
+        if (!empty(GeneralUtility::_GET('referrer')) && $auth0ErrorCode === AuthenticationApi::ERROR_403) {
+            $this->logger->notice('Handle referrer redirect prior to updating user.');
+            $this->settings['redirectDisable'] = false;
+            $this->settings['redirectMode'] = 'referrer';
+            $this->handleRedirect(['referrer'], true);
+        }
+
         $this->view->assign('userInfo', $userInfo);
     }
 

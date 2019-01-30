@@ -105,7 +105,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
 
     protected function getAuth0ResponseCode(): int
     {
-        return (int)GeneralUtility::_GET('error_description');
+        return (GeneralUtility::_GET('error') === AuthenticationApi::ERROR_403) ? 403 : 200;
     }
 
     protected function setDefaults(array $authInfo, string $mode, array $loginData, AbstractUserAuthentication $pObj)
