@@ -27,6 +27,7 @@ use TYPO3\CMS\Extbase\Service\EnvironmentService;
 
 class AuthenticationService extends \TYPO3\CMS\Core\Authentication\AuthenticationService
 {
+    const AUTH_LOGIN_PROVIDER = '1526966635';
     /**
      * @var \stdClass
      */
@@ -73,6 +74,11 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     protected $loginViaSession = false;
 
     /**
+     * @var int
+     */
+    protected $applicationUid = 0;
+
+    /**
      * @param string                                                    $mode
      * @param array                                                     $loginData
      * @param array                                                     $authInfo
@@ -86,11 +92,16 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      */
     public function initAuth($mode, $loginData, $authInfo, $pObj)
     {
-        if ($this->getAuth0ResponseCode() === 403) {
+        if ($this->isResponsible() === false) {
             return;
         }
 
-        $this->environmentService = GeneralUtility::makeInstance(EnvironmentService::class);
+        $this->initApplication();
+
+        if ($this->applicationUid === 0) {
+            return;
+        }
+
         $this->initSessionStore();
 
         // Set default values
@@ -104,9 +115,23 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         }
     }
 
-    protected function getAuth0ResponseCode(): int
+    protected function isResponsible(): bool
     {
-        return (GeneralUtility::_GET('error') === AuthenticationApi::ERROR_UNAUTHORIZED) ? 403 : 200;
+        $this->environmentService = GeneralUtility::makeInstance(EnvironmentService::class);
+        $responsible = true;
+
+        if ($this->environmentService->isEnvironmentInBackendMode() && GeneralUtility::_GP('loginProvider') !== self::AUTH_LOGIN_PROVIDER) {
+            $this->logger->notice('Not an Auth0 backend login. Skip.');
+            $responsible = false;
+        }
+
+        $auth0ErrorCode = GeneralUtility::_GET('error');
+        if ($auth0ErrorCode === AuthenticationApi::ERROR_ACCESS_DENIED || $auth0ErrorCode === AuthenticationApi::ERROR_UNAUTHORIZED) {
+            $this->logger->notice('Access denied. Skip.');
+            $responsible = false;
+        }
+
+        return $responsible;
     }
 
     protected function setDefaults(array $authInfo, string $mode, array $loginData, AbstractUserAuthentication $pObj)
@@ -127,8 +152,16 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
 
         if (is_array($tokenInfo) && isset($tokenInfo['sub'])) {
             $this->logger->debug('Try to login user via Auth0 session');
-            $this->tokenInfo = $tokenInfo;
-            $this->loginViaSession = true;
+            try {
+                $this->tokenInfo = $tokenInfo;
+                $this->getAuth0User();
+                $this->loginViaSession = true;
+            } catch (\Exception $exception) {
+                $this->logger->debug('Could not login user via Auth0 session');
+                $this->tokenInfo = [];
+                $this->auth0User = [];
+                $sessionStore->delete('user');
+            }
         }
     }
 
@@ -151,6 +184,15 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         } else {
             $this->logger->notice('Login data is empty. Could not login user.');
         }
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function getAuth0User()
+    {
+        $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $this->applicationUid);
+        $this->auth0User = $managementApi->getUserById($this->tokenInfo['sub']);
     }
 
     /**
@@ -178,6 +220,9 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
             $updateUtility->updateUser();
             $this->logger->notice('Update user groups.');
             $updateUtility->updateGroups();
+        } else {
+            // Update last uses application
+            $userUtility->updateLastApplication($this->auth0User['user_id'], $this->applicationUid);
         }
     }
 
@@ -190,26 +235,13 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      */
     protected function initializeAuth0Connections(): bool
     {
-        if ($this->environmentService->isEnvironmentInBackendMode() && GeneralUtility::_GP('loginProvider') != '1526966635') {
-            // Not an Auth0 login
-            $this->logger->notice('Not an Auth0 login. Skip.');
-
-            return false;
-        }
-
-        $applicationUid = $this->getApplicationUid();
-        if ($applicationUid === 0) {
-            return false;
-        }
-
         try {
             $apiUtility = GeneralUtility::makeInstance(ApiUtility::class);
-            $callback = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/typo3/?loginProvider=1526966635&login=1';
-            $this->authenticationApi = $apiUtility->getAuthenticationApi($applicationUid, $callback);
+            $callback = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/typo3/?loginProvider=' . self::AUTH_LOGIN_PROVIDER . '&login=1';
+            $this->authenticationApi = $apiUtility->getAuthenticationApi($this->applicationUid, $callback);
 
             $this->tokenInfo = $this->authenticationApi->getUser();
-            $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $applicationUid);
-            $this->auth0User = $managementApi->getUserById($this->tokenInfo['sub']);
+            $this->getAuth0User();
 
             if (isset($this->auth0User['error'])) {
                 $this->logger->error('No Auth0 user found.');
@@ -227,18 +259,17 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         return false;
     }
 
-    protected function getApplicationUid()
+    /**
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
+     */
+    protected function initApplication()
     {
         $applicationUid = 0;
 
         if ($this->environmentService->isEnvironmentInFrontendMode()) {
             $this->logger->notice('Handle frontend login.');
             $applicationUid = (int)GeneralUtility::_GP('application');
-
-            // No application uid found in request - skip.
-            if ($applicationUid === 0) {
-                $this->logger->error('No Auth0 application UID given.');
-            }
         } elseif ($this->environmentService->isEnvironmentInBackendMode()) {
             $this->logger->notice('Handle backend login.');
             $emConfiguration = new EmAuth0Configuration();
@@ -247,7 +278,11 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
             $this->logger->error('Environment is neither in frontend nor in backend mode');
         }
 
-        return $applicationUid;
+        if ($applicationUid === 0) {
+            $this->logger->error('No Auth0 application UID given.');
+        }
+
+        $this->applicationUid = $applicationUid;
     }
 
     /**
