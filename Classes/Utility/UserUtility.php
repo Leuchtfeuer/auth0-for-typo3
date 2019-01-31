@@ -198,4 +198,10 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             );
         }
     }
+
+    public function updateLastApplication(string $auth0UserId, int $application)
+    {
+        $userRepository = GeneralUtility::makeInstance(UserRepository::class, 'fe_users');
+        $userRepository->updateUserByAuth0Id(['auth0_last_application' => $application], $auth0UserId);
+    }
 }

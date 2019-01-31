@@ -19,7 +19,6 @@ use Bitmotion\Auth0\Api\AuthenticationApi;
 use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Service\RedirectService;
-use Bitmotion\Auth0\Service\SessionService;
 use Bitmotion\Auth0\Utility\ApiUtility;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use Bitmotion\Auth0\Utility\RoutingUtility;
@@ -87,13 +86,6 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
             GeneralUtility::makeInstance(UserUtility::class)->updateUser($this->getAuthenticationApi(), (int)$this->settings['application']);
             $redirectService->handleRedirect(['groupLogin', 'userLogin', 'login', 'getpost', 'referrer']);
-        }
-
-        // "Fake" Auth0 session when user is still logged into TYPO3 but not to Auth0
-        if ($userInfo === null && $feUserAuthentication->user !== null) {
-            $applicationUid = (!empty(GeneralUtility::_GP('application'))) ? GeneralUtility::_GP('application') : $this->settings['application'];
-            $sessionService = GeneralUtility::makeInstance(SessionService::class);
-            $userInfo = $sessionService->createAuth0Session($feUserAuthentication, $sessionStore, $applicationUid);
         }
 
         // Force redirect due to Auth0 sign up or log in errors

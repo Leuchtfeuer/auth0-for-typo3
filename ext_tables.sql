@@ -4,6 +4,7 @@
 CREATE TABLE fe_users (
   auth0_user_id varchar(255) DEFAULT '' NOT NULL,
   auth0_metadata mediumtext,
+  auth0_last_application int(11) DEFAULT 0 NOT NULL
 );
 
 #
@@ -11,13 +12,6 @@ CREATE TABLE fe_users (
 #
 CREATE TABLE be_users (
   auth0_user_id varchar(255) DEFAULT '' NOT NULL,
-);
-
-#
-# Table structure for table 'fe_groups'
-#
-CREATE TABLE fe_groups (
-  auth0_user_group varchar(255) DEFAULT '' NOT NULL,
 );
 
 #

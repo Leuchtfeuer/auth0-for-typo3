@@ -35,22 +35,33 @@ if (!isset($GLOBALS['TCA']['fe_users']['ctrl']['type'])) {
     'fe_users',
     [
         'auth0_user_id' => [
-            'exclude' => 0,
+            'exclude' => true,
             'label' => 'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_frontenduser.auth0_user_id',
             'config' => [
+                'readOnly' => true,
                 'type' => 'input',
                 'size' => 30,
                 'eval' => 'trim,required',
             ],
         ],
         'auth0_metadata' => [
-            'exclude' => 1,
+            'exclude' => true,
             'label' => 'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_frontenduser.auth0_metadata',
             'config' => [
-                'readOnly' => 1,
+                'readOnly' => true,
                 'type' => 'text',
                 'cols' => 60,
                 'rows' => 5,
+            ],
+        ],
+        'auth0_last_application' => [
+            'exclude' => true,
+            'label' => 'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_frontenduser.auth0_last_application',
+            'config' => [
+                'readOnly' => true,
+                'type' => 'select',
+                'renderType' => 'selectSingle',
+                'foreign_table' => 'tx_auth0_domain_model_application',
             ],
         ],
     ]
@@ -68,7 +79,7 @@ if (isset($GLOBALS['TCA']['fe_users']['types']['0']['showitem'])) {
     $GLOBALS['TCA']['fe_users']['types']['Tx_Auth0_FrontendUser']['showitem'] = '';
 }
 $GLOBALS['TCA']['fe_users']['types']['Tx_Auth0_FrontendUser']['showitem'] .= ',--div--;LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_frontenduser,';
-$GLOBALS['TCA']['fe_users']['types']['Tx_Auth0_FrontendUser']['showitem'] .= 'auth0_user_id,auth0_metadata';
+$GLOBALS['TCA']['fe_users']['types']['Tx_Auth0_FrontendUser']['showitem'] .= 'auth0_user_id,auth0_metadata,auth0_last_application';
 
 $GLOBALS['TCA']['fe_users']['columns'][$GLOBALS['TCA']['fe_users']['ctrl']['type']]['config']['items'][] = [
     'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:fe_users.tx_extbase_type.Tx_Auth0_FrontendUser',
