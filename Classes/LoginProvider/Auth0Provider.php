@@ -37,6 +37,11 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
     protected $authentication;
 
     /**
+     * @var array
+     */
+    protected $userInfo = null;
+
+    /**
      * @throws InvalidConfigurationTypeException
      */
     public function render(StandaloneView $standaloneView, PageRenderer $pageRenderer, LoginController $loginController)
@@ -62,17 +67,17 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
 
         // Try to get user info from session storage
         $store = new SessionStore();
-        $userInfo = $store->get('user');
+        $this->userInfo = $store->get('user');
 
-        if (($userInfo === null && GeneralUtility::_GP('login') == 1) || GeneralUtility::_GP('logout') == 1) {
-            $this->handleRequest($userInfo);
+        if (($this->userInfo === null && GeneralUtility::_GP('login') == 1) || GeneralUtility::_GP('logout') == 1) {
+            $this->handleRequest();
         }
 
         // Assign variables and Auth0 response to view
         $standaloneView->assignMultiple([
             'auth0Error' => GeneralUtility::_GP('error'),
             'auth0ErrorDescription' => GeneralUtility::_GP('error_description'),
-            'userInfo' => $userInfo,
+            'userInfo' => $this->userInfo,
         ]);
     }
 
@@ -92,13 +97,13 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         return true;
     }
 
-    protected function handleRequest($userInfo)
+    protected function handleRequest()
     {
         // Try to get user via authentication API
-        if ($userInfo === null) {
+        if ($this->userInfo === null) {
             try {
                 $this->logger->notice('Try to get user via authentication API');
-                $userInfo = $this->authentication->getUser();
+                $this->userInfo = $this->authentication->getUser();
             } catch (\Exception $exception) {
                 $this->authentication->deleteAllPersistentData();
             }
@@ -108,8 +113,8 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
             // Logout user from Auth0
             $this->logger->notice('Logout user.');
             $this->authentication->logout();
-            $userInfo = null;
-        } elseif ($userInfo === null && GeneralUtility::_GP('login') == 1) {
+            $this->userInfo = null;
+        } elseif ($this->userInfo === null && GeneralUtility::_GP('login') == 1) {
             // Login user to Auth0
             $this->logger->notice('Handle backend login.');
             $this->authentication->login();
