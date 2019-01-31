@@ -4,14 +4,26 @@
 		  product-name="auth0">
 		<header/>
 		<body>
-			<trans-unit id="backend.enable" xml:space="preserve">
-				<source>Enable Auth0 Backend Login</source>
+			<trans-unit id="backend.enable_backend_login" xml:space="preserve">
+				<source>Enable Auth0 log in for TYPO3 backend</source>
 			</trans-unit>
-			<trans-unit id="backend.connection" xml:space="preserve">
-				<source>Application ID for Backend Login</source>
+			<trans-unit id="backend.backend_connection" xml:space="preserve">
+				<source>Application identifier for backend login</source>
 			</trans-unit>
-			<trans-unit id="frontend.pid" xml:space="preserve">
-				<source>fe_user pid</source>
+			<trans-unit id="backend.reactivate_disabled_backend_users" xml:space="preserve">
+				<source>Allow log in for disabled backend users</source>
+			</trans-unit>
+			<trans-unit id="backend.reactivate_deleted_backend_users" xml:space="preserve">
+				<source>Allow log in for deleted backend users</source>
+			</trans-unit>
+			<trans-unit id="frontend.user_storage_page" xml:space="preserve">
+				<source>Storage page for frontend user</source>
+			</trans-unit>
+			<trans-unit id="frontend.reactivate_disabled_frontend_users" xml:space="preserve">
+				<source>Allow log in for disabled frontend users</source>
+			</trans-unit>
+			<trans-unit id="frontend.reactivate_deleted_frontend_users" xml:space="preserve">
+				<source>Allow log in for deleted frontend users</source>
 			</trans-unit>
 		</body>
 	</file>

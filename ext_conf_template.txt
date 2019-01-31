@@ -1,20 +1,20 @@
-# cat=Backend/10; type=boolean; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.enable
+# cat=Backend/10; type=boolean; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.enable_backend_login
 enableBackendLogin = 0
 
-# cat=Backend/20; type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.connection
+# cat=Backend/20; type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.backend_connection
 backendConnection = 1
 
-# cat=Backend/30; type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.connection
+# cat=Backend/30; type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.reactivate_disabled_backend_users
 reactivateDisabledBackendUsers = 0
 
-# cat=Backend/40; type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.connection
+# cat=Backend/40; type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.reactivate_deleted_backend_users
 reactivateDeletedBackendUsers = 0
 
-# cat=Frontend/10 type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:frontend.pid
+# cat=Frontend/10 type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:frontend.user_storage_page
 userStoragePage = 0
 
-# cat=Frontend/20; type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.connection
+# cat=Frontend/20; type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:frontend.reactivate_disabled_frontend_users
 reactivateDisabledFrontendUsers = 1
 
-# cat=Frontend/30; type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.connection
+# cat=Frontend/30; type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:frontend.reactivate_deleted_frontend_users
 reactivateDeletedFrontendUsers = 1
