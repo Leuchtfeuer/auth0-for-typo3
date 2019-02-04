@@ -115,11 +115,12 @@ class LoginController extends ActionController implements LoggerAwareInterface
         // Get Auth0 user from session storage
         $store = new SessionStore();
         $userInfo = $store->get('user');
-        $_params = [];
 
         if ($userInfo === null) {
             // Try to login user
             $this->logger->notice('Try to login user.');
+
+            $_params = ['sessionStore' => $store];
 
             foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['auth0']['login_pre_processing'] ?? [] as $_funcRef) {
                 if ($_funcRef) {
