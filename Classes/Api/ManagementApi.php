@@ -40,10 +40,10 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
      * @throws ApiException
      * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
      */
-    public function __construct(int $applicationUid = 0)
+    public function __construct(int $applicationUid = 0, string $scope = null)
     {
         if (!$this->authenticationApi instanceof Authentication) {
-            $authentication = $this->getAuthentication($applicationUid);
+            $authentication = $this->getAuthentication($applicationUid, $scope);
             $credentials = $this->connect($authentication);
 
             parent::__construct(
@@ -59,12 +59,12 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
     /**
      * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
      */
-    protected function getAuthentication(int $applicationUid): Authentication
+    protected function getAuthentication(int $applicationUid, $scope): Authentication
     {
         $applicationRepository = GeneralUtility::makeInstance(ApplicationRepository::class);
         $this->application = $applicationRepository->findByUid($applicationUid);
 
-        return $this->getAuthenticationApi();
+        return $this->getAuthenticationApi($scope);
     }
 
     /**
@@ -117,13 +117,14 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
         return $this->users->get($userId);
     }
 
-    protected function getAuthenticationApi(): Authentication
+    protected function getAuthenticationApi($scope): Authentication
     {
         return new Authentication(
             $this->application['domain'],
             $this->application['id'],
             $this->application['secret'],
-            'https://' . $this->application['domain'] . '/' . $this->application['audience']
+            'https://' . $this->application['domain'] . '/' . $this->application['audience'],
+            $scope
         );
     }
 }
