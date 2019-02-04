@@ -127,4 +127,19 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
             $scope
         );
     }
+
+    public function getUserApi(): Management\Users
+    {
+        return $this->users;
+    }
+
+    public function getTicketApi(): Management\Tickets
+    {
+        return $this->tickets;
+    }
+
+    public function getConnectionApi(): Management\Connections
+    {
+        return $this->connections;
+    }
 }
