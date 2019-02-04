@@ -48,6 +48,13 @@ class RedirectService implements SingletonInterface, LoggerAwareInterface
 
             if (!empty($redirectUris)) {
                 $redirectUri = $this->addAdditionalParamsToRedirectUri($this->getUri($redirectUris), $additionalParameters);
+
+                foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['auth0']['redirect_pre_processing'] ?? [] as $_funcRef) {
+                    if ($_funcRef) {
+                        GeneralUtility::callUserFunction($_funcRef, $redirectUri, $this);
+                    }
+                }
+
                 $this->logger->notice(sprintf('Redirect to: %s', $redirectUri));
                 header('Location: ' . $redirectUri, false, 307);
                 die;
