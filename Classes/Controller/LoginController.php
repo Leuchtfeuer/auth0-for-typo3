@@ -63,8 +63,6 @@ class LoginController extends ActionController implements LoggerAwareInterface
     }
 
     /**
-     * @todo: Refactor
-     *
      * @throws \Exception
      * @throws CoreException
      * @throws InvalidApplicationException
