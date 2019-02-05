@@ -15,6 +15,22 @@ namespace Bitmotion\Auth0\Api;
 
 use Auth0\SDK\API\Authentication;
 use Auth0\SDK\API\Management;
+use Auth0\SDK\API\Management\Blacklists;
+use Auth0\SDK\API\Management\ClientGrants;
+use Auth0\SDK\API\Management\Clients;
+use Auth0\SDK\API\Management\Connections;
+use Auth0\SDK\API\Management\DeviceCredentials;
+use Auth0\SDK\API\Management\Emails;
+use Auth0\SDK\API\Management\EmailTemplates;
+use Auth0\SDK\API\Management\Jobs;
+use Auth0\SDK\API\Management\Logs;
+use Auth0\SDK\API\Management\ResourceServers;
+use Auth0\SDK\API\Management\Rules;
+use Auth0\SDK\API\Management\Stats;
+use Auth0\SDK\API\Management\Tenants;
+use Auth0\SDK\API\Management\Tickets;
+use Auth0\SDK\API\Management\UserBlocks;
+use Auth0\SDK\API\Management\Users;
 use Auth0\SDK\Exception\ApiException;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Psr\Log\LoggerAwareInterface;
@@ -128,18 +144,88 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
         );
     }
 
-    public function getUserApi(): Management\Users
+    public function getBlacklistApi(): Blacklists
     {
-        return $this->users;
+        return $this->blacklists;
     }
 
-    public function getTicketApi(): Management\Tickets
+    public function getClientApi(): Clients
+    {
+        return $this->clients;
+    }
+
+    public function getClientGrantApi(): ClientGrants
+    {
+        return $this->client_grants;
+    }
+
+    public function getConnectionApi(): Connections
+    {
+        return $this->connections;
+    }
+
+    public function getDeviceCredentialApi(): DeviceCredentials
+    {
+        return $this->deviceCredentials;
+    }
+
+    public function getTicketApi(): Tickets
     {
         return $this->tickets;
     }
 
-    public function getConnectionApi(): Management\Connections
+    public function getUserApi(): Users
     {
-        return $this->connections;
+        return $this->users;
+    }
+
+    public function getEmailApi(): Emails
+    {
+        return $this->emails;
+    }
+
+    public function getEmailTemplateApi(): EmailTemplates
+    {
+        return $this->emailTemplates;
+    }
+
+    public function getJobApi(): Jobs
+    {
+        return $this->jobs;
+    }
+
+    public function getLogApi(): Logs
+    {
+        return $this->logs;
+    }
+
+    public function getRuleApi(): Rules
+    {
+        return $this->rules;
+    }
+
+    public function getResourceServerApi(): ResourceServers
+    {
+        return $this->resource_servers;
+    }
+
+    public function getStatApi(): Stats
+    {
+        return $this->stats;
+    }
+
+    public function getTenantApi(): Tenants
+    {
+        return $this->tenants;
+    }
+
+    public function getUserBlockApi(): UserBlocks
+    {
+        return $this->userBlocks;
+    }
+
+    public function getUsersByEmail(array $emails)
+    {
+        return $this->usersByEmail->get($emails);
     }
 }

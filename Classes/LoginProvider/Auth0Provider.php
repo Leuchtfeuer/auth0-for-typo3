@@ -34,7 +34,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
     /**
      * @var AuthenticationApi
      */
-    protected $authentication;
+    protected $authenticationApi;
 
     /**
      * @var array
@@ -103,21 +103,21 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         if ($this->userInfo === null) {
             try {
                 $this->logger->notice('Try to get user via authentication API');
-                $this->userInfo = $this->authentication->getUser();
+                $this->userInfo = $this->authenticationApi->getUser();
             } catch (\Exception $exception) {
-                $this->authentication->deleteAllPersistentData();
+                $this->authenticationApi->deleteAllPersistentData();
             }
         }
 
         if (GeneralUtility::_GP('logout') == 1) {
             // Logout user from Auth0
             $this->logger->notice('Logout user.');
-            $this->authentication->logout();
+            $this->authenticationApi->logout();
             $this->userInfo = null;
         } elseif ($this->userInfo === null && GeneralUtility::_GP('login') == 1) {
             // Login user to Auth0
             $this->logger->notice('Handle backend login.');
-            $this->authentication->login();
+            $this->authenticationApi->login();
         }
     }
 
