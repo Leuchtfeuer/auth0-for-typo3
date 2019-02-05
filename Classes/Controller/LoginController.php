@@ -166,9 +166,10 @@ class LoginController extends ActionController implements LoggerAwareInterface
     protected function getAuthenticationApi(): AuthenticationApi
     {
         $apiUtility = GeneralUtility::makeInstance(ApiUtility::class);
+        $apiUtility->setApplication((int)$this->settings['application']);
         $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
         $callbackUri = $routingUtility->getCallbackUri($this->settings['frontend']['callback'], (int)$this->settings['application']);
 
-        return $apiUtility->getAuthenticationApi((int)$this->settings['application'], $callbackUri);
+        return $apiUtility->getAuthenticationApi($callbackUri);
     }
 }
