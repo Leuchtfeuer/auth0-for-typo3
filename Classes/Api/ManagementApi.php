@@ -18,7 +18,6 @@ use Auth0\SDK\API\Management;
 use Auth0\SDK\API\Management\Blacklists;
 use Auth0\SDK\API\Management\ClientGrants;
 use Auth0\SDK\API\Management\Clients;
-use Auth0\SDK\API\Management\Connections;
 use Auth0\SDK\API\Management\DeviceCredentials;
 use Auth0\SDK\API\Management\Emails;
 use Auth0\SDK\API\Management\EmailTemplates;
@@ -32,6 +31,7 @@ use Auth0\SDK\API\Management\Tickets;
 use Auth0\SDK\API\Management\UserBlocks;
 use Auth0\SDK\API\Management\Users;
 use Auth0\SDK\Exception\ApiException;
+use Bitmotion\Auth0\Api\Management\ConnectionApi;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -52,6 +52,13 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
      */
     protected $application;
 
+    protected $connectionApi;
+
+    /**
+     * @deprecated
+     */
+    public $connections;
+
     /**
      * @throws ApiException
      * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
@@ -69,6 +76,8 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
                     'http_errors' => false,
                 ]
             );
+
+            $this->connectionApi = new ConnectionApi($this->connections);
         }
     }
 
@@ -159,9 +168,9 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
         return $this->client_grants;
     }
 
-    public function getConnectionApi(): Connections
+    public function getConnectionApi(): ConnectionApi
     {
-        return $this->connections;
+        return $this->connectionApi;
     }
 
     public function getDeviceCredentialApi(): DeviceCredentials
