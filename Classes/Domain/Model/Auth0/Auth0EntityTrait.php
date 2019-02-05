@@ -13,6 +13,7 @@ trait Auth0EntityTrait
         if (!$this instanceof Auth0EntityInterface) {
             throw new \Exception(__CLASS__ . ' has to implement ' . Auth0EntityInterface::class, 1549379399);
         }
+
         foreach ($values as $key => $value) {
             $property = GeneralUtility::underscoredToLowerCamelCase($key);
             if (property_exists(__CLASS__, $property)) {

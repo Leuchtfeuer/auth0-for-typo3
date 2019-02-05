@@ -2,28 +2,48 @@
 declare(strict_types=1);
 namespace Bitmotion\Auth0\Api\Management;
 
-use Auth0\SDK\API\Management\Connections;
+use Auth0\SDK\Exception\ApiException;
+use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Domain\Model\Auth0\Connection;
 use GuzzleHttp\Psr7\Response;
+use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
-class ConnectionApi
+class ConnectionApi extends GeneralManagementApi
 {
-    private $connections;
-
-    public function __construct(Connections $connections)
-    {
-        $this->connections = $connections;
-    }
-
+    /**
+     * Retrieves every connection matching the specified strategy. All connections are retrieved if no strategy is being
+     * specified. Accepts a list of fields to include or exclude in the resulting list of connection objects.
+     * Required scope: "read:connections"
+     *
+     *
+     * @param string $strategy          Provide strategies to only retrieve connections with such strategies
+     * @param string $fields            A comma separated list of fields to include or exclude (depending on include_fields)
+     *                                  from the result, empty to retrieve all fields
+     * @param string $name              Provide the name of the connection to retrieve
+     * @param bool $includeFields       true if the fields specified are to be included in the result, false otherwise
+     *                                  (defaults to true)
+     * @param bool   $includeTotals     true if a query summary must be included in the result, false otherwise. Default false.
+     * @param int    $page              The page number. Zero based
+     * @param int    $perPage           The amount of entries per page. Default: no paging is used, all connections are returned
+     *
+     * @throws ApiException
+     * @throws ClassNotFoundException
+     * @throws CoreException
+     * @return Connection|ObjectStorage
+     * @see https://auth0.com/docs/api/management/v2#!/Connections/get_connections
+     */
     public function getAll(
         string $strategy = '',
         string $fields = '',
+        string $name = '',
         bool $includeFields = true,
+        bool $includeTotals = false,
         int $page = 0,
-        int $perPage = 0,
-        array $params = []
-    ): ObjectStorage {
+        int $perPage = 0
+    ) {
+        $params = [];
+
         // Connection strategy to filter results by.
         if ($strategy !== '') {
             $params['strategy'] = $strategy;
@@ -32,9 +52,7 @@ class ConnectionApi
         // Results fields.
         if ($fields !== '') {
             $params['fields'] = $fields;
-            if ($includeFields === true) {
-                $params['include_fields'] = $includeFields;
-            }
+            $params['include_fields'] = $includeFields;
         }
 
         // Pagination.
@@ -45,9 +63,16 @@ class ConnectionApi
             }
         }
 
+        if ($includeTotals === true) {
+            $params['include_totals'] = (int)$includeTotals;
+        }
+
+        if ($name !== '') {
+            $params['name'] = $name;
+        }
+
         /** @var Response $response */
-        $response = $this->connections
-            ->getApiClient()
+        $response = $this->apiClient
             ->method('get')
             ->addPath('connections')
             ->withDictParams($params)
@@ -58,59 +83,202 @@ class ConnectionApi
     }
 
     /**
-     * @throws \Exception
+     * Retrieves a connection by its ID.
+     * Required scope: "read:connections"
+     *
+     *
+     * @param string $id            The id of the connection to retrieve
+     * @param string $fields        A comma separated list of fields to include or exclude (depending on include_fields)
+     *                              from the result, empty to retrieve all fields
+     * @param bool $includeFields   true if the fields specified are to be included in the result, false otherwise
+     *                              (defaults to true)
+     *
+     * @throws ApiException
+     * @throws ClassNotFoundException
+     * @throws CoreException
+     * @return Connection
+     * @see https://auth0.com/docs/api/management/v2#!/Connections/get_connections_by_id
      */
-    protected function mapResponse(Response $response): ObjectStorage
+    public function get(string $id, string $fields = '', bool $includeFields = true)
     {
-        $connections = \GuzzleHttp\json_decode($response->getBody()->getContents(), true);
+        $params = [];
 
-        $connectionObjects = new ObjectStorage();
-        foreach ($connections as $connection) {
-            $connectionObjects->attach(new Connection($connection));
+        // Results fields.
+        if ($fields !== '') {
+            $params['fields'] = $fields;
+            $params['include_fields'] = $includeFields;
         }
 
-        return $connectionObjects;
+        $response = $this->apiClient
+            ->method('get')
+            ->addPath('connections', $id)
+            ->withDictParams($params)
+            ->setReturnType('object')
+            ->call();
+
+        return $this->mapResponse($response);
     }
 
     /**
-     * @todo Rewrite
-     * @param null|mixed $fields
-     * @param null|mixed $include_fields
+     * Deletes a connection and all its users.
+     * Required scope: "delete:connections"
+     *
+     * @param string $id    Connection ID to delete
+     *
+     * @throws ApiException
+     * @throws ClassNotFoundException
+     * @throws CoreException
+     * @return object|ObjectStorage
+     * @see https://auth0.com/docs/api/management/v2#!/Connections/delete_connections_by_id
      */
-    public function get($id, $fields = null, $include_fields = null)
+    public function delete(string $id)
     {
-        return $this->connections->get($id, $fields, $include_fields);
+        $response = $this->apiClient
+            ->method('delete')
+            ->addPath('connections', $id)
+            ->setReturnType('object')
+            ->call();
+
+        return $this->mapResponse($response);
     }
 
     /**
-     * @todo Rewrite
+     * Deletes a specified connection user by its email (you cannot delete all users from specific connection).
+     * Currently, only Database Connections are supported.
+     * Required scope: "delete:users"
+     *
+     *
+     * @param string $id    The id of the connection (currently only database connections are supported)
+     * @param string $email The email of the user to delete
+     *
+     * @throws ApiException
+     * @throws ClassNotFoundException
+     * @throws CoreException
+     * @return object|ObjectStorage
+     * @see https://auth0.com/docs/api/management/v2#!/Connections/delete_users_by_email
      */
-    public function delete($id)
+    public function deleteUser(string $id, string $email)
     {
-        return $this->connections->delete($id);
+        $response = $this->apiClient
+            ->method('delete')
+            ->addPath('connections', $id)
+            ->addPath('users')
+            ->withParam('email', $email)
+            ->setReturnType('object')
+            ->call();
+
+        return $this->mapResponse($response);
     }
 
     /**
-     * @todo Rewrite
+     * Creates a new connection according to the JSON object received in body.
+     * Required scope: "create:connections"
+     *
+     * @param string $name           The name of the connection. Must start and end with an alphanumeric character and can only
+     *                               contain alphanumeric characters and '-'. Max length 128
+     * @param string $strategy       The identity provider identifier for the connection
+     * @param array $enabledClients  The identifiers of the clients for which the connection is to be enabled. If the array is
+     *                               empty or the property is not specified, no clients are enabled
+     * @param array $realms          Defines the realms for which the connection will be used (ie: email domains). If the array
+     *                               is empty or the property is not specified, the connection name will be added as realm
+     *
+     * @throws ApiException
+     * @throws ClassNotFoundException
+     * @throws CoreException
+     * @return object|ObjectStorage
+     * @see https://auth0.com/docs/api/management/v2#!/Connections/post_connections
      */
-    public function deleteUser($id, $email)
-    {
-        return $this->connections->deleteUser($id, $email);
+    public function create(
+        string $name,
+        string $strategy,
+        array $options = [],
+        array $enabledClients = [],
+        array $realms = [],
+        array $metadata = []
+    ) {
+        $body = [
+            'name' => $name,
+            // TODO: validate $strategy
+            'strategy' => $strategy,
+        ];
+
+        if (!empty($options)) {
+            // TODO: validate $options
+            $body['options'] = $options;
+        }
+
+        if (!empty($enabledClients)) {
+            $body['enabled_clients'] = $enabledClients;
+        }
+
+        if (!empty($realms)) {
+            $body['realms'] = $realms;
+        }
+
+        if (!empty($metadata)) {
+            $body['metadata'] = $metadata;
+        }
+
+        $response = $this->apiClient
+            ->method('post')
+            ->addPath('connections')
+            ->withBody(\GuzzleHttp\json_encode($body))
+            ->setReturnType('object')
+            ->call();
+
+        return $this->mapResponse($response);
     }
 
     /**
-     * @todo Rewrite
+     * Updates a connection. if you use the options parameter, the whole options object will be overridden, so ensure that
+     * all parameters are present
+     * Required scope: "update:connections"
+     *
+     * @param string $id             The id of the connection to retrieve
+     * @param array $enabledClients The identifiers of the clients for which the connection is to be enabled. If the array is
+     *                              empty or the property is not specified, no clients are enabled
+     * @param array $realms         Defines the realms for which the connection will be used (ie: email domains). If the array
+     *                              is empty or the property is not specified, the connection name will be added as realm
+     *
+     * @throws ApiException
+     * @throws ClassNotFoundException
+     * @throws CoreException
+     * @return object|ObjectStorage
+     * @see https://auth0.com/docs/api/management/v2#!/Connections/patch_connections_by_id
      */
-    public function create(array $data)
-    {
-        return $this->connections->create($data);
-    }
+    public function update(
+        string $id,
+        array $options = [],
+        array $enabledClients = [],
+        array $realms = [],
+        array $metadata = []
+    ) {
+        $body = [];
 
-    /**
-     * @todo Rewrite
-     */
-    public function update(string $id, array $data)
-    {
-        return $this->connections->update($id, $data);
+        if (!empty($options)) {
+            // TODO: validate $options
+            $body['options'] = $options;
+        }
+
+        if (!empty($enabledClients)) {
+            $body['enabled_clients'] = $enabledClients;
+        }
+
+        if (!empty($realms)) {
+            $body['realms'] = $realms;
+        }
+
+        if (!empty($metadata)) {
+            $body['metadata'] = $metadata;
+        }
+
+        $response = $this->apiClient
+            ->method('patch')
+            ->addPath('connections', $id)
+            ->withBody(\GuzzleHttp\json_encode($body))
+            ->setReturnType('object')
+            ->call();
+
+        return $this->mapResponse($response);
     }
 }

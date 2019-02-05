@@ -27,11 +27,12 @@ use Auth0\SDK\API\Management\ResourceServers;
 use Auth0\SDK\API\Management\Rules;
 use Auth0\SDK\API\Management\Stats;
 use Auth0\SDK\API\Management\Tenants;
-use Auth0\SDK\API\Management\Tickets;
 use Auth0\SDK\API\Management\UserBlocks;
 use Auth0\SDK\API\Management\Users;
 use Auth0\SDK\Exception\ApiException;
 use Bitmotion\Auth0\Api\Management\ConnectionApi;
+use Bitmotion\Auth0\Api\Management\TicketApi;
+use Bitmotion\Auth0\Api\Management\UserByEmailApi;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -54,10 +55,94 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
 
     protected $connectionApi;
 
+    protected $ticketApi;
+
+    protected $userByEmailApi;
+
     /**
      * @deprecated
      */
     public $connections;
+
+    /**
+     * @deprecated
+     */
+    public $tickets;
+
+    /**
+     * @deprecated
+     */
+    public $blacklists;
+
+    /**
+     * @deprecated
+     */
+    public $clients;
+
+    /**
+     * @deprecated
+     */
+    public $client_grants;
+
+    /**
+     * @deprecated
+     */
+    public $deviceCredentials;
+
+    /**
+     * @deprecated
+     */
+    public $users;
+
+    /**
+     * @deprecated
+     */
+    public $emails;
+
+    /**
+     * @deprecated
+     */
+    public $emailTemplates;
+
+    /**
+     * @deprecated
+     */
+    public $jobs;
+
+    /**
+     * @deprecated
+     */
+    public $logs;
+
+    /**
+     * @deprecated
+     */
+    public $rules;
+
+    /**
+     * @deprecated
+     */
+    public $resource_servers;
+
+    /**
+     * @deprecated
+     */
+    public $stats;
+
+    /**
+     * @deprecated
+     */
+    public $tenants;
+
+    /**
+     * @deprecated
+     */
+    public $userBlocks;
+
+    /**
+     * @deprecated
+     */
+    public $usersByEmail;
 
     /**
      * @throws ApiException
@@ -77,7 +162,9 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
                 ]
             );
 
-            $this->connectionApi = new ConnectionApi($this->connections);
+            $this->connectionApi = GeneralUtility::makeInstance(ConnectionApi::class, $this->connections->getApiClient());
+            $this->ticketApi = GeneralUtility::makeInstance(TicketApi::class, $this->tickets->getApiClient());
+            $this->userByEmailApi = GeneralUtility::makeInstance(UserByEmailApi::class, $this->usersByEmail->getApiClient());
         }
     }
 
@@ -89,7 +176,13 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
         $applicationRepository = GeneralUtility::makeInstance(ApplicationRepository::class);
         $this->application = $applicationRepository->findByUid($applicationUid);
 
-        return $this->getAuthenticationApi($scope);
+        return new Authentication(
+            $this->application['domain'],
+            $this->application['id'],
+            $this->application['secret'],
+            "https://{$this->application['domain']}/{$this->application['audience']}",
+            $scope
+        );
     }
 
     /**
@@ -108,49 +201,12 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
         return $result ?: [];
     }
 
-    public function getConnections(): array
-    {
-        try {
-            return $this->connections->getAll();
-        } catch (\Exception $exception) {
-            $this->logger->error(
-                $exception->getCode() . ': ' . $exception->getMessage()
-            );
-        }
-
-        return [];
-    }
-
-    public function getConnectionsForApplication(): array
-    {
-        $allowedConnections = [];
-
-        foreach ($this->getConnections() as $connection) {
-            if (in_array($this->application['id'], $connection['enabled_clients'])) {
-                $allowedConnections[] = $connection;
-            }
-        }
-
-        return $allowedConnections;
-    }
-
     /**
      * @throws \Exception
      */
     public function getUserById(string $userId)
     {
         return $this->users->get($userId);
-    }
-
-    protected function getAuthenticationApi($scope): Authentication
-    {
-        return new Authentication(
-            $this->application['domain'],
-            $this->application['id'],
-            $this->application['secret'],
-            'https://' . $this->application['domain'] . '/' . $this->application['audience'],
-            $scope
-        );
     }
 
     public function getBlacklistApi(): Blacklists
@@ -178,9 +234,9 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
         return $this->deviceCredentials;
     }
 
-    public function getTicketApi(): Tickets
+    public function getTicketApi(): TicketApi
     {
-        return $this->tickets;
+        return $this->ticketApi;
     }
 
     public function getUserApi(): Users
@@ -233,8 +289,8 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
         return $this->userBlocks;
     }
 
-    public function getUsersByEmail(array $emails)
+    public function getUserByEmailApi(): UserByEmailApi
     {
-        return $this->usersByEmail->get($emails);
+        return $this->userByEmailApi;
     }
 }
