@@ -14,7 +14,6 @@ class TicketApi extends GeneralManagementApi
      * This endpoint can be used to create a ticket to verify a user's email.
      * Required scope: "create:user_tickets"
      *
-     *
      * @param string $user          The user_id of for which the ticket is to be created
      * @param string $resultUri     The user will be redirected to this endpoint once the ticket is used
      * @param int $ttl              The ticket's lifetime in seconds starting from the moment of creation. After expiration, the
@@ -57,7 +56,6 @@ class TicketApi extends GeneralManagementApi
      * This endpoint can be used to create a password change ticket for a user.
      * Required scope: "create:user_tickets"
      *
-     *
      * @param string $user                      The user_id of for which the ticket is to be created
      * @param string $resultUri                 The user will be redirected to this endpoint once the ticket is used
      * @param int    $ttl                       The ticket's lifetime in seconds starting from the moment of creation. After
@@ -94,7 +92,6 @@ class TicketApi extends GeneralManagementApi
     /**
      * This endpoint can be used to create a password change ticket for a user.
      * Required scope: "create:user_tickets"
-     *
      *
      * @param string $email                     The user's email
      * @param string $connection                The connection that provides the identity for which the password is to be changed.
@@ -135,7 +132,6 @@ class TicketApi extends GeneralManagementApi
     /**
      * This endpoint can be used to create a password change ticket for a user.
      * Required scope: "create:user_tickets"
-     *
      *
      * @param string $user                      The user_id of for which the ticket is to be created
      * @param string $email                     The user's email

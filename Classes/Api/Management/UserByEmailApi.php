@@ -26,7 +26,6 @@ class UserByEmailApi extends GeneralManagementApi
      * When using this endpoint, make sure that you are searching for users via email addresses using the correct case.
      * Required scope: "read:users"
      *
-     *
      * @param bool   $includeFields true if the fields specified are to be included in the result, false otherwise. Defaults to true
      * @param string $fields A comma separated list of fields to include or exclude (depending on include_fields) from the
      *                       result, empty to retrieve all fields

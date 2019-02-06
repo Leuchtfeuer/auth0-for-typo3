@@ -13,7 +13,7 @@ class StatApi extends GeneralManagementApi
 {
     /**
      * Retrieves the number of active users that logged in during the last 30 days.
-     * Requires scope: "read:stats"
+     * Required scope: "read:stats"
      *
      * @return object|ObjectStorage
      * @throws ApiException
@@ -35,8 +35,7 @@ class StatApi extends GeneralManagementApi
 
     /**
      * Retrieves the number of logins that occurred in the entered date range.
-     * Requires scope: "read:stats"
-     *
+     * Required scope: "read:stats"
      *
      * @param \DateTime $from The first day of the period (inclusive) in YYYYMMDD format.
      * @param \DateTime $to   The last day of the period (inclusive) in YYYYMMDD format.

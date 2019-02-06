@@ -15,7 +15,6 @@ class TenantApi extends GeneralManagementApi
      * Use this endpoint to retrieve various settings for a tenant.
      * Required scope: "read:tenant_settings"
      *
-     *
      * @param  string $fields        A comma separated list of fields to include or exclude (depending on include_fields) from
      *                               the result, empty to retrieve all fields
      * @param  bool   $includeFields true if the fields specified are to be included in the result, false otherwise (defaults
@@ -52,7 +51,6 @@ class TenantApi extends GeneralManagementApi
     /**
      * Use this endpoint to update various fields for a tenant. Enter the new settings in a JSON string in the body parameter.
      * Required scope: "update:tenant_settings"
-     *
      *
      * @param array  $changePassword
      * @param array  $guardianMfaPage
@@ -92,8 +90,7 @@ class TenantApi extends GeneralManagementApi
         int $sessionLivetime = 0,
         int $idleSessionLifetime = 0,
         string $sandboxVersion = ''
-    )
-    {
+    ) {
         $body = [];
 
         if (!empty($changePassword)) {

@@ -16,7 +16,6 @@ class ConnectionApi extends GeneralManagementApi
      * specified. Accepts a list of fields to include or exclude in the resulting list of connection objects.
      * Required scope: "read:connections"
      *
-     *
      * @param string $strategy          Provide strategies to only retrieve connections with such strategies
      * @param string $fields            A comma separated list of fields to include or exclude (depending on include_fields)
      *                                  from the result, empty to retrieve all fields
@@ -86,7 +85,6 @@ class ConnectionApi extends GeneralManagementApi
      * Retrieves a connection by its ID.
      * Required scope: "read:connections"
      *
-     *
      * @param string $id            The id of the connection to retrieve
      * @param string $fields        A comma separated list of fields to include or exclude (depending on include_fields)
      *                              from the result, empty to retrieve all fields
@@ -146,7 +144,6 @@ class ConnectionApi extends GeneralManagementApi
      * Deletes a specified connection user by its email (you cannot delete all users from specific connection).
      * Currently, only Database Connections are supported.
      * Required scope: "delete:users"
-     *
      *
      * @param string $id    The id of the connection (currently only database connections are supported)
      * @param string $email The email of the user to delete
