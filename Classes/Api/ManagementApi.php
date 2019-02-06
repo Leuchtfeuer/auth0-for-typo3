@@ -31,6 +31,7 @@ use Auth0\SDK\API\Management\UserBlocks;
 use Auth0\SDK\API\Management\Users;
 use Auth0\SDK\Exception\ApiException;
 use Bitmotion\Auth0\Api\Management\ConnectionApi;
+use Bitmotion\Auth0\Api\Management\EmailApi;
 use Bitmotion\Auth0\Api\Management\GuardianApi;
 use Bitmotion\Auth0\Api\Management\JobApi;
 use Bitmotion\Auth0\Api\Management\StatApi;
@@ -60,6 +61,8 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
     protected $connectionApi = null;
 
     protected $userByEmailApi = null;
+
+    protected $emailApi = null;
 
     protected $guardianApi = null;
 
@@ -247,11 +250,6 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
         return $this->users;
     }
 
-    public function getEmailApi(): Emails
-    {
-        return $this->emails;
-    }
-
     public function getEmailTemplateApi(): EmailTemplates
     {
         return $this->emailTemplates;
@@ -280,6 +278,11 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
     public function getUserByEmailApi(): UserByEmailApi
     {
         return $this->userByEmailApi ?? GeneralUtility::makeInstance(UserByEmailApi::class, $this->usersByEmail->getApiClient());
+    }
+
+    public function getEmailApi(): EmailApi
+    {
+        return $this->emailApi ?? GeneralUtility::makeInstance(EmailApi::class, $this->emails->getApiClient());
     }
 
     public function getGuardianApi(): GuardianApi
