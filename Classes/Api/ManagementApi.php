@@ -36,6 +36,7 @@ use Bitmotion\Auth0\Api\Management\EmailApi;
 use Bitmotion\Auth0\Api\Management\EmailTemplateApi;
 use Bitmotion\Auth0\Api\Management\GuardianApi;
 use Bitmotion\Auth0\Api\Management\JobApi;
+use Bitmotion\Auth0\Api\Management\RuleConfigApi;
 use Bitmotion\Auth0\Api\Management\StatApi;
 use Bitmotion\Auth0\Api\Management\TenantApi;
 use Bitmotion\Auth0\Api\Management\TicketApi;
@@ -62,7 +63,25 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
      */
     protected $application;
 
+    protected $clientGrantApi = null;
+
+    protected $clientApi = null;
+
     protected $connectionApi = null;
+
+    protected $customDomainApi = null;
+
+    protected $deviceCredentialApi = null;
+
+    protected $grantApi = null;
+
+    protected $logApi = null;
+
+    protected $resourceServerApi = null;
+
+    protected $ruleApi = null;
+
+    protected $ruleConfigApi = null;
 
     protected $userBlockApi = null;
 
@@ -265,6 +284,11 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
     public function getResourceServerApi(): ResourceServers
     {
         return $this->resource_servers;
+    }
+
+    public function getRuleConfigApi(): RuleConfigApi
+    {
+        return $this->ruleConfigApi ?? GeneralUtility::makeInstance(RuleConfigApi::class, $this->rules->getApiClient());
     }
 
     public function getUserBlockApi(): UserBlockApi
