@@ -36,6 +36,7 @@ use Bitmotion\Auth0\Api\Management\EmailApi;
 use Bitmotion\Auth0\Api\Management\EmailTemplateApi;
 use Bitmotion\Auth0\Api\Management\GuardianApi;
 use Bitmotion\Auth0\Api\Management\JobApi;
+use Bitmotion\Auth0\Api\Management\LogApi;
 use Bitmotion\Auth0\Api\Management\ResourceServerApi;
 use Bitmotion\Auth0\Api\Management\RuleApi;
 use Bitmotion\Auth0\Api\Management\RuleConfigApi;
@@ -273,9 +274,9 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
         return $this->deviceCredentials;
     }
 
-    public function getLogApi(): Logs
+    public function getLogApi(): LogApi
     {
-        return $this->logs;
+        return $this->logApi ?? GeneralUtility::makeInstance(LogApi::class, $this->logs->getApiClient());
     }
 
     public function getResourceServerApi(): ResourceServerApi
