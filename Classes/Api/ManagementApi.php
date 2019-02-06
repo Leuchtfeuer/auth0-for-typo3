@@ -32,6 +32,7 @@ use Auth0\SDK\API\Management\Users;
 use Auth0\SDK\Exception\ApiException;
 use Bitmotion\Auth0\Api\Management\BlacklistApi;
 use Bitmotion\Auth0\Api\Management\ConnectionApi;
+use Bitmotion\Auth0\Api\Management\DeviceCredentialApi;
 use Bitmotion\Auth0\Api\Management\EmailApi;
 use Bitmotion\Auth0\Api\Management\EmailTemplateApi;
 use Bitmotion\Auth0\Api\Management\GrantApi;
@@ -270,9 +271,9 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
         return $this->connectionApi ?? GeneralUtility::makeInstance(ConnectionApi::class, $this->connections->getApiClient());
     }
 
-    public function getDeviceCredentialApi(): DeviceCredentials
+    public function getDeviceCredentialApi(): DeviceCredentialApi
     {
-        return $this->deviceCredentials;
+        return $this->deviceCredentialApi ?? GeneralUtility::makeInstance(DeviceCredentialApi::class, $this->deviceCredentials->getApiClient());
     }
 
     public function getGrantApi(): GrantApi
