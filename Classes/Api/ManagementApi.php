@@ -36,6 +36,7 @@ use Bitmotion\Auth0\Api\Management\EmailApi;
 use Bitmotion\Auth0\Api\Management\EmailTemplateApi;
 use Bitmotion\Auth0\Api\Management\GuardianApi;
 use Bitmotion\Auth0\Api\Management\JobApi;
+use Bitmotion\Auth0\Api\Management\RuleApi;
 use Bitmotion\Auth0\Api\Management\RuleConfigApi;
 use Bitmotion\Auth0\Api\Management\StatApi;
 use Bitmotion\Auth0\Api\Management\TenantApi;
@@ -276,14 +277,14 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
         return $this->logs;
     }
 
-    public function getRuleApi(): Rules
-    {
-        return $this->rules;
-    }
-
     public function getResourceServerApi(): ResourceServers
     {
         return $this->resource_servers;
+    }
+
+    public function getRuleApi(): RuleApi
+    {
+        return $this->ruleApi ?? GeneralUtility::makeInstance(RuleApi::class, $this->rules->getApiClient());
     }
 
     public function getRuleConfigApi(): RuleConfigApi
