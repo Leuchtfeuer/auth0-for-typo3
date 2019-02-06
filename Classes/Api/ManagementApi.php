@@ -31,6 +31,7 @@ use Auth0\SDK\API\Management\UserBlocks;
 use Auth0\SDK\API\Management\Users;
 use Auth0\SDK\Exception\ApiException;
 use Bitmotion\Auth0\Api\Management\ConnectionApi;
+use Bitmotion\Auth0\Api\Management\TenantApi;
 use Bitmotion\Auth0\Api\Management\TicketApi;
 use Bitmotion\Auth0\Api\Management\UserByEmailApi;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
@@ -53,11 +54,13 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
      */
     protected $application;
 
-    protected $connectionApi;
+    protected $connectionApi = null;
 
-    protected $ticketApi;
+    protected $ticketApi = null;
 
-    protected $userByEmailApi;
+    protected $userByEmailApi = null;
+
+    protected $tenantApi = null;
 
     /**
      * @deprecated
@@ -161,10 +164,6 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
                     'http_errors' => false,
                 ]
             );
-
-            $this->connectionApi = GeneralUtility::makeInstance(ConnectionApi::class, $this->connections->getApiClient());
-            $this->ticketApi = GeneralUtility::makeInstance(TicketApi::class, $this->tickets->getApiClient());
-            $this->userByEmailApi = GeneralUtility::makeInstance(UserByEmailApi::class, $this->usersByEmail->getApiClient());
         }
     }
 
@@ -226,17 +225,12 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
 
     public function getConnectionApi(): ConnectionApi
     {
-        return $this->connectionApi;
+        return $this->connectionApi ?? GeneralUtility::makeInstance(ConnectionApi::class, $this->connections->getApiClient());
     }
 
     public function getDeviceCredentialApi(): DeviceCredentials
     {
         return $this->deviceCredentials;
-    }
-
-    public function getTicketApi(): TicketApi
-    {
-        return $this->ticketApi;
     }
 
     public function getUserApi(): Users
@@ -279,11 +273,6 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
         return $this->stats;
     }
 
-    public function getTenantApi(): Tenants
-    {
-        return $this->tenants;
-    }
-
     public function getUserBlockApi(): UserBlocks
     {
         return $this->userBlocks;
@@ -291,6 +280,16 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
 
     public function getUserByEmailApi(): UserByEmailApi
     {
-        return $this->userByEmailApi;
+        return $this->userByEmailApi ?? GeneralUtility::makeInstance(UserByEmailApi::class, $this->usersByEmail->getApiClient());
+    }
+
+    public function getTenantApi(): Tenants
+    {
+        return $this->tenantApi ?? GeneralUtility::makeInstance(TenantApi::class, $this->tenants->getApiClient());
+    }
+
+    public function getTicketApi(): TicketApi
+    {
+        return $this->ticketApi ?? GeneralUtility::makeInstance(TicketApi::class, $this->tickets->getApiClient());
     }
 }
