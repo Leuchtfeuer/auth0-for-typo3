@@ -112,4 +112,11 @@ class GeneralManagementApi implements LoggerAwareInterface
             $data[$key] = $value;
         }
     }
+
+    protected function addBooleanProperty(array &$data, string $key, $value)
+    {
+        if ($value !== null) {
+            $data[$key] = (bool)$value;
+        }
+    }
 }
