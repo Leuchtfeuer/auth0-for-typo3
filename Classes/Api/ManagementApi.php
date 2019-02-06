@@ -34,6 +34,7 @@ use Bitmotion\Auth0\Api\Management\BlacklistApi;
 use Bitmotion\Auth0\Api\Management\ConnectionApi;
 use Bitmotion\Auth0\Api\Management\EmailApi;
 use Bitmotion\Auth0\Api\Management\EmailTemplateApi;
+use Bitmotion\Auth0\Api\Management\GrantApi;
 use Bitmotion\Auth0\Api\Management\GuardianApi;
 use Bitmotion\Auth0\Api\Management\JobApi;
 use Bitmotion\Auth0\Api\Management\LogApi;
@@ -272,6 +273,11 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
     public function getDeviceCredentialApi(): DeviceCredentials
     {
         return $this->deviceCredentials;
+    }
+
+    public function getGrantApi(): GrantApi
+    {
+        return $this->grantApi ?? GeneralUtility::makeInstance(GrantApi::class, $this->logs->getApiClient());
     }
 
     public function getLogApi(): LogApi
