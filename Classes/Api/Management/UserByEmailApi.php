@@ -43,7 +43,7 @@ class UserByEmailApi extends GeneralManagementApi
         ];
 
         if ($includeFields !== true) {
-            $params['include_fields'] = (int)$includeFields;
+            $params['include_fields'] = $includeFields;
         }
 
         if ($fields !== '') {

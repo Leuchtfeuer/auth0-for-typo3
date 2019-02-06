@@ -183,11 +183,11 @@ class TicketApi extends GeneralManagementApi
         }
 
         if ($markEmailAsVerified === true) {
-            $body['mark_email_as_verified'] = (int)$markEmailAsVerified;
+            $body['mark_email_as_verified'] = $markEmailAsVerified;
         }
 
         if ($includeEmailInRedirect) {
-            $body['includeEmailInRedirect'] = (int)$includeEmailInRedirect;
+            $body['includeEmailInRedirect'] = $includeEmailInRedirect;
         }
 
         $response = $this->apiClient

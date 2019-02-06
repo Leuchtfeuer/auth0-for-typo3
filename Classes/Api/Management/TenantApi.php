@@ -33,7 +33,7 @@ class TenantApi extends GeneralManagementApi
         ];
 
         if ($includeFields === false) {
-            $params['include_fields'] = (int)$includeFields;
+            $params['include_fields'] = $includeFields;
         }
 
 

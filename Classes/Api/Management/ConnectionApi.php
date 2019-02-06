@@ -63,7 +63,7 @@ class ConnectionApi extends GeneralManagementApi
         }
 
         if ($includeTotals === true) {
-            $params['include_totals'] = (int)$includeTotals;
+            $params['include_totals'] = $includeTotals;
         }
 
         if ($name !== '') {

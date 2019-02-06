@@ -161,8 +161,8 @@ class JobApi extends GeneralManagementApi
             ->addPath('users-imports')
             ->addFile('users', $file)
             ->addFormParam('connection_id', $connection)
-            ->addFormParam('upsert', (int)$upsert)
-            ->addFormParam('send_completion_email', (int)$sendCompletionEmail);
+            ->addFormParam('upsert', $upsert)
+            ->addFormParam('send_completion_email', $sendCompletionEmail);
 
         if ($externalId !== '') {
             $request->addFormParam('external_id', $externalId);
