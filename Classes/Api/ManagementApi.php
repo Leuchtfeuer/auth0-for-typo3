@@ -39,6 +39,8 @@ use Bitmotion\Auth0\Api\Management\JobApi;
 use Bitmotion\Auth0\Api\Management\StatApi;
 use Bitmotion\Auth0\Api\Management\TenantApi;
 use Bitmotion\Auth0\Api\Management\TicketApi;
+use Bitmotion\Auth0\Api\Management\UserApi;
+use Bitmotion\Auth0\Api\Management\UserBlockApi;
 use Bitmotion\Auth0\Api\Management\UserByEmailApi;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Psr\Log\LoggerAwareInterface;
@@ -61,6 +63,10 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
     protected $application;
 
     protected $connectionApi = null;
+
+    protected $userBlockApi = null;
+
+    protected $userApi = null;
 
     protected $userByEmailApi = null;
 
@@ -246,11 +252,6 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
         return $this->deviceCredentials;
     }
 
-    public function getUserApi(): Users
-    {
-        return $this->users;
-    }
-
     public function getLogApi(): Logs
     {
         return $this->logs;
@@ -266,9 +267,14 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
         return $this->resource_servers;
     }
 
-    public function getUserBlockApi(): UserBlocks
+    public function getUserBlockApi(): UserBlockApi
     {
-        return $this->userBlocks;
+        return $this->userBlockApi ?? GeneralUtility::makeInstance(UserBlockApi::class, $this->userBlocks->getApiClient());
+    }
+
+    public function getUserApi(): UserApi
+    {
+        return $this->userApi ?? GeneralUtility::makeInstance(UserApi::class, $this->users->getApiClient());
     }
 
     public function getUserByEmailApi(): UserByEmailApi
