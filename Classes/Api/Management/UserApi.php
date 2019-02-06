@@ -32,10 +32,10 @@ class UserApi extends GeneralManagementApi
      * @param bool   $includeFields true if the fields specified are to be included in the result, false otherwise. Defaults
      *                              to true
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Users/get_users
      */
     public function search(
@@ -53,27 +53,13 @@ class UserApi extends GeneralManagementApi
             'search_engine' => 'v3',
             'include_totals' => $includeTotals,
             'include_fields' => $includeFields,
+            'per_page' => $perPage,
+            'page' => $page,
         ];
 
-        if ($connection !== '') {
-            $params['connection'] = $connection;
-        }
-
-        if ($perPage !== 50) {
-            $params['per_page'] = $perPage;
-        }
-
-        if ($page !== 0) {
-            $params['page'] = $page;
-        }
-
-        if ($sorting !== '') {
-            $params['sort'] = $sorting;
-        }
-
-        if ($fields !== '') {
-            $params['fields'] = $fields;
-        }
+        $this->addStringProperty($params, 'connection', $connection);
+        $this->addStringProperty($params, 'sort', $sorting);
+        $this->addStringProperty($params, 'fields', $fields);
 
         $response = $this->apiClient
             ->method('get')
@@ -104,8 +90,6 @@ class UserApi extends GeneralManagementApi
      * @param string $picture       A URI pointing to the user's picture
      * @param string $phone         The user's phone number (following the E.164 recommendation), only valid for users to be
      *                              added to SMS connections
-     * @param array  $userMetadata
-     * @param array  $appMetadata
      * @param bool   $blocked       true if the user should be blocked
      * @param bool   $emailVerified true if the user's email is verified, false otherwise. If it is true then the user will not
      *                              receive a verification email, unless verify_email: true was specified
@@ -116,10 +100,10 @@ class UserApi extends GeneralManagementApi
      * @param bool   $phoneVerified true if the user's phone number is verified, false otherwise. When the user is added to a SMS
      *                              connection, they will not receive an verification SMS if this is true.
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Users/post_users
      */
     public function create(
@@ -151,45 +135,16 @@ class UserApi extends GeneralManagementApi
             'user_metadata' => $userMetadata,
         ];
 
-        if ($id !== '') {
-            $body['user_id'] = $id;
-        }
-
-        if ($email !== '') {
-            $body['email'] = $email;
-        }
-
-        if ($username !== '') {
-            $body['username'] = $username;
-        }
-
-        if ($password !== '') {
-            $body['password'] = $password;
-        }
-
-        if ($givenName !== '') {
-            $body['given_name'] = $givenName;
-        }
-
-        if ($familyName !== '') {
-            $body['familiy_name'] = $familyName;
-        }
-
-        if ($name !== '') {
-            $body['name'] = $name;
-        }
-
-        if ($nickname !== '') {
-            $body['nickname'] = $nickname;
-        }
-
-        if ($picture !== '') {
-            $body['picture'] = $picture;
-        }
-
-        if ($phone !== '') {
-            $body['phone_number'] = $phone;
-        }
+        $this->addStringProperty($body, 'user_id', $id);
+        $this->addStringProperty($body, 'email', $email);
+        $this->addStringProperty($body, 'username', $username);
+        $this->addStringProperty($body, 'password', $password);
+        $this->addStringProperty($body, 'given_name', $givenName);
+        $this->addStringProperty($body, 'family_name', $familyName);
+        $this->addStringProperty($body, 'name', $name);
+        $this->addStringProperty($body, 'nickname', $nickname);
+        $this->addStringProperty($body, 'picture', $picture);
+        $this->addStringProperty($body, 'phone_number', $phone);
 
         $response = $this->apiClient
             ->method('post')
@@ -211,21 +166,19 @@ class UserApi extends GeneralManagementApi
      *                              the result, empty to retrieve all fields
      * @param bool   $includeFields true if the fields specified are to be included in the result, false otherwise. Defaults to true
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Users/get_users_by_id
      */
     public function get(string $id, string $fields = '', bool $includeFields = true)
     {
         $params = [
-            'include_fields' => $includeFields
+            'include_fields' => $includeFields,
         ];
 
-        if ($fields !== '') {
-            $params['fields'] = $fields;
-        }
+        $this->addStringProperty($params, 'fields', $fields);
 
         $response = $this->apiClient
             ->method('get')
@@ -244,10 +197,10 @@ class UserApi extends GeneralManagementApi
      *
      * @param string $id The user_id of the user to delete
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Users/delete_users_by_id
      */
     public function delete(string $id)
@@ -274,13 +227,11 @@ class UserApi extends GeneralManagementApi
      *    credentials. Use the "Unblock a user" endpoint from the "User Blocks" API for that.
      * Required scope: "update:users update:users_app_metadata"
      *
-     * @param string $id
-     * @param array  $data
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Users/patch_users_by_id
      */
     public function update(string $id, array $data)
@@ -308,29 +259,21 @@ class UserApi extends GeneralManagementApi
      *                              descending. For example date:-1
      * @param bool   $includeTotals true if a query summary must be included in the result, false otherwise. Default false.
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Users/get_logs_by_user
      */
     public function getLog(string $id, int $page = 0, int $perPage = 50, string $sort = '', bool $includeTotals = false)
     {
         $params = [
             'include_totals' => $includeTotals,
+            'page' => $page,
+            'per_page' => $perPage,
         ];
 
-        if ($page !== 0) {
-            $params['page'] = $page;
-        }
-
-        if ($perPage !== 50) {
-            $params['per_page'] = $perPage;
-        }
-
-        if ($sort !== '') {
-            $params['sort'] = $sort;
-        }
+        $this->addStringProperty($params, 'sort', $sort);
 
         $response = $this->apiClient
             ->method('get')
@@ -350,10 +293,10 @@ class UserApi extends GeneralManagementApi
      *
      * @param string $id The user_id of the user to delete
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Users/get_enrollments
      */
     public function getEnrollments(string $id)
@@ -377,10 +320,10 @@ class UserApi extends GeneralManagementApi
      * @param string $id       The user_id of the user to delete
      * @param string $provider The multifactor provider. Supported values 'duo' or 'google-authenticator'
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Users/delete_multifactor_by_provider
      */
     public function deleteMultifactorProvider(string $id, string $provider = 'duo')
@@ -407,10 +350,10 @@ class UserApi extends GeneralManagementApi
      * @param string $provider   The identity provider of the secondary linked account.
      *                           Ex: 'google-oauth2' in google-oauth2|123456789081523216417
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Users/delete_user_identity_by_user_id
      */
     public function unlinkIdentity(string $id, string $idToUnlink, string $provider = 'ad')
@@ -434,10 +377,10 @@ class UserApi extends GeneralManagementApi
      *
      * @param string $id The user_id of the user which guardian code will be regenerated
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Users/delete_user_identity_by_user_id
      */
     public function createRecoveryCode(string $id)
@@ -465,10 +408,10 @@ class UserApi extends GeneralManagementApi
      * @param string $linkWith The JWT of the secondary account being linked. If sending this parameter, the 'provider',
      *                         'user_id' and 'connection_id' params are invalid.
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      *
      * @see https://auth0.com/docs/api/management/v2#!/Users/post_identities
      */
@@ -502,10 +445,10 @@ class UserApi extends GeneralManagementApi
      *                           useful in the case of having more than a database connection for the 'auth0' provider.
      * @param string $idToLink   The user_id of the secondary account being linked.
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      *
      * @see https://auth0.com/docs/api/management/v2#!/Users/post_identities
      */
@@ -513,17 +456,9 @@ class UserApi extends GeneralManagementApi
     {
         $body = [];
 
-        if ($provider !== '') {
-            $body['provider'] = $provider;
-        }
-
-        if ($connection !== '') {
-            $body['connection_id'] = $connection;
-        }
-
-        if ($idToLink !== '') {
-            $body['user_id'] = $idToLink;
-        }
+        $this->addStringProperty($body, 'provider', $provider);
+        $this->addStringProperty($body, 'connection_id', $connection);
+        $this->addStringProperty($body, 'user_id', $idToLink);
 
         $response = $this->apiClient
             ->method('post')

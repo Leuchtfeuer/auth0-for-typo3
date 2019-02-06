@@ -3,10 +3,8 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Api\Management;
 
 use Auth0\SDK\API\Header\ContentType;
-use Auth0\SDK\API\Helpers\ApiClient;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Domain\Model\Auth0\User;
 use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
@@ -20,12 +18,11 @@ class BlacklistApi extends GeneralManagementApi
      * been issued after it) and wait for it to expire.
      * Required scope: "blacklist:tokens"
      *
-     * @param string $aud
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Blacklists/get_tokens
      */
     public function get(string $aud)
@@ -49,12 +46,11 @@ class BlacklistApi extends GeneralManagementApi
      * been issued after it) and wait for it to expire.
      * Required scope: "blacklist:tokens"
      *
-     * @param string $aud
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Blacklists/post_tokens
      */
     public function add(string $jti, string $aud = '')
@@ -63,9 +59,7 @@ class BlacklistApi extends GeneralManagementApi
             'jti' => $jti,
         ];
 
-        if ($aud !== '') {
-            $body['aud'] = $aud;
-        }
+        $this->addStringProperty($body, 'aud', $aud);
 
         $response = $this->apiClient
             ->method('post')

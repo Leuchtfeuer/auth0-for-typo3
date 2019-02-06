@@ -3,7 +3,6 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Api\Management;
 
 use Auth0\SDK\API\Header\ContentType;
-use Auth0\SDK\API\Header\Header;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Domain\Model\Auth0\Ticket;
@@ -12,15 +11,14 @@ use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 class GuardianApi extends GeneralManagementApi
 {
-
     /**
      * Retrieves all factors. Useful to check factor enablement and trial status.
      * Required scope: "read:guardian_factors"
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Guardian/get_factors
      */
     public function getFactors()
@@ -41,10 +39,10 @@ class GuardianApi extends GeneralManagementApi
      *
      * @param string $id The id of the enrollment that is going to be updated
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Guardian/get_enrollments_by_id
      */
     public function getEnrollments(string $id)
@@ -66,10 +64,10 @@ class GuardianApi extends GeneralManagementApi
      *
      * @param string $id The id of the enrollment that is going to be updated
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Guardian/delete_enrollments_by_id
      */
     public function deleteEnrollments(string $id)
@@ -89,10 +87,10 @@ class GuardianApi extends GeneralManagementApi
      * Retrieves enrollment and verification templates. You can use this to check the current values for your templates.
      * Required scope: "read:guardian_factors"
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Guardian/get_templates
      */
     public function getTemplates()
@@ -116,17 +114,17 @@ class GuardianApi extends GeneralManagementApi
      * @param string $enrollmentMessage   Message sent to the user when they are invited to enroll with a phone number
      * @param string $verificationMessage Message sent to the user when they are prompted to verify their account
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Guardian/put_templates
      */
     public function updateTemplates(string $enrollmentMessage, string $verificationMessage)
     {
         $body = [
             'enrollment_message' => $enrollmentMessage,
-            'verification_message' => $verificationMessage
+            'verification_message' => $verificationMessage,
         ];
 
         $response = $this->apiClient
@@ -147,10 +145,10 @@ class GuardianApi extends GeneralManagementApi
      * Returns provider configuration for AWS SNS.
      * Required scope: "read:guardian_factors"
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Guardian/get_sns
      */
     public function getSns()
@@ -172,10 +170,10 @@ class GuardianApi extends GeneralManagementApi
      * Returns provider configuration.
      * Required scope: "read:guardian_factors"
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Guardian/get_twilio
      */
     public function getTwilio()
@@ -202,31 +200,20 @@ class GuardianApi extends GeneralManagementApi
      * @param string $authToken  Twilio Authentication token
      * @param string $sid        Twilio SID
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Guardian/put_twilio
      */
     public function updateTwilio(string $from = '', string $copilotSid = '', string $authToken = '', string $sid = '')
     {
         $body = [];
 
-        if ($from !== '') {
-            $body['from'] = $from;
-        }
-
-        if ($copilotSid !== '') {
-            $body['messaging_service_sid'] = $copilotSid;
-        }
-
-        if ($authToken !== '') {
-            $body['auth_token'] = $authToken;
-        }
-
-        if ($sid !== '') {
-            $body['sid'] = $sid;
-        }
+        $this->addStringProperty($body, 'from', $from);
+        $this->addStringProperty($body, 'messaging_service_sid', $copilotSid);
+        $this->addStringProperty($body, 'auth_token', $authToken);
+        $this->addStringProperty($body, 'sid', $sid);
 
         $response = $this->apiClient
             ->method('put')
@@ -252,22 +239,20 @@ class GuardianApi extends GeneralManagementApi
      *                         be sent to the user's default address
      * @param bool   $sendMail Send an email to the user to start the enrollment
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Guardian/post_ticket
      */
     public function createTicket(string $user, string $email = '', bool $sendMail = false)
     {
         $body = [
             'user_id' => $user,
-            'send_mail' => $sendMail
+            'send_mail' => $sendMail,
         ];
 
-        if ($email !== '') {
-            $body['email'] = $email;
-        }
+        $this->addStringProperty($body, 'email', $email);
 
         $response = $this->apiClient
             ->method('post')
@@ -289,10 +274,10 @@ class GuardianApi extends GeneralManagementApi
      * @param string $name    Factor name: push-notification, sms, email, duo or otp
      * @param bool   $enabled States if this factor is enabled
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Guardian/put_factors_by_name
      */
     public function updateFactor(string $name, bool $enabled = false)

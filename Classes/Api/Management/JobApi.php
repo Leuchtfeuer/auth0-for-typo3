@@ -5,7 +5,6 @@ namespace Bitmotion\Auth0\Api\Management;
 use Auth0\SDK\API\Header\ContentType;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Domain\Model\Auth0\Ticket;
 use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
@@ -17,10 +16,10 @@ class JobApi extends GeneralManagementApi
      *
      * @param  string $id  The id of the job
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Jobs/get_jobs_by_id
      */
     public function get(string $id)
@@ -41,10 +40,10 @@ class JobApi extends GeneralManagementApi
      *
      * @param  string $id  The id of the job
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Jobs/get_errors
      */
     public function getErrors(string $id)
@@ -66,10 +65,10 @@ class JobApi extends GeneralManagementApi
      *
      * @param  string $id  The id of the job
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Jobs/get_results
      */
     public function getResults(string $id)
@@ -95,10 +94,10 @@ class JobApi extends GeneralManagementApi
      * @param array  $fields     A list of fields to be included in the CSV. If omitted, a set of predefined fields will be
      *                           exported.
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Jobs/post_users_exports
      */
     public function exportUsers(string $connection = '', string $format = 'json', int $limit = 0, array $fields = [])
@@ -107,17 +106,9 @@ class JobApi extends GeneralManagementApi
             'format' => $format,
         ];
 
-        if ($connection !== '') {
-            $body['connection'] = $connection;
-        }
-
-        if ($limit !== 0) {
-            $body['limit'] = $limit;
-        }
-
-        if (!empty($fields)) {
-            $body['fields'] = $fields;
-        }
+        $this->addStringProperty($body, 'connection', $connection);
+        $this->addArrayProperty($body, 'fields', $fields);
+        $this->addIntegerProperty($body, 'limit', $limit);
 
         $response = $this->apiClient
             ->method('post')
@@ -142,10 +133,10 @@ class JobApi extends GeneralManagementApi
      * @param string $externalId          Customer defined id
      * @param bool   $sendCompletionEmail If true, send the completion email to all tenant owners when the job is finished
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Jobs/post_users_imports
      */
     public function importUsers(
@@ -181,21 +172,19 @@ class JobApi extends GeneralManagementApi
      * @param string $user   The user_id of the user to whom the email will be sent
      * @param string $client The id of the client, if not provided the global one will be used
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Jobs/post_verification_email
      */
     public function sendVerificationEmail(string $user, string $client = '')
     {
         $body = [
-            'user_id' => $user
+            'user_id' => $user,
         ];
 
-        if ($client !== '') {
-            $body['client_id'] = $client;
-        }
+        $this->addStringProperty($body, 'client_id', $client);
 
         $response = $this->apiClient
             ->method('post')

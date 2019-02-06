@@ -15,23 +15,12 @@ namespace Bitmotion\Auth0\Api;
 
 use Auth0\SDK\API\Authentication;
 use Auth0\SDK\API\Management;
-use Auth0\SDK\API\Management\Blacklists;
-use Auth0\SDK\API\Management\ClientGrants;
-use Auth0\SDK\API\Management\Clients;
-use Auth0\SDK\API\Management\DeviceCredentials;
-use Auth0\SDK\API\Management\Emails;
-use Auth0\SDK\API\Management\EmailTemplates;
-use Auth0\SDK\API\Management\Jobs;
-use Auth0\SDK\API\Management\Logs;
-use Auth0\SDK\API\Management\ResourceServers;
-use Auth0\SDK\API\Management\Rules;
-use Auth0\SDK\API\Management\Stats;
-use Auth0\SDK\API\Management\Tenants;
-use Auth0\SDK\API\Management\UserBlocks;
-use Auth0\SDK\API\Management\Users;
 use Auth0\SDK\Exception\ApiException;
 use Bitmotion\Auth0\Api\Management\BlacklistApi;
+use Bitmotion\Auth0\Api\Management\ClientApi;
+use Bitmotion\Auth0\Api\Management\ClientGrantApi;
 use Bitmotion\Auth0\Api\Management\ConnectionApi;
+use Bitmotion\Auth0\Api\Management\CustomDomainsApi;
 use Bitmotion\Auth0\Api\Management\DeviceCredentialApi;
 use Bitmotion\Auth0\Api\Management\EmailApi;
 use Bitmotion\Auth0\Api\Management\EmailTemplateApi;
@@ -256,19 +245,24 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
         return $this->users->get($userId);
     }
 
-    public function getClientApi(): Clients
+    public function getClientGrantApi(): ClientGrantApi
     {
-        return $this->clients;
+        return $this->clientGrantApi ?? GeneralUtility::makeInstance(ClientGrantApi::class, $this->client_grants->getApiClient());
     }
 
-    public function getClientGrantApi(): ClientGrants
+    public function getClientApi(): ClientApi
     {
-        return $this->client_grants;
+        return $this->clientApi ?? GeneralUtility::makeInstance(ClientApi::class, $this->clients->getApiClient());
     }
 
     public function getConnectionApi(): ConnectionApi
     {
         return $this->connectionApi ?? GeneralUtility::makeInstance(ConnectionApi::class, $this->connections->getApiClient());
+    }
+
+    public function getCustomDomainsApi(): CustomDomainsApi
+    {
+        return $this->customDomainApi ?? GeneralUtility::makeInstance(CustomDomainsApi::class, $this->connections->getApiClient());
     }
 
     public function getDeviceCredentialApi(): DeviceCredentialApi

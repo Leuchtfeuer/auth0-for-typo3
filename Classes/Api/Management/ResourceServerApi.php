@@ -5,7 +5,6 @@ namespace Bitmotion\Auth0\Api\Management;
 use Auth0\SDK\API\Header\ContentType;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Domain\Model\Auth0\Ticket;
 use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
@@ -20,10 +19,10 @@ class ResourceServerApi extends GeneralManagementApi
      *                            disabled
      * @param bool $includeTotals true if a query summary must be included in the result, false otherwise. Default false.
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Resource_Servers/get_resource_servers
      */
     public function list(int $page = 0, int $perPage = 50, bool $includeTotals = false)
@@ -51,7 +50,6 @@ class ResourceServerApi extends GeneralManagementApi
      * @param string $id                   The id or audience of the resource server to update
      * @param string $name                 The name of the resource server. Must contain at least one character. Does not
      *                                     allow '<' or '>'
-     * @param array  $scopes
      * @param string $algorithm            The algorithm used to sign tokens ['HS256' or 'RS256']
      * @param string $secret               The secret used to sign tokens when using symmetric algorithms
      * @param bool   $skip                 Flag this entity as capable of skipping consent
@@ -61,10 +59,10 @@ class ResourceServerApi extends GeneralManagementApi
      *                                     sent to Auth0 for token introspection.
      * @param array  $options              Used to store additional metadata
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Resource_Servers/post_resource_servers
      */
     public function create(
@@ -85,30 +83,12 @@ class ResourceServerApi extends GeneralManagementApi
             'signing_alg' => $algorithm,
         ];
 
-        if ($name !== '') {
-            $body['name'] = $name;
-        }
-
-        if (!empty($scopes)) {
-            $body['scopes'] = $scopes;
-        }
-
-        if ($secret !== '') {
-            $body['signing_secret'] = $secret;
-        }
-
-        if ($lifetime !== 0) {
-            $body['token_lifetime'] = $lifetime;
-        }
-
-        if ($verificationLocation !== '') {
-            $body['verificationLocation'] = $verificationLocation;
-        }
-
-        if (!empty($options)) {
-            $body['options'] = $options;
-        }
-
+        $this->addStringProperty($body, 'name', $name);
+        $this->addStringProperty($body, 'signing_secret', $secret);
+        $this->addStringProperty($body, 'verificationLocation', $verificationLocation);
+        $this->addArrayProperty($body, 'scopes', $scopes);
+        $this->addArrayProperty($body, 'options', $options);
+        $this->addIntegerProperty($body, 'token_lifetime', $lifetime);
 
         $response = $this->apiClient
             ->method('patch')
@@ -128,10 +108,10 @@ class ResourceServerApi extends GeneralManagementApi
      *
      * @param string $id The id or audience of the resource server to retrieve
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Resource_Servers/get_resource_servers_by_id
      */
     public function get(string $id)
@@ -152,10 +132,10 @@ class ResourceServerApi extends GeneralManagementApi
      *
      * @param string $id The id or the audience of the resource server to delete
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Resource_Servers/delete_resource_servers_by_id
      */
     public function delete(string $id)
@@ -177,7 +157,6 @@ class ResourceServerApi extends GeneralManagementApi
      * @param string $id                   The id or audience of the resource server to update
      * @param string $name                 The name of the resource server. Must contain at least one character. Does not
      *                                     allow '<' or '>'
-     * @param array  $scopes
      * @param string $algorithm            The algorithm used to sign tokens ['HS256' or 'RS256']
      * @param string $secret               The secret used to sign tokens when using symmetric algorithms
      * @param bool   $skip                 Flag this entity as capable of skipping consent
@@ -187,10 +166,10 @@ class ResourceServerApi extends GeneralManagementApi
      *                                     sent to Auth0 for token introspection.
      * @param array  $options              Used to store additional metadata
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Resource_Servers/patch_resource_servers_by_id
      */
     public function update(
@@ -211,30 +190,12 @@ class ResourceServerApi extends GeneralManagementApi
             'signing_alg' => $algorithm,
         ];
 
-        if ($name !== '') {
-            $body['name'] = $name;
-        }
-
-        if (!empty($scopes)) {
-            $body['scopes'] = $scopes;
-        }
-
-        if ($secret !== '') {
-            $body['signing_secret'] = $secret;
-        }
-
-        if ($lifetime !== 0) {
-            $body['token_lifetime'] = $lifetime;
-        }
-
-        if ($verificationLocation !== '') {
-            $body['verificationLocation'] = $verificationLocation;
-        }
-
-        if (!empty($options)) {
-            $body['options'] = $options;
-        }
-
+        $this->addStringProperty($body, 'name', $name);
+        $this->addStringProperty($body, 'signing_secret', $secret);
+        $this->addStringProperty($body, 'verificationLocation', $verificationLocation);
+        $this->addArrayProperty($body, 'scopes', $scopes);
+        $this->addArrayProperty($body, 'options', $options);
+        $this->addIntegerProperty($body, 'token_lifetime', $lifetime);
 
         $response = $this->apiClient
             ->method('patch')

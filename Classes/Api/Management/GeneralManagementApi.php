@@ -91,4 +91,25 @@ class GeneralManagementApi implements LoggerAwareInterface
             throw new ApiException('Could not handle request. See log for further details.', 1549382279);
         }
     }
+
+    protected function addStringProperty(array &$data, string $key, string $value)
+    {
+        if ($value !== '') {
+            $data[$key] = $value;
+        }
+    }
+
+    protected function addArrayProperty(array &$data, string $key, array $value)
+    {
+        if (!empty($value)) {
+            $data[$key] = $value;
+        }
+    }
+
+    protected function addIntegerProperty(array &$data, string $key, int $value)
+    {
+        if ($value !== 0) {
+            $data[$key] = $value;
+        }
+    }
 }

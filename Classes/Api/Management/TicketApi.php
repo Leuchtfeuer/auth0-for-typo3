@@ -32,13 +32,8 @@ class TicketApi extends GeneralManagementApi
             'user_id' => $user,
         ];
 
-        if ($resultUri !== '') {
-            $body['result_url'] = $resultUri;
-        }
-
-        if ($ttl !== 0) {
-            $body['ttl_sec'] = $ttl;
-        }
+        $this->addStringProperty($body, 'result_url', $resultUri);
+        $this->addIntegerProperty($body, 'ttl_sec', $ttl);
 
         $response = $this->apiClient
             ->method('post')
@@ -160,35 +155,16 @@ class TicketApi extends GeneralManagementApi
         bool $markEmailAsVerified = false,
         bool $includeEmailInRedirect = false
     ) {
-        $body = [];
+        $body = [
+            'mark_email_as_verified' => $markEmailAsVerified,
+            'includeEmailInRedirect' => $includeEmailInRedirect,
+        ];
 
-        if ($connection !== '') {
-            $body['connection_id'] = $connection;
-        }
-
-        if ($user) {
-            $body['user_id'] = $user;
-        }
-
-        if ($email) {
-            $body['email'] = $email;
-        }
-
-        if ($resultUri !== '') {
-            $body['result_url'] = $resultUri;
-        }
-
-        if ($ttl !== 0) {
-            $body['ttl_sec'] = $ttl;
-        }
-
-        if ($markEmailAsVerified === true) {
-            $body['mark_email_as_verified'] = $markEmailAsVerified;
-        }
-
-        if ($includeEmailInRedirect) {
-            $body['includeEmailInRedirect'] = $includeEmailInRedirect;
-        }
+        $this->addStringProperty($body, 'connection_id', $connection);
+        $this->addStringProperty($body, 'user_id', $user);
+        $this->addStringProperty($body, 'email', $email);
+        $this->addStringProperty($body, 'result_url', $resultUri);
+        $this->addIntegerProperty($body, 'ttl_sec', $ttl);
 
         $response = $this->apiClient
             ->method('post')

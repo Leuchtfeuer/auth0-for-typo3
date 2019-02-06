@@ -5,7 +5,6 @@ namespace Bitmotion\Auth0\Api\Management;
 use Auth0\SDK\API\Header\ContentType;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Domain\Model\Auth0\Ticket;
 use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
 
 class RuleApi extends GeneralManagementApi
@@ -26,10 +25,10 @@ class RuleApi extends GeneralManagementApi
      * @param bool   $includeFields true if the fields specified are to be included in the result, false otherwise
      *                              (defaults to true)
      *
-     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Rules/get_rules
      */
     public function list(
@@ -48,9 +47,7 @@ class RuleApi extends GeneralManagementApi
             'per_page' => $perPage,
         ];
 
-        if ($fields !== '') {
-            $params['fields'] = $fields;
-        }
+        $this->addStringProperty($params, 'fields', $fields);
 
         $response = $this->apiClient
             ->method('get')
@@ -76,10 +73,10 @@ class RuleApi extends GeneralManagementApi
      *                       first. If no order is provided it will automatically be one greater than the current maximum
      * @param bool   $enable true if the rule is enabled, false otherwise
      *
-     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Rules/post_rules
      */
     public function create(string $name, string $script, int $order = 0, bool $enable = false)
@@ -87,12 +84,10 @@ class RuleApi extends GeneralManagementApi
         $body = [
             'name' => $name,
             'script' => $script,
-            'enable' => $enable
+            'enable' => $enable,
         ];
 
-        if ($order !== 0) {
-            $body['order'] = $order;
-        }
+        $this->addIntegerProperty($body, 'order', $order);
 
         $response = $this->apiClient
             ->method('get')
@@ -115,10 +110,10 @@ class RuleApi extends GeneralManagementApi
      * @param bool   $includeFields true if the fields specified are to be included in the result, false otherwise
      *                              (defaults to true)
      *
-     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Rules/get_rules_by_id
      */
     public function get(string $id, string $fields = '', bool $includeFields = true)
@@ -127,9 +122,7 @@ class RuleApi extends GeneralManagementApi
             'include_fields' => $includeFields,
         ];
 
-        if ($fields !== '') {
-            $body['fields'] = $fields;
-        }
+        $this->addStringProperty($body, 'fields', $fields);
 
         $response = $this->apiClient
             ->method('get')
@@ -149,10 +142,10 @@ class RuleApi extends GeneralManagementApi
      *
      * @param string $id  The id of the rule to delete
      *
-     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Rules/delete_rules_by_id
      */
     public function delete(string $id)
@@ -179,30 +172,21 @@ class RuleApi extends GeneralManagementApi
      *                        first. Send null to delete
      * @param bool   $enabled true if the rule is enabled, false otherwise
      *
-     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Rules/patch_rules_by_id
      */
     public function update(string $id, string $script = '', string $name = '', int $order = 0, bool $enabled = true)
     {
         $body = [
-            'enabled' => $enabled
+            'enabled' => $enabled,
         ];
 
-        if ($script !== '') {
-            $body['script'] = $script;
-        }
-
-        if ($name !== '') {
-            $body['name'] = $name;
-        }
-
-        if ($order !== 0) {
-            $body['order'] = $order;
-        }
-
+        $this->addStringProperty($body, 'script', $script);
+        $this->addStringProperty($body, 'name', $name);
+        $this->addIntegerProperty($body, 'order', $order);
 
         $response = $this->apiClient
             ->method('get')

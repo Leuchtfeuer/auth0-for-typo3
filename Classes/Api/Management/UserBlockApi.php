@@ -2,7 +2,6 @@
 declare(strict_types=1);
 namespace Bitmotion\Auth0\Api\Management;
 
-use Auth0\SDK\API\Helpers\ApiClient;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Domain\Model\Auth0\User;
@@ -17,10 +16,10 @@ class UserBlockApi extends GeneralManagementApi
      *
      * @param string $identifier Should be any of: username, phone_number, email.
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      */
     public function getBlocks(string $identifier)
     {
@@ -41,10 +40,10 @@ class UserBlockApi extends GeneralManagementApi
      *
      * @param string $identifier Should be any of: username, phone_number, email.
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/User_Blocks/delete_user_blocks
      */
     public function unblock(string $identifier)
@@ -65,10 +64,10 @@ class UserBlockApi extends GeneralManagementApi
      *
      * @param string $user The user_id of the user to retrieve
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/User_Blocks/get_user_blocks_by_id
      */
     public function getUserBlocks(string $user)
@@ -91,10 +90,10 @@ class UserBlockApi extends GeneralManagementApi
      *
      * @param string $user The user_id of the user to update.
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/User_Blocks/delete_user_blocks_by_id
      */
     public function unblockUser(string $user)

@@ -41,15 +41,10 @@ class UserByEmailApi extends GeneralManagementApi
     {
         $params = [
             'email' => $email,
+            'include_fields' => $includeFields,
         ];
 
-        if ($includeFields !== true) {
-            $params['include_fields'] = $includeFields;
-        }
-
-        if ($fields !== '') {
-            $params['fields'] = $fields;
-        }
+        $this->addStringProperty($params, 'fields', $fields);
 
         $response = $this->apiClient
             ->method('get')

@@ -5,21 +5,19 @@ namespace Bitmotion\Auth0\Api\Management;
 use Auth0\SDK\API\Header\ContentType;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Domain\Model\Auth0\Ticket;
 use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 class EmailTemplateApi extends GeneralManagementApi
 {
-
     /**
      * Get an email template
      * Required scope: "read:email_templates"
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Email_Templates/get_email_templates_by_templateName
      */
     public function get(string $name)
@@ -49,10 +47,10 @@ class EmailTemplateApi extends GeneralManagementApi
      * @param bool   $includeInRedirect Whether or not we include the email as part of the returnUrl in the reset_email
      * @param bool   $enabled           Whether or not the template is enabled.
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Email_Templates/patch_email_templates_by_templateName
      */
     public function patch(
@@ -72,29 +70,12 @@ class EmailTemplateApi extends GeneralManagementApi
             'enabled' => $enabled,
         ];
 
-        if ($emailBody !== '') {
-            $body['body'] = $emailBody;
-        }
-
-        if ($from !== '') {
-            $body['from'] = $from;
-        }
-
-        if ($subject !== '') {
-            $body['subject'] = $subject;
-        }
-
-        if ($syntax !== '') {
-            $body['syntax'] = $syntax;
-        }
-
-        if ($resultUri !== '') {
-            $body['resultUrl'] = $resultUri;
-        }
-
-        if ($lifetime !== 0) {
-            $body['urlLifetimeInSeconds'] = $lifetime;
-        }
+        $this->addStringProperty($body, 'body', $emailBody);
+        $this->addStringProperty($body, 'from', $from);
+        $this->addStringProperty($body, 'subject', $subject);
+        $this->addStringProperty($body, 'syntax', $syntax);
+        $this->addStringProperty($body, 'resultUrl', $resultUri);
+        $this->addIntegerProperty($body, 'urlLifetimeInSeconds', $lifetime);
 
         $response = $this->apiClient
             ->method('patch')
@@ -123,10 +104,10 @@ class EmailTemplateApi extends GeneralManagementApi
      * @param bool   $includeInRedirect Whether or not we include the email as part of the returnUrl in the reset_email
      * @param bool   $enabled           Whether or not the template is enabled.
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Email_Templates/put_email_templates_by_templateName
      */
     public function update(
@@ -150,13 +131,8 @@ class EmailTemplateApi extends GeneralManagementApi
             'enabled' => $enabled,
         ];
 
-        if ($resultUri !== '') {
-            $body['resultUrl'] = $resultUri;
-        }
-
-        if ($lifetime !== 0) {
-            $body['urlLifetimeInSeconds'] = $lifetime;
-        }
+        $this->addStringProperty($body, 'resultUrl', $resultUri);
+        $this->addIntegerProperty($body, 'urlLifetimeInSeconds', $lifetime);
 
         $response = $this->apiClient
             ->method('put')
@@ -185,10 +161,10 @@ class EmailTemplateApi extends GeneralManagementApi
      * @param bool   $includeInRedirect Whether or not we include the email as part of the returnUrl in the reset_email
      * @param bool   $enabled           Whether or not the template is enabled.
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Email_Templates/post_email_templates
      */
     public function create(
@@ -212,13 +188,8 @@ class EmailTemplateApi extends GeneralManagementApi
             'enabled' => $enabled,
         ];
 
-        if ($resultUri !== '') {
-            $body['resultUrl'] = $resultUri;
-        }
-
-        if ($lifetime !== 0) {
-            $body['urlLifetimeInSeconds'] = $lifetime;
-        }
+        $this->addStringProperty($body, 'resultUrl', $resultUri);
+        $this->addIntegerProperty($body, 'urlLifetimeInSeconds', $lifetime);
 
         $response = $this->apiClient
             ->method('post')

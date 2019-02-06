@@ -5,7 +5,6 @@ namespace Bitmotion\Auth0\Api\Management;
 use Auth0\SDK\API\Header\ContentType;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Domain\Model\Auth0\Ticket;
 use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
 
 class RuleConfigApi extends GeneralManagementApi
@@ -14,10 +13,10 @@ class RuleConfigApi extends GeneralManagementApi
      * Returns only rules config variable keys. For security, config variable values cannot be retrieved outside rule execution.
      * Required scope: "read:rules_configs"
      *
-     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Rules_Configs/get_rules_configs
      */
     public function list()
@@ -38,10 +37,10 @@ class RuleConfigApi extends GeneralManagementApi
      *
      * @param string $key The key of the rules config to remove (Max length: 127)
      *
-     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Rules_Configs/delete_rules_configs_by_key
      */
     public function delete(string $key)
@@ -64,10 +63,10 @@ class RuleConfigApi extends GeneralManagementApi
      * @param string $key   The key of the rules config to set (Max length: 127)
      * @param string $value The value for the rules config being set.
      *
-     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Rules_Configs/put_rules_configs_by_key
      */
     public function create(string $key, string $value)

@@ -5,7 +5,6 @@ namespace Bitmotion\Auth0\Api\Management;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Domain\Model\Auth0\Connection;
-use GuzzleHttp\Psr7\Response;
 use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
@@ -36,41 +35,22 @@ class ConnectionApi extends GeneralManagementApi
         string $strategy = '',
         string $fields = '',
         string $name = '',
-        bool $includeFields = true,
-        bool $includeTotals = false,
         int $page = 0,
-        int $perPage = 0
+        int $perPage = 50,
+        bool $includeFields = true,
+        bool $includeTotals = false
     ) {
-        $params = [];
+        $params = [
+            'per_page' => $perPage,
+            'page' => $page,
+            'include_totals' => $includeTotals,
+            'include_fields' => $includeFields,
+        ];
 
-        // Connection strategy to filter results by.
-        if ($strategy !== '') {
-            $params['strategy'] = $strategy;
-        }
+        $this->addStringProperty($params, 'strategy', $strategy);
+        $this->addStringProperty($params, 'fields', $fields);
+        $this->addStringProperty($params, 'name', $name);
 
-        // Results fields.
-        if ($fields !== '') {
-            $params['fields'] = $fields;
-            $params['include_fields'] = $includeFields;
-        }
-
-        // Pagination.
-        if ($page > 0) {
-            $params['page'] = abs((int)$page);
-            if ($perPage > 0) {
-                $params['per_page'] = $perPage;
-            }
-        }
-
-        if ($includeTotals === true) {
-            $params['include_totals'] = $includeTotals;
-        }
-
-        if ($name !== '') {
-            $params['name'] = $name;
-        }
-
-        /** @var Response $response */
         $response = $this->apiClient
             ->method('get')
             ->addPath('connections')
@@ -99,13 +79,11 @@ class ConnectionApi extends GeneralManagementApi
      */
     public function get(string $id, string $fields = '', bool $includeFields = true)
     {
-        $params = [];
+        $params = [
+            'include_fields' => $includeFields,
+        ];
 
-        // Results fields.
-        if ($fields !== '') {
-            $params['fields'] = $fields;
-            $params['include_fields'] = $includeFields;
-        }
+        $this->addStringProperty($params, 'fields', $fields);
 
         $response = $this->apiClient
             ->method('get')
@@ -199,22 +177,10 @@ class ConnectionApi extends GeneralManagementApi
             'strategy' => $strategy,
         ];
 
-        if (!empty($options)) {
-            // TODO: validate $options
-            $body['options'] = $options;
-        }
-
-        if (!empty($enabledClients)) {
-            $body['enabled_clients'] = $enabledClients;
-        }
-
-        if (!empty($realms)) {
-            $body['realms'] = $realms;
-        }
-
-        if (!empty($metadata)) {
-            $body['metadata'] = $metadata;
-        }
+        $this->addArrayProperty($body, 'options', $options);
+        $this->addArrayProperty($body, 'enabled_clients', $enabledClients);
+        $this->addArrayProperty($body, 'realms', $realms);
+        $this->addArrayProperty($body, 'metadata', $metadata);
 
         $response = $this->apiClient
             ->method('post')
@@ -252,22 +218,10 @@ class ConnectionApi extends GeneralManagementApi
     ) {
         $body = [];
 
-        if (!empty($options)) {
-            // TODO: validate $options
-            $body['options'] = $options;
-        }
-
-        if (!empty($enabledClients)) {
-            $body['enabled_clients'] = $enabledClients;
-        }
-
-        if (!empty($realms)) {
-            $body['realms'] = $realms;
-        }
-
-        if (!empty($metadata)) {
-            $body['metadata'] = $metadata;
-        }
+        $this->addArrayProperty($body, 'options', $options);
+        $this->addArrayProperty($body, 'enabled_clients', $enabledClients);
+        $this->addArrayProperty($body, 'realms', $realms);
+        $this->addArrayProperty($body, 'metadata', $metadata);
 
         $response = $this->apiClient
             ->method('patch')

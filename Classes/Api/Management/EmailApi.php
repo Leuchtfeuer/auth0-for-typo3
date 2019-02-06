@@ -5,7 +5,6 @@ namespace Bitmotion\Auth0\Api\Management;
 use Auth0\SDK\API\Header\ContentType;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Domain\Model\Auth0\Ticket;
 use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
@@ -20,10 +19,10 @@ class EmailApi extends GeneralManagementApi
      * @param bool   $includeFields true if the fields specified are to be excluded from the result, false otherwise
      *                              (defaults to true)
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Emails/get_provider
      */
     public function getProvider(string $fields = '', bool $includeFields = true)
@@ -32,9 +31,7 @@ class EmailApi extends GeneralManagementApi
             'include_fields' => $includeFields,
         ];
 
-        if ($fields !== '') {
-            $params['fields'] = $fields;
-        }
+        $this->addStringProperty($params, 'fields', $fields);
 
         $response = $this->apiClient
             ->method('get')
@@ -51,10 +48,10 @@ class EmailApi extends GeneralManagementApi
      * Deletes an email provider. USE WITH CAUTION
      * Required scope: "delete:email_provider"
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Emails/delete_provider
      */
     public function deleteProvider()
@@ -80,15 +77,13 @@ class EmailApi extends GeneralManagementApi
      * Required scope: "update:email_provider"
      *
      * @param string $name               The name of the email provider ['mandrill' or 'sendgrid' or 'sparkpost' or 'ses' or 'smtp']
-     * @param array  $credentials
      * @param bool   $enabled            true if the email provider is enabled, false otherwise
      * @param string $defaultFromAddress The default from address
-     * @param array  $settings
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Emails/patch_provider
      */
     public function updateProvider(
@@ -99,24 +94,13 @@ class EmailApi extends GeneralManagementApi
         array $settings = []
     ) {
         $body = [
-            'enabled' => $enabled
+            'enabled' => $enabled,
         ];
 
-        if ($name !== '') {
-            $body['name'] = $name;
-        }
-
-        if ($defaultFromAddress !== '') {
-            $body['default_from_address'] = $defaultFromAddress;
-        }
-
-        if (!empty($credentials)) {
-            $body['credentials'] = $credentials;
-        }
-
-        if (!empty($settings)) {
-            $body['settings'] = $settings;
-        }
+        $this->addStringProperty($body, 'name', $name);
+        $this->addStringProperty($body, 'default_from_address', $defaultFromAddress);
+        $this->addArrayProperty($body, 'credentials', $credentials);
+        $this->addArrayProperty($body, 'settings', $settings);
 
         $response = $this->apiClient
             ->method('patch')
@@ -141,15 +125,13 @@ class EmailApi extends GeneralManagementApi
      * Required scope: "create:email_provider"
      *
      * @param string $name               The name of the email provider ['mandrill' or 'sendgrid' or 'sparkpost' or 'ses' or 'smtp']
-     * @param array  $credentials
      * @param bool   $enabled            true if the email provider is enabled, false otherwise
      * @param string $defaultFromAddress The default from address
-     * @param array  $settings
      *
-     * @return object|ObjectStorage
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
+     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Emails/post_provider
      */
     public function createProvider(
@@ -165,13 +147,8 @@ class EmailApi extends GeneralManagementApi
             'credentials' => $credentials,
         ];
 
-        if ($defaultFromAddress !== '') {
-            $body['default_from_address'] = $defaultFromAddress;
-        }
-
-        if (!empty($settings)) {
-            $body['settings'] = $settings;
-        }
+        $this->addStringProperty($body, 'default_from_address', $defaultFromAddress);
+        $this->addArrayProperty($body, 'settings', $settings);
 
         $response = $this->apiClient
             ->method('post')
