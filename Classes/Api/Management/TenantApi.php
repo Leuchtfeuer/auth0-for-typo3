@@ -41,7 +41,7 @@ class TenantApi extends GeneralManagementApi
             ->method('get')
             ->addPath('tenants')
             ->addPath('settings')
-            ->withParams($params)
+            ->withDictParams($params)
             ->setReturnType('object')
             ->call();
 

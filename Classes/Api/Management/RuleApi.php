@@ -44,36 +44,65 @@ class RuleApi extends GeneralManagementApi
             'include_totals' => $includeTotals,
             'enabled' => $enabled,
             'include_fields' => $includeFields,
+            'page' => $page,
+            'per_page' => $perPage,
         ];
-
-
-        if ($page !== 0) {
-            $params['page'] = $page;
-        }
-
-        if ($perPage !== 50) {
-            $params['per_page'] = $perPage;
-        }
 
         if ($fields !== '') {
             $params['fields'] = $fields;
         }
 
-
-
         $response = $this->apiClient
             ->method('get')
             ->addPath('rules')
-            ->withParams($params)
+            ->withDictParams($params)
             ->setReturnType('object')
             ->call();
 
         return $this->mapResponse($response);
     }
 
-    public function create()
+    /**
+     * Creates a new rule according to the JSON object received in body
+     * The samples on the right show you every attribute that could be used. Mandatory attributes are name and script
+     * Note: Changing a rule's stage of execution from the default login_success can change the rule's function signature to have
+     * user omitted.
+     * Required scope: "create:rules"
+     *
+     * @param string $name   The name of the rule. Can only contain alphanumeric characters, spaces and '-'. Can neither start
+     *                       nor end with '-' or spaces
+     * @param string $script A script that contains the rule's code
+     * @param int    $order  The rule's order in relation to other rules. A rule with a lower order than another rule executes
+     *                       first. If no order is provided it will automatically be one greater than the current maximum
+     * @param bool   $enable true if the rule is enabled, false otherwise
+     *
+     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
+     * @throws ApiException
+     * @throws ClassNotFoundException
+     * @throws CoreException
+     * @see https://auth0.com/docs/api/management/v2#!/Rules/post_rules
+     */
+    public function create(string $name, string $script, int $order = 0, bool $enable = false)
     {
+        $body = [
+            'name' => $name,
+            'script' => $script,
+            'enable' => $enable
+        ];
 
+        if ($order !== 0) {
+            $body['order'] = $order;
+        }
+
+        $response = $this->apiClient
+            ->method('get')
+            ->addPath('rules')
+            ->withHeader(new ContentType('application/json'))
+            ->withBody(\GuzzleHttp\json_encode($body))
+            ->setReturnType('object')
+            ->call();
+
+        return $this->mapResponse($response);
     }
 
     /**

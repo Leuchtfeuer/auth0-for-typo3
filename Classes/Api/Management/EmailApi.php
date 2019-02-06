@@ -40,7 +40,7 @@ class EmailApi extends GeneralManagementApi
             ->method('get')
             ->addPath('emails')
             ->addPath('provider')
-            ->withParams($params)
+            ->withDictParams($params)
             ->setReturnType('object')
             ->call();
 

@@ -78,7 +78,7 @@ class UserApi extends GeneralManagementApi
         $response = $this->apiClient
             ->method('get')
             ->addPath('users')
-            ->withParams($params)
+            ->withDictParams($params)
             ->setReturnType('object')
             ->call();
 
@@ -231,7 +231,7 @@ class UserApi extends GeneralManagementApi
             ->method('get')
             ->addPath('users')
             ->addPath($id)
-            ->withParams($params)
+            ->withDictParams($params)
             ->setReturnType('object')
             ->call();
 
@@ -337,7 +337,7 @@ class UserApi extends GeneralManagementApi
             ->addPath('users')
             ->addPath($id)
             ->addPath('logs')
-            ->withParams($params)
+            ->withDictParams($params)
             ->setReturnType('object')
             ->call();
 

@@ -54,7 +54,7 @@ class UserByEmailApi extends GeneralManagementApi
         $response = $this->apiClient
             ->method('get')
             ->addPath('users-by-email')
-            ->withParams($params)
+            ->withDictParams($params)
             ->setReturnType('object')
             ->call();
 
