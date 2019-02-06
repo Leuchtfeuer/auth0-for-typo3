@@ -29,7 +29,7 @@ class EmailApi extends GeneralManagementApi
     public function getProvider(string $fields = '', bool $includeFields = true)
     {
         $params = [
-            'include_fields' => $includeFields;
+            'include_fields' => $includeFields,
         ];
 
         if ($fields !== '') {

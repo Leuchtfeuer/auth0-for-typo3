@@ -30,6 +30,7 @@ use Auth0\SDK\API\Management\Tenants;
 use Auth0\SDK\API\Management\UserBlocks;
 use Auth0\SDK\API\Management\Users;
 use Auth0\SDK\Exception\ApiException;
+use Bitmotion\Auth0\Api\Management\BlacklistApi;
 use Bitmotion\Auth0\Api\Management\ConnectionApi;
 use Bitmotion\Auth0\Api\Management\EmailApi;
 use Bitmotion\Auth0\Api\Management\EmailTemplateApi;
@@ -62,6 +63,8 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
     protected $connectionApi = null;
 
     protected $userByEmailApi = null;
+
+    protected $blacklistApi = null;
 
     protected $emailTemplateApi = null;
 
@@ -223,11 +226,6 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
         return $this->users->get($userId);
     }
 
-    public function getBlacklistApi(): Blacklists
-    {
-        return $this->blacklists;
-    }
-
     public function getClientApi(): Clients
     {
         return $this->clients;
@@ -276,6 +274,11 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
     public function getUserByEmailApi(): UserByEmailApi
     {
         return $this->userByEmailApi ?? GeneralUtility::makeInstance(UserByEmailApi::class, $this->usersByEmail->getApiClient());
+    }
+
+    public function getBlacklistApi(): BlacklistApi
+    {
+        return $this->blacklistApi ?? GeneralUtility::makeInstance(BlacklistApi::class, $this->blacklists->getApiClient());
     }
 
     public function getEmailTemplateApi(): EmailTemplateApi

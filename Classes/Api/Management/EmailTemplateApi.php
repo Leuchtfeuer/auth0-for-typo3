@@ -93,7 +93,7 @@ class EmailTemplateApi extends GeneralManagementApi
         }
 
         if ($lifetime !== 0) {
-            $body['urlLifetimeInSeconds'] = $lifetime
+            $body['urlLifetimeInSeconds'] = $lifetime;
         }
 
         $response = $this->apiClient
@@ -155,7 +155,7 @@ class EmailTemplateApi extends GeneralManagementApi
         }
 
         if ($lifetime !== 0) {
-            $body['urlLifetimeInSeconds'] = $lifetime
+            $body['urlLifetimeInSeconds'] = $lifetime;
         }
 
         $response = $this->apiClient
@@ -217,7 +217,7 @@ class EmailTemplateApi extends GeneralManagementApi
         }
 
         if ($lifetime !== 0) {
-            $body['urlLifetimeInSeconds'] = $lifetime
+            $body['urlLifetimeInSeconds'] = $lifetime;
         }
 
         $response = $this->apiClient
