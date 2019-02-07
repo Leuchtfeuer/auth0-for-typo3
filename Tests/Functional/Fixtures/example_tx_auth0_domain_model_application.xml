@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dataset>
+	<tx_auth0_domain_model_application>
+		<uid>1</uid>
+		<pid>0</pid>
+		<tstamp>1539156784</tstamp>
+		<crdate>1539156784</crdate>
+		<cruser_id>1</cruser_id>
+		<deleted>0</deleted>
+		<hidden>0</hidden>
+		<title>APPLICATION NAME</title>
+		<id>CLIENT ID</id>
+		<secret>CLIENT SECRET</secret>
+		<domain>CLIENT DOMAIN</domain>
+		<audience>api/v2/</audience>
+	</tx_auth0_domain_model_application>
+</dataset>
