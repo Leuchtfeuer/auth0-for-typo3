@@ -5,7 +5,8 @@ namespace Bitmotion\Auth0\Api\Management;
 use Auth0\SDK\API\Header\ContentType;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
+use Bitmotion\Auth0\Domain\Model\Auth0\ClientGrant;
+use TYPO3\CMS\Core\Exception;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 class ClientGrantApi extends GeneralManagementApi
@@ -23,9 +24,9 @@ class ClientGrantApi extends GeneralManagementApi
      * @param bool   $includeTotals true if a query summary must be included in the result, false otherwise. Default false.
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return ClientGrant|ClientGrant[]
      * @see https://auth0.com/docs/api/management/v2#!/Client_Grants/get_client_grants
      */
     public function list(string $id = '', string $audience = '', int $page = 0, int $perPage = 50, bool $includeTotals = false)
@@ -58,7 +59,7 @@ class ClientGrantApi extends GeneralManagementApi
      * @param string[] $scope    Scopes.
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
      * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Client_Grants/post_client_grants
@@ -90,7 +91,7 @@ class ClientGrantApi extends GeneralManagementApi
      *
      * @throws ApiException
      * @throws CoreException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Client_Grants/delete_client_grants_by_id
      */
@@ -114,7 +115,7 @@ class ClientGrantApi extends GeneralManagementApi
      * @param string[] $scope Scopes.
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
      * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Client_Grants/patch_client_grants_by_id

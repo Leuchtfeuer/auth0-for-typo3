@@ -7,6 +7,7 @@ namespace Composer\Autoload;
 class ComposerStaticInitcd064bfa049f3dcf6166ee81e13cb4e1
 {
     public static $files = array (
+        '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
@@ -14,6 +15,13 @@ class ComposerStaticInitcd064bfa049f3dcf6166ee81e13cb4e1
     );
 
     public static $prefixLengthsPsr4 = array (
+        'S' => 
+        array (
+            'Symfony\\Polyfill\\Ctype\\' => 23,
+            'Symfony\\Component\\Serializer\\' => 29,
+            'Symfony\\Component\\PropertyAccess\\' => 33,
+            'Symfony\\Component\\Inflector\\' => 28,
+        ),
         'P' => 
         array (
             'Psr\\Http\\Message\\' => 17,
@@ -35,6 +43,22 @@ class ComposerStaticInitcd064bfa049f3dcf6166ee81e13cb4e1
     );
 
     public static $prefixDirsPsr4 = array (
+        'Symfony\\Polyfill\\Ctype\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
+        ),
+        'Symfony\\Component\\Serializer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/serializer',
+        ),
+        'Symfony\\Component\\PropertyAccess\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/property-access',
+        ),
+        'Symfony\\Component\\Inflector\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/inflector',
+        ),
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
@@ -188,6 +212,106 @@ class ComposerStaticInitcd064bfa049f3dcf6166ee81e13cb4e1
         'Psr\\Http\\Message\\StreamInterface' => __DIR__ . '/..' . '/psr/http-message/src/StreamInterface.php',
         'Psr\\Http\\Message\\UploadedFileInterface' => __DIR__ . '/..' . '/psr/http-message/src/UploadedFileInterface.php',
         'Psr\\Http\\Message\\UriInterface' => __DIR__ . '/..' . '/psr/http-message/src/UriInterface.php',
+        'Symfony\\Component\\Inflector\\Inflector' => __DIR__ . '/..' . '/symfony/inflector/Inflector.php',
+        'Symfony\\Component\\PropertyAccess\\Exception\\AccessException' => __DIR__ . '/..' . '/symfony/property-access/Exception/AccessException.php',
+        'Symfony\\Component\\PropertyAccess\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/symfony/property-access/Exception/ExceptionInterface.php',
+        'Symfony\\Component\\PropertyAccess\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/symfony/property-access/Exception/InvalidArgumentException.php',
+        'Symfony\\Component\\PropertyAccess\\Exception\\InvalidPropertyPathException' => __DIR__ . '/..' . '/symfony/property-access/Exception/InvalidPropertyPathException.php',
+        'Symfony\\Component\\PropertyAccess\\Exception\\NoSuchIndexException' => __DIR__ . '/..' . '/symfony/property-access/Exception/NoSuchIndexException.php',
+        'Symfony\\Component\\PropertyAccess\\Exception\\NoSuchPropertyException' => __DIR__ . '/..' . '/symfony/property-access/Exception/NoSuchPropertyException.php',
+        'Symfony\\Component\\PropertyAccess\\Exception\\OutOfBoundsException' => __DIR__ . '/..' . '/symfony/property-access/Exception/OutOfBoundsException.php',
+        'Symfony\\Component\\PropertyAccess\\Exception\\RuntimeException' => __DIR__ . '/..' . '/symfony/property-access/Exception/RuntimeException.php',
+        'Symfony\\Component\\PropertyAccess\\Exception\\UnexpectedTypeException' => __DIR__ . '/..' . '/symfony/property-access/Exception/UnexpectedTypeException.php',
+        'Symfony\\Component\\PropertyAccess\\PropertyAccess' => __DIR__ . '/..' . '/symfony/property-access/PropertyAccess.php',
+        'Symfony\\Component\\PropertyAccess\\PropertyAccessor' => __DIR__ . '/..' . '/symfony/property-access/PropertyAccessor.php',
+        'Symfony\\Component\\PropertyAccess\\PropertyAccessorBuilder' => __DIR__ . '/..' . '/symfony/property-access/PropertyAccessorBuilder.php',
+        'Symfony\\Component\\PropertyAccess\\PropertyAccessorInterface' => __DIR__ . '/..' . '/symfony/property-access/PropertyAccessorInterface.php',
+        'Symfony\\Component\\PropertyAccess\\PropertyPath' => __DIR__ . '/..' . '/symfony/property-access/PropertyPath.php',
+        'Symfony\\Component\\PropertyAccess\\PropertyPathBuilder' => __DIR__ . '/..' . '/symfony/property-access/PropertyPathBuilder.php',
+        'Symfony\\Component\\PropertyAccess\\PropertyPathInterface' => __DIR__ . '/..' . '/symfony/property-access/PropertyPathInterface.php',
+        'Symfony\\Component\\PropertyAccess\\PropertyPathIterator' => __DIR__ . '/..' . '/symfony/property-access/PropertyPathIterator.php',
+        'Symfony\\Component\\PropertyAccess\\PropertyPathIteratorInterface' => __DIR__ . '/..' . '/symfony/property-access/PropertyPathIteratorInterface.php',
+        'Symfony\\Component\\Serializer\\Annotation\\DiscriminatorMap' => __DIR__ . '/..' . '/symfony/serializer/Annotation/DiscriminatorMap.php',
+        'Symfony\\Component\\Serializer\\Annotation\\Groups' => __DIR__ . '/..' . '/symfony/serializer/Annotation/Groups.php',
+        'Symfony\\Component\\Serializer\\Annotation\\MaxDepth' => __DIR__ . '/..' . '/symfony/serializer/Annotation/MaxDepth.php',
+        'Symfony\\Component\\Serializer\\Annotation\\SerializedName' => __DIR__ . '/..' . '/symfony/serializer/Annotation/SerializedName.php',
+        'Symfony\\Component\\Serializer\\DependencyInjection\\SerializerPass' => __DIR__ . '/..' . '/symfony/serializer/DependencyInjection/SerializerPass.php',
+        'Symfony\\Component\\Serializer\\Encoder\\ChainDecoder' => __DIR__ . '/..' . '/symfony/serializer/Encoder/ChainDecoder.php',
+        'Symfony\\Component\\Serializer\\Encoder\\ChainEncoder' => __DIR__ . '/..' . '/symfony/serializer/Encoder/ChainEncoder.php',
+        'Symfony\\Component\\Serializer\\Encoder\\ContextAwareDecoderInterface' => __DIR__ . '/..' . '/symfony/serializer/Encoder/ContextAwareDecoderInterface.php',
+        'Symfony\\Component\\Serializer\\Encoder\\ContextAwareEncoderInterface' => __DIR__ . '/..' . '/symfony/serializer/Encoder/ContextAwareEncoderInterface.php',
+        'Symfony\\Component\\Serializer\\Encoder\\CsvEncoder' => __DIR__ . '/..' . '/symfony/serializer/Encoder/CsvEncoder.php',
+        'Symfony\\Component\\Serializer\\Encoder\\DecoderInterface' => __DIR__ . '/..' . '/symfony/serializer/Encoder/DecoderInterface.php',
+        'Symfony\\Component\\Serializer\\Encoder\\EncoderInterface' => __DIR__ . '/..' . '/symfony/serializer/Encoder/EncoderInterface.php',
+        'Symfony\\Component\\Serializer\\Encoder\\JsonDecode' => __DIR__ . '/..' . '/symfony/serializer/Encoder/JsonDecode.php',
+        'Symfony\\Component\\Serializer\\Encoder\\JsonEncode' => __DIR__ . '/..' . '/symfony/serializer/Encoder/JsonEncode.php',
+        'Symfony\\Component\\Serializer\\Encoder\\JsonEncoder' => __DIR__ . '/..' . '/symfony/serializer/Encoder/JsonEncoder.php',
+        'Symfony\\Component\\Serializer\\Encoder\\NormalizationAwareInterface' => __DIR__ . '/..' . '/symfony/serializer/Encoder/NormalizationAwareInterface.php',
+        'Symfony\\Component\\Serializer\\Encoder\\XmlEncoder' => __DIR__ . '/..' . '/symfony/serializer/Encoder/XmlEncoder.php',
+        'Symfony\\Component\\Serializer\\Encoder\\YamlEncoder' => __DIR__ . '/..' . '/symfony/serializer/Encoder/YamlEncoder.php',
+        'Symfony\\Component\\Serializer\\Exception\\BadMethodCallException' => __DIR__ . '/..' . '/symfony/serializer/Exception/BadMethodCallException.php',
+        'Symfony\\Component\\Serializer\\Exception\\CircularReferenceException' => __DIR__ . '/..' . '/symfony/serializer/Exception/CircularReferenceException.php',
+        'Symfony\\Component\\Serializer\\Exception\\ExceptionInterface' => __DIR__ . '/..' . '/symfony/serializer/Exception/ExceptionInterface.php',
+        'Symfony\\Component\\Serializer\\Exception\\ExtraAttributesException' => __DIR__ . '/..' . '/symfony/serializer/Exception/ExtraAttributesException.php',
+        'Symfony\\Component\\Serializer\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/symfony/serializer/Exception/InvalidArgumentException.php',
+        'Symfony\\Component\\Serializer\\Exception\\LogicException' => __DIR__ . '/..' . '/symfony/serializer/Exception/LogicException.php',
+        'Symfony\\Component\\Serializer\\Exception\\MappingException' => __DIR__ . '/..' . '/symfony/serializer/Exception/MappingException.php',
+        'Symfony\\Component\\Serializer\\Exception\\MissingConstructorArgumentsException' => __DIR__ . '/..' . '/symfony/serializer/Exception/MissingConstructorArgumentsException.php',
+        'Symfony\\Component\\Serializer\\Exception\\NotEncodableValueException' => __DIR__ . '/..' . '/symfony/serializer/Exception/NotEncodableValueException.php',
+        'Symfony\\Component\\Serializer\\Exception\\NotNormalizableValueException' => __DIR__ . '/..' . '/symfony/serializer/Exception/NotNormalizableValueException.php',
+        'Symfony\\Component\\Serializer\\Exception\\RuntimeException' => __DIR__ . '/..' . '/symfony/serializer/Exception/RuntimeException.php',
+        'Symfony\\Component\\Serializer\\Exception\\UnexpectedValueException' => __DIR__ . '/..' . '/symfony/serializer/Exception/UnexpectedValueException.php',
+        'Symfony\\Component\\Serializer\\Exception\\UnsupportedException' => __DIR__ . '/..' . '/symfony/serializer/Exception/UnsupportedException.php',
+        'Symfony\\Component\\Serializer\\Mapping\\AttributeMetadata' => __DIR__ . '/..' . '/symfony/serializer/Mapping/AttributeMetadata.php',
+        'Symfony\\Component\\Serializer\\Mapping\\AttributeMetadataInterface' => __DIR__ . '/..' . '/symfony/serializer/Mapping/AttributeMetadataInterface.php',
+        'Symfony\\Component\\Serializer\\Mapping\\ClassDiscriminatorFromClassMetadata' => __DIR__ . '/..' . '/symfony/serializer/Mapping/ClassDiscriminatorFromClassMetadata.php',
+        'Symfony\\Component\\Serializer\\Mapping\\ClassDiscriminatorMapping' => __DIR__ . '/..' . '/symfony/serializer/Mapping/ClassDiscriminatorMapping.php',
+        'Symfony\\Component\\Serializer\\Mapping\\ClassDiscriminatorResolverInterface' => __DIR__ . '/..' . '/symfony/serializer/Mapping/ClassDiscriminatorResolverInterface.php',
+        'Symfony\\Component\\Serializer\\Mapping\\ClassMetadata' => __DIR__ . '/..' . '/symfony/serializer/Mapping/ClassMetadata.php',
+        'Symfony\\Component\\Serializer\\Mapping\\ClassMetadataInterface' => __DIR__ . '/..' . '/symfony/serializer/Mapping/ClassMetadataInterface.php',
+        'Symfony\\Component\\Serializer\\Mapping\\Factory\\CacheClassMetadataFactory' => __DIR__ . '/..' . '/symfony/serializer/Mapping/Factory/CacheClassMetadataFactory.php',
+        'Symfony\\Component\\Serializer\\Mapping\\Factory\\ClassMetadataFactory' => __DIR__ . '/..' . '/symfony/serializer/Mapping/Factory/ClassMetadataFactory.php',
+        'Symfony\\Component\\Serializer\\Mapping\\Factory\\ClassMetadataFactoryInterface' => __DIR__ . '/..' . '/symfony/serializer/Mapping/Factory/ClassMetadataFactoryInterface.php',
+        'Symfony\\Component\\Serializer\\Mapping\\Factory\\ClassResolverTrait' => __DIR__ . '/..' . '/symfony/serializer/Mapping/Factory/ClassResolverTrait.php',
+        'Symfony\\Component\\Serializer\\Mapping\\Loader\\AnnotationLoader' => __DIR__ . '/..' . '/symfony/serializer/Mapping/Loader/AnnotationLoader.php',
+        'Symfony\\Component\\Serializer\\Mapping\\Loader\\FileLoader' => __DIR__ . '/..' . '/symfony/serializer/Mapping/Loader/FileLoader.php',
+        'Symfony\\Component\\Serializer\\Mapping\\Loader\\LoaderChain' => __DIR__ . '/..' . '/symfony/serializer/Mapping/Loader/LoaderChain.php',
+        'Symfony\\Component\\Serializer\\Mapping\\Loader\\LoaderInterface' => __DIR__ . '/..' . '/symfony/serializer/Mapping/Loader/LoaderInterface.php',
+        'Symfony\\Component\\Serializer\\Mapping\\Loader\\XmlFileLoader' => __DIR__ . '/..' . '/symfony/serializer/Mapping/Loader/XmlFileLoader.php',
+        'Symfony\\Component\\Serializer\\Mapping\\Loader\\YamlFileLoader' => __DIR__ . '/..' . '/symfony/serializer/Mapping/Loader/YamlFileLoader.php',
+        'Symfony\\Component\\Serializer\\NameConverter\\AdvancedNameConverterInterface' => __DIR__ . '/..' . '/symfony/serializer/NameConverter/AdvancedNameConverterInterface.php',
+        'Symfony\\Component\\Serializer\\NameConverter\\CamelCaseToSnakeCaseNameConverter' => __DIR__ . '/..' . '/symfony/serializer/NameConverter/CamelCaseToSnakeCaseNameConverter.php',
+        'Symfony\\Component\\Serializer\\NameConverter\\MetadataAwareNameConverter' => __DIR__ . '/..' . '/symfony/serializer/NameConverter/MetadataAwareNameConverter.php',
+        'Symfony\\Component\\Serializer\\NameConverter\\NameConverterInterface' => __DIR__ . '/..' . '/symfony/serializer/NameConverter/NameConverterInterface.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\AbstractNormalizer' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/AbstractNormalizer.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\AbstractObjectNormalizer' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/AbstractObjectNormalizer.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\ArrayDenormalizer' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/ArrayDenormalizer.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\CacheableSupportsMethodInterface' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/CacheableSupportsMethodInterface.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\ConstraintViolationListNormalizer' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/ConstraintViolationListNormalizer.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\ContextAwareDenormalizerInterface' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/ContextAwareDenormalizerInterface.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\ContextAwareNormalizerInterface' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/ContextAwareNormalizerInterface.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\CustomNormalizer' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/CustomNormalizer.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\DataUriNormalizer' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/DataUriNormalizer.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\DateIntervalNormalizer' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/DateIntervalNormalizer.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\DateTimeNormalizer' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/DateTimeNormalizer.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\DenormalizableInterface' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/DenormalizableInterface.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\DenormalizerAwareInterface' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/DenormalizerAwareInterface.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\DenormalizerAwareTrait' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/DenormalizerAwareTrait.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\DenormalizerInterface' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/DenormalizerInterface.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\GetSetMethodNormalizer' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/GetSetMethodNormalizer.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\JsonSerializableNormalizer' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/JsonSerializableNormalizer.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\NormalizableInterface' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/NormalizableInterface.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\NormalizerAwareInterface' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/NormalizerAwareInterface.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\NormalizerAwareTrait' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/NormalizerAwareTrait.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\NormalizerInterface' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/NormalizerInterface.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\ObjectNormalizer' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/ObjectNormalizer.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\ObjectToPopulateTrait' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/ObjectToPopulateTrait.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\PropertyNormalizer' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/PropertyNormalizer.php',
+        'Symfony\\Component\\Serializer\\Serializer' => __DIR__ . '/..' . '/symfony/serializer/Serializer.php',
+        'Symfony\\Component\\Serializer\\SerializerAwareInterface' => __DIR__ . '/..' . '/symfony/serializer/SerializerAwareInterface.php',
+        'Symfony\\Component\\Serializer\\SerializerAwareTrait' => __DIR__ . '/..' . '/symfony/serializer/SerializerAwareTrait.php',
+        'Symfony\\Component\\Serializer\\SerializerInterface' => __DIR__ . '/..' . '/symfony/serializer/SerializerInterface.php',
+        'Symfony\\Polyfill\\Ctype\\Ctype' => __DIR__ . '/..' . '/symfony/polyfill-ctype/Ctype.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

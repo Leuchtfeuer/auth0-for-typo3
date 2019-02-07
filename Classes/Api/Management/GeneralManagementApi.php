@@ -4,11 +4,17 @@ namespace Bitmotion\Auth0\Api\Management;
 
 use Auth0\SDK\API\Helpers\ApiClient;
 use Auth0\SDK\Exception\ApiException;
+use Bitmotion\Auth0\Domain\Model\Auth0\ApiError;
 use GuzzleHttp\Psr7\Response;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
-use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
+use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\Exception;
 
 class GeneralManagementApi implements LoggerAwareInterface
 {
@@ -17,6 +23,11 @@ class GeneralManagementApi implements LoggerAwareInterface
     protected $apiClient;
 
     protected $objectName = '';
+
+    // TODO: add DateTimeNormalizer if necessary
+    protected $normalizer = [];
+
+    protected $serializeFormat = 'json';
 
     public function __construct(ApiClient $apiClient)
     {
@@ -30,40 +41,56 @@ class GeneralManagementApi implements LoggerAwareInterface
 
     /**
      * @throws ApiException
-     * @throws ClassNotFoundException
-     * @return object|ObjectStorage
+     * @throws Exception
+     * @return object|array[object]
      */
     protected function mapResponse(Response $response)
     {
-        $bodyContent = \GuzzleHttp\json_decode($response->getBody()->getContents(), true);
+        $jsonResponse = $response->getBody()->getContents();
+        $objectName = $this->getObjectName($response);
 
-        if (isset($bodyContent['statusCode'])) {
-            $this->getResponseObject($bodyContent);
+        $this->normalizer[] = new ObjectNormalizer(null, new CamelCaseToSnakeCaseNameConverter());
+
+        if (substr($jsonResponse, 0, 1) === '[') {
+            $this->normalizer[] = new ArrayDenormalizer();
+            $objectName .= '[]';
         }
 
-        $objectName = $this->getObjectName();
+        $serializer = new Serializer($this->normalizer, [new JsonEncoder()]);
+        $object = $serializer->deserialize($jsonResponse, $objectName, $this->serializeFormat);
 
-        if (isset($bodyContent['id']) || isset($bodyContent['ticket'])) {
-            return new $objectName($bodyContent);
+        if ($object instanceof ApiError) {
+            $this->getResponseObject($object);
         }
 
-        $objects = new ObjectStorage();
-        foreach ($bodyContent as $object) {
-            $objects->attach(new $objectName($object));
+        if (is_array($object) && count($object) === 1) {
+            return array_shift($object);
         }
 
-        return $objects;
+        return $object;
     }
 
     /**
-     * @throws ClassNotFoundException
+     * @throws Exception
      */
-    private function getObjectName(): string
+    private function getObjectName(Response $response): string
     {
+        if ($response->getStatusCode() !== 200) {
+            return ApiError::class;
+        }
+
         if ($this->objectName !== '') {
             return $this->objectName;
         }
 
+        return $this->getObjectNameByClassName();
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function getObjectNameByClassName(): string
+    {
         $className = get_called_class();
         $parts = explode('\\', $className);
         $modelName = rtrim(array_pop($parts), 'Api');
@@ -73,23 +100,22 @@ class GeneralManagementApi implements LoggerAwareInterface
             return $modelClass;
         }
 
-        throw new ClassNotFoundException(sprintf('Class "%s" does not exist.', $modelClass), 1549388794);
+        throw new Exception(sprintf('Class "%s" does not exist.', $modelClass), 1549388794);
     }
 
-    private function getResponseObject(array $response)
+    /**
+     * @throws ApiException
+     */
+    private function getResponseObject(ApiError $error)
     {
-        if ($response['statusCode'] !== 200) {
-            $this->logger->critical(
-                sprintf(
-                    '%s (%s): %s',
-                    $response['error'],
-                    $response['errorCode'],
-                    $response['message']
-                )
-            );
+        $errorMessage = sprintf('%s (%s): %s', $error->getError(), $error->getErrorCode(), $error->getMessage());
+        $this->logger->critical($errorMessage);
 
+        if (GeneralUtility::getApplicationContext()->isProduction()) {
             throw new ApiException('Could not handle request. See log for further details.', 1549382279);
         }
+
+        throw new ApiException($errorMessage, 1549559117);
     }
 
     protected function addStringProperty(array &$data, string $key, string $value)
