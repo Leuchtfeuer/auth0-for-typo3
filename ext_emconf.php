@@ -24,4 +24,9 @@ $EM_CONF[$_EXTKEY] = [
             'Bitmotion\\Auth0\\' => 'Classes',
         ],
     ],
+    'autoload-dev' => [
+        'psr-4' => [
+            'Bitmotion\\Auth0\\Tests\\' => 'Classes/Tests',
+        ],
+    ],
 ];
