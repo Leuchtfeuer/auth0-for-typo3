@@ -2,11 +2,12 @@
 declare(strict_types=1);
 namespace Bitmotion\Auth0\Utility;
 
-use Auth0\SDK\API\Management\Users;
 use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Api\AuthenticationApi;
+use Bitmotion\Auth0\Api\Management\ClientGrantApi;
 use Bitmotion\Auth0\Api\Management\ConnectionApi;
 use Bitmotion\Auth0\Api\Management\TicketApi;
+use Bitmotion\Auth0\Api\Management\UserApi;
 use Bitmotion\Auth0\Api\ManagementApi;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Scope;
@@ -66,7 +67,7 @@ class ApiUtility implements LoggerAwareInterface
         $this->application = $applicationUid;
     }
 
-    public function getUserApi(string ...$scopes): Users
+    public function getUserApi(string ...$scopes): UserApi
     {
         return $this->getManagementApi($scopes)->getUserApi();
     }
@@ -79,6 +80,11 @@ class ApiUtility implements LoggerAwareInterface
     public function getConnectionApi(string ...$scopes): ConnectionApi
     {
         return $this->getManagementApi($scopes)->getConnectionApi();
+    }
+
+    public function getClientGrantApi(string ...$scopes): ClientGrantApi
+    {
+        return $this->getManagementApi($scopes)->getClientGrantApi();
     }
 
     protected function getManagementApi(array $scopes): ManagementApi

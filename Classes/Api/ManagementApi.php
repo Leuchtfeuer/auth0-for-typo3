@@ -239,11 +239,11 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
 
     /**
      * @throws \Exception
-     * @deprecated Use UserApi instead.
+     * @deprecated Use $this->getUserApi->get() instead.
      */
     public function getUserById(string $userId)
     {
-        return $this->users->get($userId);
+        return $this->getUserApi()->get($userId);
     }
 
     public function getClientGrantApi(): ClientGrantApi
