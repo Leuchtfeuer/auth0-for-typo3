@@ -35,7 +35,9 @@
     "typo3/cms-saltedpasswords": "^9.5.0",
     "auth0/auth0-php": "^5.3.2",
     "symfony/serializer": "^4.2",
-    "symfony/property-access": "^4.2"
+    "symfony/property-access": "^4.2",
+    "symfony/property-info": "^4.2",
+    "symfony/http-foundation": "^4.2"
   },
   "require-dev": {
     "typo3/testing-framework": "^4.0"
