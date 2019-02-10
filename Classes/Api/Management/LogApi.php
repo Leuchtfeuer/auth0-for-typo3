@@ -2,13 +2,24 @@
 declare(strict_types=1);
 namespace Bitmotion\Auth0\Api\Management;
 
+use Auth0\SDK\API\Helpers\ApiClient;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
-use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use Bitmotion\Auth0\Domain\Model\Auth0\Log;
+use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use TYPO3\CMS\Extbase\Object\Exception;
 
 class LogApi extends GeneralManagementApi
 {
+    public function __construct(ApiClient $apiClient)
+    {
+        $this->extractor = new ReflectionExtractor();
+        $this->normalizer[] = new DateTimeNormalizer();
+
+        parent::__construct($apiClient);
+    }
+
     /**
      * Retrieves log entries that match the specified search criteria (or list all entries if no criteria is used).
      * You can search with a criteria using the q parameter.
@@ -26,9 +37,9 @@ class LogApi extends GeneralManagementApi
      *                              true.
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return Log|Log[]
      * @see https://auth0.com/docs/api/management/v2#!/Logs/get_logs
      */
     public function search(
@@ -71,9 +82,9 @@ class LogApi extends GeneralManagementApi
      * @param int    $take The total amount of entries to retrieve when using the from parameter.
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return Log|Log[]
      * @see https://auth0.com/docs/api/management/v2#!/Logs/get_logs
      */
     public function searchByCheckpoint(string $from, int $take = 50)
@@ -82,7 +93,7 @@ class LogApi extends GeneralManagementApi
             ->method('get')
             ->addPath('logs')
             ->withParam('from', $from)
-            ->withParams('take', $take)
+            ->withParam('take', $take)
             ->setReturnType('object')
             ->call();
 
@@ -94,13 +105,12 @@ class LogApi extends GeneralManagementApi
      * in the schema.
      * Required scope: "read:logs"
      *
-     *
      * @param string $id  The log_id of the log to retrieve
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return Log
      * @see https://auth0.com/docs/api/management/v2#!/Logs/get_logs_by_id
      */
     public function get(string $id)
