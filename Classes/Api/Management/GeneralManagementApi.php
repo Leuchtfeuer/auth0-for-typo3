@@ -56,12 +56,14 @@ class GeneralManagementApi implements LoggerAwareInterface
      * @throws Exception
      * @return object|object[]
      */
-    protected function mapResponse(Response $response)
+    protected function mapResponse(Response $response, string $objectName = '', bool $returnRaw = false)
     {
         $jsonResponse = $response->getBody()->getContents();
-        $objectName = $this->getObjectName($response);
+        $objectName = ($objectName !== '') ? $objectName : $this->getObjectName($response, $returnRaw);
 
-        $this->normalizer[] = new ObjectNormalizer(null, new CamelCaseToSnakeCaseNameConverter());
+        if ($returnRaw === true && !$objectName !== ApiError::class) {
+            return $jsonResponse;
+        }
 
         if (substr($jsonResponse, 0, 1) === '[') {
             $this->normalizer[] = new ArrayDenormalizer();
@@ -82,17 +84,53 @@ class GeneralManagementApi implements LoggerAwareInterface
         return $object;
     }
 
+    protected function serialize(object $object, string $format = 'json', array $allowedAttributes = []): string
+    {
+        $options = [
+            ObjectNormalizer::SKIP_NULL_VALUES => true,
+        ];
+
+        $this->addArrayProperty($options, ObjectNormalizer::ATTRIBUTES, $allowedAttributes);
+
+        return $this->getSerializer()->serialize($object, $format, $options);
+    }
+
+    protected function normalize(object $object, $format = null, array $attributes = [], bool $negate = false)
+    {
+        $options = [
+            ObjectNormalizer::SKIP_NULL_VALUES => true,
+        ];
+
+        if ($negate === true) {
+            $this->addArrayProperty($options, ObjectNormalizer::IGNORED_ATTRIBUTES, $attributes);
+        } else {
+            $this->addArrayProperty($options, ObjectNormalizer::ATTRIBUTES, $attributes);
+        }
+
+        return $this->getSerializer()->normalize($object, $format, $options);
+    }
+
+    protected function getSerializer(): Serializer
+    {
+        return new Serializer(
+            array_merge($this->normalizer, [$this->objectNormalizer]),
+            [new JsonEncoder()]
+        );
+    }
+
     /**
      * @throws Exception
      */
-    private function getObjectName(Response $response): string
+    private function getObjectName(Response $response, bool $returnRaw): string
     {
-        if ($response->getStatusCode() !== 200) {
+        $statusCode = $response->getStatusCode();
+
+        if ($statusCode !== 200 && $statusCode !== 201) {
             return ApiError::class;
         }
 
-        if ($this->objectName !== '') {
-            return $this->objectName;
+        if ($returnRaw === true) {
+            return '';
         }
 
         return $this->getObjectNameByClassName();
