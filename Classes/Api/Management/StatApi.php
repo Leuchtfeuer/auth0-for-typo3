@@ -2,24 +2,34 @@
 declare(strict_types=1);
 namespace Bitmotion\Auth0\Api\Management;
 
+use Auth0\SDK\API\Helpers\ApiClient;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
-use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use Bitmotion\Auth0\Domain\Model\Auth0\Stat;
+use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use TYPO3\CMS\Extbase\Object\Exception;
 
 class StatApi extends GeneralManagementApi
 {
+    public function __construct(ApiClient $apiClient)
+    {
+        $this->extractor = new ReflectionExtractor();
+        $this->normalizer[] = new DateTimeNormalizer();
+
+        parent::__construct($apiClient);
+    }
+
     /**
      * Retrieves the number of active users that logged in during the last 30 days.
      * Required scope: "read:stats"
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Stats/get_active_users
      */
-    public function getActiveUsersCount()
+    public function getActiveUsersCount(): int
     {
         $response = $this->apiClient
             ->method('get')
@@ -28,7 +38,7 @@ class StatApi extends GeneralManagementApi
             ->setReturnType('object')
             ->call();
 
-        return $this->mapResponse($response);
+        return (int)$this->mapResponse($response, '', true);
     }
 
     /**
@@ -39,19 +49,28 @@ class StatApi extends GeneralManagementApi
      * @param \DateTime $to   The last day of the period (inclusive) in YYYYMMDD format.
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return Stat|Stat[]
      * @see https://auth0.com/docs/api/management/v2#!/Stats/get_daily
      */
-    public function getDailyStats(\DateTime $from, \DateTime $to)
+    public function getDailyStats(\DateTime $from = null, \DateTime $to = null)
     {
+        $params = [];
+
+        if ($from instanceof \DateTime) {
+            $params['from'] = $from->format('Ymd');
+        }
+
+        if ($to instanceof \DateTime) {
+            $params['to'] = $to->format('Ymd');
+        }
+
         $response = $this->apiClient
             ->method('get')
             ->addPath('stats')
             ->addPath('daily')
-            ->withParam('from', $from->format('Ymd'))
-            ->withParam('to', $to->format('Ymd'))
+            ->withDictParams($params)
             ->setReturnType('object')
             ->call();
 
