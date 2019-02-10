@@ -107,10 +107,10 @@ class Scope
     const TRIGGER_READ = 'read:triggers';
     const TRIGGER_UPDATE = 'update:triggers';
 
-    const USER_DELETE = 'delete:user';
+    const USER_DELETE = 'delete:users';
     const USER_CREATE = 'create:users';
     const USER_IDP_TOKEN_READ = 'read:user_idp_tokens';
-    const USER_READ = 'read_user';
+    const USER_READ = 'read:users';
     const USER_UPDATE = 'update:users';
 
     const TICKET_CREATE = 'create:user_tickets';
