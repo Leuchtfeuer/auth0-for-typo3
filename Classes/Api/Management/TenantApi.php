@@ -3,13 +3,29 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Api\Management;
 
 use Auth0\SDK\API\Header\ContentType;
+use Auth0\SDK\API\Helpers\ApiClient;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
-use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use Bitmotion\Auth0\Domain\Model\Auth0\Tenant;
+use Bitmotion\Auth0\Extractor\PropertyTypeExtractor\TenantExtractor;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use TYPO3\CMS\Extbase\Object\Exception;
 
 class TenantApi extends GeneralManagementApi
 {
+    const EXCLUDED_UPDATE_PROPERTIES = [
+        'sandboxVersionsAvailable',
+        'flags',
+    ];
+
+    public function __construct(ApiClient $apiClient)
+    {
+        $this->extractor = new TenantExtractor();
+        $this->defaultContext[ObjectNormalizer::DISABLE_TYPE_ENFORCEMENT] = true;
+
+        parent::__construct($apiClient);
+    }
+
     /**
      * Use this endpoint to retrieve various settings for a tenant.
      * Required scope: "read:tenant_settings"
@@ -20,17 +36,18 @@ class TenantApi extends GeneralManagementApi
      *                               to true)
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return Tenant|Tenant[]
      * @see https://auth0.com/docs/api/management/v2#!/Tenants/get_settings
      */
     public function get(string $fields = '', bool $includeFields = true)
     {
         $params = [
-            'fields' => $fields,
             'include_fields' => $includeFields,
         ];
+
+        $this->addStringProperty($params, 'fields', $fields);
 
         $response = $this->apiClient
             ->method('get')
@@ -47,57 +64,17 @@ class TenantApi extends GeneralManagementApi
      * Use this endpoint to update various fields for a tenant. Enter the new settings in a JSON string in the body parameter.
      * Required scope: "update:tenant_settings"
      *
-     * @param string $defaultAudience     Default audience for API Authorization
-     * @param string $defaultDirectory    Name of the connection that will be used for password grants at the token endpoint.
-     *                                    Only the following connection types are supported: LDAP, AD, Database Connections,
-     *                                    Passwordless, Windows Azure Active Directory, ADFS
-     * @param string $friendlyName        The friendly name of the tenant
-     * @param string $pictureUrl          The URL of the tenant logo (recommended size: 150x150)
-     * @param string $supportEmail        User support email
-     * @param string $supportUrl          User support url
-     * @param array  $allowedLogoutUrls   A set of URLs that are valid to redirect to after logout from Auth0
-     * @param int    $sessionLifetime     Login session lifetime, how long the session will stay valid (unit: hours)
-     * @param int    $idleSessionLifetime Force a user to login after they have been inactive for the specified number (unit: hours)
-     * @param string $sandboxVersion      The selected sandbox version to be used for the extensibility environment
+     * @param Tenant $tenant The tenant you want to update.
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return Tenant
      * @see https://auth0.com/docs/api/management/v2#!/Tenants/patch_settings
      */
-    public function update(
-        array $changePassword = [],
-        array $guardianMfaPage = [],
-        string $defaultAudience = '',
-        string $defaultDirectory = '',
-        array $errorPage = [],
-        array $flags = [],
-        string $friendlyName = '',
-        string $pictureUrl = '',
-        string $supportEmail = '',
-        string $supportUrl = '',
-        array $allowedLogoutUrls = [],
-        int $sessionLifetime = 0,
-        int $idleSessionLifetime = 0,
-        string $sandboxVersion = ''
-    ) {
-        $body = [];
-
-        $this->addStringProperty($body, 'default_audience', $defaultAudience);
-        $this->addStringProperty($body, 'default_directory', $defaultDirectory);
-        $this->addStringProperty($body, 'friendly_name', $friendlyName);
-        $this->addStringProperty($body, 'picture_url', $pictureUrl);
-        $this->addStringProperty($body, 'support_email', $supportEmail);
-        $this->addStringProperty($body, 'support_url', $supportUrl);
-        $this->addStringProperty($body, 'sandbox_version', $sandboxVersion);
-        $this->addArrayProperty($body, 'change_password', $changePassword);
-        $this->addArrayProperty($body, 'guardian_mfa_page', $guardianMfaPage);
-        $this->addArrayProperty($body, 'error_page', $errorPage);
-        $this->addArrayProperty($body, 'flags', $flags);
-        $this->addArrayProperty($body, 'allowed_logout_urls', $allowedLogoutUrls);
-        $this->addIntegerProperty($body, 'session_lifetime', $sessionLifetime);
-        $this->addIntegerProperty($body, 'idle_session_lifetime', $idleSessionLifetime);
+    public function update(Tenant $tenant)
+    {
+        $body = $this->normalize($tenant, 'array', self::EXCLUDED_UPDATE_PROPERTIES, true);
 
         $response = $this->apiClient
             ->method('patch')
