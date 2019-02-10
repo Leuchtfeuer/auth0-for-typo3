@@ -4,10 +4,17 @@ namespace Bitmotion\Auth0\Utility;
 
 use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Api\AuthenticationApi;
+use Bitmotion\Auth0\Api\Management\ClientApi;
 use Bitmotion\Auth0\Api\Management\ClientGrantApi;
 use Bitmotion\Auth0\Api\Management\ConnectionApi;
+use Bitmotion\Auth0\Api\Management\LogApi;
+use Bitmotion\Auth0\Api\Management\ResourceServerApi;
+use Bitmotion\Auth0\Api\Management\StatApi;
+use Bitmotion\Auth0\Api\Management\TenantApi;
 use Bitmotion\Auth0\Api\Management\TicketApi;
 use Bitmotion\Auth0\Api\Management\UserApi;
+use Bitmotion\Auth0\Api\Management\UserBlockApi;
+use Bitmotion\Auth0\Api\Management\UserByEmailApi;
 use Bitmotion\Auth0\Api\ManagementApi;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Scope;
@@ -85,6 +92,41 @@ class ApiUtility implements LoggerAwareInterface
     public function getClientGrantApi(string ...$scopes): ClientGrantApi
     {
         return $this->getManagementApi($scopes)->getClientGrantApi();
+    }
+
+    public function getClientApi(string ...$scopes): ClientApi
+    {
+        return $this->getManagementApi($scopes)->getClientApi();
+    }
+
+    public function getUserBlockApi(string ...$scopes): UserBlockApi
+    {
+        return $this->getManagementApi($scopes)->getUserBlockApi();
+    }
+
+    public function getUserByEmailApi(string ...$scopes): UserByEmailApi
+    {
+        return $this->getManagementApi($scopes)->getUserByEmailApi();
+    }
+
+    public function getStatApi(string ...$scopes): StatApi
+    {
+        return $this->getManagementApi($scopes)->getStatApi();
+    }
+
+    public function getTenantApi(string ...$scopes): TenantApi
+    {
+        return $this->getManagementApi($scopes)->getTenantApi();
+    }
+
+    public function getLogApi(string ...$scopes): LogApi
+    {
+        return $this->getManagementApi($scopes)->getLogApi();
+    }
+
+    public function getResourceServerApi(string ...$scopes): ResourceServerApi
+    {
+        return $this->getManagementApi($scopes)->getResourceServerApi();
     }
 
     protected function getManagementApi(array $scopes): ManagementApi
