@@ -13,7 +13,7 @@
 	colors="true"
 	convertErrorsToExceptions="true"
 	convertWarningsToExceptions="true"
-	forceCoversAnnotation="false"
+	forceCoversAnnotation="true"
 	stopOnError="false"
 	stopOnFailure="false"
 	stopOnIncomplete="false"
@@ -22,8 +22,13 @@
 	beStrictAboutTestsThatDoNotTestAnything="false"
 >
 	<testsuites>
-		<testsuite name="EXT:auth0 tests">
-			<directory>../Functional/</directory>
+		<testsuite name="EXT:auth0 API tests">
+			<directory>../Functional/API/</directory>
 		</testsuite>
 	</testsuites>
+	<filter>
+		<whitelist>
+			<directory>../../Classes/</directory>
+		</whitelist>
+	</filter>
 </phpunit>
