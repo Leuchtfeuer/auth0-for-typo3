@@ -7,22 +7,22 @@ class ClientGrant
     /**
      * @var string
      */
-    protected $id = 'ID';
+    protected $id;
 
     /**
      * @var string
      */
-    protected $clientId = 'CLIENT';
+    protected $clientId;
 
     /**
      * @var string
      */
-    protected $audience = 'AUDI';
+    protected $audience;
 
     /**
      * @var string[]
      */
-    protected $scope = ['SCOPE', 'SCI', 'SCA'];
+    protected $scope;
 
     public function getId(): string
     {
