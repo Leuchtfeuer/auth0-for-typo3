@@ -50,6 +50,7 @@ class ClientGrantsTest extends FunctionalTestCase
      * Tries to instantiate the ClientGrantApi
      *
      * @test
+     * @covers \Bitmotion\Auth0\Utility\ApiUtility::getClientGrantApi
      */
     public function instantiateApi(): ClientGrantApi
     {
@@ -64,10 +65,12 @@ class ClientGrantsTest extends FunctionalTestCase
      *
      * @test
      * @depends instantiateApi
+     * @covers \Bitmotion\Auth0\Api\Management\ClientGrantApi::list
      */
     public function listClientGrants(ClientGrantApi $clientGrantApi): array
     {
         $clientGrants = $clientGrantApi->list();
+        $this->assertIsArray($clientGrants);
         $this->assertNotEmpty($clientGrants);
 
         return $clientGrants;
@@ -78,6 +81,7 @@ class ClientGrantsTest extends FunctionalTestCase
      *
      * @test
      * @depends listClientGrants
+     * @covers \Bitmotion\Auth0\Api\Management\ClientGrantApi::list
      */
     public function loadSingleClientGrant(array $clientGrants): ClientGrant
     {
@@ -93,6 +97,7 @@ class ClientGrantsTest extends FunctionalTestCase
      * @test
      * @depends instantiateApi
      * @depends loadSingleClientGrant
+     * @covers \Bitmotion\Auth0\Api\Management\ClientGrantApi::list
      */
     public function findClientGrant(ClientGrantApi $clientGrantApi, ClientGrant $clientGrant)
     {
