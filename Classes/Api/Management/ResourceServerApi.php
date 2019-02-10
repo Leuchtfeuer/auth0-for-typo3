@@ -3,13 +3,33 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Api\Management;
 
 use Auth0\SDK\API\Header\ContentType;
+use Auth0\SDK\API\Helpers\ApiClient;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
+use Bitmotion\Auth0\Domain\Model\Auth0\ResourceServer;
+use Bitmotion\Auth0\Extractor\PropertyTypeExtractor\ResourceServerExtractor;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use TYPO3\CMS\Extbase\Object\Exception;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 class ResourceServerApi extends GeneralManagementApi
 {
+    const EXCLUDED_UPDATE_PROPERTIES = [
+        'system', 'id', 'identifier',
+    ];
+
+    const EXCLUDED_CREATE_PROPERTIES = [
+        'system', 'id',
+    ];
+
+    public function __construct(ApiClient $apiClient)
+    {
+        $this->extractor = new ResourceServerExtractor();
+        $this->defaultContext[ObjectNormalizer::DISABLE_TYPE_ENFORCEMENT] = true;
+
+        parent::__construct($apiClient);
+    }
+
     /**
      * Manage your Resource Servers. These host protected resources that you can access by interfacing with its APIs.
      * Required scope: "read:resource_servers"
@@ -20,9 +40,9 @@ class ResourceServerApi extends GeneralManagementApi
      * @param bool $includeTotals true if a query summary must be included in the result, false otherwise. Default false.
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return ResourceServer|ResourceServer[]
      * @see https://auth0.com/docs/api/management/v2#!/Resource_Servers/get_resource_servers
      */
     public function list(int $page = 0, int $perPage = 50, bool $includeTotals = false)
@@ -47,55 +67,23 @@ class ResourceServerApi extends GeneralManagementApi
      * Create a resource server
      * Required scope: "create:resource_servers"
      *
-     * @param string $id                   The id or audience of the resource server to update
-     * @param string $name                 The name of the resource server. Must contain at least one character. Does not
-     *                                     allow '<' or '>'
-     * @param string $algorithm            The algorithm used to sign tokens ['HS256' or 'RS256']
-     * @param string $secret               The secret used to sign tokens when using symmetric algorithms
-     * @param bool   $skip                 Flag this entity as capable of skipping consent
-     * @param bool   $offlineAccess        Allows issuance of refresh tokens for this entity
-     * @param int    $lifetime             The amount of time (in seconds) that the token will be valid after being issued
-     * @param string $verificationLocation A uri from which to retrieve JWKs for this resource server used for verifying the JWT
-     *                                     sent to Auth0 for token introspection.
-     * @param array  $options              Used to store additional metadata
+     * @param ResourceServer $resourceServer The ResourceServer you want to create.
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
      * @return object|ObjectStorage
      * @see https://auth0.com/docs/api/management/v2#!/Resource_Servers/post_resource_servers
      */
-    public function create(
-        string $id,
-        string $name = '',
-        array $scopes = [],
-        string $algorithm = 'RS256',
-        string $secret = '',
-        bool $skip = false,
-        bool $offlineAccess = false,
-        int $lifetime = 0,
-        string $verificationLocation = '',
-        array $options = []
-    ) {
-        $body = [
-            'skip_consent_for_verifiable_first_party_clients' => $skip,
-            'allow_offline_access' => $offlineAccess,
-            'signing_alg' => $algorithm,
-        ];
-
-        $this->addStringProperty($body, 'name', $name);
-        $this->addStringProperty($body, 'signing_secret', $secret);
-        $this->addStringProperty($body, 'verificationLocation', $verificationLocation);
-        $this->addArrayProperty($body, 'scopes', $scopes);
-        $this->addArrayProperty($body, 'options', $options);
-        $this->addIntegerProperty($body, 'token_lifetime', $lifetime);
+    public function create(ResourceServer $resourceServer)
+    {
+        $data = $this->normalize($resourceServer, 'array', self::EXCLUDED_CREATE_PROPERTIES, true);
 
         $response = $this->apiClient
-            ->method('patch')
+            ->method('post')
             ->addPath('resource-servers')
-            ->addPath($id)
             ->withHeader(new ContentType('application/json'))
-            ->withBody(\GuzzleHttp\json_encode($body))
+            ->withBody(\GuzzleHttp\json_encode($data))
             ->setReturnType('object')
             ->call();
 
@@ -109,9 +97,9 @@ class ResourceServerApi extends GeneralManagementApi
      * @param string $id The id or audience of the resource server to retrieve
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return ResourceServer
      * @see https://auth0.com/docs/api/management/v2#!/Resource_Servers/get_resource_servers_by_id
      */
     public function get(string $id)
@@ -132,10 +120,8 @@ class ResourceServerApi extends GeneralManagementApi
      *
      * @param string $id The id or the audience of the resource server to delete
      *
-     * @throws ApiException
-     * @throws ClassNotFoundException
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return bool
      * @see https://auth0.com/docs/api/management/v2#!/Resource_Servers/delete_resource_servers_by_id
      */
     public function delete(string $id)
@@ -147,62 +133,37 @@ class ResourceServerApi extends GeneralManagementApi
             ->setReturnType('object')
             ->call();
 
-        return $this->mapResponse($response);
+        return $response->getStatusCode() === 204;
     }
 
     /**
      * Update a resource server
      * Required scope: "update:resource_servers"
      *
-     * @param string $id                   The id or audience of the resource server to update
-     * @param string $name                 The name of the resource server. Must contain at least one character. Does not
-     *                                     allow '<' or '>'
-     * @param string $algorithm            The algorithm used to sign tokens ['HS256' or 'RS256']
-     * @param string $secret               The secret used to sign tokens when using symmetric algorithms
-     * @param bool   $skip                 Flag this entity as capable of skipping consent
-     * @param bool   $offlineAccess        Allows issuance of refresh tokens for this entity
-     * @param int    $lifetime             The amount of time (in seconds) that the token will be valid after being issued
-     * @param string $verificationLocation A uri from which to retrieve JWKs for this resource server used for verifying the JWT
-     *                                     sent to Auth0 for token introspection.
-     * @param array  $options              Used to store additional metadata
+     * @param ResourceServer $resourceServer The ResourceServer you want to update.
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return ResourceServer
      * @see https://auth0.com/docs/api/management/v2#!/Resource_Servers/patch_resource_servers_by_id
      */
-    public function update(
-        string $id,
-        string $name = '',
-        array $scopes = [],
-        string $algorithm = 'RS256',
-        string $secret = '',
-        bool $skip = false,
-        bool $offlineAccess = false,
-        int $lifetime = 0,
-        string $verificationLocation = '',
-        array $options = []
-    ) {
-        $body = [
-            'skip_consent_for_verifiable_first_party_clients' => $skip,
-            'allow_offline_access' => $offlineAccess,
-            'signing_alg' => $algorithm,
-        ];
+    public function update(ResourceServer $resourceServer)
+    {
+        $originServer = $this->get($resourceServer->getId());
+        $originData = $this->normalize($originServer, 'array', self::EXCLUDED_UPDATE_PROPERTIES, true);
 
-        $this->addStringProperty($body, 'name', $name);
-        $this->addStringProperty($body, 'signing_secret', $secret);
-        $this->addStringProperty($body, 'verificationLocation', $verificationLocation);
-        $this->addArrayProperty($body, 'scopes', $scopes);
-        $this->addArrayProperty($body, 'options', $options);
-        $this->addIntegerProperty($body, 'token_lifetime', $lifetime);
+        $newData = $this->normalize($resourceServer, 'array', self::EXCLUDED_UPDATE_PROPERTIES, true);
+
+        // Auth0 excepts diff only - wtf
+        $data = array_diff_assoc($newData, $originData);
 
         $response = $this->apiClient
             ->method('patch')
             ->addPath('resource-servers')
-            ->addPath($id)
+            ->addPath($resourceServer->getId())
             ->withHeader(new ContentType('application/json'))
-            ->withBody(\GuzzleHttp\json_encode($body))
+            ->withBody(\GuzzleHttp\json_encode($data))
             ->setReturnType('object')
             ->call();
 
