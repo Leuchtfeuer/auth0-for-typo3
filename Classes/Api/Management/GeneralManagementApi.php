@@ -22,27 +22,39 @@ class GeneralManagementApi implements LoggerAwareInterface
 
     protected $apiClient;
 
-    protected $objectName = '';
+    protected $objectNormalizer;
 
-    // TODO: add DateTimeNormalizer if necessary
     protected $normalizer = [];
 
     protected $serializeFormat = 'json';
 
+    protected $extractor = null;
+
+    protected $defaultContext = [];
+
     public function __construct(ApiClient $apiClient)
     {
         $this->apiClient = $apiClient;
+        $this->objectNormalizer = $this->getObjectNormalizer();
     }
 
-    protected function setObjectName(string $objectName)
+    protected function getObjectNormalizer()
     {
-        $this->objectName = $objectName;
+        return new ObjectNormalizer(
+            null,
+            new CamelCaseToSnakeCaseNameConverter(),
+            null,
+            $this->extractor,
+            null,
+            null,
+            $this->defaultContext
+        );
     }
 
     /**
      * @throws ApiException
      * @throws Exception
-     * @return object|array[object]
+     * @return object|object[]
      */
     protected function mapResponse(Response $response)
     {
@@ -56,7 +68,7 @@ class GeneralManagementApi implements LoggerAwareInterface
             $objectName .= '[]';
         }
 
-        $serializer = new Serializer($this->normalizer, [new JsonEncoder()]);
+        $serializer = $this->getSerializer();
         $object = $serializer->deserialize($jsonResponse, $objectName, $this->serializeFormat);
 
         if ($object instanceof ApiError) {
