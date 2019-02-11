@@ -24,8 +24,13 @@ matrix:
 
 before_install:
   - sudo apt-get install -y parallel
-  - composer self-update
-  - composer --version
+  - composer req typo3/cms-core=$TYPO3_VERSION
+  - composer req typo3/cms-backend=$TYPO3_VERSION
+  - composer req typo3/cms-extbase=$TYPO3_VERSION
+  - composer req typo3/cms-extensionmanager=$TYPO3_VERSION
+  - composer req typo3/cms-fluid=$TYPO3_VERSION
+  - composer req typo3/cms-frontend=$TYPO3_VERSION
+  - composer req typo3/cms-saltedpasswords=$TYPO3_VERSION
 
 before_script:
   - phpenv config-rm xdebug.ini
