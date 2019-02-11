@@ -110,7 +110,7 @@ class ClientTest extends FunctionalTestCase
         $encryptionKey->setSubject('Subject');
 
         $client = new Client();
-        $client->setName('NEW_CLIENT_' . time());
+        $client->setName('NEW_CLIENT_' . uniqid());
         $client->setDescription('Temporär bin ich wär');
         $client->setLogoUri('https://www.google.com/favicon.ico');
         $client->setCallbacks(['https://www.bitmotion.de', 'http://typo39.local/']);
@@ -123,7 +123,7 @@ class ClientTest extends FunctionalTestCase
         $client->setClientMetadata(['foo' => 'bar']);
         $client->setJwtConfiguration($jwtConfiguration);
         $client->setGrantTypes(['client_credentials']);
-        $client->setClientId('kjkasjdfkölajsklödf');
+        $client->setClientId(uniqid() . time());
 
         $client = $clientApi->create($client);
 
