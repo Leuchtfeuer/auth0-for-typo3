@@ -27,7 +27,7 @@ cache:
     - "$HOME/.composer/cache"
 
 before_install:
-  - chmod +x build.sh
+  - sudo chmod +x Build/*.sh
   - sudo apt-get install -y parallel
 
 install: Build/install.sh
