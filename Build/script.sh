@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [ -n $TYPO3_DATABASE_NAME ]; then
 	export typo3DatabaseName=$TYPO3_DATABASE_NAME

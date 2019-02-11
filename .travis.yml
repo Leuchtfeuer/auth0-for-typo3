@@ -6,15 +6,15 @@ php:
 
 env:
   global:
-    - TYPO3_DATABASE_NAME = "typo3"
-    - TYPO3_DATABASE_HOST = "127.0.0.1"
-    - TYPO3_DATABASE_USERNAME = "root"
-    - TYPO3_DATABASE_PASSWORD = ""
-    - PHP_CS_FIXER_VERSION = "^2.13"
+    - TYPO3_DATABASE_NAME="auth0"
+    - TYPO3_DATABASE_HOST="127.0.0.1"
+    - TYPO3_DATABASE_USERNAME="root"
+    - TYPO3_DATABASE_PASSWORD=""
+    - PHP_CS_FIXER_VERSION="^2.13"
   matrix:
-    - TYPO3_VERSION = "^9.5"
-    - TYPO3_VERSION = "9.5.x-dev"
-    - TYPO3_VERSION = "dev-master"
+    - TYPO3_VERSION="^9.5"
+    - TYPO3_VERSION="9.5.x-dev"
+    - TYPO3_VERSION="dev-master"
 
 matrix:
   fast_finish: true
@@ -28,12 +28,12 @@ cache:
 
 before_install: true
 
-install: ./Build/install.sh
+install: Build/install.sh
 
 before_script:
   - export TYPO3_PATH_WEB=$PWD/.Build/web
 
-script: ./Build/script.sh
+script: Build/script.sh
 
 notifications:
   slack:
