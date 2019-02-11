@@ -10,10 +10,10 @@ composer req friendsofphp/php-cs-fixer:"${PHP_CS_FIXER_VERSION}" typo3/cms-core:
 # --------------------------------------------------------------------------- #
 # Write Fixture file
 
-FILE="Tests/Functional/Fixtures/_tx_auth0_domain_model_application.xml"
+APPLICATION_FILE="Tests/Functional/Fixtures/tx_auth0_domain_model_application.xml"
 
 exec 6>&1
-exec > $FILE
+exec > $APPLICATION_FILE
 
 echo '<?xml version="1.0" encoding="UTF-8" ?>'
 echo '<dataset>'

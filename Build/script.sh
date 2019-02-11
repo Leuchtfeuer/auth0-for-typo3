@@ -31,3 +31,6 @@ fi
 
 echo "Running functional API tests"
 .Build/bin/phpunit --colors --configuration Tests/Build/FunctionalTests.xml Tests/Functional --bootstrap .Build/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php --coverage-clover=coverage.integration.clover
+
+
+rm $APPLICATION_FILE
