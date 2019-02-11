@@ -22,6 +22,10 @@ matrix:
     - env: TYPO3_VERSION = "dev-master"
     - env: TYPO3_VERSION = "9.5.x-dev"
 
+cache:
+  directories:
+    - "$HOME/.composer/cache"
+
 before_install: true
 
 install: ./Build/install.sh
@@ -29,13 +33,7 @@ install: ./Build/install.sh
 before_script:
   - export TYPO3_PATH_WEB=$PWD/.Build/web
 
-cache:
-  directories:
-    - "$HOME/.composer/cache"
-
 script: ./Build/script.sh
-
-sudo: false
 
 notifications:
   slack:
