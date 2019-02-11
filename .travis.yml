@@ -22,23 +22,9 @@ matrix:
     - env: TYPO3_VERSION = "dev-master"
     - env: TYPO3_VERSION = "9.5.x-dev"
 
-before_install:
-  - sudo apt-get install -y parallel
+before_install: true
 
-install:
-  - >
-    echo "Using TYPO3 Version: $TYPO3_VERSION"
-    echo "Using PHP-CS Fixer Version: $PHP_CS_FIXER_VERSION"
-    echo "Using database host: $TYPO3_DATABASE_HOST"
-    echo "Using database dbname: $TYPO3_DATABASE_NAME"
-    echo "Using database user: $TYPO3_DATABASE_USERNAME"
-  - composer req typo3/cms-core:${TYPO3_VERSION}
-  - composer req typo3/cms-backend:${TYPO3_VERSION}
-  - composer req typo3/cms-extbase:${TYPO3_VERSION}
-  - composer req typo3/cms-extensionmanager:${TYPO3_VERSION}
-  - composer req typo3/cms-fluid:${TYPO3_VERSION}
-  - composer req typo3/cms-frontend:${TYPO3_VERSION}
-  - composer req typo3/cms-saltedpasswords:${TYPO3_VERSION}
+install: ./Build/install.sh
 
 before_script:
   - export TYPO3_PATH_WEB=$PWD/.Build/web
@@ -47,11 +33,7 @@ cache:
   directories:
     - "$HOME/.composer/cache"
 
-script:
-  - >
-    echo;
-    echo "Running functional API tests";
-    .Build/bin/phpunit --colors --configuration Tests/Build/FunctionalTests.xml Tests/Functional --teamcity
+script: ./Build/script.sh
 
 sudo: false
 
