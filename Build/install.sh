@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [[ "${TYPO3_VERSION}"" = *"dev"*  ]]; then
+if [[ "${TYPO3_VERSION}" = *"dev"*  ]]; then
     composer config minimum-stability dev
 fi
 
