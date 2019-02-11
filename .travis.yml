@@ -1,0 +1,48 @@
+language: php
+
+env:
+  global:
+    - TYPO3_DATABASE_NAME = "typo3"
+    - TYPO3_DATABASE_HOST = "127.0.0.1"
+    - TYPO3_DATABASE_USERNAME = "root"
+    - TYPO3_DATABASE_PASSWORD = ""
+    - PHP_CS_FIXER_VERSION = "^2.13"
+  matrix:
+    - TYPO3_VERSION = "^9.5"
+    - TYPO3_VERSION = "9.5.x-dev"
+    - TYPO3_VERSION = "dev-master"
+
+php:
+  - 7.2
+  - 7.3
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - env: TYPO3_VERSION = "dev-master"
+    - env: TYPO3_VERSION = "9.5.x-dev"
+
+before_install:
+  - sudo apt-get install -y parallel
+  - composer self-update
+  - composer --version
+
+before_script:
+  - phpenv config-rm xdebug.ini
+  - export TYPO3_PATH_WEB=$PWD/.Build/web
+
+cache:
+  directories:
+    - "$HOME/.composer/cache"
+
+script:
+  - >
+    echo;
+    echo "Running functional API tests";
+    .Build/bin/phpunit --colors --configuration Tests/Build/FunctionalTests.xml Tests/Functional --teamcity
+
+sudo: false
+
+notifications:
+  slack:
+    secure: cpZ51OZ5M4B3Y869O21dhelpB2UDXfJBh5MIaeYwLHyBQR9kbU0BbJz0Lh5zWnuHSqDriMBmMCpKw8A8/z5iiblCyI2/ObacOrVYNKavTMytHGS9uQ/wrWLffIRCUaMDmhjN+xBWf44PH8xVBI00z7QZ+EH841EXHYS66WvGBQtBNarwuXz9806s8VuwoYVD++k4AG+cLb4Ili0NeWJUrxm1Vb4UphAI/ep1FDrUEs1yZuampyIpc9sW5g1YpPgyc0rXM5jcqjuSoSXb9R6gV/WP4wwy0U9DkYov/sYnhgFSxg9peO9wjixAzBIWKqyjApRPpjMGi14jEVfaB7XeNMV1L9WxiDMFu2+r/gcjaJG3aMZqL8nV32K+ODrMFUahxHLbJK5Q8dyWkBs2FCKoS/Otd/cWYoGq+QsAfmsPP+acdenLCsroZBn1c5qfu5opG06vUqSfo1mwjE2KZbWMv8G0n+VC4ntV7AqlmY6d4s70uq+8cWddyBoF2/ntmVx5GERSJkFK6aAmP13ndrRTS7x5Ih6vQEvsYfn+/konf5Qw8lJLBEJOoJ9gCBx1hp1AmP9+PAoN2d/VwuZzatIjvNkyDIjXfHmHfgt1CFh3TUyJrvYNOBdyrIyDiCBvzk15RwY1/tOp8A0KfPAn5jDAoG0IZCkpO4iQ40indpmjiWk=

@@ -1,21 +1,10 @@
 {
   "name": "bitmotion/auth0",
   "description": "Auth0 is the solution you need for web, mobile, IoT, and internal applications. Loved by developers and trusted by enterprises.",
-  "keywords": [
-    "TYPO3",
-    "Auth0",
-    "SSO",
-    "Login",
-    "User"
-  ],
+  "keywords": ["TYPO3", "Auth0", "SSO", "Login", "User"],
   "type": "typo3-cms-extension",
   "license": "GPL-3.0-or-later",
   "homepage": "https://www.bitmotion.de",
-  "support": {
-    "issues": "https://github.com/bitmotion/auth0-for-typo3/issues",
-    "source": "https://github.com/bitmotion/auth0-for-typo3",
-    "email": "typo3-ext@bitmotion.de"
-  },
   "authors": [
     {
       "name": "Florian Wessels",
@@ -24,6 +13,11 @@
       "homepage": "https://www.bitmotion.de"
     }
   ],
+  "support": {
+    "issues": "https://github.com/bitmotion/auth0-for-typo3/issues",
+    "source": "https://github.com/bitmotion/auth0-for-typo3",
+    "email": "typo3-ext@bitmotion.de"
+  },
   "require": {
     "php": ">=7.2.0 <7.4",
     "typo3/cms-core": "^9.5.0",
@@ -45,6 +39,10 @@
   "suggest": {
     "typo3/cms-scheduler": "TYPO3 Scheduler"
   },
+  "replace": {
+    "auth0": "self.version",
+    "typo3-ter/auth0": "self.version"
+  },
   "autoload": {
     "psr-4": {
       "Bitmotion\\Auth0\\": "Classes/"
@@ -55,8 +53,20 @@
       "Bitmotion\\Auth0\\Tests\\": "Tests/"
     }
   },
-  "replace": {
-    "auth0": "self.version",
-    "typo3-ter/auth0": "self.version"
+  "config": {
+    "vendor-dir": ".Build/vendor",
+    "bin-dir": ".Build/bin"
+  },
+  "scripts": {
+    "post-autoload-dump": [
+      "mkdir -p .Build/web/typo3conf/ext/",
+      "[ -L .Build/web/typo3conf/ext/auth0 ] || ln -snvf ../../../../. .Build/web/typo3conf/ext/auth0"
+    ]
+  },
+  "extra": {
+    "typo3/cms": {
+      "cms-package-dir": "{$vendor-dir}/typo3/cms",
+      "web-dir": ".Build/web"
+    }
   }
 }

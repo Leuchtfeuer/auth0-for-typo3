@@ -1,1 +1,3 @@
 /Tests/Functional/Fixtures/tx_auth0_domain_model_application.xml
+/.Build/
+/composer.lock
