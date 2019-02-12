@@ -2,21 +2,13 @@
 declare(strict_types=1);
 namespace Bitmotion\Auth0\Api\Management;
 
-use Auth0\SDK\API\Helpers\ApiClient;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Domain\Model\Auth0\User;
-use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
-use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use TYPO3\CMS\Extbase\Object\Exception;
 
 class UserByEmailApi extends GeneralManagementApi
 {
-    public function __construct(ApiClient $apiClient)
-    {
-        parent::__construct($apiClient);
-        $this->objectName = User::class;
-    }
-
     /**
      * If Auth0 is the identify provider (idP), the email address associated with a user is saved in lower case, regardless
      * of how you initially provided it. For example, if you register a user as JohnSmith@example.com, Auth0 saves the user's
@@ -27,17 +19,17 @@ class UserByEmailApi extends GeneralManagementApi
      * Required scope: "read:users"
      *
      * @param string $email         The user's email
-     * @param bool   $includeFields true if the fields specified are to be included in the result, false otherwise. Defaults to true
      * @param string $fields        A comma separated list of fields to include or exclude (depending on include_fields) from the
      *                              result, empty to retrieve all fields
+     * @param bool   $includeFields true if the fields specified are to be included in the result, false otherwise. Defaults to true
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return User|User[]
      * @see https://auth0.com/docs/api/management/v2#!/Users_By_Email/get_users_by_email
      */
-    public function get(string $email, bool $includeFields = true, string $fields = '')
+    public function get(string $email, string $fields = '', bool $includeFields = true)
     {
         $params = [
             'email' => $email,
@@ -53,6 +45,6 @@ class UserByEmailApi extends GeneralManagementApi
             ->setReturnType('object')
             ->call();
 
-        return $this->mapResponse($response);
+        return $this->mapResponse($response, User::class);
     }
 }

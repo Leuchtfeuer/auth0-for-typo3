@@ -3,13 +3,64 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Api\Management;
 
 use Auth0\SDK\API\Header\ContentType;
+use Auth0\SDK\API\Helpers\ApiClient;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
+use Bitmotion\Auth0\Domain\Model\Auth0\Enrollment;
+use Bitmotion\Auth0\Domain\Model\Auth0\Log;
+use Bitmotion\Auth0\Domain\Model\Auth0\User;
+use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Object\Exception;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 class UserApi extends GeneralManagementApi
 {
+    const ALLOWED_ATTRIBUTES_UPDATE = [
+        'blocked',
+        'emailVerified',
+        'email',
+        'verifyEmail',
+        'password',
+        'phoneNumber',
+        'phoneVerified',
+        'userMetadata',
+        'appMetadata',
+        'username',
+    ];
+
+    const ALLOWED_ATTRIBUTES_CREATE = [
+        'userId',
+        'email',
+        'username',
+        'password',
+        'phoneNumber',
+        'userMetadata',
+        'blocked',
+        'emailVerified',
+        'phoneVerified',
+        'appMetadata',
+        'givenName',
+        'familyName',
+        'name',
+        'nickname',
+        'picture',
+    ];
+
+    const TYPE_USER = 'user_metadata';
+    const TYPE_APP = 'app_metadata';
+    const TYPE_BOTH = 'user_app_metadata';
+
+    public function __construct(ApiClient $apiClient)
+    {
+        $this->extractor = new ReflectionExtractor();
+        $this->normalizer[] = new DateTimeNormalizer();
+
+        parent::__construct($apiClient);
+    }
+
     /**
      * This endpoint can be used to retrieve a list of users. With this endpoint it is possible to:
      *  - Specify a search criteria for users
@@ -33,9 +84,9 @@ class UserApi extends GeneralManagementApi
      *                              to true
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return User|User[]
      * @see https://auth0.com/docs/api/management/v2#!/Users/get_users
      */
     public function search(
@@ -78,79 +129,30 @@ class UserApi extends GeneralManagementApi
      * email and password.
      * Required scope: "create:users"
      *
-     * @param string $connection    The connection the user belongs to
-     * @param string $id            The id of the user
-     * @param string $email         The user's email
-     * @param string $username      The user's username. Only valid if the connection requires a username
-     * @param string $password      The user's password (mandatory for non SMS connections)
-     * @param string $givenName     The user's user given name(s)
-     * @param string $familyName    The user's family name(s)
-     * @param string $name          The user's full name
-     * @param string $nickname      The user's nickname
-     * @param string $picture       A URI pointing to the user's picture
-     * @param string $phone         The user's phone number (following the E.164 recommendation), only valid for users to be
-     *                              added to SMS connections
-     * @param bool   $blocked       true if the user should be blocked
-     * @param bool   $emailVerified true if the user's email is verified, false otherwise. If it is true then the user will not
-     *                              receive a verification email, unless verify_email: true was specified
-     * @param bool   $verifyEmail   If true, the user will receive a verification email after creation, even if created with
-     *                              email_verified set to true. If false, the user will not receive a verification email, even if
-     *                              created with email_verified set to false. If unspecified, defaults to the behavior determined
-     *                              by the value of email_verified.
-     * @param bool   $phoneVerified true if the user's phone number is verified, false otherwise. When the user is added to a SMS
-     *                              connection, they will not receive an verification SMS if this is true.
+     * @param User   $user           The user to create
+     * @param string $connectionName The name of the connection the user belongs to
+     * @param bool   $verifyEmail    If true, the user will receive a verification email after creation, even if created with
+     *                               email_verified set to true. If false, the user will not receive a verification email, even if
+     *                               created with email_verified set to false. If unspecified, defaults to the behavior determined
+     *                               by the value of email_verified.
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return User|User[]
      * @see https://auth0.com/docs/api/management/v2#!/Users/post_users
      */
-    public function create(
-        string $connection,
-        string $id = '',
-        string $email = '',
-        string $username = '',
-        string $password = '',
-        string $givenName = '',
-        string $familyName = '',
-        string $name = '',
-        string $nickname = '',
-        string $picture = '',
-        string $phone = '',
-        array $userMetadata = [],
-        array $appMetadata = [],
-        bool $blocked = false,
-        bool $emailVerified = false,
-        bool $verifyEmail = false,
-        bool $phoneVerified = false
-    ) {
-        $body = [
-            'connection' => $connection,
-            'blocked' => $blocked,
-            'email_verified' => $emailVerified,
-            'verify_email' => $verifyEmail,
-            'phone_verified' => $phoneVerified,
-            'app_metadata' => $appMetadata,
-            'user_metadata' => $userMetadata,
-        ];
-
-        $this->addStringProperty($body, 'user_id', $id);
-        $this->addStringProperty($body, 'email', $email);
-        $this->addStringProperty($body, 'username', $username);
-        $this->addStringProperty($body, 'password', $password);
-        $this->addStringProperty($body, 'given_name', $givenName);
-        $this->addStringProperty($body, 'family_name', $familyName);
-        $this->addStringProperty($body, 'name', $name);
-        $this->addStringProperty($body, 'nickname', $nickname);
-        $this->addStringProperty($body, 'picture', $picture);
-        $this->addStringProperty($body, 'phone_number', $phone);
+    public function create(User $user, string $connectionName, bool $verifyEmail = true)
+    {
+        $data = $this->normalize($user, 'array', self::ALLOWED_ATTRIBUTES_CREATE);
+        $this->addStringProperty($data, 'connection', $connectionName);
+        $this->addBooleanProperty($data, 'verify_email', $verifyEmail);
 
         $response = $this->apiClient
             ->method('post')
             ->addPath('users')
             ->withHeader(new ContentType('application/json'))
-            ->withBody(\GuzzleHttp\json_encode($body))
+            ->withBody(\GuzzleHttp\json_encode($data))
             ->setReturnType('object')
             ->call();
 
@@ -167,9 +169,9 @@ class UserApi extends GeneralManagementApi
      * @param bool   $includeFields true if the fields specified are to be included in the result, false otherwise. Defaults to true
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return User|User[]
      * @see https://auth0.com/docs/api/management/v2#!/Users/get_users_by_id
      */
     public function get(string $id, string $fields = '', bool $includeFields = true)
@@ -192,15 +194,54 @@ class UserApi extends GeneralManagementApi
     }
 
     /**
+     * Get only users and / or app metadata
+     * Required scope: "read:users read:user_idp_tokens"
+     *
+     * @param string $id   The user_id of the user to retrieve
+     * @param string $type Whether to fetch user and or app metadata or not
+     *
+     * @throws ApiException
+     * @throws CoreException
+     * @throws Exception
+     * @return array
+     */
+    public function getMetadata(string $id, string $type)
+    {
+        $user = $this->get($id, implode(',', [self::TYPE_USER, self::TYPE_APP]));
+
+        switch ($type) {
+            case self::TYPE_USER:
+                $data = $user->getUserMetadata();
+                break;
+
+            case self::TYPE_APP:
+                $data = $user->getAppMetadata();
+                break;
+
+            case self::TYPE_BOTH:
+                $data = [
+                    self::TYPE_USER => $user->getUserMetadata(),
+                    self::TYPE_APP => $user->getAppMetadata(),
+                ];
+                break;
+
+            default:
+                $data = [];
+        }
+
+        return $data;
+    }
+
+    /**
      * This endpoint can be used to delete a single user based on the id.
      * Required scope: "delete:users"
      *
      * @param string $id The user_id of the user to delete
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return bool
      * @see https://auth0.com/docs/api/management/v2#!/Users/delete_users_by_id
      */
     public function delete(string $id)
@@ -212,7 +253,7 @@ class UserApi extends GeneralManagementApi
             ->setReturnType('object')
             ->call();
 
-        return $this->mapResponse($response);
+        return $response->getStatusCode() === 204;
     }
 
     /**
@@ -223,29 +264,61 @@ class UserApi extends GeneralManagementApi
      *    of being replaced but be careful, the merge only occurs on the first level.
      *  - If you are updating email_verified, phone_verified, username or password you need to specify the connection property too.
      *  - If your are updating email or phone_number you need to specify the connection and the client_id properties.
-     *  - Updating the blocked to false does not affect the user's blocked state from an excessive amount of incorrectly provided
-     *    credentials. Use the "Unblock a user" endpoint from the "User Blocks" API for that.
      * Required scope: "update:users update:users_app_metadata"
      *
+     * @param User   $user           The user object to update.
+     * @param string $connectionName Connection ID. Necessary for updating email, phone_number, email_verified, phone_verified,
+     *                               username or password.
+     * @param string $client         Client ID. Necessary for updating email or phone_number.
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return User|User[]
      * @see https://auth0.com/docs/api/management/v2#!/Users/patch_users_by_id
      */
-    public function update(string $id, array $data)
+    public function update(User $user, $connectionName = '', $client = '')
     {
-        $response = $this->apiClient
-            ->method('patch')
-            ->addPath('users')
-            ->addPath($id)
-            ->withHeader(new ContentType('application/json'))
-            ->withBody(\GuzzleHttp\json_encode($data))
-            ->setReturnType('object')
-            ->call();
+        $originUser = $this->get($user->getUserId());
+        $updateMailOrPhone = $this->shouldUpdateMailOrPhone($user, $originUser, $connectionName, $client);
+        $updateCoreData = $this->shouldUpdateCoreData($user, $originUser, $connectionName);
 
-        return $this->mapResponse($response);
+        if ($originUser->isBlocked() === true && $user->isBlocked() === false) {
+            $user->setBlocked(true);
+            $this->logger->warning(
+                'Updating the blocked to false does not affect the user\'s blocked state from an excessive amount of ' .
+                'incorrectly provided credentials. Use the "Unblock a user" endpoint from the "User Blocks" API for that.'
+            );
+        }
+
+        $dataToUpdate = $this->normalize($user, 'array', self::ALLOWED_ATTRIBUTES_UPDATE);
+        $this->cleanData($dataToUpdate, $originUser);
+        $this->populateUpdateData($dataToUpdate, $updateMailOrPhone, $updateCoreData, $connectionName, $client);
+
+        return (empty($dataToUpdate)) ? $user : $this->updateUser($user->getUserId(), $dataToUpdate);
+    }
+
+    /**
+     * @param string $id   the id of the user to update
+     * @param array  $data data to update
+     * @param string $type user for user_metadata,
+     *
+     * @throws ApiException
+     * @throws CoreException
+     * @throws Exception
+     * @return bool true when the data could be updated, false otherwise
+     */
+    public function updateMetadata(string $id, array $data, $type): bool
+    {
+        if ($type !== self::TYPE_APP && $type !== self::TYPE_USER) {
+            $this->logger->error('Given type is not allowed.');
+
+            return false;
+        }
+
+        $user = $this->updateUser($id, [$type => $data]);
+
+        return $user instanceof User;
     }
 
     /**
@@ -260,9 +333,9 @@ class UserApi extends GeneralManagementApi
      * @param bool   $includeTotals true if a query summary must be included in the result, false otherwise. Default false.
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return Log|Log[]
      * @see https://auth0.com/docs/api/management/v2#!/Users/get_logs_by_user
      */
     public function getLog(string $id, int $page = 0, int $perPage = 50, string $sort = '', bool $includeTotals = false)
@@ -284,7 +357,7 @@ class UserApi extends GeneralManagementApi
             ->setReturnType('object')
             ->call();
 
-        return $this->mapResponse($response);
+        return $this->mapResponse($response, Log::class);
     }
 
     /**
@@ -294,9 +367,9 @@ class UserApi extends GeneralManagementApi
      * @param string $id The user_id of the user to delete
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return Enrollment|Enrollment[]
      * @see https://auth0.com/docs/api/management/v2#!/Users/get_enrollments
      */
     public function getEnrollments(string $id)
@@ -309,7 +382,7 @@ class UserApi extends GeneralManagementApi
             ->setReturnType('object')
             ->call();
 
-        return $this->mapResponse($response);
+        return $this->mapResponse($response, Enrollment::class);
     }
 
     /**
@@ -471,5 +544,88 @@ class UserApi extends GeneralManagementApi
             ->call();
 
         return $this->mapResponse($response);
+    }
+
+    protected function updateUser(string $id, array $data)
+    {
+        $response = $this->apiClient
+            ->method('patch')
+            ->addPath('users')
+            ->addPath($id)
+            ->withHeader(new ContentType('application/json'))
+            ->withBody(\GuzzleHttp\json_encode($data))
+            ->setReturnType('object')
+            ->call();
+
+        return $this->mapResponse($response);
+    }
+
+    protected function shouldUpdateMailOrPhone(User &$user, User $originUser, string $connection, string $client): bool
+    {
+        if ($originUser->getEmail() !== $user->getEmail() || $originUser->getPhoneNumber() !== $user->getPhoneNumber()) {
+            if ($connection !== '' && $client !== '') {
+                return true;
+            }
+
+            $user->setEmail($originUser->getEmail());
+            $user->setPhoneNumber($originUser->getPhoneNumber());
+
+            $this->logger->error(
+                'If your are updating email or phone_number you need to specify the connection and ' .
+                'the client_id properties.'
+            );
+        }
+
+        return false;
+    }
+
+    protected function shouldUpdateCoreData(User &$user, User $originUser, string $connection): bool
+    {
+        if (
+            $originUser->isEmailVerified() !== $user->isEmailVerified() ||
+            $originUser->isPhoneVerified() !== $user->isPhoneVerified() ||
+            $originUser->getUsername() !== $user->getUsername() ||
+            !empty($user->getPassword())
+        ) {
+            if ($connection !== '') {
+                return true;
+            }
+
+            $user->setEmailVerified($originUser->isEmailVerified());
+            $user->setPhoneVerified($originUser->isPhoneVerified());
+            $user->setUsername($originUser->getUsername());
+            $user->setPassword(null);
+
+            $this->logger->error(
+                'If you are updating email_verified, phone_verified, username or password you need to specify ' .
+                'the connection property too.'
+            );
+        }
+
+        return false;
+    }
+
+    protected function cleanData(array &$data, User $user)
+    {
+        foreach ($data as $key => $value) {
+            $prefix = (gettype($value) === 'boolean') ? 'is' : 'get';
+            $originValue = call_user_func([$user, $prefix . ucfirst(GeneralUtility::underscoredToLowerCamelCase($key))]);
+
+            if (($value === $originValue && !is_array($value)) || (is_array($value) && empty(array_diff($value, $originValue)))) {
+                unset($data[$key]);
+            }
+        }
+    }
+
+    protected function populateUpdateData(array &$data, bool $updateMailOrPhone, bool $updateCoreData, string $connection, string $client)
+    {
+        if ($updateMailOrPhone === true) {
+            $data['connection'] = $connection;
+            $data['client_id'] = $client;
+        }
+
+        if ($updateCoreData) {
+            $data['connection'] = $connection;
+        }
     }
 }
