@@ -19,6 +19,7 @@ use Bitmotion\Auth0\Api\ManagementApi;
 use Bitmotion\Auth0\Domain\Model\Auth0\User;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Domain\Repository\UserRepository;
+use Bitmotion\Auth0\Scope;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -182,11 +183,13 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             $this->logger->notice('Try to update user.');
 
             $tokenInfo = $authenticationApi->getUser();
-            $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $applicationUid);
-            $auth0User = $managementApi->getUserById($tokenInfo['sub']);
+            $apiUtility = GeneralUtility::makeInstance(ApiUtility::class);
+            $apiUtility->setApplication($applicationUid);
+            $userApi = $apiUtility->getUserApi(Scope::USER_READ);
+            $user = $userApi->get($tokenInfo['sub']);
 
             // Update existing user on every login
-            $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, 'fe_users', $auth0User);
+            $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, 'fe_users', $user);
             $updateUtility->updateUser();
             $updateUtility->updateGroups();
         } catch (\Exception $exception) {
