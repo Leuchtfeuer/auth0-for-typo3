@@ -13,11 +13,13 @@ namespace Bitmotion\Auth0\Service;
  *
  ***/
 
+use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\AuthenticationApi;
-use Bitmotion\Auth0\Api\ManagementApi;
+use Bitmotion\Auth0\Domain\Model\Auth0\User;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
+use Bitmotion\Auth0\Scope;
 use Bitmotion\Auth0\Utility\ApiUtility;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
@@ -54,9 +56,9 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     protected $tableName = 'fe_users';
 
     /**
-     * @var array
+     * @var User
      */
-    protected $auth0User = null;
+    protected $auth0User;
 
     /**
      * @var EnvironmentService
@@ -159,7 +161,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
             } catch (\Exception $exception) {
                 $this->logger->debug('Could not login user via Auth0 session');
                 $this->tokenInfo = [];
-                $this->auth0User = [];
+                $this->auth0User = null;
                 $sessionStore->delete('user');
             }
         }
@@ -191,8 +193,18 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      */
     protected function getAuth0User()
     {
-        $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $this->applicationUid);
-        $this->auth0User = $managementApi->getUserById($this->tokenInfo['sub']);
+        $apiUtility = GeneralUtility::makeInstance(ApiUtility::class);
+        $apiUtility->setApplication($this->applicationUid);
+        $userUtility = $apiUtility->getUserApi(Scope::USER_READ);
+        try {
+            $this->auth0User = $userUtility->get($this->tokenInfo['sub']);
+        } catch (ApiException $apiException) {
+            $this->logger->error('No Auth0 user found.');
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -222,7 +234,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
             $updateUtility->updateGroups();
         } else {
             // Update last uses application
-            $userUtility->updateLastApplication($this->auth0User['user_id'], $this->applicationUid);
+            $userUtility->updateLastApplication($this->auth0User->getUserId(), $this->applicationUid);
         }
     }
 
@@ -240,17 +252,13 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
             $apiUtility->setApplication($this->applicationUid);
             $callback = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/typo3/?loginProvider=' . self::AUTH_LOGIN_PROVIDER . '&login=1';
             $this->authenticationApi = $apiUtility->getAuthenticationApi($callback);
-
             $this->tokenInfo = $this->authenticationApi->getUser();
-            $this->getAuth0User();
 
-            if (isset($this->auth0User['error'])) {
-                $this->logger->error('No Auth0 user found.');
-
+            if ($this->getAuth0User() === false) {
                 return false;
             }
 
-            $this->logger->notice(sprintf('User found: %s', $this->auth0User['email']));
+            $this->logger->notice(sprintf('User found: %s', $this->auth0User->getEmail()));
 
             return true;
         } catch (InvalidApplicationException $exception) {
@@ -316,7 +324,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         // Login user
         if ($user['auth0_user_id'] !== '' && $user['auth0_user_id'] == $this->tokenInfo['sub']) {
             // Do not login if email address is not verified
-            if ($this->auth0User['email_verified'] === false && ($this->mode === 'getUserBE' || (bool)$this->auth0Data['loginIfMailIsNotVerified'] === false)) {
+            if ($this->auth0User->isEmailVerified() === false && ($this->mode === 'getUserBE' || (bool)$this->auth0Data['loginIfMailIsNotVerified'] === false)) {
                 $this->logger->notice('Email not verified. Do not login user.');
 
                 return 0;

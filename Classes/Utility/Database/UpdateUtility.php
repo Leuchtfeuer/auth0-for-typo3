@@ -13,12 +13,16 @@ namespace Bitmotion\Auth0\Utility\Database;
  *
  ***/
 
+use Bitmotion\Auth0\Domain\Model\Auth0\User;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Domain\Repository\UserRepository;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use Bitmotion\Auth0\Utility\ParseFuncUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class UpdateUtility implements LoggerAwareInterface
@@ -33,16 +37,16 @@ class UpdateUtility implements LoggerAwareInterface
     protected $tableName = '';
 
     /**
-     * @var array
+     * @var User
      */
-    protected $user = [];
+    protected $user;
 
     /**
      * @var ParseFuncUtility
      */
     protected $parseFuncUtility;
 
-    public function __construct(string $tableName, array $user)
+    public function __construct(string $tableName, User $user)
     {
         $this->tableName = $tableName;
         $this->user = $user;
@@ -100,7 +104,7 @@ class UpdateUtility implements LoggerAwareInterface
 
     protected function mapRoles(array $groupMapping, array &$groupsToAssign, bool &$isBeAdmin, bool &$shouldUpdate)
     {
-        $userRoles = $this->user['app_metadata']['roles'];
+        $userRoles = $this->user->getAppMetadata()['roles'];
 
         if (empty($userRoles)) {
             $this->logger->notice('No Auth0 roles defined.');
@@ -139,13 +143,13 @@ class UpdateUtility implements LoggerAwareInterface
 
         if (!empty($updates)) {
             $userRepository = GeneralUtility::makeInstance(UserRepository::class, $this->tableName);
-            $userRepository->updateUserByAuth0Id($updates, $this->user['user_id']);
+            $userRepository->updateUserByAuth0Id($updates, $this->user->getUserId());
         }
     }
 
     protected function performUserUpdate(array $mappingConfiguration, bool $reactivateUser)
     {
-        $this->logger->debug(sprintf('%s: Prepare update for Auth0 user "%s"', $this->tableName, $this->user['user_id']));
+        $this->logger->debug(sprintf('%s: Prepare update for Auth0 user "%s"', $this->tableName, $this->user->getUserId()));
 
         $updates = [];
         $userRepository = GeneralUtility::makeInstance(UserRepository::class, $this->tableName);
@@ -159,7 +163,7 @@ class UpdateUtility implements LoggerAwareInterface
         }
 
         $this->addRestrictions($userRepository);
-        $userRepository->updateUserByAuth0Id($updates, $this->user['user_id']);
+        $userRepository->updateUserByAuth0Id($updates, $this->user->getUserId());
     }
 
     protected function addRestrictions(UserRepository &$userRepository)
@@ -190,15 +194,18 @@ class UpdateUtility implements LoggerAwareInterface
     protected function mapUserData(array &$updates, array $mappingConfiguration)
     {
         $this->parseFuncUtility = $parseFuncUtility = GeneralUtility::makeInstance(ParseFuncUtility::class);
+        $normalizer = new ObjectNormalizer(null, new CamelCaseToSnakeCaseNameConverter());
+        $serializer = new Serializer([$normalizer]);
+        $user = $serializer->normalize($this->user, 'array');
         $value = false;
 
         foreach ($mappingConfiguration as $typo3FieldName => $auth0FieldName) {
             if (!is_array($auth0FieldName)) {
                 // Update without parsing function
-                $value = $this->parseFuncUtility->updateWithoutParseFunc($auth0FieldName, $this->user);
+                $value = $this->parseFuncUtility->updateWithoutParseFunc($auth0FieldName, $user);
             } elseif (is_array($auth0FieldName) && isset($auth0FieldName[self::TYPO_SCRIPT_NODE_VALUE])) {
                 // Update with parsing function
-                $value = $this->parseFuncUtility->updateWithParseFunc($typo3FieldName, $auth0FieldName, $this->user);
+                $value = $this->parseFuncUtility->updateWithParseFunc($typo3FieldName, $auth0FieldName, $user);
             }
 
             if ($value !== false) {

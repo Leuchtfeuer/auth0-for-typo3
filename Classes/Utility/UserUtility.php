@@ -16,6 +16,7 @@ namespace Bitmotion\Auth0\Utility;
 use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\AuthenticationApi;
 use Bitmotion\Auth0\Api\ManagementApi;
+use Bitmotion\Auth0\Domain\Model\Auth0\User;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Domain\Repository\UserRepository;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
@@ -62,14 +63,14 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
      * @throws \TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException
      */
-    public function insertUser(string $tableName, array $auth0User)
+    public function insertUser(string $tableName, User $user)
     {
         switch ($tableName) {
             case 'fe_users':
-                $this->insertFeUser($tableName, $auth0User);
+                $this->insertFeUser($tableName, $user);
                 break;
             case 'be_users':
-                $this->insertBeUser($tableName, $auth0User);
+                $this->insertBeUser($tableName, $user);
                 break;
             default:
                 $this->logger->error(sprintf('"%s" is not a valid table name.', $tableName));
@@ -83,7 +84,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
      * @throws \TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException
      */
-    public function insertFeUser(string $tableName, array $auth0User)
+    public function insertFeUser(string $tableName, User $user)
     {
         $emConfiguration = new EmAuth0Configuration();
         $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
@@ -91,12 +92,12 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             'tx_extbase_type' => 'Tx_Auth0_FrontendUser',
             'pid' => $emConfiguration->getUserStoragePage(),
             'tstamp' => time(),
-            'username' => $auth0User['email'],
+            'username' => $user->getEmail(),
             'password' => $this->getPassword(),
-            'email' => $auth0User['email'],
+            'email' => $user->getEmail(),
             'crdate' => time(),
-            'auth0_user_id' => $auth0User['user_id'],
-            'auth0_metadata' => \GuzzleHttp\json_encode($auth0User['user_metadata']),
+            'auth0_user_id' => $user->getUserId(),
+            'auth0_metadata' => \GuzzleHttp\json_encode($user->getUserMetadata()),
         ]);
     }
 
@@ -105,17 +106,17 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      *
      * @throws \TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException
      */
-    public function insertBeUser(string $tableName, array $auth0User)
+    public function insertBeUser(string $tableName, User $user)
     {
         $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
         $userRepository->insertUser([
             'pid' => 0,
             'tstamp' => time(),
-            'username' => $auth0User['email'],
+            'username' => $user->getEmail(),
             'password' => $this->getPassword(),
-            'email' => $auth0User['email'],
+            'email' => $user->getEmail(),
             'crdate' => time(),
-            'auth0_user_id' => $auth0User['user_id'],
+            'auth0_user_id' => $user->getUserId(),
         ]);
     }
 

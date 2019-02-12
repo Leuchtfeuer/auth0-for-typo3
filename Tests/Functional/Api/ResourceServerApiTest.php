@@ -135,8 +135,8 @@ class ResourceServerApiTest extends FunctionalTestCase
         $newServer->setName('Mein Name');
         $newServer->setScopes($scopes);
         $newServer->setAllowOfflineAccess(false);
-        $newServer->setId('meine-ie-ist-das');
-        $newServer->setIdentifier('Mein Identifier');
+        $newServer->setId(uniqid() . time());
+        $newServer->setIdentifier(uniqid());
         $newServer->setIsSystem(false);
         $newServer->setSigningAlg(JwtConfiguration::ALG_HS256);
         $newServer->setSigningSecret('jkldasöfjklasdjfklasjkldfjaöl');
