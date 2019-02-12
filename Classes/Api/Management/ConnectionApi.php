@@ -2,14 +2,31 @@
 declare(strict_types=1);
 namespace Bitmotion\Auth0\Api\Management;
 
+use Auth0\SDK\API\Helpers\ApiClient;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Domain\Model\Auth0\Connection;
+use Bitmotion\Auth0\Scope;
 use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
+use TYPO3\CMS\Extbase\Object\Exception;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
 class ConnectionApi extends GeneralManagementApi
 {
+    protected $strategies = [];
+
+    public function __construct(ApiClient $apiClient)
+    {
+        parent::__construct($apiClient);
+
+        try {
+            $reflection = new \ReflectionClass(Connection::class);
+            $this->strategies = $reflection->getConstants();
+        } catch (\ReflectionException $exception) {
+            $this->logger->error('Could not load allowed strategies.');
+        }
+    }
+
     /**
      * Retrieves every connection matching the specified strategy. All connections are retrieved if no strategy is being
      * specified. Accepts a list of fields to include or exclude in the resulting list of connection objects.
@@ -26,12 +43,12 @@ class ConnectionApi extends GeneralManagementApi
      * @param int    $perPage           The amount of entries per page. Default: no paging is used, all connections are returned
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return Connection|ObjectStorage
+     * @return Connection|Connection[]
      * @see https://auth0.com/docs/api/management/v2#!/Connections/get_connections
      */
-    public function getAll(
+    public function list(
         string $strategy = '',
         string $fields = '',
         string $name = '',
@@ -47,7 +64,12 @@ class ConnectionApi extends GeneralManagementApi
             'include_fields' => $includeFields,
         ];
 
-        $this->addStringProperty($params, 'strategy', $strategy);
+        if (in_array($strategy, $this->strategies)) {
+            $this->addStringProperty($params, 'strategy', $strategy);
+        } else {
+            $this->logger->warning(sprintf('Given strategy %s is not allowed.', $strategy));
+        }
+
         $this->addStringProperty($params, 'fields', $fields);
         $this->addStringProperty($params, 'name', $name);
 
@@ -72,9 +94,9 @@ class ConnectionApi extends GeneralManagementApi
      *                              (defaults to true)
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return Connection
+     * @return Connection|Connection[]
      * @see https://auth0.com/docs/api/management/v2#!/Connections/get_connections_by_id
      */
     public function get(string $id, string $fields = '', bool $includeFields = true)

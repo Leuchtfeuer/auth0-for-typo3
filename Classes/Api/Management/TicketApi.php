@@ -6,7 +6,7 @@ use Auth0\SDK\API\Header\ContentType;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Domain\Model\Auth0\Ticket;
-use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
+use TYPO3\CMS\Extbase\Object\Exception;
 
 class TicketApi extends GeneralManagementApi
 {
@@ -21,7 +21,7 @@ class TicketApi extends GeneralManagementApi
      *                              default lifetime of five days will be applied
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
      * @return Ticket
      * @see https://auth0.com/docs/api/management/v2#!/Tickets/post_email_verification
@@ -61,7 +61,7 @@ class TicketApi extends GeneralManagementApi
      * @param bool   $includeEmailInRedirect    Whether or not we include the email as part of the returnUrl in the reset_email
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
      * @return Ticket
      * @see https://auth0.com/docs/api/management/v2#!/Tickets/post_password_change
@@ -100,7 +100,7 @@ class TicketApi extends GeneralManagementApi
      * @param bool   $includeEmailInRedirect    Whether or not we include the email as part of the returnUrl in the reset_email
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
      * @return Ticket
      * @see https://auth0.com/docs/api/management/v2#!/Tickets/post_password_change
@@ -141,7 +141,7 @@ class TicketApi extends GeneralManagementApi
      * @param bool   $includeEmailInRedirect    Whether or not we include the email as part of the returnUrl in the reset_email
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
      * @return Ticket
      * @see https://auth0.com/docs/api/management/v2#!/Tickets/post_password_change
