@@ -58,7 +58,7 @@ class Scope
     const EMAIL_TEMPLATE_UPDATE = 'update:email_templates';
 
     const GRANT_READ = 'read:grants';
-    const GRANT_UPDATE = 'update:grants';
+    const GRANT_DELETE = 'delete:grants';
 
     const GUARDIAN_ENROLLMENT_DELETE = 'delete:guardian_enrollment';
     const GUARDIAN_ENROLLMENT_READ = 'read:guardian_enrollment';
