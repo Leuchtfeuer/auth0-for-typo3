@@ -5,8 +5,8 @@ namespace Bitmotion\Auth0\Api\Management;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Domain\Model\Auth0\User;
-use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
-use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+use Bitmotion\Auth0\Domain\Model\Auth0\UserBlock;
+use TYPO3\CMS\Extbase\Object\Exception;
 
 class UserBlockApi extends GeneralManagementApi
 {
@@ -17,9 +17,9 @@ class UserBlockApi extends GeneralManagementApi
      * @param string $identifier Should be any of: username, phone_number, email.
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return UserBlock|UserBlock[]
      */
     public function getBlocks(string $identifier)
     {
@@ -40,10 +40,8 @@ class UserBlockApi extends GeneralManagementApi
      *
      * @param string $identifier Should be any of: username, phone_number, email.
      *
-     * @throws ApiException
-     * @throws ClassNotFoundException
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return bool
      * @see https://auth0.com/docs/api/management/v2#!/User_Blocks/delete_user_blocks
      */
     public function unblock(string $identifier)
@@ -55,27 +53,27 @@ class UserBlockApi extends GeneralManagementApi
             ->setReturnType('object')
             ->call();
 
-        return $this->mapResponse($response);
+        return ($response->getStatusCode() === 204);
     }
 
     /**
      * This endpoint can be used to retrieve a list of blocked IP addresses of a particular user given a user_id.
      * Required scope: "read:users"
      *
-     * @param string $user The user_id of the user to retrieve
+     * @param User $user The user to retrieve
      *
      * @throws ApiException
-     * @throws ClassNotFoundException
+     * @throws Exception
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return UserBlock|UserBlock[]
      * @see https://auth0.com/docs/api/management/v2#!/User_Blocks/get_user_blocks_by_id
      */
-    public function getUserBlocks(string $user)
+    public function getUserBlocks(User $user)
     {
         $response = $this->apiClient
             ->method('get')
             ->addPath('user-blocks')
-            ->addPath($user)
+            ->addPath($user->getUserId())
             ->setReturnType('object')
             ->call();
 
@@ -88,23 +86,21 @@ class UserBlockApi extends GeneralManagementApi
      * that was blocked by an admin.
      * Required scope: "update:users"
      *
-     * @param string $user The user_id of the user to update.
+     * @param User $user The user to update.
      *
-     * @throws ApiException
-     * @throws ClassNotFoundException
      * @throws CoreException
-     * @return object|ObjectStorage
+     * @return bool
      * @see https://auth0.com/docs/api/management/v2#!/User_Blocks/delete_user_blocks_by_id
      */
-    public function unblockUser(string $user)
+    public function unblockUser(User $user)
     {
         $response = $this->apiClient
             ->method('delete')
             ->addPath('user-blocks')
-            ->addPath($user)
+            ->addPath($user->getUserId())
             ->setReturnType('object')
             ->call();
 
-        return $this->mapResponse($response);
+        return $response->getStatusCode() === 204;
     }
 }
