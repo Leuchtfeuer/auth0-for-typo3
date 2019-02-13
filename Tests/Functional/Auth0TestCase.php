@@ -92,8 +92,6 @@ abstract class Auth0TestCase extends FunctionalTestCase
             'audience' => 'https://' . $application['domain'] . '/' . $application['audience'],
         ]);
 
-        print_r($result);
-
         return $result ?: [];
     }
 
