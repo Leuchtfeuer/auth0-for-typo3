@@ -32,7 +32,7 @@ class UserByEmailApi extends GeneralManagementApi
     public function get(string $email, string $fields = '', bool $includeFields = true)
     {
         $params = [
-            'email' => $email,
+            'email' => rawurlencode($email),
             'include_fields' => $includeFields,
         ];
 
