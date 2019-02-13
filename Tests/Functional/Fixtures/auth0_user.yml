@@ -1,4 +1,4 @@
-email: "f.wessels+testing@bitmotion.de"
+email: "f.wessels+%s@bitmotion.de"
 password: "top$ecreT123"
 user_metadata:
   new: "signup"
@@ -9,5 +9,5 @@ app_metadata:
 given_name: "Florian"
 family_name: "Wessels"
 name: "John Doe"
-nickname: "flossels"
+nickname: "flossels-%s"
 picture: "https://www.google.de/favicon.ico"

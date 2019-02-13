@@ -107,7 +107,10 @@ abstract class Auth0TestCase extends FunctionalTestCase
     {
         $serializer = self::getSerializer();
         $file = __DIR__ . '/Fixtures/auth0_user.yml';
+        /** @var User $user */
         $user = $serializer->deserialize(file_get_contents($file), User::class, 'yml');
+        $user->setEmail(sprintf($user->getEmail(), uniqid());
+        $user->setNickname(sprintf($user->getNickname(), uniqid());
 
         $data = $serializer->normalize($user, 'array', [
             ObjectNormalizer::ATTRIBUTES => UserApi::ALLOWED_ATTRIBUTES_CREATE,
