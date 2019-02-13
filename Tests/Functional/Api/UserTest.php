@@ -122,7 +122,7 @@ class UserTest extends Auth0TestCase
 
         $user = $userApi->get($this->getUser()->getUserId(), 'name', false);
         $this->assertNull($user->getName());
-        $this->assertEquals($user->getEmail(), 'f.wessels+testing@bitmotion.de');
+        $this->assertEquals($user->getEmail(), $this->getUser()->getEmail());
     }
 
     /**
