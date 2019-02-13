@@ -6,19 +6,10 @@ use Bitmotion\Auth0\Api\Management\ResourceServerApi;
 use Bitmotion\Auth0\Domain\Model\Auth0\Client\JwtConfiguration;
 use Bitmotion\Auth0\Domain\Model\Auth0\ResourceServer;
 use Bitmotion\Auth0\Scope;
-use Bitmotion\Auth0\Utility\ApiUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
+use Bitmotion\Auth0\Tests\Functional\Auth0TestCase;
 
-class ResourceServerApiTest extends FunctionalTestCase
+class ResourceServerApiTest extends Auth0TestCase
 {
-    /**
-     * @var array
-     */
-    protected $testExtensionsToLoad = [
-        'typo3conf/ext/auth0',
-    ];
-
     /**
      * @var array
      */
@@ -30,24 +21,6 @@ class ResourceServerApiTest extends FunctionalTestCase
     ];
 
     /**
-     * @var int
-     */
-    protected $application = 1;
-
-    /**
-     * @var ApiUtility
-     */
-    protected $apiUtility;
-
-    public function setUp()
-    {
-        parent::setUp();
-        $this->importDataSet(__DIR__ . '/../Fixtures/tx_auth0_domain_model_application.xml');
-        $this->apiUtility = GeneralUtility::makeInstance(ApiUtility::class);
-        $this->apiUtility->setApplication($this->application);
-    }
-
-    /**
      * Tries to instantiate the ResourceServerApi
      *
      * @test
@@ -55,7 +28,7 @@ class ResourceServerApiTest extends FunctionalTestCase
      */
     public function instantiateApi(): ResourceServerApi
     {
-        $resourceServer = $this->apiUtility->getResourceServerApi(...$this->scopes);
+        $resourceServer = $this->getApiUtility()->getResourceServerApi(...$this->scopes);
         $this->assertInstanceOf(ResourceServerApi::class, $resourceServer);
 
         return $resourceServer;

@@ -5,43 +5,13 @@ namespace Bitmotion\Auth0\Tests\Functional\Api;
 use Bitmotion\Auth0\Api\Management\StatApi;
 use Bitmotion\Auth0\Domain\Model\Auth0\Stat;
 use Bitmotion\Auth0\Scope;
-use Bitmotion\Auth0\Utility\ApiUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
+use Bitmotion\Auth0\Tests\Functional\Auth0TestCase;
 
-class StatTest extends FunctionalTestCase
+class StatTest extends Auth0TestCase
 {
-    /**
-     * @var array
-     */
-    protected $testExtensionsToLoad = [
-        'typo3conf/ext/auth0',
-    ];
-
-    /**
-     * @var array
-     */
     protected $scopes = [
         Scope::STATS_READ,
     ];
-
-    /**
-     * @var int
-     */
-    protected $application = 1;
-
-    /**
-     * @var ApiUtility
-     */
-    protected $apiUtility;
-
-    public function setUp()
-    {
-        parent::setUp();
-        $this->importDataSet(__DIR__ . '/../Fixtures/tx_auth0_domain_model_application.xml');
-        $this->apiUtility = GeneralUtility::makeInstance(ApiUtility::class);
-        $this->apiUtility->setApplication($this->application);
-    }
 
     /**
      * Tries to instantiate the StatApi
@@ -51,7 +21,7 @@ class StatTest extends FunctionalTestCase
      */
     public function instantiateApi(): StatApi
     {
-        $statApi = $this->apiUtility->getStatApi(...$this->scopes);
+        $statApi = $this->getApiUtility()->getStatApi(...$this->scopes);
         $this->assertInstanceOf(StatApi::class, $statApi);
 
         return $statApi;

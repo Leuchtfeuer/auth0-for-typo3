@@ -5,44 +5,14 @@ namespace Bitmotion\Auth0\Tests\Functional\Api;
 use Bitmotion\Auth0\Api\Management\TenantApi;
 use Bitmotion\Auth0\Domain\Model\Auth0\Tenant;
 use Bitmotion\Auth0\Scope;
-use Bitmotion\Auth0\Utility\ApiUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
+use Bitmotion\Auth0\Tests\Functional\Auth0TestCase;
 
-class TenantTest extends FunctionalTestCase
+class TenantTest extends Auth0TestCase
 {
-    /**
-     * @var array
-     */
-    protected $testExtensionsToLoad = [
-        'typo3conf/ext/auth0',
-    ];
-
-    /**
-     * @var array
-     */
     protected $scopes = [
         Scope::TENANT_SETTINGS_UPDATE,
         Scope::TENANT_SETTINGS_READ,
     ];
-
-    /**
-     * @var int
-     */
-    protected $application = 1;
-
-    /**
-     * @var ApiUtility
-     */
-    protected $apiUtility;
-
-    public function setUp()
-    {
-        parent::setUp();
-        $this->importDataSet(__DIR__ . '/../Fixtures/tx_auth0_domain_model_application.xml');
-        $this->apiUtility = GeneralUtility::makeInstance(ApiUtility::class);
-        $this->apiUtility->setApplication($this->application);
-    }
 
     /**
      * Tries to instantiate the TenantApi
@@ -52,7 +22,7 @@ class TenantTest extends FunctionalTestCase
      */
     public function instantiateApi(): TenantApi
     {
-        $tenantApi = $this->apiUtility->getTenantApi(...$this->scopes);
+        $tenantApi = $this->getApiUtility()->getTenantApi(...$this->scopes);
         $this->assertInstanceOf(TenantApi::class, $tenantApi);
 
         return $tenantApi;
