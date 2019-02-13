@@ -8,8 +8,17 @@ use Bitmotion\Auth0\Api\Management\BlacklistApi;
 use Bitmotion\Auth0\Api\Management\ClientApi;
 use Bitmotion\Auth0\Api\Management\ClientGrantApi;
 use Bitmotion\Auth0\Api\Management\ConnectionApi;
+use Bitmotion\Auth0\Api\Management\CustomDomainApi;
+use Bitmotion\Auth0\Api\Management\DeviceCredentialApi;
+use Bitmotion\Auth0\Api\Management\EmailApi;
+use Bitmotion\Auth0\Api\Management\EmailTemplateApi;
+use Bitmotion\Auth0\Api\Management\GrantApi;
+use Bitmotion\Auth0\Api\Management\GuardianApi;
+use Bitmotion\Auth0\Api\Management\JobApi;
 use Bitmotion\Auth0\Api\Management\LogApi;
 use Bitmotion\Auth0\Api\Management\ResourceServerApi;
+use Bitmotion\Auth0\Api\Management\RuleApi;
+use Bitmotion\Auth0\Api\Management\RuleConfigApi;
 use Bitmotion\Auth0\Api\Management\StatApi;
 use Bitmotion\Auth0\Api\Management\TenantApi;
 use Bitmotion\Auth0\Api\Management\TicketApi;
@@ -133,6 +142,51 @@ class ApiUtility implements LoggerAwareInterface
     public function getBlacklistApi(string ...$scopes): BlacklistApi
     {
         return $this->getManagementApi(...$scopes)->getBlacklistApi();
+    }
+
+    public function getCustomDomainApi(string ...$scopes): CustomDomainApi
+    {
+        return $this->getManagementApi(...$scopes)->getCustomDomainApi();
+    }
+
+    public function getDeviceCredentialApi(string ...$scopes): DeviceCredentialApi
+    {
+        return $this->getManagementApi(...$scopes)->getDeviceCredentialApi();
+    }
+
+    public function getEmailApi(string ...$scopes): EmailApi
+    {
+        return $this->getManagementApi(...$scopes)->getEmailApi();
+    }
+
+    public function getEmailTemplateApi(string ...$scopes): EmailTemplateApi
+    {
+        return $this->getManagementApi(...$scopes)->getEmailTemplateApi();
+    }
+
+    public function getGrantApi(string ...$scopes): GrantApi
+    {
+        return $this->getManagementApi(...$scopes)->getGrantApi();
+    }
+
+    public function getGuardianApi(string ...$scopes): GuardianApi
+    {
+        return $this->getManagementApi(...$scopes)->getGuardianApi();
+    }
+
+    public function getJobApi(string ...$scopes): JobApi
+    {
+        return $this->getManagementApi(...$scopes)->getJobApi();
+    }
+
+    public function getRuleConfigApi(string ...$scopes): RuleConfigApi
+    {
+        return $this->getManagementApi(...$scopes)->getRuleConfigApi();
+    }
+
+    public function getRuleApi(string ...$scopes): RuleApi
+    {
+        return $this->getManagementApi(...$scopes)->getRuleApi();
     }
 
     protected function getManagementApi(... $scopes): ManagementApi
