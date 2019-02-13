@@ -20,7 +20,7 @@ use Bitmotion\Auth0\Api\Management\BlacklistApi;
 use Bitmotion\Auth0\Api\Management\ClientApi;
 use Bitmotion\Auth0\Api\Management\ClientGrantApi;
 use Bitmotion\Auth0\Api\Management\ConnectionApi;
-use Bitmotion\Auth0\Api\Management\CustomDomainsApi;
+use Bitmotion\Auth0\Api\Management\CustomDomainApi;
 use Bitmotion\Auth0\Api\Management\DeviceCredentialApi;
 use Bitmotion\Auth0\Api\Management\EmailApi;
 use Bitmotion\Auth0\Api\Management\EmailTemplateApi;
@@ -261,9 +261,9 @@ class ManagementApi extends Management implements SingletonInterface, LoggerAwar
         return $this->connectionApi ?? GeneralUtility::makeInstance(ConnectionApi::class, $this->connections->getApiClient());
     }
 
-    public function getCustomDomainsApi(): CustomDomainsApi
+    public function getCustomDomainApi(): CustomDomainApi
     {
-        return $this->customDomainApi ?? GeneralUtility::makeInstance(CustomDomainsApi::class, $this->connections->getApiClient());
+        return $this->customDomainApi ?? GeneralUtility::makeInstance(CustomDomainApi::class, $this->connections->getApiClient());
     }
 
     public function getDeviceCredentialApi(): DeviceCredentialApi

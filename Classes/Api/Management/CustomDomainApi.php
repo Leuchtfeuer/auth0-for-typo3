@@ -8,7 +8,7 @@ use Auth0\SDK\Exception\CoreException;
 use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
-class CustomDomainsApi extends GeneralManagementApi
+class CustomDomainApi extends GeneralManagementApi
 {
     /**
      * Retrieves the status of every custom domain.
