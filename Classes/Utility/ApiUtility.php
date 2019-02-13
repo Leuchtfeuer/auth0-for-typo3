@@ -4,6 +4,7 @@ namespace Bitmotion\Auth0\Utility;
 
 use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Api\AuthenticationApi;
+use Bitmotion\Auth0\Api\Management\BlacklistApi;
 use Bitmotion\Auth0\Api\Management\ClientApi;
 use Bitmotion\Auth0\Api\Management\ClientGrantApi;
 use Bitmotion\Auth0\Api\Management\ConnectionApi;
@@ -76,60 +77,65 @@ class ApiUtility implements LoggerAwareInterface
 
     public function getUserApi(string ...$scopes): UserApi
     {
-        return $this->getManagementApi($scopes)->getUserApi();
+        return $this->getManagementApi(...$scopes)->getUserApi();
     }
 
     public function getTicketApi(string ...$scopes): TicketApi
     {
-        return $this->getManagementApi($scopes)->getTicketApi();
+        return $this->getManagementApi(...$scopes)->getTicketApi();
     }
 
     public function getConnectionApi(string ...$scopes): ConnectionApi
     {
-        return $this->getManagementApi($scopes)->getConnectionApi();
+        return $this->getManagementApi(...$scopes)->getConnectionApi();
     }
 
     public function getClientGrantApi(string ...$scopes): ClientGrantApi
     {
-        return $this->getManagementApi($scopes)->getClientGrantApi();
+        return $this->getManagementApi(...$scopes)->getClientGrantApi();
     }
 
     public function getClientApi(string ...$scopes): ClientApi
     {
-        return $this->getManagementApi($scopes)->getClientApi();
+        return $this->getManagementApi(...$scopes)->getClientApi();
     }
 
     public function getUserBlockApi(string ...$scopes): UserBlockApi
     {
-        return $this->getManagementApi($scopes)->getUserBlockApi();
+        return $this->getManagementApi(...$scopes)->getUserBlockApi();
     }
 
     public function getUserByEmailApi(string ...$scopes): UserByEmailApi
     {
-        return $this->getManagementApi($scopes)->getUserByEmailApi();
+        return $this->getManagementApi(...$scopes)->getUserByEmailApi();
     }
 
     public function getStatApi(string ...$scopes): StatApi
     {
-        return $this->getManagementApi($scopes)->getStatApi();
+        return $this->getManagementApi(...$scopes)->getStatApi();
     }
 
     public function getTenantApi(string ...$scopes): TenantApi
     {
-        return $this->getManagementApi($scopes)->getTenantApi();
+        return $this->getManagementApi(...$scopes)->getTenantApi();
     }
 
     public function getLogApi(string ...$scopes): LogApi
     {
-        return $this->getManagementApi($scopes)->getLogApi();
+        return $this->getManagementApi(...$scopes)->getLogApi();
     }
 
     public function getResourceServerApi(string ...$scopes): ResourceServerApi
     {
-        return $this->getManagementApi($scopes)->getResourceServerApi();
+        return $this->getManagementApi(...$scopes)->getResourceServerApi();
     }
 
-    protected function getManagementApi(array $scopes): ManagementApi
+    public function getBlacklistApi(string ...$scopes): BlacklistApi
+    {
+        return $this->getManagementApi(...$scopes)->getBlacklistApi();
+    }
+
+    protected function getManagementApi(... $scopes): ManagementApi
     {
         $this->setScope($scopes);
 
