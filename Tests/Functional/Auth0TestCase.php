@@ -136,6 +136,7 @@ abstract class Auth0TestCase extends FunctionalTestCase
     public static function tearDownAfterClass()
     {
         self::$userApi->delete(self::$user->getUserId());
+        parent::tearDownAfterClass();
     }
 
     public function setUp()
