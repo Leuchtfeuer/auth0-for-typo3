@@ -1,0 +1,13 @@
+email: "f.wessels+testing@bitmotion.de"
+password: "top$ecreT123"
+user_metadata:
+  new: "signup"
+blocked: false
+email_verified: false
+app_metadata:
+  app: "metadata"
+given_name: "Florian"
+family_name: "Wessels"
+name: "John Doe"
+nickname: "flossels"
+picture: "https://www.google.de/favicon.ico"
