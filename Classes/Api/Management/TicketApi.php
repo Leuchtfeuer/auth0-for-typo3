@@ -6,6 +6,7 @@ use Auth0\SDK\API\Header\ContentType;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Domain\Model\Auth0\Ticket;
+use Bitmotion\Auth0\Domain\Model\Auth0\User;
 use TYPO3\CMS\Extbase\Object\Exception;
 
 class TicketApi extends GeneralManagementApi
@@ -14,9 +15,9 @@ class TicketApi extends GeneralManagementApi
      * This endpoint can be used to create a ticket to verify a user's email.
      * Required scope: "create:user_tickets"
      *
-     * @param string $user          The user_id of for which the ticket is to be created
+     * @param User   $user          The user_id of for which the ticket is to be created
      * @param string $resultUri     The user will be redirected to this endpoint once the ticket is used
-     * @param int $ttl              The ticket's lifetime in seconds starting from the moment of creation. After expiration, the
+     * @param int    $ttl           The ticket's lifetime in seconds starting from the moment of creation. After expiration, the
      *                              ticket cannot be used to verify the user's email. If not specified or if you send 0, the Auth0
      *                              default lifetime of five days will be applied
      *
@@ -26,10 +27,10 @@ class TicketApi extends GeneralManagementApi
      * @return Ticket
      * @see https://auth0.com/docs/api/management/v2#!/Tickets/post_email_verification
      */
-    public function createEmailVerificationTicket(string $user, string $resultUri = '', int $ttl = 0)
+    public function createEmailVerificationTicket(User $user, string $resultUri = '', int $ttl = 0)
     {
         $body = [
-            'user_id' => $user,
+            'user_id' => $user->getUserId(),
         ];
 
         $this->addStringProperty($body, 'result_url', $resultUri);
@@ -51,7 +52,7 @@ class TicketApi extends GeneralManagementApi
      * This endpoint can be used to create a password change ticket for a user.
      * Required scope: "create:user_tickets"
      *
-     * @param string $user                      The user_id of for which the ticket is to be created
+     * @param User   $user                    The user_id of for which the ticket is to be created
      * @param string $resultUri                 The user will be redirected to this endpoint once the ticket is used
      * @param int    $ttl                       The ticket's lifetime in seconds starting from the moment of creation. After
      *                                          expiration, the ticket cannot be used to change the user's password. If not
@@ -67,14 +68,14 @@ class TicketApi extends GeneralManagementApi
      * @see https://auth0.com/docs/api/management/v2#!/Tickets/post_password_change
      */
     public function createPasswordChangeTicket(
-        string $user,
+        User $user,
         string $resultUri = '',
         int $ttl = 0,
         bool $markEmailAsVerified = false,
         bool $includeEmailInRedirect = false
     ) {
         return $this->createPasswordChangeTicketRaw(
-            $user,
+            $user->getUserId(),
             '',
             '',
             $resultUri,
