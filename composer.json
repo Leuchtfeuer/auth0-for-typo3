@@ -31,7 +31,9 @@
     "symfony/serializer": "^4.2",
     "symfony/property-access": "^4.2",
     "symfony/property-info": "^4.2",
-    "symfony/http-foundation": "^4.2"
+    "symfony/http-foundation": "^4.2",
+    "ext-pdo": "*",
+    "ext-json": "*"
   },
   "require-dev": {
     "typo3/testing-framework": "^4.0"
