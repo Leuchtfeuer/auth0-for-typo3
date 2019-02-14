@@ -3,10 +3,10 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Api\Management;
 
 use Auth0\SDK\API\Header\ContentType;
-use Auth0\SDK\API\Helpers\ApiClient;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Domain\Model\Auth0\ResourceServer;
+use Bitmotion\Auth0\Domain\Model\Auth0\Api\Client;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\ResourceServer;
 use Bitmotion\Auth0\Extractor\PropertyTypeExtractor\ResourceServerExtractor;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use TYPO3\CMS\Extbase\Object\Exception;
@@ -22,12 +22,12 @@ class ResourceServerApi extends GeneralManagementApi
         'system', 'id',
     ];
 
-    public function __construct(ApiClient $apiClient)
+    public function __construct(Client $client)
     {
         $this->extractor = new ResourceServerExtractor();
         $this->defaultContext[ObjectNormalizer::DISABLE_TYPE_ENFORCEMENT] = true;
 
-        parent::__construct($apiClient);
+        parent::__construct($client);
     }
 
     /**
@@ -53,8 +53,8 @@ class ResourceServerApi extends GeneralManagementApi
             'include_totals' => $includeTotals,
         ];
 
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('resource-servers')
             ->withDictParams($params)
             ->setReturnType('object')
@@ -79,8 +79,8 @@ class ResourceServerApi extends GeneralManagementApi
     {
         $data = $this->normalize($resourceServer, 'array', self::EXCLUDED_CREATE_PROPERTIES, true);
 
-        $response = $this->apiClient
-            ->method('post')
+        $response = $this->client
+            ->request('post')
             ->addPath('resource-servers')
             ->withHeader(new ContentType('application/json'))
             ->withBody(\GuzzleHttp\json_encode($data))
@@ -104,8 +104,8 @@ class ResourceServerApi extends GeneralManagementApi
      */
     public function get(string $id)
     {
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('resource-servers')
             ->addPath($id)
             ->setReturnType('object')
@@ -126,8 +126,8 @@ class ResourceServerApi extends GeneralManagementApi
      */
     public function delete(string $id)
     {
-        $response = $this->apiClient
-            ->method('delete')
+        $response = $this->client
+            ->request('delete')
             ->addPath('resource-servers')
             ->addPath($id)
             ->setReturnType('object')
@@ -158,8 +158,8 @@ class ResourceServerApi extends GeneralManagementApi
         // Auth0 excepts diff only - wtf
         $data = array_diff_assoc($newData, $originData);
 
-        $response = $this->apiClient
-            ->method('patch')
+        $response = $this->client
+            ->request('patch')
             ->addPath('resource-servers')
             ->addPath($resourceServer->getId())
             ->withHeader(new ContentType('application/json'))

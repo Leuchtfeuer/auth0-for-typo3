@@ -1,8 +1,8 @@
 <?php
 declare(strict_types=1);
-namespace Bitmotion\Auth0\Domain\Model\Auth0;
+namespace Bitmotion\Auth0\Domain\Model\Auth0\Api;
 
-class ApiError
+class Error
 {
     protected $statusCode = 200;
 

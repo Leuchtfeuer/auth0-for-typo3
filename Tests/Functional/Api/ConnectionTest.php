@@ -4,8 +4,8 @@ namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 use Bitmotion\Auth0\Api\Management\ClientGrantApi;
 use Bitmotion\Auth0\Api\Management\ConnectionApi;
-use Bitmotion\Auth0\Domain\Model\Auth0\ClientGrant;
-use Bitmotion\Auth0\Domain\Model\Auth0\Connection;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\ClientGrant;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Connection;
 use Bitmotion\Auth0\Scope;
 use Bitmotion\Auth0\Tests\Functional\Auth0TestCase;
 

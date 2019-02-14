@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
-namespace Bitmotion\Auth0\Domain\Model\Auth0;
+namespace Bitmotion\Auth0\Domain\Model\Auth0\Management;
 
-use Bitmotion\Auth0\Domain\Model\Auth0\Tenant\ErrorPage;
-use Bitmotion\Auth0\Domain\Model\Auth0\Tenant\Flag;
-use Bitmotion\Auth0\Domain\Model\Auth0\Tenant\MfaPage;
-use Bitmotion\Auth0\Domain\Model\Auth0\Tenant\PasswordPage;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Tenant\ErrorPage;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Tenant\Flag;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Tenant\MfaPage;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Tenant\PasswordPage;
 
 class Tenant
 {

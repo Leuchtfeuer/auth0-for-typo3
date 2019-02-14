@@ -13,8 +13,9 @@ namespace Bitmotion\Auth0\Command;
  *
  ***/
 
-use Bitmotion\Auth0\Api\ManagementApi;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
+use Bitmotion\Auth0\Scope;
+use Bitmotion\Auth0\Utility\ApiUtility;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -198,11 +199,12 @@ class CleanUpCommand extends Command
      */
     protected function updateUsers(): int
     {
-        $management = GeneralUtility::makeInstance(ManagementApi::class, $this->configuration->getBackendConnection());
+        $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $this->configuration->getBackendConnection());
+        $userApi = $apiUtility->getUserApi(Scope::USER_READ);
         $userCount = 0;
 
         foreach ($this->users as $user) {
-            $auth0User = $management->getUserById($user['auth0_user_id']);
+            $auth0User = $userApi->get($user['auth0_user_id']);
             if (isset($auth0User['statusCode']) && $auth0User['statusCode'] === 404) {
                 $this->handleUser($user);
                 $this->clearSessionData($user);

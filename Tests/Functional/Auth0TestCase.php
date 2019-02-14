@@ -3,11 +3,13 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Tests\Functional;
 
 use Auth0\SDK\API\Authentication;
+use Auth0\SDK\API\Header\Authorization\AuthorizationBearer;
 use Auth0\SDK\API\Header\ContentType;
-use Auth0\SDK\API\Helpers\ApiClient;
-use Auth0\SDK\API\Management;
+use Auth0\SDK\API\Header\Header;
+use Auth0\SDK\API\Helpers\InformationHeaders;
 use Bitmotion\Auth0\Api\Management\UserApi;
-use Bitmotion\Auth0\Domain\Model\Auth0\User;
+use Bitmotion\Auth0\Domain\Model\Auth0\Api\Client;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
 use Bitmotion\Auth0\Utility\ApiUtility;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
@@ -50,28 +52,23 @@ abstract class Auth0TestCase extends FunctionalTestCase
     private static $user;
 
     /**
-     * @var UserApi
-     */
-    private static $userApi;
-
-    /**
      * @var Authentication
      */
     private static $authentication;
 
+    /**
+     * @var Client
+     */
+    private static $client;
+
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
-
-        $credentials = self::connect();
-        $management = new Management($credentials['access_token'], self::$domain, ['http_errors' => false]);
-        $apiClient = $management->users->getApiClient();
-        self::$userApi = new UserApi($apiClient);
-
-        self::insertUser($apiClient);
+        self::connect();
+        self::insertUser();
     }
 
-    private static function connect(): array
+    private static function connect()
     {
         $xml = new XmlEncoder();
         $file = __DIR__ . '/Fixtures/tx_auth0_domain_model_application.xml';
@@ -86,13 +83,30 @@ abstract class Auth0TestCase extends FunctionalTestCase
             "https://{$application['domain']}/{$application['audience']}"
         );
 
-        $result = self::$authentication->client_credentials([
+        $credentials = self::$authentication->client_credentials([
             'client_secret' => $application['secret'],
             'client_id' => $application['id'],
             'audience' => 'https://' . $application['domain'] . '/' . $application['audience'],
         ]);
 
-        return $result ?: [];
+        self::setClient($credentials, $application);
+    }
+
+    private static function setClient(array $credentials, array $application)
+    {
+        $informationHeader = new InformationHeaders();
+        $informationHeader->setPackage('auth0-typo3-test', '3.0.0');
+        $informationHeader->setEnvProperty('php', phpversion());
+
+        $audience = sprintf('/%s/', trim($application['audience'], '/'));
+        $domain = sprintf('https://%s', rtrim($application['domain'], '/'));
+
+        self::$client = new Client(false);
+        self::$client->addHeader(new Header('Auth0-Client', $informationHeader->build()));
+        self::$client->setDomain($domain);
+        self::$client->setBasePath($audience);
+        self::$client->setGuzzleOptions(['http_errors' => false]);
+        self::$client->addHeader(new AuthorizationBearer($credentials['access_token']));
     }
 
     private static function getSerializer(): Serializer
@@ -103,7 +117,7 @@ abstract class Auth0TestCase extends FunctionalTestCase
         return new Serializer([$normalizer], $encoders);
     }
 
-    private static function insertUser(ApiClient $apiClient)
+    private static function insertUser()
     {
         $serializer = self::getSerializer();
         $file = __DIR__ . '/Fixtures/auth0_user.yml';
@@ -119,16 +133,16 @@ abstract class Auth0TestCase extends FunctionalTestCase
         $data['connection'] = self::CONNECTION_NAME;
         $data['verify_email'] = true;
 
-        $response = self::createUser($data, $apiClient);
+        $response = self::createUser($data);
         $jsonResponse = $response->getBody()->getContents();
 
         self::$user = $serializer->deserialize($jsonResponse, User::class, 'json');
     }
 
-    private static function createUser(array $data, ApiClient $apiClient)
+    private static function createUser(array $data)
     {
-        return $apiClient
-            ->method('post')
+        return self::$client
+            ->request('post')
             ->addPath('users')
             ->withHeader(new ContentType('application/json'))
             ->withBody(\GuzzleHttp\json_encode($data))
@@ -138,7 +152,13 @@ abstract class Auth0TestCase extends FunctionalTestCase
 
     public static function tearDownAfterClass()
     {
-        self::$userApi->delete(self::$user->getUserId());
+        self::$client
+            ->request('delete')
+            ->addPath('users')
+            ->addPath(self::$user->getUserId())
+            ->setReturnType('object')
+            ->call();
+
         parent::tearDownAfterClass();
     }
 
@@ -147,8 +167,7 @@ abstract class Auth0TestCase extends FunctionalTestCase
         parent::setUp();
 
         $this->importDataSet(__DIR__ . '/Fixtures/tx_auth0_domain_model_application.xml');
-        $this->apiUtility = GeneralUtility::makeInstance(ApiUtility::class);
-        $this->apiUtility->setApplication($this->application);
+        $this->apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $this->application);
     }
 
     abstract public function instantiateApi();

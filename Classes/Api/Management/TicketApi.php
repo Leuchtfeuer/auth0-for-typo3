@@ -5,8 +5,8 @@ namespace Bitmotion\Auth0\Api\Management;
 use Auth0\SDK\API\Header\ContentType;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Domain\Model\Auth0\Ticket;
-use Bitmotion\Auth0\Domain\Model\Auth0\User;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Ticket;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
 use TYPO3\CMS\Extbase\Object\Exception;
 
 class TicketApi extends GeneralManagementApi
@@ -36,8 +36,8 @@ class TicketApi extends GeneralManagementApi
         $this->addStringProperty($body, 'result_url', $resultUri);
         $this->addIntegerProperty($body, 'ttl_sec', $ttl);
 
-        $response = $this->apiClient
-            ->method('post')
+        $response = $this->client
+            ->request('post')
             ->addPath('tickets')
             ->addPath('email-verification')
             ->withHeader(new ContentType('application/json'))
@@ -167,8 +167,8 @@ class TicketApi extends GeneralManagementApi
         $this->addStringProperty($body, 'result_url', $resultUri);
         $this->addIntegerProperty($body, 'ttl_sec', $ttl);
 
-        $response = $this->apiClient
-            ->method('post')
+        $response = $this->client
+            ->request('post')
             ->addPath('tickets')
             ->addPath('password-change')
             ->withHeader(new ContentType('application/json'))

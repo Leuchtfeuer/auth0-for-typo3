@@ -14,7 +14,7 @@ namespace Bitmotion\Auth0\LoginProvider;
  ***/
 
 use Auth0\SDK\Store\SessionStore;
-use Bitmotion\Auth0\Api\AuthenticationApi;
+use Bitmotion\Auth0\Api\Auth0;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Utility\ApiUtility;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
@@ -32,9 +32,9 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
     use LoggerAwareTrait;
 
     /**
-     * @var AuthenticationApi
+     * @var Auth0
      */
-    protected $authenticationApi;
+    protected $auth0;
 
     /**
      * @var array
@@ -57,7 +57,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         }
 
         // Throw error if there is no application
-        if (!$this->setAuthenticationApi()) {
+        if (!$this->setAuth0()) {
             $standaloneView->assign('error', 'no_application');
 
             return;
@@ -81,14 +81,13 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         ]);
     }
 
-    protected function setAuthenticationApi(): bool
+    protected function setAuth0(): bool
     {
         try {
             $configuration = new EmAuth0Configuration();
 
-            $apiUtility = GeneralUtility::makeInstance(ApiUtility::class);
-            $apiUtility->setApplication((int)$configuration->getBackendConnection());
-            $this->authenticationApi = $apiUtility->getAuthenticationApi(GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
+            $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, (int)$configuration->getBackendConnection());
+            $this->auth0 = $apiUtility->getAuth0(GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
         } catch (\Exception $exception) {
             return false;
         }
@@ -98,25 +97,25 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
 
     protected function handleRequest()
     {
-        // Try to get user via authentication API
+        // Try to get user via Auth0 API
         if ($this->userInfo === null) {
             try {
-                $this->logger->notice('Try to get user via authentication API');
-                $this->userInfo = $this->authenticationApi->getUser();
+                $this->logger->notice('Try to get user via Auth0 API');
+                $this->userInfo = $this->auth0->getUser();
             } catch (\Exception $exception) {
-                $this->authenticationApi->deleteAllPersistentData();
+                $this->auth0->deleteAllPersistentData();
             }
         }
 
         if (GeneralUtility::_GP('logout') == 1) {
             // Logout user from Auth0
             $this->logger->notice('Logout user.');
-            $this->authenticationApi->logout();
+            $this->auth0->logout();
             $this->userInfo = null;
         } elseif ($this->userInfo === null && GeneralUtility::_GP('login') == 1) {
             // Login user to Auth0
             $this->logger->notice('Handle backend login.');
-            $this->authenticationApi->login();
+            $this->auth0->login();
         }
     }
 

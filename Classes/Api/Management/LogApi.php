@@ -2,9 +2,9 @@
 declare(strict_types=1);
 namespace Bitmotion\Auth0\Api\Management;
 
-use Auth0\SDK\API\Helpers\ApiClient;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
+use Bitmotion\Auth0\Domain\Model\Auth0\Api\Client;
 use Bitmotion\Auth0\Domain\Model\Auth0\Log;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
@@ -12,12 +12,12 @@ use TYPO3\CMS\Extbase\Object\Exception;
 
 class LogApi extends GeneralManagementApi
 {
-    public function __construct(ApiClient $apiClient)
+    public function __construct(Client $client)
     {
         $this->extractor = new ReflectionExtractor();
         $this->normalizer[] = new DateTimeNormalizer();
 
-        parent::__construct($apiClient);
+        parent::__construct($client);
     }
 
     /**
@@ -62,8 +62,8 @@ class LogApi extends GeneralManagementApi
         $this->addStringProperty($params, 'sort', $sorting);
         $this->addStringProperty($params, 'fields', $fields);
 
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('logs')
             ->withDictParams($params)
             ->setReturnType('object')
@@ -89,8 +89,8 @@ class LogApi extends GeneralManagementApi
      */
     public function searchByCheckpoint(string $from, int $take = 50)
     {
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('logs')
             ->withParam('from', $from)
             ->withParam('take', $take)
@@ -115,8 +115,8 @@ class LogApi extends GeneralManagementApi
      */
     public function get(string $id)
     {
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('logs')
             ->addPath($id)
             ->setReturnType('object')

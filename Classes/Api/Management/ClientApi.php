@@ -3,10 +3,9 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Api\Management;
 
 use Auth0\SDK\API\Header\ContentType;
-use Auth0\SDK\API\Helpers\ApiClient;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Domain\Model\Auth0\Client;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Client;
 use Bitmotion\Auth0\Extractor\PropertyTypeExtractor\ClientExtractor;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use TYPO3\CMS\Extbase\Object\Exception;
@@ -23,12 +22,12 @@ class ClientApi extends GeneralManagementApi
         'firstParty',
     ];
 
-    public function __construct(ApiClient $apiClient)
+    public function __construct(\Bitmotion\Auth0\Domain\Model\Auth0\Api\Client $client)
     {
         $this->extractor = new ClientExtractor();
         $this->defaultContext[ObjectNormalizer::DISABLE_TYPE_ENFORCEMENT] = true;
 
-        parent::__construct($apiClient);
+        parent::__construct($client);
     }
 
     /**
@@ -79,8 +78,8 @@ class ClientApi extends GeneralManagementApi
         $this->addBooleanProperty($params, 'is_global', $global);
         $this->addBooleanProperty($params, 'is_first_party', $firstParty);
 
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('clients')
             ->withDictParams($params)
             ->setReturnType('object')
@@ -107,8 +106,8 @@ class ClientApi extends GeneralManagementApi
     {
         $data = $this->normalize($client, 'array', self::EXCLUDED_CREATE_PROPERTIES, true);
 
-        $response = $this->apiClient
-            ->method('post')
+        $response = $this->client
+            ->request('post')
             ->addPath('clients')
             ->withHeader(new ContentType('application/json'))
             ->withBody(\GuzzleHttp\json_encode($data))
@@ -144,8 +143,8 @@ class ClientApi extends GeneralManagementApi
 
         $this->addStringProperty($params, 'fields', $fields);
 
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('clients')
             ->addPath($id)
             ->withDictParams($params)
@@ -167,8 +166,8 @@ class ClientApi extends GeneralManagementApi
      */
     public function delete(string $id): bool
     {
-        $response = $this->apiClient
-            ->method('delete')
+        $response = $this->client
+            ->request('delete')
             ->addPath('clients')
             ->addPath($id)
             ->setReturnType('object')
@@ -195,8 +194,8 @@ class ClientApi extends GeneralManagementApi
         $data = $this->normalize($client, 'array', self::EXCLUDED_UPDATE_PROPERTIES, true);
         $this->cleanProperties($data);
 
-        $response = $this->apiClient
-            ->method('patch')
+        $response = $this->client
+            ->request('patch')
             ->addPath('clients')
             ->addPath($client->getClientId())
             ->withHeader(new ContentType('application/json'))
@@ -221,8 +220,8 @@ class ClientApi extends GeneralManagementApi
      */
     public function rotateSecret(string $id)
     {
-        $response = $this->apiClient
-            ->method('post')
+        $response = $this->client
+            ->request('post')
             ->addPath('clients')
             ->addPath($id)
             ->addPath('rotate-secret')

@@ -3,8 +3,8 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 use Bitmotion\Auth0\Api\Management\ResourceServerApi;
-use Bitmotion\Auth0\Domain\Model\Auth0\Client\JwtConfiguration;
-use Bitmotion\Auth0\Domain\Model\Auth0\ResourceServer;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Client\JwtConfiguration;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\ResourceServer;
 use Bitmotion\Auth0\Scope;
 use Bitmotion\Auth0\Tests\Functional\Auth0TestCase;
 

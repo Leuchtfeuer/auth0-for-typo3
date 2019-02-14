@@ -15,7 +15,7 @@ namespace Bitmotion\Auth0\Controller;
 
 use Auth0\SDK\Exception\CoreException;
 use Auth0\SDK\Store\SessionStore;
-use Bitmotion\Auth0\Api\AuthenticationApi;
+use Bitmotion\Auth0\Api\Auth0;
 use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Service\RedirectService;
@@ -70,6 +70,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
     public function formAction()
     {
         // Get Auth0 user from session storage
+        // ToDo: User Auth0->getUser() instead.
         $sessionStore = new SessionStore();
         $userInfo = $sessionStore->get('user');
         $feUserAuthentication = $GLOBALS['TSFE']->fe_user;
@@ -82,12 +83,12 @@ class LoginController extends ActionController implements LoggerAwareInterface
                 $redirectService->forceRedirectByReferrer(['logintype' => 'login']);
             }
 
-            GeneralUtility::makeInstance(UserUtility::class)->updateUser($this->getAuthenticationApi(), (int)$this->settings['application']);
+            GeneralUtility::makeInstance(UserUtility::class)->updateUser($this->getAuth0(), (int)$this->settings['application']);
             $redirectService->handleRedirect(['groupLogin', 'userLogin', 'login', 'getpost', 'referrer']);
         }
 
         // Force redirect due to Auth0 sign up or log in errors
-        if (!empty(GeneralUtility::_GET('referrer')) && $this->error === AuthenticationApi::ERROR_UNAUTHORIZED) {
+        if (!empty(GeneralUtility::_GET('referrer')) && $this->error === Auth0::ERROR_UNAUTHORIZED) {
             $this->logger->notice('Handle referrer redirect because of Auth0 errors.');
             $redirectService->forceRedirectByReferrer([
                 'error' => $this->error,
@@ -111,6 +112,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
     public function loginAction()
     {
         // Get Auth0 user from session storage
+        // ToDo: User Auth0->getUser() instead.
         $store = new SessionStore();
         $userInfo = $store->get('user');
 
@@ -126,7 +128,8 @@ class LoginController extends ActionController implements LoggerAwareInterface
                 }
             }
 
-            GeneralUtility::makeInstance(UserUtility::class)->loginUser($this->getAuthenticationApi());
+            $this->logger->notice('Try to login user to Auth0.');
+            $this->getAuth0()->login();
         }
 
         // Show login form
@@ -138,6 +141,8 @@ class LoginController extends ActionController implements LoggerAwareInterface
      * @throws InvalidApplicationException
      * @throws StopActionException
      * @throws UnsupportedRequestTypeException
+     * @deprecated
+     * TODO: Write Hook $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['logoff_post_processing'] instead (or pre_processing)
      */
     public function logoutAction()
     {
@@ -148,7 +153,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
             }
         }
 
-        GeneralUtility::makeInstance(UserUtility::class)->logoutUser($this->getAuthenticationApi());
+        $this->getAuth0()->logout();
 
         foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['auth0']['logoff_post_processing'] ?? [] as $_funcRef) {
             if ($_funcRef) {
@@ -163,13 +168,12 @@ class LoginController extends ActionController implements LoggerAwareInterface
      * @throws CoreException
      * @throws InvalidApplicationException
      */
-    protected function getAuthenticationApi(): AuthenticationApi
+    protected function getAuth0(): Auth0
     {
-        $apiUtility = GeneralUtility::makeInstance(ApiUtility::class);
-        $apiUtility->setApplication((int)$this->settings['application']);
+        $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, (int)$this->settings['application']);
         $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
         $callbackUri = $routingUtility->getCallbackUri($this->settings['frontend']['callback'], (int)$this->settings['application']);
 
-        return $apiUtility->getAuthenticationApi($callbackUri);
+        return $apiUtility->getAuth0($callbackUri);
     }
 }

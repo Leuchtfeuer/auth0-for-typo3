@@ -13,11 +13,10 @@ namespace Bitmotion\Auth0\Api;
  *
  ***/
 
-use Auth0\SDK\Auth0;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class AuthenticationApi extends Auth0
+class Auth0 extends \Auth0\SDK\Auth0
 {
     /**
      * Error codes provided by Auth0
@@ -55,13 +54,15 @@ class AuthenticationApi extends Auth0
         $applicationRepository = GeneralUtility::makeInstance(ApplicationRepository::class);
         $application = $applicationRepository->findByUid($applicationUid);
 
+        // Todo: Add debug key in development mode
+
         $config = [
             'domain' => $application['domain'],
             'client_id' => $application['id'],
             'client_secret' => $application['secret'],
+            'redirect_uri' => $redirectUri,
             'audience' => 'https://' . $application['domain'] . '/' . $application['audience'],
             'scope' => $scope,
-            'redirect_uri' => $redirectUri,
             'persist_access_token' => true,
             'persist_refresh_token' => true,
             'persist_id_token' => true,

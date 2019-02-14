@@ -15,7 +15,7 @@ namespace Bitmotion\Auth0\Service;
 
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Store\SessionStore;
-use Bitmotion\Auth0\Api\AuthenticationApi;
+use Bitmotion\Auth0\Api\Auth0;
 use Bitmotion\Auth0\Domain\Model\Auth0\User;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
@@ -66,9 +66,9 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     protected $environmentService;
 
     /**
-     * @var AuthenticationApi
+     * @var Auth0
      */
-    protected $authenticationApi;
+    protected $auth0;
 
     /**
      * @var bool
@@ -78,7 +78,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     /**
      * @var int
      */
-    protected $applicationUid = 0;
+    protected $application = 0;
 
     /**
      * @param string                                                    $mode
@@ -100,7 +100,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
 
         $this->initApplication();
 
-        if ($this->applicationUid === 0) {
+        if ($this->application === 0) {
             return;
         }
 
@@ -128,7 +128,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         }
 
         $auth0ErrorCode = GeneralUtility::_GET('error');
-        if ($auth0ErrorCode === AuthenticationApi::ERROR_ACCESS_DENIED || $auth0ErrorCode === AuthenticationApi::ERROR_UNAUTHORIZED) {
+        if ($auth0ErrorCode === Auth0::ERROR_ACCESS_DENIED || $auth0ErrorCode === Auth0::ERROR_UNAUTHORIZED) {
             $this->logger->notice('Access denied. Skip.');
             $responsible = false;
         }
@@ -193,8 +193,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      */
     protected function getAuth0User()
     {
-        $apiUtility = GeneralUtility::makeInstance(ApiUtility::class);
-        $apiUtility->setApplication($this->applicationUid);
+        $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $this->application);
         $userUtility = $apiUtility->getUserApi(Scope::USER_READ);
         try {
             $this->auth0User = $userUtility->get($this->tokenInfo['sub']);
@@ -234,7 +233,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
             $updateUtility->updateGroups();
         } else {
             // Update last uses application
-            $userUtility->updateLastApplication($this->auth0User->getUserId(), $this->applicationUid);
+            $userUtility->setLastUsedApplication($this->auth0User->getUserId(), $this->application);
         }
     }
 
@@ -248,11 +247,10 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     protected function initializeAuth0Connections(): bool
     {
         try {
-            $apiUtility = GeneralUtility::makeInstance(ApiUtility::class);
-            $apiUtility->setApplication($this->applicationUid);
+            $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $this->application);
             $callback = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/typo3/?loginProvider=' . self::AUTH_LOGIN_PROVIDER . '&login=1';
-            $this->authenticationApi = $apiUtility->getAuthenticationApi($callback);
-            $this->tokenInfo = $this->authenticationApi->getUser();
+            $this->auth0 = $apiUtility->getAuth0($callback);
+            $this->tokenInfo = $this->auth0->getUser();
 
             if ($this->getAuth0User() === false) {
                 return false;
@@ -291,7 +289,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
             $this->logger->error('No Auth0 application UID given.');
         }
 
-        $this->applicationUid = $applicationUid;
+        $this->application = $applicationUid;
     }
 
     /**
@@ -307,7 +305,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
 
         if (!is_array($user)) {
             if ($this->auth0User !== null) {
-                $this->authenticationApi->deleteAllPersistentData();
+                $this->auth0->deleteAllPersistentData();
             }
 
             $this->writelog(255, 3, 3, 2, 'Login-attempt from ###IP###, username \'%s\' not found!!', [$this->login['uname']]);

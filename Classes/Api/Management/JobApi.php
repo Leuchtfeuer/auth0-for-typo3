@@ -24,8 +24,8 @@ class JobApi extends GeneralManagementApi
      */
     public function get(string $id)
     {
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('jobs')
             ->addPath($id)
             ->setReturnType('object')
@@ -48,8 +48,8 @@ class JobApi extends GeneralManagementApi
      */
     public function getErrors(string $id)
     {
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('jobs')
             ->addPath($id)
             ->addPath('errors')
@@ -73,8 +73,8 @@ class JobApi extends GeneralManagementApi
      */
     public function getResults(string $id)
     {
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('jobs')
             ->addPath($id)
             ->addPath('results')
@@ -110,8 +110,8 @@ class JobApi extends GeneralManagementApi
         $this->addArrayProperty($body, 'fields', $fields);
         $this->addIntegerProperty($body, 'limit', $limit);
 
-        $response = $this->apiClient
-            ->method('post')
+        $response = $this->client
+            ->request('post')
             ->addPath('jobs')
             ->addPath('users-exports')
             ->withHeader(new ContentType('application/json'))
@@ -146,8 +146,8 @@ class JobApi extends GeneralManagementApi
         string $externalId = '',
         bool $sendCompletionEmail = false
     ) {
-        $request = $this->apiClient
-            ->method('post')
+        $request = $this->client
+            ->request('post')
             ->addPath('jobs')
             ->addPath('users-imports')
             ->addFile('users', $file)
@@ -186,8 +186,8 @@ class JobApi extends GeneralManagementApi
 
         $this->addStringProperty($body, 'client_id', $client);
 
-        $response = $this->apiClient
-            ->method('post')
+        $response = $this->client
+            ->request('post')
             ->addPath('jobs')
             ->addPath('verification-email')
             ->withHeader(new ContentType('application/json'))

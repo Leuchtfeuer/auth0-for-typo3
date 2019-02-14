@@ -4,7 +4,7 @@ namespace Bitmotion\Auth0\Api\Management;
 
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Domain\Model\Auth0\User;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
 use TYPO3\CMS\Extbase\Object\Exception;
 
 class UserByEmailApi extends GeneralManagementApi
@@ -38,8 +38,8 @@ class UserByEmailApi extends GeneralManagementApi
 
         $this->addStringProperty($params, 'fields', $fields);
 
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('users-by-email')
             ->withDictParams($params)
             ->setReturnType('object')

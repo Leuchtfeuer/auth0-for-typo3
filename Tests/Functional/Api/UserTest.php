@@ -4,8 +4,8 @@ namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 use Auth0\SDK\Exception\ApiException;
 use Bitmotion\Auth0\Api\Management\UserApi;
-use Bitmotion\Auth0\Domain\Model\Auth0\Log;
-use Bitmotion\Auth0\Domain\Model\Auth0\User;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Log;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
 use Bitmotion\Auth0\Scope;
 use Bitmotion\Auth0\Tests\Functional\Auth0TestCase;
 
@@ -97,7 +97,7 @@ class UserTest extends Auth0TestCase
         $updated = $user->getUpdatedAt();
         $metadata['time'] = $time;
 
-        $this->assertTrue($userApi->updateMetadata($user->getUserId(), $metadata, UserApi::TYPE_USER));
+        $this->assertTrue($userApi->updateMetadata($user, $metadata, UserApi::TYPE_USER));
 
         $user = $userApi->get($user->getUserId());
         $this->assertTrue(isset($user->getUserMetadata()['time']));

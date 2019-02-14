@@ -3,12 +3,12 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Api\Management;
 
 use Auth0\SDK\API\Header\ContentType;
-use Auth0\SDK\API\Helpers\ApiClient;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Domain\Model\Auth0\Enrollment;
-use Bitmotion\Auth0\Domain\Model\Auth0\Log;
-use Bitmotion\Auth0\Domain\Model\Auth0\User;
+use Bitmotion\Auth0\Domain\Model\Auth0\Api\Client;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Enrollment;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Log;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
@@ -53,12 +53,12 @@ class UserApi extends GeneralManagementApi
     const TYPE_APP = 'app_metadata';
     const TYPE_BOTH = 'user_app_metadata';
 
-    public function __construct(ApiClient $apiClient)
+    public function __construct(Client $client)
     {
         $this->extractor = new ReflectionExtractor();
         $this->normalizer[] = new DateTimeNormalizer();
 
-        parent::__construct($apiClient);
+        parent::__construct($client);
     }
 
     /**
@@ -112,8 +112,8 @@ class UserApi extends GeneralManagementApi
         $this->addStringProperty($params, 'sort', $sorting);
         $this->addStringProperty($params, 'fields', $fields);
 
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('users')
             ->withDictParams($params)
             ->setReturnType('object')
@@ -148,8 +148,8 @@ class UserApi extends GeneralManagementApi
         $this->addStringProperty($data, 'connection', $connectionName);
         $this->addBooleanProperty($data, 'verify_email', $verifyEmail);
 
-        $response = $this->apiClient
-            ->method('post')
+        $response = $this->client
+            ->request('post')
             ->addPath('users')
             ->withHeader(new ContentType('application/json'))
             ->withBody(\GuzzleHttp\json_encode($data))
@@ -182,8 +182,8 @@ class UserApi extends GeneralManagementApi
 
         $this->addStringProperty($params, 'fields', $fields);
 
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('users')
             ->addPath($id)
             ->withDictParams($params)
@@ -246,8 +246,8 @@ class UserApi extends GeneralManagementApi
      */
     public function delete(string $id)
     {
-        $response = $this->apiClient
-            ->method('delete')
+        $response = $this->client
+            ->request('delete')
             ->addPath('users')
             ->addPath($id)
             ->setReturnType('object')
@@ -295,11 +295,11 @@ class UserApi extends GeneralManagementApi
         $this->cleanData($dataToUpdate, $originUser);
         $this->populateUpdateData($dataToUpdate, $updateMailOrPhone, $updateCoreData, $connectionName, $client);
 
-        return (empty($dataToUpdate)) ? $user : $this->updateUser($user->getUserId(), $dataToUpdate);
+        return (empty($dataToUpdate)) ? $user : $this->updateUser($user, $dataToUpdate);
     }
 
     /**
-     * @param string $id   the id of the user to update
+     * @param User $user   the user you want to update
      * @param array  $data data to update
      * @param string $type user for user_metadata,
      *
@@ -308,7 +308,7 @@ class UserApi extends GeneralManagementApi
      * @throws Exception
      * @return bool true when the data could be updated, false otherwise
      */
-    public function updateMetadata(string $id, array $data, $type): bool
+    public function updateMetadata(User $user, array $data, $type): bool
     {
         if ($type !== self::TYPE_APP && $type !== self::TYPE_USER) {
             $this->logger->error('Given type is not allowed.');
@@ -316,7 +316,7 @@ class UserApi extends GeneralManagementApi
             return false;
         }
 
-        $user = $this->updateUser($id, [$type => $data]);
+        $user = $this->updateUser($user, [$type => $data]);
 
         return $user instanceof User;
     }
@@ -348,8 +348,8 @@ class UserApi extends GeneralManagementApi
 
         $this->addStringProperty($params, 'sort', $sort);
 
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('users')
             ->addPath($id)
             ->addPath('logs')
@@ -374,8 +374,8 @@ class UserApi extends GeneralManagementApi
      */
     public function getEnrollments(string $id)
     {
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('users')
             ->addPath($id)
             ->addPath('enrollments')
@@ -401,8 +401,8 @@ class UserApi extends GeneralManagementApi
      */
     public function deleteMultifactorProvider(string $id, string $provider = 'duo')
     {
-        $response = $this->apiClient
-            ->method('delete')
+        $response = $this->client
+            ->request('delete')
             ->addPath('users')
             ->addPath($id)
             ->addPath('multifactor')
@@ -431,8 +431,8 @@ class UserApi extends GeneralManagementApi
      */
     public function unlinkIdentity(string $id, string $idToUnlink, string $provider = 'ad')
     {
-        $response = $this->apiClient
-            ->method('delete')
+        $response = $this->client
+            ->request('delete')
             ->addPath('users')
             ->addPath($id)
             ->addPath('identities')
@@ -458,8 +458,8 @@ class UserApi extends GeneralManagementApi
      */
     public function createRecoveryCode(string $id)
     {
-        $response = $this->apiClient
-            ->method('post')
+        $response = $this->client
+            ->request('post')
             ->addPath('users')
             ->addPath($id)
             ->addPath('recovery-code-regeneration')
@@ -491,8 +491,8 @@ class UserApi extends GeneralManagementApi
     private function linkAccountByToken(string $id, string $linkWith)
     {
         // TODO: Authorization Header Bearer PRIMARY_ACCOUNT_JWT
-        $response = $this->apiClient
-            ->method('post')
+        $response = $this->client
+            ->request('post')
             ->addPath('users')
             ->addPath($id)
             ->addPath('identities')
@@ -533,8 +533,8 @@ class UserApi extends GeneralManagementApi
         $this->addStringProperty($body, 'connection_id', $connection);
         $this->addStringProperty($body, 'user_id', $idToLink);
 
-        $response = $this->apiClient
-            ->method('post')
+        $response = $this->client
+            ->request('post')
             ->addPath('users')
             ->addPath($id)
             ->addPath('identities')
@@ -546,12 +546,12 @@ class UserApi extends GeneralManagementApi
         return $this->mapResponse($response);
     }
 
-    protected function updateUser(string $id, array $data)
+    protected function updateUser(User $user, array $data)
     {
-        $response = $this->apiClient
-            ->method('patch')
+        $response = $this->client
+            ->request('patch')
             ->addPath('users')
-            ->addPath($id)
+            ->addPath($user->getUserId())
             ->withHeader(new ContentType('application/json'))
             ->withBody(\GuzzleHttp\json_encode($data))
             ->setReturnType('object')

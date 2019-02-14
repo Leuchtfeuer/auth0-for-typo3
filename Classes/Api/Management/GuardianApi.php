@@ -23,8 +23,8 @@ class GuardianApi extends GeneralManagementApi
      */
     public function getFactors()
     {
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('guardian')
             ->addPath('factor')
             ->setReturnType('object')
@@ -47,8 +47,8 @@ class GuardianApi extends GeneralManagementApi
      */
     public function getEnrollments(string $id)
     {
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('guardian')
             ->addPath('enrollments')
             ->addPath($id)
@@ -72,8 +72,8 @@ class GuardianApi extends GeneralManagementApi
      */
     public function deleteEnrollments(string $id)
     {
-        $response = $this->apiClient
-            ->method('delete')
+        $response = $this->client
+            ->request('delete')
             ->addPath('guardian')
             ->addPath('enrollments')
             ->addPath($id)
@@ -95,8 +95,8 @@ class GuardianApi extends GeneralManagementApi
      */
     public function getTemplates()
     {
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('guardian')
             ->addPath('factors')
             ->addPath('sms')
@@ -127,8 +127,8 @@ class GuardianApi extends GeneralManagementApi
             'verification_message' => $verificationMessage,
         ];
 
-        $response = $this->apiClient
-            ->method('put')
+        $response = $this->client
+            ->request('put')
             ->addPath('guardian')
             ->addPath('factors')
             ->addPath('sms')
@@ -153,8 +153,8 @@ class GuardianApi extends GeneralManagementApi
      */
     public function getSns()
     {
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('guardian')
             ->addPath('factors')
             ->addPath('push-notification')
@@ -178,8 +178,8 @@ class GuardianApi extends GeneralManagementApi
      */
     public function getTwilio()
     {
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('guardian')
             ->addPath('factors')
             ->addPath('sms')
@@ -215,8 +215,8 @@ class GuardianApi extends GeneralManagementApi
         $this->addStringProperty($body, 'auth_token', $authToken);
         $this->addStringProperty($body, 'sid', $sid);
 
-        $response = $this->apiClient
-            ->method('put')
+        $response = $this->client
+            ->request('put')
             ->addPath('guardian')
             ->addPath('factors')
             ->addPath('sms')
@@ -254,8 +254,8 @@ class GuardianApi extends GeneralManagementApi
 
         $this->addStringProperty($body, 'email', $email);
 
-        $response = $this->apiClient
-            ->method('post')
+        $response = $this->client
+            ->request('post')
             ->addPath('guardian')
             ->addPath('enrollments')
             ->addPath('ticket')
@@ -282,8 +282,8 @@ class GuardianApi extends GeneralManagementApi
      */
     public function updateFactor(string $name, bool $enabled = false)
     {
-        $response = $this->apiClient
-            ->method('put')
+        $response = $this->client
+            ->request('put')
             ->addPath('guardian')
             ->addPath('factors')
             ->addPath($name)

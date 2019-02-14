@@ -13,8 +13,7 @@ namespace Bitmotion\Auth0\Utility;
  *
  ***/
 
-use Auth0\SDK\Store\SessionStore;
-use Bitmotion\Auth0\Api\AuthenticationApi;
+use Bitmotion\Auth0\Api\Auth0;
 use Bitmotion\Auth0\Domain\Model\Auth0\User;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Domain\Repository\UserRepository;
@@ -22,6 +21,9 @@ use Bitmotion\Auth0\Scope;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
+use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Crypto\Random;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -59,9 +61,9 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     }
 
     /**
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
-     * @throws \TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
+     * @throws InvalidPasswordHashException
      */
     public function insertUser(string $tableName, User $user)
     {
@@ -80,9 +82,9 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     /**
      * Inserts a new frontend user
      *
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
-     * @throws \TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
+     * @throws InvalidPasswordHashException
      */
     public function insertFeUser(string $tableName, User $user)
     {
@@ -104,7 +106,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     /**
      * Inserts a new backend user
      *
-     * @throws \TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException
+     * @throws InvalidPasswordHashException
      */
     public function insertBeUser(string $tableName, User $user)
     {
@@ -121,7 +123,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     }
 
     /**
-     * @throws \TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException
+     * @throws InvalidPasswordHashException
      */
     protected function getPassword(): string
     {
@@ -145,45 +147,42 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         ];
     }
 
-    public function loginUser(AuthenticationApi $authenticationApi)
+    /**
+     * @deprecated Use $auth0->login() instead.
+     */
+    public function loginUser(Auth0 $auth0)
     {
         try {
-            $userInfo = $authenticationApi->getUser();
+            $userInfo = $auth0->getUser();
 
             if (!$userInfo) {
                 // Try to login user to Auth0
                 $this->logger->notice('Try to login user to Auth0.');
-                $authenticationApi->login();
+                $auth0->login();
             }
         } catch (\Exception $exception) {
-            if (isset($authenticationApi) && $authenticationApi instanceof AuthenticationApi) {
-                $authenticationApi->deleteAllPersistentData();
+            if (isset($auth0) && $auth0 instanceof Auth0) {
+                $auth0->deleteAllPersistentData();
             }
         }
     }
 
-    public function logoutUser(AuthenticationApi $authenticationApi)
+    /**
+     * @deprecated Use $auth0->logout() instead.
+     */
+    public function logoutUser(Auth0 $auth0)
     {
-        try {
-            $this->logger->notice('Log out user');
-            $authenticationApi->logout();
-        } catch (\Exception $exception) {
-            // Delete user from SessionStore
-            $store = new SessionStore();
-            if ($store->get('user')) {
-                $store->delete('user');
-            }
-        }
+        $this->logger->notice('Log out user');
+        $auth0->logout();
     }
 
-    public function updateUser(AuthenticationApi $authenticationApi, int $applicationUid)
+    public function updateUser(Auth0 $auth0, int $application)
     {
         try {
             $this->logger->notice('Try to update user.');
 
-            $tokenInfo = $authenticationApi->getUser();
-            $apiUtility = GeneralUtility::makeInstance(ApiUtility::class);
-            $apiUtility->setApplication($applicationUid);
+            $tokenInfo = $auth0->getUser();
+            $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $application);
             $userApi = $apiUtility->getUserApi(Scope::USER_READ);
             $user = $userApi->get($tokenInfo['sub']);
 
@@ -202,7 +201,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         }
     }
 
-    public function updateLastApplication(string $auth0UserId, int $application)
+    public function setLastUsedApplication(string $auth0UserId, int $application)
     {
         $userRepository = GeneralUtility::makeInstance(UserRepository::class, 'fe_users');
         $userRepository->updateUserByAuth0Id(['auth0_last_application' => $application], $auth0UserId);

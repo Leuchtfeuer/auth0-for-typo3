@@ -27,8 +27,8 @@ class BlacklistApi extends GeneralManagementApi
      */
     public function get(string $aud)
     {
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('blacklists')
             ->addPath('tokens')
             ->withParam('aud', $aud)
@@ -61,8 +61,8 @@ class BlacklistApi extends GeneralManagementApi
 
         $this->addStringProperty($body, 'aud', $aud);
 
-        $response = $this->apiClient
-            ->method('post')
+        $response = $this->client
+            ->request('post')
             ->addPath('blacklists')
             ->addPath('tokens')
             ->withHeader(new ContentType('application/json'))

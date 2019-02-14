@@ -22,8 +22,8 @@ class EmailTemplateApi extends GeneralManagementApi
      */
     public function get(string $name)
     {
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('email-templates')
             ->addPath($name)
             ->setReturnType('object')
@@ -77,8 +77,8 @@ class EmailTemplateApi extends GeneralManagementApi
         $this->addStringProperty($body, 'resultUrl', $resultUri);
         $this->addIntegerProperty($body, 'urlLifetimeInSeconds', $lifetime);
 
-        $response = $this->apiClient
-            ->method('patch')
+        $response = $this->client
+            ->request('patch')
             ->addPath('email-templates')
             ->addPath($name)
             ->withHeader(new ContentType('application/json'))
@@ -134,8 +134,8 @@ class EmailTemplateApi extends GeneralManagementApi
         $this->addStringProperty($body, 'resultUrl', $resultUri);
         $this->addIntegerProperty($body, 'urlLifetimeInSeconds', $lifetime);
 
-        $response = $this->apiClient
-            ->method('put')
+        $response = $this->client
+            ->request('put')
             ->addPath('email-templates')
             ->addPath($name)
             ->withHeader(new ContentType('application/json'))
@@ -191,8 +191,8 @@ class EmailTemplateApi extends GeneralManagementApi
         $this->addStringProperty($body, 'resultUrl', $resultUri);
         $this->addIntegerProperty($body, 'urlLifetimeInSeconds', $lifetime);
 
-        $response = $this->apiClient
-            ->method('post')
+        $response = $this->client
+            ->request('post')
             ->addPath('email-templates')
             ->withHeader(new ContentType('application/json'))
             ->withBody(\GuzzleHttp\json_encode($body))

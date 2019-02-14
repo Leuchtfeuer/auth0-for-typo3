@@ -21,8 +21,8 @@ class RuleConfigApi extends GeneralManagementApi
      */
     public function list()
     {
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('rules-configs')
             ->setReturnType('object')
             ->call();
@@ -45,8 +45,8 @@ class RuleConfigApi extends GeneralManagementApi
      */
     public function delete(string $key)
     {
-        $response = $this->apiClient
-            ->method('delete')
+        $response = $this->client
+            ->request('delete')
             ->addPath('rules-configs')
             ->addPath($key)
             ->setReturnType('object')
@@ -71,8 +71,8 @@ class RuleConfigApi extends GeneralManagementApi
      */
     public function create(string $key, string $value)
     {
-        $response = $this->apiClient
-            ->method('put')
+        $response = $this->client
+            ->request('put')
             ->addPath('rules-configs')
             ->addPath($key)
             ->withHeader(new ContentType('application/json'))

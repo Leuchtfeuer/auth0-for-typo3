@@ -3,10 +3,10 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 use Bitmotion\Auth0\Api\Management\ClientApi;
-use Bitmotion\Auth0\Domain\Model\Auth0\Client;
-use Bitmotion\Auth0\Domain\Model\Auth0\Client\EncryptionKey;
-use Bitmotion\Auth0\Domain\Model\Auth0\Client\JwtConfiguration;
-use Bitmotion\Auth0\Domain\Model\Auth0\Client\Mobile;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Client;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Client\EncryptionKey;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Client\JwtConfiguration;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Client\Mobile;
 use Bitmotion\Auth0\Scope;
 use Bitmotion\Auth0\Tests\Functional\Auth0TestCase;
 

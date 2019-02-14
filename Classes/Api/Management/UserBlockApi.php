@@ -4,8 +4,8 @@ namespace Bitmotion\Auth0\Api\Management;
 
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Domain\Model\Auth0\User;
-use Bitmotion\Auth0\Domain\Model\Auth0\UserBlock;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\UserBlock;
 use TYPO3\CMS\Extbase\Object\Exception;
 
 class UserBlockApi extends GeneralManagementApi
@@ -23,8 +23,8 @@ class UserBlockApi extends GeneralManagementApi
      */
     public function getBlocks(string $identifier)
     {
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('user-blocks')
             ->withParam('identifier', $identifier)
             ->setReturnType('object')
@@ -46,14 +46,14 @@ class UserBlockApi extends GeneralManagementApi
      */
     public function unblock(string $identifier)
     {
-        $response = $this->apiClient
-            ->method('delete')
+        $response = $this->client
+            ->request('delete')
             ->addPath('user-blocks')
             ->withParam('identifier', $identifier)
             ->setReturnType('object')
             ->call();
 
-        return ($response->getStatusCode() === 204);
+        return $response->getStatusCode() === 204;
     }
 
     /**
@@ -70,8 +70,8 @@ class UserBlockApi extends GeneralManagementApi
      */
     public function getUserBlocks(User $user)
     {
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('user-blocks')
             ->addPath($user->getUserId())
             ->setReturnType('object')
@@ -94,8 +94,8 @@ class UserBlockApi extends GeneralManagementApi
      */
     public function unblockUser(User $user)
     {
-        $response = $this->apiClient
-            ->method('delete')
+        $response = $this->client
+            ->request('delete')
             ->addPath('user-blocks')
             ->addPath($user->getUserId())
             ->setReturnType('object')

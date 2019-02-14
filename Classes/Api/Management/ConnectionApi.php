@@ -2,10 +2,10 @@
 declare(strict_types=1);
 namespace Bitmotion\Auth0\Api\Management;
 
-use Auth0\SDK\API\Helpers\ApiClient;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Domain\Model\Auth0\Connection;
+use Bitmotion\Auth0\Domain\Model\Auth0\Api\Client;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Connection;
 use Bitmotion\Auth0\Scope;
 use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
 use TYPO3\CMS\Extbase\Object\Exception;
@@ -15,9 +15,9 @@ class ConnectionApi extends GeneralManagementApi
 {
     protected $strategies = [];
 
-    public function __construct(ApiClient $apiClient)
+    public function __construct(Client $client)
     {
-        parent::__construct($apiClient);
+        parent::__construct($client);
 
         try {
             $reflection = new \ReflectionClass(Connection::class);
@@ -73,8 +73,8 @@ class ConnectionApi extends GeneralManagementApi
         $this->addStringProperty($params, 'fields', $fields);
         $this->addStringProperty($params, 'name', $name);
 
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('connections')
             ->withDictParams($params)
             ->setReturnType('object')
@@ -107,8 +107,8 @@ class ConnectionApi extends GeneralManagementApi
 
         $this->addStringProperty($params, 'fields', $fields);
 
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('connections', $id)
             ->withDictParams($params)
             ->setReturnType('object')
@@ -131,8 +131,8 @@ class ConnectionApi extends GeneralManagementApi
      */
     public function delete(string $id)
     {
-        $response = $this->apiClient
-            ->method('delete')
+        $response = $this->client
+            ->request('delete')
             ->addPath('connections', $id)
             ->setReturnType('object')
             ->call();
@@ -156,8 +156,8 @@ class ConnectionApi extends GeneralManagementApi
      */
     public function deleteUser(string $id, string $email)
     {
-        $response = $this->apiClient
-            ->method('delete')
+        $response = $this->client
+            ->request('delete')
             ->addPath('connections', $id)
             ->addPath('users')
             ->withParam('email', $email)
@@ -204,8 +204,8 @@ class ConnectionApi extends GeneralManagementApi
         $this->addArrayProperty($body, 'realms', $realms);
         $this->addArrayProperty($body, 'metadata', $metadata);
 
-        $response = $this->apiClient
-            ->method('post')
+        $response = $this->client
+            ->request('post')
             ->addPath('connections')
             ->withBody(\GuzzleHttp\json_encode($body))
             ->setReturnType('object')
@@ -245,8 +245,8 @@ class ConnectionApi extends GeneralManagementApi
         $this->addArrayProperty($body, 'realms', $realms);
         $this->addArrayProperty($body, 'metadata', $metadata);
 
-        $response = $this->apiClient
-            ->method('patch')
+        $response = $this->client
+            ->request('patch')
             ->addPath('connections', $id)
             ->withBody(\GuzzleHttp\json_encode($body))
             ->setReturnType('object')

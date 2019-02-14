@@ -3,10 +3,10 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Api\Management;
 
 use Auth0\SDK\API\Header\ContentType;
-use Auth0\SDK\API\Helpers\ApiClient;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Domain\Model\Auth0\Tenant;
+use Bitmotion\Auth0\Domain\Model\Auth0\Api\Client;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Tenant;
 use Bitmotion\Auth0\Extractor\PropertyTypeExtractor\TenantExtractor;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use TYPO3\CMS\Extbase\Object\Exception;
@@ -18,12 +18,12 @@ class TenantApi extends GeneralManagementApi
         'flags',
     ];
 
-    public function __construct(ApiClient $apiClient)
+    public function __construct(Client $client)
     {
         $this->extractor = new TenantExtractor();
         $this->defaultContext[ObjectNormalizer::DISABLE_TYPE_ENFORCEMENT] = true;
 
-        parent::__construct($apiClient);
+        parent::__construct($client);
     }
 
     /**
@@ -49,8 +49,8 @@ class TenantApi extends GeneralManagementApi
 
         $this->addStringProperty($params, 'fields', $fields);
 
-        $response = $this->apiClient
-            ->method('get')
+        $response = $this->client
+            ->request('get')
             ->addPath('tenants')
             ->addPath('settings')
             ->withDictParams($params)
@@ -76,8 +76,8 @@ class TenantApi extends GeneralManagementApi
     {
         $body = $this->normalize($tenant, 'array', self::EXCLUDED_UPDATE_PROPERTIES, true);
 
-        $response = $this->apiClient
-            ->method('patch')
+        $response = $this->client
+            ->request('patch')
             ->addPath('tenants')
             ->addPath('settings')
             ->withHeader(new ContentType('application/json'))

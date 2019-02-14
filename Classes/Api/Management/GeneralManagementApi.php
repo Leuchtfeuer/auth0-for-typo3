@@ -2,9 +2,9 @@
 declare(strict_types=1);
 namespace Bitmotion\Auth0\Api\Management;
 
-use Auth0\SDK\API\Helpers\ApiClient;
 use Auth0\SDK\Exception\ApiException;
-use Bitmotion\Auth0\Domain\Model\Auth0\ApiError;
+use Bitmotion\Auth0\Domain\Model\Auth0\Api\Client;
+use Bitmotion\Auth0\Domain\Model\Auth0\Api\Error;
 use GuzzleHttp\Psr7\Response;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -20,7 +20,7 @@ class GeneralManagementApi implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    protected $apiClient;
+    protected $client;
 
     protected $objectNormalizer;
 
@@ -32,9 +32,9 @@ class GeneralManagementApi implements LoggerAwareInterface
 
     protected $defaultContext = [];
 
-    public function __construct(ApiClient $apiClient)
+    public function __construct(Client $client)
     {
-        $this->apiClient = $apiClient;
+        $this->client = $client;
         $this->objectNormalizer = $this->getObjectNormalizer();
     }
 
@@ -61,7 +61,7 @@ class GeneralManagementApi implements LoggerAwareInterface
         $jsonResponse = $response->getBody()->getContents();
         $objectName = ($objectName !== '') ? $objectName : $this->getObjectName($response, $returnRaw);
 
-        if ($returnRaw === true && !$objectName !== ApiError::class) {
+        if ($returnRaw === true && !$objectName !== Error::class) {
             return $jsonResponse;
         }
 
@@ -73,7 +73,7 @@ class GeneralManagementApi implements LoggerAwareInterface
         $serializer = $this->getSerializer();
         $object = $serializer->deserialize($jsonResponse, $objectName, $this->serializeFormat);
 
-        if ($object instanceof ApiError) {
+        if ($object instanceof Error) {
             $this->getResponseObject($object);
         }
 
@@ -126,7 +126,7 @@ class GeneralManagementApi implements LoggerAwareInterface
         $statusCode = $response->getStatusCode();
 
         if ($statusCode !== 200 && $statusCode !== 201) {
-            return ApiError::class;
+            return Error::class;
         }
 
         if ($returnRaw === true) {
@@ -144,7 +144,7 @@ class GeneralManagementApi implements LoggerAwareInterface
         $className = get_called_class();
         $parts = explode('\\', $className);
         $modelName = rtrim(array_pop($parts), 'Api');
-        $modelClass = $parts[0] . '\\' . $parts[1] . '\\Domain\\Model\\Auth0\\' . $modelName;
+        $modelClass = $parts[0] . '\\' . $parts[1] . '\\Domain\\Model\\Auth0\\Management\\' . $modelName;
 
         if (class_exists($modelClass)) {
             return $modelClass;
@@ -156,7 +156,7 @@ class GeneralManagementApi implements LoggerAwareInterface
     /**
      * @throws ApiException
      */
-    private function getResponseObject(ApiError $error)
+    private function getResponseObject(Error $error)
     {
         $errorMessage = sprintf('%s (%s): %s', $error->getError(), $error->getErrorCode(), $error->getMessage());
         $this->logger->critical($errorMessage);

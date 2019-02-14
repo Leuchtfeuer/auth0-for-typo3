@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 use Bitmotion\Auth0\Api\Management\TenantApi;
-use Bitmotion\Auth0\Domain\Model\Auth0\Tenant;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Tenant;
 use Bitmotion\Auth0\Scope;
 use Bitmotion\Auth0\Tests\Functional\Auth0TestCase;
 

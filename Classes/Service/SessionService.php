@@ -3,7 +3,8 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Service;
 
 use Auth0\SDK\Store\SessionStore;
-use Bitmotion\Auth0\Api\ManagementApi;
+use Bitmotion\Auth0\Scope;
+use Bitmotion\Auth0\Utility\ApiUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -21,8 +22,8 @@ class SessionService implements SingletonInterface, LoggerAwareInterface
     public function createAuth0Session(FrontendUserAuthentication $feUserAuthentication, SessionStore $sessionStore, int $applicationUid): array
     {
         $this->logger->notice('Found active TYPO3 session but no active Auth0 session.');
-        $managementApi = GeneralUtility::makeInstance(ManagementApi::class, (int)$applicationUid);
-        $auth0User = $managementApi->getUserById($feUserAuthentication->user['auth0_user_id']);
+        $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, (int)$applicationUid);
+        $auth0User = $apiUtility->getUserApi(Scope::USER_READ)->get($feUserAuthentication->user['auth0_user_id']);
         $userInfo = [];
 
         if (isset($auth0User['blocked']) && $auth0User['blocked'] === true) {
