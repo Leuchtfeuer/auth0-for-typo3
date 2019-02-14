@@ -6,11 +6,18 @@ use Auth0\SDK\API\Header\ContentType;
 use Auth0\SDK\API\Header\Header;
 use Auth0\SDK\API\Helpers\InformationHeaders;
 use Auth0\SDK\API\Helpers\RequestBuilder;
+use Auth0\SDK\Exception\CoreException;
 use TYPO3\CMS\Core\Package\Exception;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 class Client
 {
+    const METHOD_GET = 'get';
+    const METHOD_POST = 'post';
+    const METHOD_PATCH = 'patch';
+    const METHOD_PUT = 'put';
+    const METHOD_DELETE = 'delete';
+
     /**
      * @var string
      */
@@ -114,10 +121,9 @@ class Client
      *
      * @param string $method - HTTP method to use (GET, POST, PATCH, etc).
      *
-     * @throws \Auth0\SDK\Exception\CoreException
-     * @return RequestBuilder
+     * @throws CoreException
      */
-    public function request(string $method)
+    public function request(string $method): RequestBuilder
     {
         $method = strtolower($method);
         $builder = new RequestBuilder([
@@ -129,7 +135,7 @@ class Client
         ]);
         $builder->withHeaders($this->headers);
 
-        if (in_array($method, [ 'patch', 'post', 'put' ])) {
+        if (in_array($method, [ self::METHOD_PATCH, self::METHOD_POST, self::METHOD_PUT ])) {
             $builder->withHeader(new ContentType('application/json'));
         }
 

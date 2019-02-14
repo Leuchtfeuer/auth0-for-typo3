@@ -39,7 +39,7 @@ class UserByEmailApi extends GeneralManagementApi
         $this->addStringProperty($params, 'fields', $fields);
 
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('users-by-email')
             ->withDictParams($params)
             ->setReturnType('object')

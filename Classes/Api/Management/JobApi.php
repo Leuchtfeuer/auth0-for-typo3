@@ -25,7 +25,7 @@ class JobApi extends GeneralManagementApi
     public function get(string $id)
     {
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('jobs')
             ->addPath($id)
             ->setReturnType('object')
@@ -49,7 +49,7 @@ class JobApi extends GeneralManagementApi
     public function getErrors(string $id)
     {
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('jobs')
             ->addPath($id)
             ->addPath('errors')
@@ -74,7 +74,7 @@ class JobApi extends GeneralManagementApi
     public function getResults(string $id)
     {
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('jobs')
             ->addPath($id)
             ->addPath('results')
@@ -111,7 +111,7 @@ class JobApi extends GeneralManagementApi
         $this->addIntegerProperty($body, 'limit', $limit);
 
         $response = $this->client
-            ->request('post')
+            ->request(Client::METHOD_POST)
             ->addPath('jobs')
             ->addPath('users-exports')
             ->withHeader(new ContentType('application/json'))
@@ -147,7 +147,7 @@ class JobApi extends GeneralManagementApi
         bool $sendCompletionEmail = false
     ) {
         $request = $this->client
-            ->request('post')
+            ->request(Client::METHOD_POST)
             ->addPath('jobs')
             ->addPath('users-imports')
             ->addFile('users', $file)
@@ -187,7 +187,7 @@ class JobApi extends GeneralManagementApi
         $this->addStringProperty($body, 'client_id', $client);
 
         $response = $this->client
-            ->request('post')
+            ->request(Client::METHOD_POST)
             ->addPath('jobs')
             ->addPath('verification-email')
             ->withHeader(new ContentType('application/json'))

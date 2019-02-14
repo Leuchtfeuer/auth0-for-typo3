@@ -54,7 +54,7 @@ class ResourceServerApi extends GeneralManagementApi
         ];
 
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('resource-servers')
             ->withDictParams($params)
             ->setReturnType('object')
@@ -80,7 +80,7 @@ class ResourceServerApi extends GeneralManagementApi
         $data = $this->normalize($resourceServer, 'array', self::EXCLUDED_CREATE_PROPERTIES, true);
 
         $response = $this->client
-            ->request('post')
+            ->request(Client::METHOD_POST)
             ->addPath('resource-servers')
             ->withHeader(new ContentType('application/json'))
             ->withBody(\GuzzleHttp\json_encode($data))
@@ -105,7 +105,7 @@ class ResourceServerApi extends GeneralManagementApi
     public function get(string $id)
     {
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('resource-servers')
             ->addPath($id)
             ->setReturnType('object')
@@ -127,7 +127,7 @@ class ResourceServerApi extends GeneralManagementApi
     public function delete(string $id)
     {
         $response = $this->client
-            ->request('delete')
+            ->request(Client::METHOD_DELETE)
             ->addPath('resource-servers')
             ->addPath($id)
             ->setReturnType('object')
@@ -159,7 +159,7 @@ class ResourceServerApi extends GeneralManagementApi
         $data = array_diff_assoc($newData, $originData);
 
         $response = $this->client
-            ->request('patch')
+            ->request(Client::METHOD_PATCH)
             ->addPath('resource-servers')
             ->addPath($resourceServer->getId())
             ->withHeader(new ContentType('application/json'))

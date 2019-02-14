@@ -50,7 +50,7 @@ class RuleApi extends GeneralManagementApi
         $this->addStringProperty($params, 'fields', $fields);
 
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('rules')
             ->withDictParams($params)
             ->setReturnType('object')
@@ -90,7 +90,7 @@ class RuleApi extends GeneralManagementApi
         $this->addIntegerProperty($body, 'order', $order);
 
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('rules')
             ->withHeader(new ContentType('application/json'))
             ->withBody(\GuzzleHttp\json_encode($body))
@@ -125,7 +125,7 @@ class RuleApi extends GeneralManagementApi
         $this->addStringProperty($body, 'fields', $fields);
 
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('rules')
             ->addPath($id)
             ->withHeader(new ContentType('application/json'))
@@ -151,7 +151,7 @@ class RuleApi extends GeneralManagementApi
     public function delete(string $id)
     {
         $response = $this->client
-            ->request('delete')
+            ->request(Client::METHOD_DELETE)
             ->addPath('rules')
             ->addPath($id)
             ->setReturnType('object')
@@ -189,7 +189,7 @@ class RuleApi extends GeneralManagementApi
         $this->addIntegerProperty($body, 'order', $order);
 
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('rules')
             ->addPath($id)
             ->withHeader(new ContentType('application/json'))

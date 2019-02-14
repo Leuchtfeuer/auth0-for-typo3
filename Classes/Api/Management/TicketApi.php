@@ -37,7 +37,7 @@ class TicketApi extends GeneralManagementApi
         $this->addIntegerProperty($body, 'ttl_sec', $ttl);
 
         $response = $this->client
-            ->request('post')
+            ->request(Client::METHOD_POST)
             ->addPath('tickets')
             ->addPath('email-verification')
             ->withHeader(new ContentType('application/json'))
@@ -168,7 +168,7 @@ class TicketApi extends GeneralManagementApi
         $this->addIntegerProperty($body, 'ttl_sec', $ttl);
 
         $response = $this->client
-            ->request('post')
+            ->request(Client::METHOD_POST)
             ->addPath('tickets')
             ->addPath('password-change')
             ->withHeader(new ContentType('application/json'))

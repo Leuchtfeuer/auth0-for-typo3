@@ -24,7 +24,7 @@ class UserBlockApi extends GeneralManagementApi
     public function getBlocks(string $identifier)
     {
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('user-blocks')
             ->withParam('identifier', $identifier)
             ->setReturnType('object')
@@ -47,7 +47,7 @@ class UserBlockApi extends GeneralManagementApi
     public function unblock(string $identifier)
     {
         $response = $this->client
-            ->request('delete')
+            ->request(Client::METHOD_DELETE)
             ->addPath('user-blocks')
             ->withParam('identifier', $identifier)
             ->setReturnType('object')
@@ -71,7 +71,7 @@ class UserBlockApi extends GeneralManagementApi
     public function getUserBlocks(User $user)
     {
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('user-blocks')
             ->addPath($user->getUserId())
             ->setReturnType('object')
@@ -95,7 +95,7 @@ class UserBlockApi extends GeneralManagementApi
     public function unblockUser(User $user)
     {
         $response = $this->client
-            ->request('delete')
+            ->request(Client::METHOD_DELETE)
             ->addPath('user-blocks')
             ->addPath($user->getUserId())
             ->setReturnType('object')

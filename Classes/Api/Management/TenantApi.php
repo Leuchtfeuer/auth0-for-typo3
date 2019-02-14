@@ -50,7 +50,7 @@ class TenantApi extends GeneralManagementApi
         $this->addStringProperty($params, 'fields', $fields);
 
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('tenants')
             ->addPath('settings')
             ->withDictParams($params)
@@ -77,7 +77,7 @@ class TenantApi extends GeneralManagementApi
         $body = $this->normalize($tenant, 'array', self::EXCLUDED_UPDATE_PROPERTIES, true);
 
         $response = $this->client
-            ->request('patch')
+            ->request(Client::METHOD_PATCH)
             ->addPath('tenants')
             ->addPath('settings')
             ->withHeader(new ContentType('application/json'))

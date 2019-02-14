@@ -32,7 +32,7 @@ class StatApi extends GeneralManagementApi
     public function getActiveUsersCount(): int
     {
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('stats')
             ->addPath('active-users')
             ->setReturnType('object')
@@ -67,7 +67,7 @@ class StatApi extends GeneralManagementApi
         }
 
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('stats')
             ->addPath('daily')
             ->withDictParams($params)

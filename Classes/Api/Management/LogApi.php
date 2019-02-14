@@ -63,7 +63,7 @@ class LogApi extends GeneralManagementApi
         $this->addStringProperty($params, 'fields', $fields);
 
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('logs')
             ->withDictParams($params)
             ->setReturnType('object')
@@ -90,7 +90,7 @@ class LogApi extends GeneralManagementApi
     public function searchByCheckpoint(string $from, int $take = 50)
     {
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('logs')
             ->withParam('from', $from)
             ->withParam('take', $take)
@@ -116,7 +116,7 @@ class LogApi extends GeneralManagementApi
     public function get(string $id)
     {
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('logs')
             ->addPath($id)
             ->setReturnType('object')

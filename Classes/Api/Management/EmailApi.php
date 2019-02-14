@@ -34,7 +34,7 @@ class EmailApi extends GeneralManagementApi
         $this->addStringProperty($params, 'fields', $fields);
 
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('emails')
             ->addPath('provider')
             ->withDictParams($params)
@@ -57,7 +57,7 @@ class EmailApi extends GeneralManagementApi
     public function deleteProvider()
     {
         $response = $this->client
-            ->request('delete')
+            ->request(Client::METHOD_DELETE)
             ->addPath('emails')
             ->addPath('provider')
             ->setReturnType('object')
@@ -103,7 +103,7 @@ class EmailApi extends GeneralManagementApi
         $this->addArrayProperty($body, 'settings', $settings);
 
         $response = $this->client
-            ->request('patch')
+            ->request(Client::METHOD_PATCH)
             ->addPath('emails')
             ->addPath('provider')
             ->withHeader(new ContentType('application/json'))
@@ -151,7 +151,7 @@ class EmailApi extends GeneralManagementApi
         $this->addArrayProperty($body, 'settings', $settings);
 
         $response = $this->client
-            ->request('post')
+            ->request(Client::METHOD_POST)
             ->addPath('emails')
             ->addPath('provider')
             ->withHeader(new ContentType('application/json'))

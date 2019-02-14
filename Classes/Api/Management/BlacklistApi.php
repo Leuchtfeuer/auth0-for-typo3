@@ -5,6 +5,7 @@ namespace Bitmotion\Auth0\Api\Management;
 use Auth0\SDK\API\Header\ContentType;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
+use Bitmotion\Auth0\Domain\Model\Auth0\Api\Client;
 use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 
@@ -28,7 +29,7 @@ class BlacklistApi extends GeneralManagementApi
     public function get(string $aud)
     {
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('blacklists')
             ->addPath('tokens')
             ->withParam('aud', $aud)
@@ -62,7 +63,7 @@ class BlacklistApi extends GeneralManagementApi
         $this->addStringProperty($body, 'aud', $aud);
 
         $response = $this->client
-            ->request('post')
+            ->request(Client::METHOD_POST)
             ->addPath('blacklists')
             ->addPath('tokens')
             ->withHeader(new ContentType('application/json'))

@@ -23,7 +23,7 @@ class CustomDomainApi extends GeneralManagementApi
     public function list()
     {
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('custom-domains')
             ->setReturnType('object')
             ->call();
@@ -55,7 +55,7 @@ class CustomDomainApi extends GeneralManagementApi
         ];
 
         $response = $this->client
-            ->request('post')
+            ->request(Client::METHOD_POST)
             ->addPath('custom-domains')
             ->withHeader(new ContentType('application/json'))
             ->withBody(\GuzzleHttp\json_encode($body))
@@ -80,7 +80,7 @@ class CustomDomainApi extends GeneralManagementApi
     public function get(string $id)
     {
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('custom-domains')
             ->addPath($id)
             ->setReturnType('object')
@@ -104,7 +104,7 @@ class CustomDomainApi extends GeneralManagementApi
     public function delete(string $id)
     {
         $response = $this->client
-            ->request('delete')
+            ->request(Client::METHOD_DELETE)
             ->addPath('custom-domains')
             ->addPath($id)
             ->setReturnType('object')
@@ -132,7 +132,7 @@ class CustomDomainApi extends GeneralManagementApi
     public function verify(string $id)
     {
         $response = $this->client
-            ->request('delete')
+            ->request(Client::METHOD_DELETE)
             ->addPath('custom-domains')
             ->addPath($id)
             ->addPath('verify')

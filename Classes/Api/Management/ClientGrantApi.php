@@ -41,7 +41,7 @@ class ClientGrantApi extends GeneralManagementApi
         $this->addStringProperty($params, 'audience', $audience);
 
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('client-grants')
             ->withDictParams($params)
             ->setReturnType('object')
@@ -73,7 +73,7 @@ class ClientGrantApi extends GeneralManagementApi
         ];
 
         $response = $this->client
-            ->request('post')
+            ->request(Client::METHOD_POST)
             ->addPath('client-grants')
             ->withHeader(new ContentType('application/json'))
             ->withBody(\GuzzleHttp\json_encode($body))
@@ -98,7 +98,7 @@ class ClientGrantApi extends GeneralManagementApi
     public function delete(string $id)
     {
         $response = $this->client
-            ->request('delete')
+            ->request(Client::METHOD_DELETE)
             ->addPath('client-grants')
             ->addPath($id)
             ->setReturnType('object')
@@ -123,7 +123,7 @@ class ClientGrantApi extends GeneralManagementApi
     public function update(string $id, array $scope)
     {
         $response = $this->client
-            ->request('patch')
+            ->request(Client::METHOD_PATCH)
             ->addPath('client-grants')
             ->addPath($id)
             ->withHeader(new ContentType('application/json'))

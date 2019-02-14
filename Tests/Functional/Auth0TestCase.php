@@ -142,7 +142,7 @@ abstract class Auth0TestCase extends FunctionalTestCase
     private static function createUser(array $data)
     {
         return self::$client
-            ->request('post')
+            ->request(Client::METHOD_POST)
             ->addPath('users')
             ->withHeader(new ContentType('application/json'))
             ->withBody(\GuzzleHttp\json_encode($data))
@@ -153,7 +153,7 @@ abstract class Auth0TestCase extends FunctionalTestCase
     public static function tearDownAfterClass()
     {
         self::$client
-            ->request('delete')
+            ->request(Client::METHOD_DELETE)
             ->addPath('users')
             ->addPath(self::$user->getUserId())
             ->setReturnType('object')

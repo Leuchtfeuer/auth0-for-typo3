@@ -40,7 +40,7 @@ class DeviceCredentialApi extends GeneralManagementApi
         $this->addStringProperty($params, 'fields', $fields);
 
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('device-credentials')
             ->withDictParams($params)
             ->setReturnType('object')
@@ -76,7 +76,7 @@ class DeviceCredentialApi extends GeneralManagementApi
         $this->addStringProperty($body, 'client_id', $client);
 
         $response = $this->client
-            ->request('post')
+            ->request(Client::METHOD_POST)
             ->addPath('device-credentials')
             ->withHeader(new ContentType('application/json'))
             ->withBody(\GuzzleHttp\json_encode($body))
@@ -101,7 +101,7 @@ class DeviceCredentialApi extends GeneralManagementApi
     public function delete(string $id)
     {
         $response = $this->client
-            ->request('delete')
+            ->request(Client::METHOD_DELETE)
             ->addPath('device-credentials')
             ->addPath($id)
             ->setReturnType('object')

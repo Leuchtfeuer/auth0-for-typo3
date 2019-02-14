@@ -79,7 +79,7 @@ class ClientApi extends GeneralManagementApi
         $this->addBooleanProperty($params, 'is_first_party', $firstParty);
 
         $response = $this->client
-            ->request('get')
+            ->request(\Bitmotion\Auth0\Domain\Model\Auth0\Api\Client::METHOD_GET)
             ->addPath('clients')
             ->withDictParams($params)
             ->setReturnType('object')
@@ -107,7 +107,7 @@ class ClientApi extends GeneralManagementApi
         $data = $this->normalize($client, 'array', self::EXCLUDED_CREATE_PROPERTIES, true);
 
         $response = $this->client
-            ->request('post')
+            ->request(\Bitmotion\Auth0\Domain\Model\Auth0\Api\Client::METHOD_POST)
             ->addPath('clients')
             ->withHeader(new ContentType('application/json'))
             ->withBody(\GuzzleHttp\json_encode($data))
@@ -144,7 +144,7 @@ class ClientApi extends GeneralManagementApi
         $this->addStringProperty($params, 'fields', $fields);
 
         $response = $this->client
-            ->request('get')
+            ->request(\Bitmotion\Auth0\Domain\Model\Auth0\Api\Client::METHOD_GET)
             ->addPath('clients')
             ->addPath($id)
             ->withDictParams($params)
@@ -167,7 +167,7 @@ class ClientApi extends GeneralManagementApi
     public function delete(string $id): bool
     {
         $response = $this->client
-            ->request('delete')
+            ->request(\Bitmotion\Auth0\Domain\Model\Auth0\Api\Client::METHOD_DELETE)
             ->addPath('clients')
             ->addPath($id)
             ->setReturnType('object')
@@ -195,7 +195,7 @@ class ClientApi extends GeneralManagementApi
         $this->cleanProperties($data);
 
         $response = $this->client
-            ->request('patch')
+            ->request(\Bitmotion\Auth0\Domain\Model\Auth0\Api\Client::METHOD_PATCH)
             ->addPath('clients')
             ->addPath($client->getClientId())
             ->withHeader(new ContentType('application/json'))
@@ -221,7 +221,7 @@ class ClientApi extends GeneralManagementApi
     public function rotateSecret(string $id)
     {
         $response = $this->client
-            ->request('post')
+            ->request(\Bitmotion\Auth0\Domain\Model\Auth0\Api\Client::METHOD_POST)
             ->addPath('clients')
             ->addPath($id)
             ->addPath('rotate-secret')

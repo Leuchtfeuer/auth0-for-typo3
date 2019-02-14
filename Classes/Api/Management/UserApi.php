@@ -113,7 +113,7 @@ class UserApi extends GeneralManagementApi
         $this->addStringProperty($params, 'fields', $fields);
 
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('users')
             ->withDictParams($params)
             ->setReturnType('object')
@@ -149,7 +149,7 @@ class UserApi extends GeneralManagementApi
         $this->addBooleanProperty($data, 'verify_email', $verifyEmail);
 
         $response = $this->client
-            ->request('post')
+            ->request(Client::METHOD_POST)
             ->addPath('users')
             ->withHeader(new ContentType('application/json'))
             ->withBody(\GuzzleHttp\json_encode($data))
@@ -183,7 +183,7 @@ class UserApi extends GeneralManagementApi
         $this->addStringProperty($params, 'fields', $fields);
 
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('users')
             ->addPath($id)
             ->withDictParams($params)
@@ -247,7 +247,7 @@ class UserApi extends GeneralManagementApi
     public function delete(string $id)
     {
         $response = $this->client
-            ->request('delete')
+            ->request(Client::METHOD_DELETE)
             ->addPath('users')
             ->addPath($id)
             ->setReturnType('object')
@@ -349,7 +349,7 @@ class UserApi extends GeneralManagementApi
         $this->addStringProperty($params, 'sort', $sort);
 
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('users')
             ->addPath($id)
             ->addPath('logs')
@@ -375,7 +375,7 @@ class UserApi extends GeneralManagementApi
     public function getEnrollments(string $id)
     {
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('users')
             ->addPath($id)
             ->addPath('enrollments')
@@ -402,7 +402,7 @@ class UserApi extends GeneralManagementApi
     public function deleteMultifactorProvider(string $id, string $provider = 'duo')
     {
         $response = $this->client
-            ->request('delete')
+            ->request(Client::METHOD_DELETE)
             ->addPath('users')
             ->addPath($id)
             ->addPath('multifactor')
@@ -432,7 +432,7 @@ class UserApi extends GeneralManagementApi
     public function unlinkIdentity(string $id, string $idToUnlink, string $provider = 'ad')
     {
         $response = $this->client
-            ->request('delete')
+            ->request(Client::METHOD_DELETE)
             ->addPath('users')
             ->addPath($id)
             ->addPath('identities')
@@ -459,7 +459,7 @@ class UserApi extends GeneralManagementApi
     public function createRecoveryCode(string $id)
     {
         $response = $this->client
-            ->request('post')
+            ->request(Client::METHOD_POST)
             ->addPath('users')
             ->addPath($id)
             ->addPath('recovery-code-regeneration')
@@ -492,7 +492,7 @@ class UserApi extends GeneralManagementApi
     {
         // TODO: Authorization Header Bearer PRIMARY_ACCOUNT_JWT
         $response = $this->client
-            ->request('post')
+            ->request(Client::METHOD_POST)
             ->addPath('users')
             ->addPath($id)
             ->addPath('identities')
@@ -534,7 +534,7 @@ class UserApi extends GeneralManagementApi
         $this->addStringProperty($body, 'user_id', $idToLink);
 
         $response = $this->client
-            ->request('post')
+            ->request(Client::METHOD_POST)
             ->addPath('users')
             ->addPath($id)
             ->addPath('identities')
@@ -549,7 +549,7 @@ class UserApi extends GeneralManagementApi
     protected function updateUser(User $user, array $data)
     {
         $response = $this->client
-            ->request('patch')
+            ->request(Client::METHOD_PATCH)
             ->addPath('users')
             ->addPath($user->getUserId())
             ->withHeader(new ContentType('application/json'))

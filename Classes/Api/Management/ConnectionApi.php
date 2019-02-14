@@ -74,7 +74,7 @@ class ConnectionApi extends GeneralManagementApi
         $this->addStringProperty($params, 'name', $name);
 
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('connections')
             ->withDictParams($params)
             ->setReturnType('object')
@@ -108,7 +108,7 @@ class ConnectionApi extends GeneralManagementApi
         $this->addStringProperty($params, 'fields', $fields);
 
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('connections', $id)
             ->withDictParams($params)
             ->setReturnType('object')
@@ -132,7 +132,7 @@ class ConnectionApi extends GeneralManagementApi
     public function delete(string $id)
     {
         $response = $this->client
-            ->request('delete')
+            ->request(Client::METHOD_DELETE)
             ->addPath('connections', $id)
             ->setReturnType('object')
             ->call();
@@ -157,7 +157,7 @@ class ConnectionApi extends GeneralManagementApi
     public function deleteUser(string $id, string $email)
     {
         $response = $this->client
-            ->request('delete')
+            ->request(Client::METHOD_DELETE)
             ->addPath('connections', $id)
             ->addPath('users')
             ->withParam('email', $email)
@@ -205,7 +205,7 @@ class ConnectionApi extends GeneralManagementApi
         $this->addArrayProperty($body, 'metadata', $metadata);
 
         $response = $this->client
-            ->request('post')
+            ->request(Client::METHOD_POST)
             ->addPath('connections')
             ->withBody(\GuzzleHttp\json_encode($body))
             ->setReturnType('object')
@@ -246,7 +246,7 @@ class ConnectionApi extends GeneralManagementApi
         $this->addArrayProperty($body, 'metadata', $metadata);
 
         $response = $this->client
-            ->request('patch')
+            ->request(Client::METHOD_PATCH)
             ->addPath('connections', $id)
             ->withBody(\GuzzleHttp\json_encode($body))
             ->setReturnType('object')

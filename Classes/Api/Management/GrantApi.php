@@ -49,7 +49,7 @@ class GrantApi extends GeneralManagementApi
         $this->addArrayProperty($params, 'scope', $scopes);
 
         $response = $this->client
-            ->request('get')
+            ->request(Client::METHOD_GET)
             ->addPath('grants')
             ->withDictParams($params)
             ->setReturnType('object')
@@ -74,7 +74,7 @@ class GrantApi extends GeneralManagementApi
     public function delete(string $id, string $user)
     {
         $response = $this->client
-            ->request('delete')
+            ->request(Client::METHOD_DELETE)
             ->addPath('grants')
             ->addPath($id)
             ->withParam('user_id', $user)
