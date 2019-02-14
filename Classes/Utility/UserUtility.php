@@ -14,7 +14,7 @@ namespace Bitmotion\Auth0\Utility;
  ***/
 
 use Bitmotion\Auth0\Api\Auth0;
-use Bitmotion\Auth0\Domain\Model\Auth0\User;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Domain\Repository\UserRepository;
 use Bitmotion\Auth0\Scope;

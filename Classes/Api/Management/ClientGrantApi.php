@@ -5,7 +5,8 @@ namespace Bitmotion\Auth0\Api\Management;
 use Auth0\SDK\API\Header\ContentType;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Domain\Model\Auth0\ClientGrant;
+use Bitmotion\Auth0\Domain\Model\Auth0\Api\Client;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\ClientGrant;
 use TYPO3\CMS\Core\Exception;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 

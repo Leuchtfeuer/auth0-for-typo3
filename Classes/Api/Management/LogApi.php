@@ -5,7 +5,7 @@ namespace Bitmotion\Auth0\Api\Management;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Domain\Model\Auth0\Api\Client;
-use Bitmotion\Auth0\Domain\Model\Auth0\Log;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Log;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use TYPO3\CMS\Extbase\Object\Exception;

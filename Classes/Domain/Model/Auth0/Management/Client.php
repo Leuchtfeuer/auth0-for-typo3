@@ -545,7 +545,7 @@ class Client
     }
 
     /**
-     * @return array
+     * @return Addon
      */
     public function getAddons()
     {

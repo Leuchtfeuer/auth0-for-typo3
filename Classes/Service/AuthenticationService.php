@@ -16,7 +16,7 @@ namespace Bitmotion\Auth0\Service;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\Auth0;
-use Bitmotion\Auth0\Domain\Model\Auth0\User;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Scope;

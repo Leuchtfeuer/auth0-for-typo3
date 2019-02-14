@@ -6,7 +6,6 @@ use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Domain\Model\Auth0\Api\Client;
 use Bitmotion\Auth0\Domain\Model\Auth0\Management\Connection;
-use Bitmotion\Auth0\Scope;
 use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
 use TYPO3\CMS\Extbase\Object\Exception;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;

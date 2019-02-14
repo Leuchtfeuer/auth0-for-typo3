@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace Bitmotion\Auth0\Extractor\PropertyTypeExtractor;
 
-use Bitmotion\Auth0\Domain\Model\Auth0\ResourceServer\Scope;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\ResourceServer\Scope;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 use Symfony\Component\PropertyInfo\Type;

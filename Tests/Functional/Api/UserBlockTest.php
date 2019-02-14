@@ -49,7 +49,7 @@ class UserBlockTest extends Auth0TestCase
         $this->assertTrue($this->getUser()->isBlocked());
         $success = $userBlockApi->unblockUser($this->getUser());
         $this->assertTrue($success);
-        $user = $this->userApi->get($this->getUser()->getUserId());
+//        $user = $this->userApi->get($this->getUser()->getUserId());
         // TODO: Users blocked by Admin or API call (setBlocked) can not be unblocked this way
         // $this->assertFalse($user->isBlocked());
     }

@@ -5,7 +5,7 @@ namespace Bitmotion\Auth0\Api\Management;
 use Auth0\SDK\API\Header\ContentType;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Domain\Model\Auth0\Ticket;
+use Bitmotion\Auth0\Domain\Model\Auth0\Api\Client;
 use Symfony\Component\VarExporter\Exception\ClassNotFoundException;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 

@@ -57,12 +57,12 @@ class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
 
     public function geAuth0Metadata(): array
     {
-        return json_decode($this->auth0Metadata);
+        return \GuzzleHttp\json_decode($this->auth0Metadata);
     }
 
     public function setAuth0Metadata(array $auth0Metadata)
     {
-        $this->auth0Metadata = json_encode($auth0Metadata);
+        $this->auth0Metadata = \GuzzleHttp\json_encode($auth0Metadata);
     }
 
     public function getMetadata(): array

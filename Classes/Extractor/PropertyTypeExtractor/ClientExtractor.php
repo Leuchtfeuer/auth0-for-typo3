@@ -2,10 +2,10 @@
 declare(strict_types=1);
 namespace Bitmotion\Auth0\Extractor\PropertyTypeExtractor;
 
-use Bitmotion\Auth0\Domain\Model\Auth0\Client\Addon;
-use Bitmotion\Auth0\Domain\Model\Auth0\Client\EncryptionKey;
-use Bitmotion\Auth0\Domain\Model\Auth0\Client\JwtConfiguration;
-use Bitmotion\Auth0\Domain\Model\Auth0\Client\Mobile;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Client\Addon;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Client\EncryptionKey;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Client\JwtConfiguration;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Client\Mobile;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 use Symfony\Component\PropertyInfo\Type;

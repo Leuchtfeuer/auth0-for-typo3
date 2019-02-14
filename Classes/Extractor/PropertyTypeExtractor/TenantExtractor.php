@@ -2,10 +2,10 @@
 declare(strict_types=1);
 namespace Bitmotion\Auth0\Extractor\PropertyTypeExtractor;
 
-use Bitmotion\Auth0\Domain\Model\Auth0\Tenant\ErrorPage;
-use Bitmotion\Auth0\Domain\Model\Auth0\Tenant\Flag;
-use Bitmotion\Auth0\Domain\Model\Auth0\Tenant\MfaPage;
-use Bitmotion\Auth0\Domain\Model\Auth0\Tenant\PasswordPage;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Tenant\ErrorPage;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Tenant\Flag;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Tenant\MfaPage;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Tenant\PasswordPage;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 use Symfony\Component\PropertyInfo\Type;
