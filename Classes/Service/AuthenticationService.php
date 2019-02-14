@@ -24,12 +24,14 @@ use Bitmotion\Auth0\Utility\ApiUtility;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
 use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;
+use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Service\EnvironmentService;
 
 class AuthenticationService extends \TYPO3\CMS\Core\Authentication\AuthenticationService
 {
     const AUTH_LOGIN_PROVIDER = '1526966635';
+
     /**
      * @var \stdClass
      */
@@ -100,12 +102,6 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
 
         $this->initApplication();
 
-        if ($this->application === 0) {
-            return;
-        }
-
-        $this->initSessionStore();
-
         // Set default values
         $this->setDefaults($authInfo, $mode, $loginData, $pObj);
 
@@ -147,7 +143,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         $this->pObj = $pObj;
     }
 
-    protected function initSessionStore()
+    protected function initSessionStore(): bool
     {
         $sessionStore = new SessionStore();
         $tokenInfo = $sessionStore->get('user');
@@ -156,8 +152,11 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
             $this->logger->debug('Try to login user via Auth0 session');
             try {
                 $this->tokenInfo = $tokenInfo;
+                $this->setApplicationByUser($tokenInfo['sub']);
                 $this->getAuth0User();
                 $this->loginViaSession = true;
+
+                return true;
             } catch (\Exception $exception) {
                 $this->logger->debug('Could not login user via Auth0 session');
                 $this->tokenInfo = [];
@@ -165,6 +164,22 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
                 $sessionStore->delete('user');
             }
         }
+
+        return false;
+    }
+
+    protected function setApplicationByUser(string $auth0UserId)
+    {
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableName);
+        $application = $queryBuilder
+            ->select('auth0_last_application')
+            ->from($this->tableName)
+            ->where($queryBuilder->expr()->eq('auth0_user_id', $queryBuilder->createNamedParameter($auth0UserId)))
+            ->execute()
+            ->fetchColumn();
+
+        $this->logger->debug(sprintf('Found application (ID: %s) for active Auth0 session.', $application));
+        $this->application = (int)$application;
     }
 
     /**
@@ -177,11 +192,9 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         // Handle login for frontend or backend
         if ($this->mode === 'getUserFE' && !empty($loginData)) {
             $this->logger->notice('Handle Auth0 login for frontend users');
-            $this->tableName = 'fe_users';
             $this->insertOrUpdateUser();
         } elseif ($this->mode === 'getUserBE' && !empty($loginData)) {
             $this->logger->notice('Handle Auth0 login for backend users');
-            $this->tableName = 'be_users';
             $this->insertOrUpdateUser();
         } else {
             $this->logger->notice('Login data is empty. Could not login user.');
@@ -194,9 +207,10 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     protected function getAuth0User()
     {
         $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $this->application);
-        $userUtility = $apiUtility->getUserApi(Scope::USER_READ);
+        $userApi = $apiUtility->getUserApi(Scope::USER_READ);
+
         try {
-            $this->auth0User = $userUtility->get($this->tokenInfo['sub']);
+            $this->auth0User = $userApi->get($this->tokenInfo['sub']);
         } catch (ApiException $apiException) {
             $this->logger->error('No Auth0 user found.');
 
@@ -272,24 +286,22 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      */
     protected function initApplication()
     {
-        $applicationUid = 0;
-
         if ($this->environmentService->isEnvironmentInFrontendMode()) {
             $this->logger->notice('Handle frontend login.');
-            $applicationUid = (int)GeneralUtility::_GP('application');
+            $this->application = (int)GeneralUtility::_GP('application');
+            $this->tableName = 'fe_users';
         } elseif ($this->environmentService->isEnvironmentInBackendMode()) {
             $this->logger->notice('Handle backend login.');
             $emConfiguration = new EmAuth0Configuration();
-            $applicationUid = $emConfiguration->getBackendConnection();
+            $this->application = $emConfiguration->getBackendConnection();
+            $this->tableName = 'be_users';
         } else {
             $this->logger->error('Environment is neither in frontend nor in backend mode');
         }
 
-        if ($applicationUid === 0) {
+        if ($this->application === 0 && $this->initSessionStore() === false) {
             $this->logger->error('No Auth0 application UID given.');
         }
-
-        $this->application = $applicationUid;
     }
 
     /**
