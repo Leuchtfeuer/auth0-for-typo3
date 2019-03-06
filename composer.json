@@ -3,7 +3,7 @@
   "description": "Auth0 is the solution you need for web, mobile, IoT, and internal applications. Loved by developers and trusted by enterprises.",
   "keywords": ["TYPO3", "Auth0", "SSO", "Login", "User"],
   "type": "typo3-cms-extension",
-  "license": "GPL-3.0-or-later",
+  "license": "GPL-2.0-or-later",
   "homepage": "https://www.bitmotion.de",
   "authors": [
     {
