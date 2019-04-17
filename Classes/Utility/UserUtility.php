@@ -133,17 +133,16 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         return $saltFactory->getHashedPassword($password);
     }
 
-    public function convertAuth0UserToUserInfo(array $auth0User): array
+    public function convertAuth0UserToUserInfo(User $auth0User): array
     {
         return [
-            'sub' => $auth0User['user_id'],
-            'given_name' => $auth0User['given_name'],
-            'family_name' => $auth0User['family_name'],
-            'nickname' => $auth0User['nickname'],
-            'name' => $auth0User['name'],
-            'picture' => $auth0User['picture'],
-            'locale' => $auth0User['locale'],
-            'updated_at' => $auth0User['updated_at'],
+            'sub' => $auth0User->getUserId(),
+            'given_name' => $auth0User->getGivenName(),
+            'family_name' => $auth0User->getFamilyName(),
+            'nickname' => $auth0User->getNickname(),
+            'name' => $auth0User->getName(),
+            'picture' => $auth0User->getPicture(),
+            'updated_at' => $auth0User->getUpdatedAt(),
         ];
     }
 

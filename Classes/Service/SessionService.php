@@ -26,7 +26,7 @@ class SessionService implements SingletonInterface, LoggerAwareInterface
         $auth0User = $apiUtility->getUserApi(Scope::USER_READ)->get($feUserAuthentication->user['auth0_user_id']);
         $userInfo = [];
 
-        if (isset($auth0User['blocked']) && $auth0User['blocked'] === true) {
+        if ($auth0User->isBlocked()) {
             $this->logger->notice('Logoff user as it is blocked in Auth0.');
         } else {
             $this->logger->debug('Map raw auth0 user to token info array.');
