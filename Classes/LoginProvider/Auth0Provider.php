@@ -69,7 +69,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         $store = new SessionStore();
         $this->userInfo = $store->get('user');
 
-        if (($this->userInfo === null && GeneralUtility::_GP('login') == 1) || GeneralUtility::_GP('logout') == 1) {
+        if (($this->userInfo === null && (int)GeneralUtility::_GP('login') === 1) || (int)GeneralUtility::_GP('logout') === 1) {
             $this->handleRequest();
         }
 
