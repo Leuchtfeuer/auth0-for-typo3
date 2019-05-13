@@ -89,6 +89,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
             $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, (int)$configuration->getBackendConnection());
             $this->auth0 = $apiUtility->getAuth0(GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
         } catch (\Exception $exception) {
+            $this->logger->critical($exception->getMessage());
             return false;
         }
 
@@ -103,6 +104,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
                 $this->logger->notice('Try to get user via Auth0 API');
                 $this->userInfo = $this->auth0->getUser();
             } catch (\Exception $exception) {
+                $this->logger->critical($exception->getMessage());
                 $this->auth0->deleteAllPersistentData();
             }
         }
@@ -124,6 +126,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         try {
             ConfigurationUtility::getSetting('propertyMapping');
         } catch (\Exception $exception) {
+            $this->logger->notice($exception->getMessage());
             return false;
         }
 
