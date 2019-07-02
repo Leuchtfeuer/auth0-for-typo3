@@ -340,6 +340,21 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
                 return 0;
             }
 
+            // Skip when there is an Auth0 session but the corresponding TYPO3 user hast no user group assigned.
+            if (empty($user['usergroup']) && $this->loginViaSession === true) {
+                $this->logger->notice('Could not login user via session as it has no group assigned.');
+
+                if (!$this->auth0 instanceof Auth0) {
+                    $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $this->application);
+                    $callback = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/typo3/?loginProvider=' . self::AUTH_LOGIN_PROVIDER . '&login=1';
+                    $this->auth0 = $apiUtility->getAuth0($callback);
+                }
+
+                $this->auth0->logout();
+
+                return 0;
+            }
+
             // Success
             $this->logger->notice(sprintf('Auth0 User %s (UID: %s) successfully logged in.', $user['auth0_user_id'], $user['uid']));
 
