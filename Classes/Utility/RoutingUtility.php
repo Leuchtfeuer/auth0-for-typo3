@@ -28,48 +28,30 @@ class RoutingUtility implements LoggerAwareInterface
         $this->targetPage = (int)$GLOBALS['TSFE']->id;
     }
 
-    public function getCallbackUri(array $callbackSettings, int $applicationUid): string
+    public function setCallback(array $callbackSettings)
     {
-        $pageType = $callbackSettings['targetPageType'];
-        $pageUid = $callbackSettings['targetPageUid'];
+        $pageType = (int)$callbackSettings['targetPageType'] ?? 0;
+        $pageUid = (int)$callbackSettings['targetPageUid'] ?? 0;
 
-        $this->setArguments([
-            'logintype' => 'login',
-            'application' => $applicationUid,
-            'referrer' => $this->getUri(),
-        ]);
-
-        if (!empty($pageUid)) {
+        if ($pageUid !== 0) {
             // Check whether page exists
             $page = GeneralUtility::makeInstance(ObjectManager::class)->get(PageRepository::class)->checkRecord('pages', $pageUid);
 
             if (!empty($page)) {
-                $this->setTargetPage((int)$pageUid);
+                $this->setTargetPage($pageUid);
             } else {
                 $this->logger->warning(sprintf('No page found for given uid "%s".', $pageUid));
             }
         }
 
-        if (!empty($pageType)) {
+        if ($pageType !== 0) {
             $this->setTargetPageType((int)$pageType);
         }
-
-        $uri = $this->getUri();
-        $this->logger->notice(sprintf('Set callback URI to: %s', $uri));
-
-        return $uri;
     }
 
-    protected function getRedirectUri(): string
+    public function getLogoutUri(string $controllerName, string $actionName, array $callbackSettings): string
     {
-        $routingUtility = GeneralUtility::makeInstance(self::class);
-        $redirectUri = $routingUtility->getUri();
-
-        return $redirectUri;
-    }
-
-    public function getLogoutUri(string $controllerName = '', string $actionName = ''): string
-    {
+        $this->setCallback($callbackSettings);
         $this->setArguments([
             'tx_auth0_loginform' => [
                 'action' => $actionName,

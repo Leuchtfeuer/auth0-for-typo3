@@ -157,7 +157,12 @@ class LoginController extends ActionController implements LoggerAwareInterface
         }
 
         $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
-        $redirectUri = $routingUtility->getLogoutUri($this->request->getControllerName(), $this->request->getControllerActionName());
+
+        $redirectUri = $routingUtility->getLogoutUri(
+            $this->request->getControllerName() ?? 'Login',
+            $this->request->getControllerActionName() ?? 'form',
+            $this->settings['frontend']['callback'] ?? []
+        );
 
         if ((bool)$this->settings['softLogout'] === true) {
             $this->redirectToUri($redirectUri);
@@ -177,8 +182,13 @@ class LoginController extends ActionController implements LoggerAwareInterface
     {
         $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, (int)$this->settings['application']);
         $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
-        $callbackUri = $routingUtility->getCallbackUri($this->settings['frontend']['callback'], (int)$this->settings['application']);
+        $routingUtility->setArguments([
+            'logintype' => 'login',
+            'application' => (int)$this->settings['application'],
+            'referrer' => $routingUtility->getUri(),
+        ]);
+        $routingUtility->setCallback($this->settings['frontend']['callback']);
 
-        return $apiUtility->getAuth0($callbackUri);
+        return $apiUtility->getAuth0($routingUtility->getUri());
     }
 }
