@@ -68,6 +68,19 @@ class RoutingUtility implements LoggerAwareInterface
         return $redirectUri;
     }
 
+    public function getLogoutUri(string $controllerName = '', string $actionName = ''): string
+    {
+        $this->setArguments([
+            'tx_auth0_loginform' => [
+                'action' => $actionName,
+                'Controller' => $controllerName,
+            ],
+            'logintype' => 'logout',
+        ]);
+
+        return $this->getUri();
+    }
+
     public function getUri(): string
     {
         $uriBuilder = GeneralUtility::makeInstance(ObjectManager::class)->get(UriBuilder::class);

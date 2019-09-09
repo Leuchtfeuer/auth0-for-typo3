@@ -16,7 +16,7 @@ namespace Bitmotion\Auth0\Controller;
 use Auth0\SDK\Exception\CoreException;
 use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\Auth0;
-use Bitmotion\Auth0\Domain\Model\Application;
+use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Service\RedirectService;
 use Bitmotion\Auth0\Utility\ApiUtility;
@@ -34,11 +34,6 @@ use TYPO3\CMS\Extbase\Mvc\Exception\UnsupportedRequestTypeException;
 class LoginController extends ActionController implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
-
-    /**
-     * @var Application
-     */
-    protected $application;
 
     protected $error = '';
 
@@ -161,7 +156,17 @@ class LoginController extends ActionController implements LoggerAwareInterface
             }
         }
 
-        $this->redirect('form');
+        $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
+        $redirectUri = $routingUtility->getLogoutUri($this->request->getControllerName(), $this->request->getControllerActionName());
+
+        if ((bool)$this->settings['softLogout'] === true) {
+            $this->redirectToUri($redirectUri);
+        }
+
+        $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid((int)$this->settings['application']);
+        $logoutUri = $this->getAuth0()->getLogoutUri($redirectUri, $application['id']);
+
+        $this->redirectToUri($logoutUri);
     }
 
     /**

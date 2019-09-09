@@ -90,6 +90,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
             $this->auth0 = $apiUtility->getAuth0(GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
         } catch (\Exception $exception) {
             $this->logger->critical($exception->getMessage());
+
             return false;
         }
 
@@ -127,6 +128,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
             ConfigurationUtility::getSetting('propertyMapping');
         } catch (\Exception $exception) {
             $this->logger->notice($exception->getMessage());
+
             return false;
         }
 

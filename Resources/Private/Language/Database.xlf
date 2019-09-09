@@ -59,6 +59,9 @@
 			<trans-unit id="tt_content.pi_flexform.sheet_general">
 				<source>General</source>
 			</trans-unit>
+			<trans-unit id="tt_content.pi_flexform.softLogout">
+				<source>Logout from TYPO3 only (not from Auth0)</source>
+			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.sheet_redirect">
 				<source>Redirects</source>
 			</trans-unit>
