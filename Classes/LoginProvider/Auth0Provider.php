@@ -16,6 +16,8 @@ namespace Bitmotion\Auth0\LoginProvider;
 use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\Auth0;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
+use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
+use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Utility\ApiUtility;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use Psr\Log\LoggerAwareInterface;
@@ -40,6 +42,11 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
      * @var array
      */
     protected $userInfo = null;
+
+    /**
+     * @var EmAuth0Configuration
+     */
+    protected $configuration;
 
     /**
      * @throws InvalidConfigurationTypeException
@@ -84,9 +91,9 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
     protected function setAuth0(): bool
     {
         try {
-            $configuration = new EmAuth0Configuration();
+            $this->configuration = new EmAuth0Configuration();
 
-            $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, (int)$configuration->getBackendConnection());
+            $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, (int)$this->configuration->getBackendConnection());
             $this->auth0 = $apiUtility->getAuth0(GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
         } catch (\Exception $exception) {
             $this->logger->critical($exception->getMessage());
@@ -97,7 +104,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         return true;
     }
 
-    protected function handleRequest()
+    protected function handleRequest(): void
     {
         // Try to get user via Auth0 API
         if ($this->userInfo === null) {
@@ -115,6 +122,10 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
             $this->logger->notice('Logout user.');
             $this->auth0->logout();
             $this->userInfo = null;
+
+            if ($this->configuration->isSoftLogout() === false) {
+                $this->logoutFromAuth0();
+            }
         } elseif ($this->userInfo === null && GeneralUtility::_GP('login') == 1) {
             // Login user to Auth0
             $this->logger->notice('Handle backend login.');
@@ -138,7 +149,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
     /**
      * @throws InvalidConfigurationTypeException
      */
-    protected function prepareView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer)
+    protected function prepareView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
     {
         $backendViewSettings = ConfigurationUtility::getSetting('backend', 'view');
         $standaloneView->setLayoutRootPaths([$backendViewSettings['layoutPath']]);
@@ -148,7 +159,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         $pageRenderer->addCssFile($backendViewSettings['stylesheet']);
     }
 
-    protected function getDefaultView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer)
+    protected function getDefaultView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
     {
         $standaloneView->setLayoutRootPaths(['EXT:auth0/Resources/Private/Layouts/']);
         $standaloneView->setTemplatePathAndFilename(
@@ -156,5 +167,18 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         );
         $standaloneView->assign('error', 'no_typoscript');
         $pageRenderer->addCssFile('EXT:auth0/Resources/Public/Styles/backend.css');
+    }
+
+    /**
+     * @throws InvalidApplicationException
+     */
+    protected function logoutFromAuth0()
+    {
+        $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid((int)$this->configuration->getBackendConnection());
+        $redirectUri = str_replace('logout=1', '', GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
+        $logoutUri = $this->auth0->getLogoutUri(rtrim($redirectUri, '&'), $application['id']);
+
+        header('Location: ' . $logoutUri);
+        exit;
     }
 }

@@ -16,6 +16,9 @@
 			<trans-unit id="backend.reactivate_deleted_backend_users" xml:space="preserve">
 				<source>Allow log in for deleted backend users</source>
 			</trans-unit>
+			<trans-unit id="backend.soft_logout" xml:space="preserve">
+				<source>Logout from TYPO3 only (not from Auth0)</source>
+			</trans-unit>
 			<trans-unit id="frontend.user_storage_page" xml:space="preserve">
 				<source>Storage page for frontend user</source>
 			</trans-unit>

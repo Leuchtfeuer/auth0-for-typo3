@@ -13,56 +13,40 @@ namespace Bitmotion\Auth0\Domain\Model\Dto;
  *
  ***/
 
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class EmAuth0Configuration implements SingletonInterface
 {
-    /**
-     * @var bool
-     */
     protected $enableBackendLogin = false;
 
-    /**
-     * @var int
-     */
     protected $backendConnection = 0;
 
-    /**
-     * @var int
-     */
     protected $userStoragePage = 0;
 
-    /**
-     * @var int
-     */
     protected $reactivateDisabledBackendUsers = 0;
 
-    /**
-     * @var int
-     */
     protected $reactivateDeletedBackendUsers = 0;
 
-    /**
-     * @var int
-     */
     protected $reactivateDisabledFrontendUsers = 1;
 
-    /**
-     * @var int
-     */
     protected $reactivateDeletedFrontendUsers = 1;
+
+    protected $softLogout = false;
 
     /**
      * EmAuth0Configuration constructor.
      *
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
      */
     public function __construct()
     {
         $configuration = GeneralUtility::makeInstance(ExtensionConfiguration::class)->get('auth0');
+
         if ($configuration) {
             $this->setPropertiesFromConfiguration($configuration);
         }
@@ -110,5 +94,10 @@ class EmAuth0Configuration implements SingletonInterface
     public function getReactivateDeletedFrontendUsers(): bool
     {
         return (bool)$this->reactivateDeletedFrontendUsers;
+    }
+
+    public function isSoftLogout(): bool
+    {
+        return (bool)$this->softLogout;
     }
 }
