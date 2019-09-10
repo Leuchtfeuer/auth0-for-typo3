@@ -26,5 +26,5 @@ class CustomDomainTest extends Auth0TestCase
         return $customDomainApi;
     }
 
-    // TODO: implemnt
+    // TODO: implement
 }

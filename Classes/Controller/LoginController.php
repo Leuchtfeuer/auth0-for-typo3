@@ -181,11 +181,12 @@ class LoginController extends ActionController implements LoggerAwareInterface
         $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, (int)$this->settings['application']);
         $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
         $referrer = $routingUtility->getUri();
-        $redirectUri = $routingUtility->addArgument('logintype', 'login')
-                                      ->addArgument('application', (int)$this->settings['application'])
-                                      ->addArgument('referrer', $referrer)
-                                      ->setCallback((int)$callbackSettings['targetPageUid'], (int)$callbackSettings['targetPageType'])
-                                      ->getUri();
+        $redirectUri = $routingUtility
+            ->addArgument('logintype', 'login')
+            ->addArgument('application', (int)$this->settings['application'])
+            ->addArgument('referrer', $referrer)
+            ->setCallback((int)$callbackSettings['targetPageUid'], (int)$callbackSettings['targetPageType'])
+            ->getUri();
 
         return $apiUtility->getAuth0($redirectUri);
     }

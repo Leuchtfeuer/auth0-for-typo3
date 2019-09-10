@@ -97,6 +97,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         $standaloneView->assignMultiple([
             'auth0Error' => GeneralUtility::_GP('error'),
             'auth0ErrorDescription' => GeneralUtility::_GP('error_description'),
+            'code' => GeneralUtility::_GET('code'),
             'userInfo' => $this->userInfo,
         ]);
     }

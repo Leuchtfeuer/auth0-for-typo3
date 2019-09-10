@@ -1,11 +1,11 @@
-<div class="typo3-login">
+<div class="typo3-login auth0-login">
 	<div class="typo3-login-inner">
 		<div class="typo3-login-container">
 			<div class="typo3-login-wrap">
 				<div class="panel panel-lg panel-login">
 					<div class="panel-body">
-						<div class="auth0-login-logo">
-							<img src="/typo3conf/ext/auth0/Resources/Public/Images/logo-blue.png" class="auth0-login-image" alt="" />
+						<div class="typo3-login-logo">
+							<img src="{logo}" class="typo3-login-image" alt="" />
 						</div>
 						<f:if condition="{formType} == 'LoginForm'">
 							<f:then>
@@ -29,8 +29,11 @@
 										<f:form.hidden name="userident" id="t3-field-userident" class="t3js-login-userident-field" value="" />
 										<f:form.hidden name="redirect_url" value="{redirectUrl}" />
 										<f:form.hidden name="loginRefresh" value="{loginRefresh}" />
+
 										<f:render partial="Login/InterfaceSelector" arguments="{_all}" />
+
 										<f:render section="loginFormFields" arguments="{_all}"/>
+
 										<ul class="list-unstyled typo3-login-links">
 											<f:for each="{loginProviders}" as="provider" key="providerKey">
 												<f:if condition="{provider.label}">
@@ -82,9 +85,9 @@
 					<f:render partial="LoginNews" arguments="{_all}" />
 					<div class="panel-footer">
 						<div class="typo3-login-copyright-wrap">
-							<a href="#loginCopyright" class="typo3-login-copyright-link collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="loginCopyright">
-								<span><f:translate key="login.copyrightLink" /></span>
-								<img src="{images.typo3}" alt="{f:translate(key: 'login.typo3Logo')}" width="70" height="20" />
+							<a href="https://www.auth0.com" target="_blank" class="typo3-login-copyright-link collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="loginCopyright">
+								<span><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.login.copyright" /></span>
+								<f:image src="EXT:auth0/Resources/Public/Images/logo-blue.png" height="20" />
 							</a>
 							<div id="loginCopyright" class="collapse">
 								<div class="typo3-login-copyright-text">

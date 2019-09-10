@@ -1,38 +1,50 @@
-.btn-auth0 {
-	padding: 12px;
-	font-weight: normal;
-	line-height: 1.3rem;
-	border-radius: 2px;
-	font-size: 12px;
+.auth0-login {
+	color: #000000;
 }
 
-.auth0-login-logo {
-	margin-bottom: 30px;
+.auth0-login .alert-danger {
+	background-color: #ffd8cc;
+	color: #801f00;
 }
 
-.auth0-login-logo .auth0-login-image {
-	max-width: 150px;
-	height: auto;
-	display: block;
-	margin: 0 auto;
+.auth0-login .alert-success {
+	background-color: #e5f8d1;
+	color: #3f6910;
 }
 
-a.btn-auth0 {
-	font-weight: normal;
+.auth0-login .alert {
+	padding: 15px;
+	margin-bottom: 28px;
+	border-radius: 3px;
+	border: 0;
 }
 
-.btn-auth0.btn-success {
-	background-color: #EB5425;
+.auth0-login .panel {
+	background-color: #e3e5e7;
+}
+
+.auth0-login .btn {
+	font-weight: 500;
+	text-align: center;
+}
+
+.auth0-login .btn-login {
+	margin: 20px 0;
+}
+
+.auth0-login .btn-auth0 {
+	color: #fff;
+	background-color: #eb5424;
 	border-color: #e14615;
-	color: #fff;
+	padding: auto 20px;
 }
 
-.btn-auth0.btn-success:hover {
+.auth0-login .btn-auth0:focus {
 	color: #fff;
-	background-color: #ca3f12;
-	border-color: #a93510;
+	background-color: #eb5424;
+	border-color: #e14615;
 }
 
-.c-auth0 .form-group {
-	margin-top: 35px;
+.auth0-login .typo3-login-links {
+	font-size: 12px;
 }

@@ -8,17 +8,43 @@ use TYPO3\CMS\Extbase\Service\EnvironmentService;
 
 class SingleSignOutHook
 {
-    public function perform()
-    {
-        $backendMode = GeneralUtility::makeInstance(EnvironmentService::class)->isEnvironmentInBackendMode();
+    protected $configuration;
 
-        if ($backendMode === true) {
-            $configuration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
-            if ($configuration->getEnableBackendLogin() === true && $configuration->isSoftLogout() === false) {
-                $backendRoot = sprintf('%s/typo3/?%s', GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST'), 'auth0[action]=logout');
-                header('Location: ' . $backendRoot);
-                exit;
-            }
+    public function __construct()
+    {
+        $this->configuration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
+    }
+
+    public function performLogin(): void
+    {
+        // TODO: Future use
+    }
+
+    public function performLogout(): void
+    {
+        $environmentService = GeneralUtility::makeInstance(EnvironmentService::class);
+
+        if ($environmentService->isEnvironmentInBackendMode()) {
+            $this->performBackendLogout();
+        } elseif ($environmentService->isEnvironmentInFrontendMode()) {
+            $this->performFrontendLogout();
         }
+    }
+
+    /**
+     * Performs single sign-out if configured
+     */
+    protected function performBackendLogout(): void
+    {
+        if ($this->configuration->getEnableBackendLogin() === true && $this->configuration->isSoftLogout() === false) {
+            $backendRoot = sprintf('%s/typo3/?%s', GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST'), 'auth0[action]=logout');
+            header('Location: ' . $backendRoot);
+            exit;
+        }
+    }
+
+    protected function performFrontendLogout(): void
+    {
+        // TODO: Future use
     }
 }

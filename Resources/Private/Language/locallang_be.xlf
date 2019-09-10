@@ -16,16 +16,19 @@
 			</trans-unit>
 
 			<trans-unit id="form.login.typo3">
-				<source>Login to TYPO3</source>
+				<source>Log in to TYPO3</source>
+			</trans-unit>
+			<trans-unit id="form.login.copyright">
+				<source>More about Auth0</source>
 			</trans-unit>
 			<trans-unit id="form.logout.auth0">
-				<source>logout</source>
+				<source>Logout from Auth0</source>
 			</trans-unit>
 			<trans-unit id="form.login.auth0">
-				<source>Login to Auth0</source>
+				<source>Log in to Auth0</source>
 			</trans-unit>
 			<trans-unit id="form.logged-in-as">
-				<source>You are currently logged in to Auth0 as:</source>
+				<source>Hello</source>
 			</trans-unit>
 			<trans-unit id="form.not-logged-in">
 				<source><![CDATA[You are currently <strong>not</strong> logged in to Auth0.]]></source>
@@ -34,13 +37,19 @@
 				<source>No Application</source>
 			</trans-unit>
 			<trans-unit id="form.error.no_application.description">
-				<source>Please choose an application, which should be used for login to TYPO3.</source>
+				<source>Please choose an application, which should be used for log in to TYPO3.</source>
 			</trans-unit>
 			<trans-unit id="form.error.no_typoscript.title">
 				<source>No TypoScript</source>
 			</trans-unit>
 			<trans-unit id="form.error.no_typoscript.description">
 				<source>No settings for TYPO3 backend found. TypoScript included?</source>
+			</trans-unit>
+			<trans-unit id="form.logged-in.success.title">
+				<source>Well done!</source>
+			</trans-unit>
+			<trans-unit id="form.logged-in.success.description">
+				<source>You have successfully logged in.</source>
 			</trans-unit>
 		</body>
 	</file>

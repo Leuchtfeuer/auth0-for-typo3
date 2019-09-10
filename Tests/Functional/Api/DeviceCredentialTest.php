@@ -27,5 +27,5 @@ class DeviceCredentialTest extends Auth0TestCase
         return $deviceCredentialApi;
     }
 
-    // TODO: implemnt
+    // TODO: implement
 }
