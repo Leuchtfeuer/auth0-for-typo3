@@ -158,7 +158,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
         $logoutSettings = $this->settings['frontend']['logout'] ?? [];
         $redirectUri = GeneralUtility::makeInstance(RoutingUtility::class)
             ->setCallback((int)$logoutSettings['targetPageUid'], (int)$logoutSettings['targetPageType'])
-            ->setArguments(['logintype' => 'logout'])
+            ->addArgument('logintype', 'logout')
             ->getUri();
 
         if ((bool)$this->settings['softLogout'] === true) {
@@ -180,11 +180,13 @@ class LoginController extends ActionController implements LoggerAwareInterface
         $callbackSettings = $this->settings['frontend']['callback'] ?? [];
         $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, (int)$this->settings['application']);
         $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
-        $routingUtility->addArgument('logintype', 'login');
-        $routingUtility->addArgument('application', (int)$this->settings['application']);
-        $routingUtility->addArgument('referrer', $routingUtility->getUri());
-        $routingUtility->setCallback((int)$callbackSettings['targetPageUid'], (int)$callbackSettings['targetPageType']);
+        $referrer = $routingUtility->getUri();
+        $redirectUri = $routingUtility->addArgument('logintype', 'login')
+                                      ->addArgument('application', (int)$this->settings['application'])
+                                      ->addArgument('referrer', $referrer)
+                                      ->setCallback((int)$callbackSettings['targetPageUid'], (int)$callbackSettings['targetPageType'])
+                                      ->getUri();
 
-        return $apiUtility->getAuth0($routingUtility->getUri());
+        return $apiUtility->getAuth0($redirectUri);
     }
 }

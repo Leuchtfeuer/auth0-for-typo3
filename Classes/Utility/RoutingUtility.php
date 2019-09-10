@@ -42,7 +42,7 @@ class RoutingUtility implements LoggerAwareInterface
         }
 
         if ($pageType !== 0) {
-            $this->setTargetPageType((int)$pageType);
+            $this->setTargetPageType($pageType);
         }
 
         return $this;
@@ -83,9 +83,11 @@ class RoutingUtility implements LoggerAwareInterface
         $this->targetPageType = $targetPageType;
     }
 
-    public function addArgument(string $key, $value)
+    public function addArgument(string $key, $value): self
     {
         $this->arguments = array_merge_recursive($this->arguments, [ $key => $value ]);
+
+        return $this;
     }
 
     public function setArguments(array $arguments): self
