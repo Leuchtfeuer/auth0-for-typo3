@@ -28,11 +28,8 @@ class RoutingUtility implements LoggerAwareInterface
         $this->targetPage = (int)$GLOBALS['TSFE']->id;
     }
 
-    public function setCallback(array $callbackSettings)
+    public function setCallback(int $pageUid, int $pageType): self
     {
-        $pageType = (int)$callbackSettings['targetPageType'] ?? 0;
-        $pageUid = (int)$callbackSettings['targetPageUid'] ?? 0;
-
         if ($pageUid !== 0) {
             // Check whether page exists
             $page = GeneralUtility::makeInstance(ObjectManager::class)->get(PageRepository::class)->checkRecord('pages', $pageUid);
@@ -47,20 +44,8 @@ class RoutingUtility implements LoggerAwareInterface
         if ($pageType !== 0) {
             $this->setTargetPageType((int)$pageType);
         }
-    }
 
-    public function getLogoutUri(string $controllerName, string $actionName, array $callbackSettings): string
-    {
-        $this->setCallback($callbackSettings);
-        $this->setArguments([
-            'tx_auth0_loginform' => [
-                'action' => $actionName,
-                'Controller' => $controllerName,
-            ],
-            'logintype' => 'logout',
-        ]);
-
-        return $this->getUri();
+        return $this;
     }
 
     public function getUri(): string
@@ -98,10 +83,17 @@ class RoutingUtility implements LoggerAwareInterface
         $this->targetPageType = $targetPageType;
     }
 
-    public function setArguments(array $arguments): void
+    public function addArgument(string $key, $value)
+    {
+        $this->arguments = array_merge_recursive($this->arguments, [ $key => $value ]);
+    }
+
+    public function setArguments(array $arguments): self
     {
         $this->logger->debug('[URI] Set arguments', $arguments);
         $this->arguments = $arguments;
+
+        return $this;
     }
 
     public function setCreateAbsoluteUri(bool $createAbsoluteUri): void

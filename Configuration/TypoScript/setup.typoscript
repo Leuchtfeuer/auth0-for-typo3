@@ -29,8 +29,13 @@ plugin.tx_auth0 {
 
         frontend {
             callback {
-                targetPageUid = {$plugin.tx_auth0.settings.frontend.callback.targetPageUid}
                 targetPageType = {$plugin.tx_auth0.settings.frontend.callback.targetPageType}
+                targetPageUid = {$plugin.tx_auth0.settings.frontend.callback.targetPageUid}
+            }
+
+            logout {
+                targetPageType = {$plugin.tx_auth0.settings.frontend.logout.targetPageType}
+                targetPageUid = {$plugin.tx_auth0.settings.frontend.logout.targetPageUid}
             }
         }
 

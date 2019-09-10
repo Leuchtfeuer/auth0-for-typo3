@@ -136,7 +136,6 @@ class LoginController extends ActionController implements LoggerAwareInterface
      * @throws InvalidApplicationException
      * @throws StopActionException
      * @throws UnsupportedRequestTypeException
-     * @deprecated
      * TODO: Write Hook $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['logoff_post_processing'] instead (or pre_processing)
      */
     public function logoutAction()
@@ -156,13 +155,11 @@ class LoginController extends ActionController implements LoggerAwareInterface
             }
         }
 
-        $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
-
-        $redirectUri = $routingUtility->getLogoutUri(
-            $this->request->getControllerName() ?? 'Login',
-            $this->request->getControllerActionName() ?? 'form',
-            $this->settings['frontend']['callback'] ?? []
-        );
+        $logoutSettings = $this->settings['frontend']['logout'] ?? [];
+        $redirectUri = GeneralUtility::makeInstance(RoutingUtility::class)
+            ->setCallback((int)$logoutSettings['targetPageUid'], (int)$logoutSettings['targetPageType'])
+            ->setArguments(['logintype' => 'logout'])
+            ->getUri();
 
         if ((bool)$this->settings['softLogout'] === true) {
             $this->redirectToUri($redirectUri);
@@ -180,14 +177,13 @@ class LoginController extends ActionController implements LoggerAwareInterface
      */
     protected function getAuth0(): Auth0
     {
+        $callbackSettings = $this->settings['frontend']['callback'] ?? [];
         $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, (int)$this->settings['application']);
         $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
-        $routingUtility->setArguments([
-            'logintype' => 'login',
-            'application' => (int)$this->settings['application'],
-            'referrer' => $routingUtility->getUri(),
-        ]);
-        $routingUtility->setCallback($this->settings['frontend']['callback']);
+        $routingUtility->addArgument('logintype', 'login');
+        $routingUtility->addArgument('application', (int)$this->settings['application']);
+        $routingUtility->addArgument('referrer', $routingUtility->getUri());
+        $routingUtility->setCallback((int)$callbackSettings['targetPageUid'], (int)$callbackSettings['targetPageType']);
 
         return $apiUtility->getAuth0($routingUtility->getUri());
     }

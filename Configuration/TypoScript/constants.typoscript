@@ -23,6 +23,11 @@ plugin.tx_auth0 {
                 targetPageType = 1547536919
                 targetPageUid = 1
             }
+
+            logout {
+                targetPageType = 0
+                targetPageUid = 1
+            }
         }
     }
 }
