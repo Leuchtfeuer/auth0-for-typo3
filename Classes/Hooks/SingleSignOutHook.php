@@ -21,7 +21,7 @@ class SingleSignOutHook implements SingletonInterface
         $this->environmentService = GeneralUtility::makeInstance(EnvironmentService::class);
     }
 
-    public function isResponsible()
+    public function isResponsible(): void
     {
         if ($this->environmentService->isEnvironmentInBackendMode()) {
             $beUser = $GLOBALS['BE_USER'];
