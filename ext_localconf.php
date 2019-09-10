@@ -26,7 +26,7 @@ $configuration = new \Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration();
 if ($configuration->getEnableBackendLogin() === true) {
     $subtypes = 'authUserFE,getUserFE,getUserBE,authUserBE';
     if (TYPO3_MODE === 'BE') {
-        $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['backend']['loginProviders'][1526966635] = [
+        $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['backend']['loginProviders'][\Bitmotion\Auth0\LoginProvider\Auth0Provider::LOGIN_PROVIDER] = [
             'provider' => \Bitmotion\Auth0\LoginProvider\Auth0Provider::class,
             'sorting' => 25,
             'icon-class' => 'fa-sign-in',

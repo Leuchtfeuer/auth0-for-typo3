@@ -19,6 +19,7 @@ use Bitmotion\Auth0\Api\Auth0;
 use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
 use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
+use Bitmotion\Auth0\LoginProvider\Auth0Provider;
 use Bitmotion\Auth0\Scope;
 use Bitmotion\Auth0\Utility\ApiUtility;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
@@ -30,6 +31,9 @@ use TYPO3\CMS\Extbase\Service\EnvironmentService;
 
 class AuthenticationService extends \TYPO3\CMS\Core\Authentication\AuthenticationService
 {
+    /**
+     * @deprecated Use Auth0Provider::LOGIN_PROVIDER instead
+     */
     const AUTH_LOGIN_PROVIDER = '1526966635';
 
     /**
@@ -118,7 +122,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         $this->environmentService = GeneralUtility::makeInstance(EnvironmentService::class);
         $responsible = true;
 
-        if ($this->environmentService->isEnvironmentInBackendMode() && GeneralUtility::_GP('loginProvider') !== self::AUTH_LOGIN_PROVIDER) {
+        if ($this->environmentService->isEnvironmentInBackendMode() && GeneralUtility::_GP('loginProvider') !== Auth0Provider::LOGIN_PROVIDER) {
             $this->logger->notice('Not an Auth0 backend login. Skip.');
             $responsible = false;
         }

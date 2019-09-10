@@ -33,6 +33,12 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
+    public const ACTION_LOGIN = 'login';
+
+    public const ACTION_LOGOUT = 'logout';
+
+    public const LOGIN_PROVIDER = 1526966635;
+
     /**
      * @var Auth0
      */
