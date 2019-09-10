@@ -122,7 +122,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         $this->environmentService = GeneralUtility::makeInstance(EnvironmentService::class);
         $responsible = true;
 
-        if ($this->environmentService->isEnvironmentInBackendMode() && GeneralUtility::_GP('loginProvider') !== Auth0Provider::LOGIN_PROVIDER) {
+        if ($this->environmentService->isEnvironmentInBackendMode() && (int)GeneralUtility::_GP('loginProvider') !== Auth0Provider::LOGIN_PROVIDER) {
             $this->logger->notice('Not an Auth0 backend login. Skip.');
             $responsible = false;
         }
