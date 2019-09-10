@@ -45,7 +45,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
     protected $auth0;
 
     /**
-     * @var array
+     * @var ?array
      */
     protected $userInfo = null;
 
@@ -53,6 +53,11 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
      * @var EmAuth0Configuration
      */
     protected $configuration;
+
+    /**
+     * @var ?string
+     */
+    protected $action = null;
 
     /**
      * @throws InvalidConfigurationTypeException
@@ -81,8 +86,10 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         // Try to get user info from session storage
         $store = new SessionStore();
         $this->userInfo = $store->get('user');
+        $urlData = GeneralUtility::_GP('auth0') ?? [];
+        $this->action = $urlData['action'] ?? null;
 
-        if (($this->userInfo === null && (int)GeneralUtility::_GP('login') === 1) || (int)GeneralUtility::_GP('logout') === 1) {
+        if (($this->userInfo === null && $this->action === self::ACTION_LOGIN) || $this->action === self::ACTION_LOGOUT) {
             $this->handleRequest();
         }
 
@@ -123,16 +130,11 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
             }
         }
 
-        if (GeneralUtility::_GP('logout') == 1) {
+        if ($this->action === self::ACTION_LOGOUT) {
             // Logout user from Auth0
             $this->logger->notice('Logout user.');
-            $this->auth0->logout();
-            $this->userInfo = null;
-
-            if ($this->configuration->isSoftLogout() === false) {
-                $this->logoutFromAuth0();
-            }
-        } elseif ($this->userInfo === null && GeneralUtility::_GP('login') == 1) {
+            $this->logoutFromAuth0();
+        } elseif ($this->userInfo === null && $this->action === self::ACTION_LOGIN) {
             // Login user to Auth0
             $this->logger->notice('Handle backend login.');
             $this->auth0->login();
@@ -180,8 +182,11 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
      */
     protected function logoutFromAuth0()
     {
+        $this->auth0->logout();
+        $this->userInfo = null;
+
         $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid((int)$this->configuration->getBackendConnection());
-        $redirectUri = str_replace('logout=1', '', GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
+        $redirectUri = str_replace('auth0[action]=logout', '', GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
         $logoutUri = $this->auth0->getLogoutUri(rtrim($redirectUri, '&'), $application['id']);
 
         header('Location: ' . $logoutUri);

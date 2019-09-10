@@ -266,7 +266,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     {
         try {
             $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $this->application);
-            $callback = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/typo3/?loginProvider=' . self::AUTH_LOGIN_PROVIDER . '&login=1';
+            $callback = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/typo3/?loginProvider=' . Auth0Provider::LOGIN_PROVIDER . '&auth0[action]=login';
             $this->auth0 = $apiUtility->getAuth0($callback);
             $this->tokenInfo = $this->auth0->getUser();
 
@@ -350,7 +350,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
 
                 if (!$this->auth0 instanceof Auth0) {
                     $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $this->application);
-                    $callback = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/typo3/?loginProvider=' . self::AUTH_LOGIN_PROVIDER . '&login=1';
+                    $callback = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/typo3/?loginProvider=' . Auth0Provider::LOGIN_PROVIDER . '&auth0[action]=login';
                     $this->auth0 = $apiUtility->getAuth0($callback);
                 }
 

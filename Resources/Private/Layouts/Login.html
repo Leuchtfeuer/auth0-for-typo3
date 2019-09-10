@@ -30,7 +30,7 @@
 										<f:form.hidden name="redirect_url" value="{redirectUrl}" />
 										<f:form.hidden name="loginRefresh" value="{loginRefresh}" />
 										<f:render partial="Login/InterfaceSelector" arguments="{_all}" />
-										<f:render section="loginFormFields" />
+										<f:render section="loginFormFields" arguments="{_all}"/>
 										<ul class="list-unstyled typo3-login-links">
 											<f:for each="{loginProviders}" as="provider" key="providerKey">
 												<f:if condition="{provider.label}">
