@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace Bitmotion\Auth0\Domain\Repository;
 
-use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
+use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Database\ConnectionPool;

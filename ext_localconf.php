@@ -22,7 +22,7 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php'][
 
 
 
-$configuration = new \Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration();
+$configuration = new \Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration();
 if ($configuration->getEnableBackendLogin() === true) {
     $subtypes = 'authUserFE,getUserFE,getUserBE,authUserBE';
     if (TYPO3_MODE === 'BE') {

@@ -13,7 +13,7 @@ namespace Bitmotion\Auth0\Command;
  *
  ***/
 
-use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
+use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Scope;
 use Bitmotion\Auth0\Utility\ApiUtility;
 use Symfony\Component\Console\Command\Command;

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 namespace Bitmotion\Auth0\Hooks;
 
-use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
+use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Service\EnvironmentService;

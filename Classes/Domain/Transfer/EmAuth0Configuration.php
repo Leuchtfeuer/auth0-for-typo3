@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Bitmotion\Auth0\Domain\Model\Dto;
+namespace Bitmotion\Auth0\Domain\Transfer;
 
 /***
  *

@@ -14,8 +14,8 @@ namespace Bitmotion\Auth0\Utility\Database;
  ***/
 
 use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
-use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Domain\Repository\UserRepository;
+use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use Bitmotion\Auth0\Utility\ParseFuncUtility;
 use Psr\Log\LoggerAwareInterface;

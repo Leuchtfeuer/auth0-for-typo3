@@ -15,8 +15,8 @@ namespace Bitmotion\Auth0\LoginProvider;
 
 use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\Auth0;
-use Bitmotion\Auth0\Domain\Model\Dto\EmAuth0Configuration;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
+use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Utility\ApiUtility;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
