@@ -78,11 +78,9 @@ $GLOBALS['TYPO3_CONF_VARS']['LOG']['Bitmotion']['Auth0'] = [
     'writerConfiguration' => [
         \TYPO3\CMS\Core\Log\LogLevel::DEBUG => [
             \TYPO3\CMS\Core\Log\Writer\NullWriter::class => []
-        ]
-    ]
+        ],
+    ],
 ];
-
-$GLOBALS['TYPO3_CONF_VARS']['SVCONF']['auth']['setup']['FE_fetchUserIfNoSession'] = true;
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['logoff_pre_processing']['auth0'] = \Bitmotion\Auth0\Hooks\SingleSignOutHook::class . '->isResponsible';
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['logoff_post_processing']['auth0'] = \Bitmotion\Auth0\Hooks\SingleSignOutHook::class . '->performLogout';

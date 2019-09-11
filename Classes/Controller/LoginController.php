@@ -64,22 +64,25 @@ class LoginController extends ActionController implements LoggerAwareInterface
      */
     public function formAction()
     {
-        // Get Auth0 user from session storage
-        // ToDo: User Auth0->getUser() instead.
-        $sessionStore = new SessionStore();
-        $userInfo = $sessionStore->get('user');
         $feUserAuthentication = $GLOBALS['TSFE']->fe_user;
         $redirectService = GeneralUtility::makeInstance(RedirectService::class, $this->settings);
 
-        // Redirect when user just logged in (and update him)
-        if (GeneralUtility::_GP('logintype') === 'login' && $feUserAuthentication->user !== null && $userInfo !== null) {
-            if (!empty(GeneralUtility::_GP('referrer'))) {
-                $this->logger->notice('Handle referrer redirect prior to updating user.');
-                $redirectService->forceRedirectByReferrer(['logintype' => 'login']);
-            }
+        if ($feUserAuthentication->user !== null) {
+            // Get Auth0 user from session storage
+            // ToDo: User Auth0->getUser() instead.
+            $sessionStore = new SessionStore();
+            $userInfo = $sessionStore->get('user');
 
-            GeneralUtility::makeInstance(UserUtility::class)->updateUser($this->getAuth0(), (int)$this->settings['application']);
-            $redirectService->handleRedirect(['groupLogin', 'userLogin', 'login', 'getpost', 'referrer']);
+            // Redirect when user just logged in (and update him)
+            if (GeneralUtility::_GP('logintype') === 'login' && $userInfo !== null) {
+                if (!empty(GeneralUtility::_GP('referrer'))) {
+                    $this->logger->notice('Handle referrer redirect prior to updating user.');
+                    $redirectService->forceRedirectByReferrer(['logintype' => 'login']);
+                }
+
+                GeneralUtility::makeInstance(UserUtility::class)->updateUser($this->getAuth0(), (int)$this->settings['application']);
+                $redirectService->handleRedirect(['groupLogin', 'userLogin', 'login', 'getpost', 'referrer']);
+            }
         }
 
         // Force redirect due to Auth0 sign up or log in errors
@@ -92,7 +95,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
         }
 
         $this->view->assignMultiple([
-            'userInfo' => $userInfo,
+            'userInfo' => $userInfo ?? null,
             'auth0Error' => $this->error,
             'auth0ErrorDescription' => $this->errorDescription,
         ]);
@@ -110,24 +113,13 @@ class LoginController extends ActionController implements LoggerAwareInterface
         // ToDo: User Auth0->getUser() instead.
         $store = new SessionStore();
         $userInfo = $store->get('user');
+        $feUserAuthentication = $GLOBALS['TSFE']->fe_user;
 
-        if ($userInfo === null) {
-            // Try to login user
-            $this->logger->notice('Try to login user.');
-
-            $_params = ['sessionStore' => $store];
-
-            foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['auth0']['login_pre_processing'] ?? [] as $_funcRef) {
-                if ($_funcRef) {
-                    GeneralUtility::callUserFunction($_funcRef, $_params, $this);
-                }
-            }
-
+        if ($userInfo === null || $feUserAuthentication->user === null) {
             $this->logger->notice('Try to login user to Auth0.');
             $this->getAuth0()->login();
         }
 
-        // Show login form
         $this->redirect('form');
     }
 
@@ -136,36 +128,24 @@ class LoginController extends ActionController implements LoggerAwareInterface
      * @throws InvalidApplicationException
      * @throws StopActionException
      * @throws UnsupportedRequestTypeException
-     * TODO: Write Hook $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['logoff_post_processing'] instead (or pre_processing)
      */
     public function logoutAction()
     {
-        $_params = [];
-        foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['auth0']['logoff_pre_processing'] ?? [] as $_funcRef) {
-            if ($_funcRef) {
-                GeneralUtility::callUserFunction($_funcRef, $_params, $this);
-            }
-        }
-
-        $this->getAuth0()->logout();
-
-        foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['auth0']['logoff_post_processing'] ?? [] as $_funcRef) {
-            if ($_funcRef) {
-                GeneralUtility::callUserFunction($_funcRef, $_params, $this);
-            }
-        }
-
+        $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid((int)$this->settings['application']);
         $logoutSettings = $this->settings['frontend']['logout'] ?? [];
         $redirectUri = GeneralUtility::makeInstance(RoutingUtility::class)
             ->setCallback((int)$logoutSettings['targetPageUid'], (int)$logoutSettings['targetPageType'])
             ->addArgument('logintype', 'logout')
             ->getUri();
 
-        if ((bool)$this->settings['softLogout'] === true) {
+        $singleLogOut = isset($this->settings['softLogout']) ? !(bool)$this->settings['softLogout'] : (bool)$application['single_log_out'];
+
+        if ($singleLogOut === false) {
             $this->redirectToUri($redirectUri);
         }
 
-        $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid((int)$this->settings['application']);
+        $this->getAuth0()->logout();
+        $this->logger->notice('Proceed with single log out.');
         $logoutUri = $this->getAuth0()->getLogoutUri($redirectUri, $application['id']);
 
         $this->redirectToUri($logoutUri);
