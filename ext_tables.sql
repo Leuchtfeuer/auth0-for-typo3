@@ -19,6 +19,7 @@ CREATE TABLE be_users (
 #
 CREATE TABLE tx_auth0_domain_model_application (
   title varchar(255) DEFAULT '' NOT NULL,
+  single_log_out SMALLINT(5) DEFAULT 1 NOT NULL,
   id varchar(255) DEFAULT '' NOT NULL,
   secret varchar(255) DEFAULT '' NOT NULL,
   domain varchar(255) DEFAULT '' NOT NULL,

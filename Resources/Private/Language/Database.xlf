@@ -44,9 +44,8 @@
 			<trans-unit id="tx_auth0_domain_model_application.audience">
 				<source>Audience</source>
 			</trans-unit>
-
-			<trans-unit id="xxflexform.settings.title">
-				<source>Auth0</source>
+			<trans-unit id="tx_auth0_domain_model_application.single_log_out">
+				<source>Single log out</source>
 			</trans-unit>
 
 			<trans-unit id="fe_users.tx_extbase_type.Tx_Auth0_FrontendUser">

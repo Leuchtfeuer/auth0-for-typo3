@@ -42,6 +42,11 @@ class Application extends AbstractEntity
      */
     protected $audience = '';
 
+    /**
+     * @var bool
+     */
+    protected $singleLogOut = false;
+
     public function getTitle(): string
     {
         return $this->title;
@@ -91,5 +96,15 @@ class Application extends AbstractEntity
     public function setAudience(string $audience)
     {
         $this->audience = $audience;
+    }
+
+    public function isSingleLogOut(): bool
+    {
+        return $this->singleLogOut;
+    }
+
+    public function setSingleLogOut(bool $singleLogOut): void
+    {
+        $this->singleLogOut = $singleLogOut;
     }
 }

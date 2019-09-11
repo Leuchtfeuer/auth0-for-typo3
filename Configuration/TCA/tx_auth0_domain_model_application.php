@@ -17,10 +17,10 @@ return [
         'iconfile' => 'EXT:auth0/Resources/Public/Icons/tx_auth0_domain_model_application.png',
     ],
     'interface' => [
-        'showRecordFieldList' => 'hidden, title, id, secret, domain, audience',
+        'showRecordFieldList' => 'hidden, title, id, secret, domain, audience, single_log_out',
     ],
     'types' => [
-        '1' => ['showitem' => 'hidden, title, domain, id, secret, audience'],
+        '1' => ['showitem' => 'hidden, single_log_out, title, domain, id, secret, audience'],
     ],
     'columns' => [
         'hidden' => [
@@ -28,6 +28,13 @@ return [
             'config' => [
                 'type' => 'check',
                 'default' => 0,
+            ],
+        ],
+        'single_log_out' => [
+            'label' => 'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_application.single_log_out',
+            'config' => [
+                'type' => 'check',
+                'default' => true,
             ],
         ],
         'title' => [
