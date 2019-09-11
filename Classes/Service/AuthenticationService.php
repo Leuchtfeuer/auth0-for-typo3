@@ -136,6 +136,30 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         return $responsible;
     }
 
+    /**
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
+     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
+     */
+    protected function initApplication()
+    {
+        if ($this->environmentService->isEnvironmentInFrontendMode()) {
+            $this->logger->notice('Handle frontend login.');
+            $this->application = (int)GeneralUtility::_GP('application');
+            $this->tableName = 'fe_users';
+        } elseif ($this->environmentService->isEnvironmentInBackendMode()) {
+            $this->logger->notice('Handle backend login.');
+            $emConfiguration = new EmAuth0Configuration();
+            $this->application = $emConfiguration->getBackendConnection();
+            $this->tableName = 'be_users';
+        } else {
+            $this->logger->error('Environment is neither in frontend nor in backend mode');
+        }
+
+        if ($this->application === 0 && $this->initSessionStore() === false) {
+            $this->logger->error('No Auth0 application UID given.');
+        }
+    }
+
     protected function setDefaults(array $authInfo, string $mode, array $loginData, AbstractUserAuthentication $pObj)
     {
         $authInfo['db_user']['check_pid_clause'] = false;
@@ -282,30 +306,6 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         }
 
         return false;
-    }
-
-    /**
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
-     */
-    protected function initApplication()
-    {
-        if ($this->environmentService->isEnvironmentInFrontendMode()) {
-            $this->logger->notice('Handle frontend login.');
-            $this->application = (int)GeneralUtility::_GP('application');
-            $this->tableName = 'fe_users';
-        } elseif ($this->environmentService->isEnvironmentInBackendMode()) {
-            $this->logger->notice('Handle backend login.');
-            $emConfiguration = new EmAuth0Configuration();
-            $this->application = $emConfiguration->getBackendConnection();
-            $this->tableName = 'be_users';
-        } else {
-            $this->logger->error('Environment is neither in frontend nor in backend mode');
-        }
-
-        if ($this->application === 0 && $this->initSessionStore() === false) {
-            $this->logger->error('No Auth0 application UID given.');
-        }
     }
 
     /**
