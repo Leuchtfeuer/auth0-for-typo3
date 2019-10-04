@@ -9,7 +9,7 @@ return [
                 'typo3/cms-frontend/authentication',
             ],
             'before' => [
-                'typo3/cms-frontend/site',
+                'typo3/cms-frontend/base-redirect-resolver',
             ],
         ],
     ],
