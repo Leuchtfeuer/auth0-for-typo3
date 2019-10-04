@@ -34,15 +34,15 @@
 
 .auth0-login .btn-auth0 {
 	color: #fff;
-	background-color: #eb5424;
-	border-color: #e14615;
+	background-color: #5C666F;
+	border-color: #5C666F;
 	padding: auto 20px;
 }
 
 .auth0-login .btn-auth0:focus {
 	color: #fff;
-	background-color: #eb5424;
-	border-color: #e14615;
+	background-color: #5C666F;
+	border-color: #5C666F;
 }
 
 .auth0-login .typo3-login-links {
