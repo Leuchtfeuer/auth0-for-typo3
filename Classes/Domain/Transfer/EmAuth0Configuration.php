@@ -27,19 +27,17 @@ class EmAuth0Configuration implements SingletonInterface
 
     protected $userStoragePage = 0;
 
-    protected $reactivateDisabledBackendUsers = 0;
+    protected $reactivateDisabledBackendUsers = false;
 
-    protected $reactivateDeletedBackendUsers = 0;
+    protected $reactivateDeletedBackendUsers = false;
 
-    protected $reactivateDisabledFrontendUsers = 1;
+    protected $reactivateDisabledFrontendUsers = true;
 
-    protected $reactivateDeletedFrontendUsers = 1;
+    protected $reactivateDeletedFrontendUsers = true;
 
     protected $softLogout = false;
 
     /**
-     * EmAuth0Configuration constructor.
-     *
      * @throws ExtensionConfigurationExtensionNotConfiguredException
      * @throws ExtensionConfigurationPathDoesNotExistException
      */
