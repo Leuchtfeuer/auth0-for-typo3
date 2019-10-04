@@ -23,7 +23,7 @@ class Auth0Middleware implements MiddlewareInterface, LoggerAwareInterface
         $sessionStore = new SessionStore();
         $userInfo = $sessionStore->get('user');
 
-        if ($userInfo === null && is_array($feUserAuthentication->user) && $feUserAuthentication->user['auth0_user_id'] !== '') {
+        if ($userInfo === null && is_array($feUserAuthentication->user) && isset($feUserAuthentication->user['auth0_user_id']) && !empty($feUserAuthentication->user['auth0_user_id'])) {
             $this->logger->notice('Logoff user.');
             $feUserAuthentication->logoff();
         }

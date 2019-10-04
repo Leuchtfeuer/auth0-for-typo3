@@ -74,7 +74,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
             $userInfo = $sessionStore->get('user');
 
             // Redirect when user just logged in (and update him)
-            if (GeneralUtility::_GP('logintype') === 'login' && $userInfo !== null) {
+            if (GeneralUtility::_GET('logintype') === 'login' && $userInfo !== null) {
                 if (!empty(GeneralUtility::_GP('referrer'))) {
                     $this->logger->notice('Handle referrer redirect prior to updating user.');
                     $redirectService->forceRedirectByReferrer(['logintype' => 'login']);
@@ -83,6 +83,8 @@ class LoginController extends ActionController implements LoggerAwareInterface
                 GeneralUtility::makeInstance(UserUtility::class)->updateUser($this->getAuth0(), (int)$this->settings['application']);
                 $redirectService->handleRedirect(['groupLogin', 'userLogin', 'login', 'getpost', 'referrer']);
             }
+        } elseif (GeneralUtility::_GET('logintype') === 'logout' && !empty(GeneralUtility::_GET('referrer'))) {
+            $this->redirectToUri(GeneralUtility::_GET('referrer'));
         }
 
         // Force redirect due to Auth0 sign up or log in errors
@@ -133,20 +135,29 @@ class LoginController extends ActionController implements LoggerAwareInterface
     {
         $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid((int)$this->settings['application']);
         $logoutSettings = $this->settings['frontend']['logout'] ?? [];
-        $redirectUri = GeneralUtility::makeInstance(RoutingUtility::class)
-            ->setCallback((int)$logoutSettings['targetPageUid'], (int)$logoutSettings['targetPageType'])
-            ->addArgument('logintype', 'logout')
-            ->getUri();
-
         $singleLogOut = isset($this->settings['softLogout']) ? !(bool)$this->settings['softLogout'] : (bool)$application['single_log_out'];
 
+        $redirect = GeneralUtility::makeInstance(RoutingUtility::class)
+             ->setCallback((int)$logoutSettings['targetPageUid'], (int)$logoutSettings['targetPageType'])
+             ->addArgument('logintype', 'logout');
+
+        if (strpos($this->settings['redirectMode'], 'logout') !== false && !empty($this->settings['redirectPageLogout']) && (bool)$this->settings['redirectDisable'] === false) {
+            $referrer = GeneralUtility::makeInstance(RoutingUtility::class)
+                ->setTargetPage((int)$this->settings['redirectPageLogout'])
+                ->getUri();
+            $redirect->addArgument('referrer', $referrer);
+        } elseif (empty($this->settings['redirectPageLogout']) && (bool)$this->settings['redirectDisable'] === false) {
+            $referrer = GeneralUtility::makeInstance(RoutingUtility::class)->getUri();
+            $redirect->addArgument('referrer', $referrer);
+        }
+
         if ($singleLogOut === false) {
-            $this->redirectToUri($redirectUri);
+            $this->redirectToUri($redirect->getUri());
         }
 
         $this->getAuth0()->logout();
         $this->logger->notice('Proceed with single log out.');
-        $logoutUri = $this->getAuth0()->getLogoutUri($redirectUri, $application['id']);
+        $logoutUri = $this->getAuth0()->getLogoutUri($redirect->getUri(), $application['id']);
 
         $this->redirectToUri($logoutUri);
     }

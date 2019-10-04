@@ -71,10 +71,12 @@ class RoutingUtility implements LoggerAwareInterface
         return '';
     }
 
-    public function setTargetPage(int $targetPage): void
+    public function setTargetPage(int $targetPage): self
     {
         $this->logger->debug(sprintf('[URI] Set target page to "%s"', $targetPage));
         $this->targetPage = $targetPage;
+
+        return $this;
     }
 
     public function setTargetPageType(int $targetPageType): void
