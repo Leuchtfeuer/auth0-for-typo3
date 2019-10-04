@@ -5,17 +5,23 @@ if (!defined('TYPO3_COMPOSER_MODE') || !TYPO3_COMPOSER_MODE) {
     require \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('auth0') . 'Libraries/vendor/autoload.php';
 }
 
-\TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-    'Bitmotion.' . $_EXTKEY,
-    'LoginForm',
-    [
-        'Login' => 'form, login, logout',
-    ],
-    // non-cacheable actions
-    [
-        'Login' => 'form, login, logout',
-    ]
-);
+if (version_compare(TYPO3_version, '10.0.0', '>=')) {
+    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
+        'Auth0',
+        'LoginForm',
+        [\Bitmotion\Auth0\Controller\LoginController::class => 'form, login, logout'],
+        [\Bitmotion\Auth0\Controller\LoginController::class => 'form, login, logout']
+    );
+} else {
+    // TODO: Remove this when dropping TYPO3 9 LTS support.
+    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
+        'Bitmotion.Auth0',
+        'LoginForm',
+        ['Login' => 'form, login, logout'],
+        ['Login' => 'form, login, logout']
+    );
+}
+
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['list_type_Info']['auth0_loginform']['auth0'] =
     \Bitmotion\Auth0\Hooks\PageLayoutViewHook::class . '->getSummary';

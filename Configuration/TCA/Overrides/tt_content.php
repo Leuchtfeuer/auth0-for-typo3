@@ -6,11 +6,21 @@ declare(strict_types=1);
 /////////////////
 
 // Register LoginForm PlugIn
-\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
-    'Bitmotion.auth0',
-    'LoginForm',
-    'Auth0: Login form'
-);
+if (version_compare(TYPO3_version, '10.0.0', '>=')) {
+    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
+        'Auth0',
+        'LoginForm',
+        'Auth0: Login form'
+    );
+} else {
+    // TODO: Remove this when dropping TYPO3 9 LTS support.
+    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
+        'Bitmotion.Auth0',
+        'LoginForm',
+        'Auth0: Login form'
+    );
+}
+
 
 ///////////////////
 //   FLEXFORMS   //

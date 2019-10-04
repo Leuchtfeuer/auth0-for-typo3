@@ -32,7 +32,12 @@ class RoutingUtility implements LoggerAwareInterface
     {
         if ($pageUid !== 0) {
             // Check whether page exists
-            $page = GeneralUtility::makeInstance(ObjectManager::class)->get(PageRepository::class)->checkRecord('pages', $pageUid);
+            if (class_exists('TYPO3\\CMS\\Core\\Domain\\Repository\\PageRepository')) {
+                $page = GeneralUtility::makeInstance(ObjectManager::class)->get(\TYPO3\CMS\Core\Domain\Repository\PageRepository::class)->checkRecord('pages', $pageUid);
+            } else {
+                // TODO: Remove this when dropping TYPO3 9 LTS support.
+                $page = GeneralUtility::makeInstance(ObjectManager::class)->get(PageRepository::class)->checkRecord('pages', $pageUid);
+            }
 
             if (!empty($page)) {
                 $this->setTargetPage($pageUid);
