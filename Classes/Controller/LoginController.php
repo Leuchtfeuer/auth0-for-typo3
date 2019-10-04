@@ -137,27 +137,21 @@ class LoginController extends ActionController implements LoggerAwareInterface
         $logoutSettings = $this->settings['frontend']['logout'] ?? [];
         $singleLogOut = isset($this->settings['softLogout']) ? !(bool)$this->settings['softLogout'] : (bool)$application['single_log_out'];
 
-        $redirect = GeneralUtility::makeInstance(RoutingUtility::class)
-             ->setCallback((int)$logoutSettings['targetPageUid'], (int)$logoutSettings['targetPageType'])
-             ->addArgument('logintype', 'logout');
+        $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
+        $routingUtility->setCallback((int)$logoutSettings['targetPageUid'], (int)$logoutSettings['targetPageType']);
+        $routingUtility->addArgument('logintype', 'logout');
 
-        if (strpos($this->settings['redirectMode'], 'logout') !== false && !empty($this->settings['redirectPageLogout']) && (bool)$this->settings['redirectDisable'] === false) {
-            $referrer = GeneralUtility::makeInstance(RoutingUtility::class)
-                ->setTargetPage((int)$this->settings['redirectPageLogout'])
-                ->getUri();
-            $redirect->addArgument('referrer', $referrer);
-        } elseif (empty($this->settings['redirectPageLogout']) && (bool)$this->settings['redirectDisable'] === false) {
-            $referrer = GeneralUtility::makeInstance(RoutingUtility::class)->getUri();
-            $redirect->addArgument('referrer', $referrer);
+        if (strpos($this->settings['redirectMode'], 'logout') !== false && (bool)$this->settings['redirectDisable'] === false) {
+            $routingUtility->addArgument('referrer', $this->addLogoutRedirect());
         }
 
         if ($singleLogOut === false) {
-            $this->redirectToUri($redirect->getUri());
+            $this->redirectToUri($routingUtility->getUri());
         }
 
         $this->getAuth0()->logout();
         $this->logger->notice('Proceed with single log out.');
-        $logoutUri = $this->getAuth0()->getLogoutUri($redirect->getUri(), $application['id']);
+        $logoutUri = $this->getAuth0()->getLogoutUri($routingUtility->getUri(), $application['id']);
 
         $this->redirectToUri($logoutUri);
     }
@@ -180,5 +174,16 @@ class LoginController extends ActionController implements LoggerAwareInterface
             ->getUri();
 
         return $apiUtility->getAuth0($redirectUri);
+    }
+
+    protected function addLogoutRedirect(): string
+    {
+        $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
+
+        if (!empty($this->settings['redirectPageLogout'])) {
+            $routingUtility->setTargetPage((int)$this->settings['redirectPageLogout']);
+        }
+
+        return $routingUtility->getUri();
     }
 }
