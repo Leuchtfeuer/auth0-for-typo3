@@ -11,7 +11,7 @@
 				<source>Auth0 Metadata</source>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_frontenduser.auth0_last_application" xml:space="preserve">
-				<source>Last uses Auth0 application</source>
+				<source>Last used Auth0 application</source>
 			</trans-unit>
 			<trans-unit id="tx_auth0.tx_extbase_type" xml:space="preserve">
 				<source>Extbase Typ</source>
@@ -30,13 +30,13 @@
 				<source>Application</source>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_application.title">
-				<source>Title</source>
+				<source>Name</source>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_application.id">
-				<source>Id</source>
+				<source>Client ID</source>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_application.secret">
-				<source>Secret</source>
+				<source>Client Secret</source>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_application.domain">
 				<source>Domain</source>
@@ -103,7 +103,6 @@
 			<trans-unit id="tt_content.pi_flexform.redirectDisable">
 				<source>Disable Redirect</source>
 			</trans-unit>
-
 		</body>
 	</file>
 </xliff>
