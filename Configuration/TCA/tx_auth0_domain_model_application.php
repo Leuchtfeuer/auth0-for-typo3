@@ -20,21 +20,55 @@ return [
         'showRecordFieldList' => 'hidden, title, id, secret, domain, audience, single_log_out',
     ],
     'types' => [
-        '1' => ['showitem' => 'hidden, single_log_out, title, domain, id, secret, audience'],
+        '1' => ['showitem' => '
+            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general,
+                single_log_out,
+                --palette--;;domain,
+                --palette--;;client,
+                audience,
+            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
+                --palette--;;hidden,'
+        ],
+    ],
+    'palettes' => [
+        'client' => [
+            'showitem' => 'id,secret'
+        ],
+        'domain' => [
+            'showitem' => 'title,domain,'
+        ],
+        'hidden' => [
+            'showitem' => 'hidden;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:field.default.hidden',
+        ],
     ],
     'columns' => [
         'hidden' => [
-            'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hidden',
+            'exclude' => true,
+            'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.enabled',
             'config' => [
                 'type' => 'check',
-                'default' => 0,
+                'renderType' => 'checkboxToggle',
+                'items' => [
+                    [
+                        0 => '',
+                        1 => '',
+                        'invertStateDisplay' => true
+                    ],
+                ],
             ],
         ],
         'single_log_out' => [
             'label' => 'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_application.single_log_out',
             'config' => [
                 'type' => 'check',
-                'default' => true,
+                'renderType' => 'checkboxToggle',
+                'items' => [
+                    [
+                        0 => '',
+                        1 => '',
+                    ],
+                ],
+                'default' => 1,
             ],
         ],
         'title' => [
