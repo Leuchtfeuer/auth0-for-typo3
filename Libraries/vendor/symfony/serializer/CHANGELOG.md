@@ -1,6 +1,13 @@
 CHANGELOG
 =========
 
+4.3.0
+-----
+
+ * added the list of constraint violations' parameters in `ConstraintViolationListNormalizer`
+ * added support for serializing `DateTimeZone` objects
+ * added a `deep_object_to_populate` context option to recursive denormalize on `object_to_populate` object.
+
 4.2.0
 -----
 
@@ -131,7 +138,7 @@ CHANGELOG
 
  * added `$context` support for XMLEncoder.
  * [DEPRECATION] JsonEncode and JsonDecode where modified to throw
-   an exception if error found. No need for get*Error() functions
+   an exception if error found. No need for `get*Error()` functions
 
 2.3.0
 -----

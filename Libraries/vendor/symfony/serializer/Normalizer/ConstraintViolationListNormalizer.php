@@ -11,13 +11,13 @@
 
 namespace Symfony\Component\Serializer\Normalizer;
 
+use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 /**
  * A normalizer that normalizes a ConstraintViolationListInterface instance.
  *
  * This Normalizer implements RFC7807 {@link https://tools.ietf.org/html/rfc7807}.
- *
  *
  * @author Grégoire Pineau <lyrixx@lyrixx.info>
  * @author Kévin Dunglas <dunglas@gmail.com>
@@ -30,10 +30,12 @@ class ConstraintViolationListNormalizer implements NormalizerInterface, Cacheabl
     const TYPE = 'type';
 
     private $defaultContext;
+    private $nameConverter;
 
-    public function __construct($defaultContext = [])
+    public function __construct($defaultContext = [], NameConverterInterface $nameConverter = null)
     {
         $this->defaultContext = $defaultContext;
+        $this->nameConverter = $nameConverter;
     }
 
     /**
@@ -44,11 +46,12 @@ class ConstraintViolationListNormalizer implements NormalizerInterface, Cacheabl
         $violations = [];
         $messages = [];
         foreach ($object as $violation) {
-            $propertyPath = $violation->getPropertyPath();
+            $propertyPath = $this->nameConverter ? $this->nameConverter->normalize($violation->getPropertyPath(), null, $format, $context) : $violation->getPropertyPath();
 
             $violationEntry = [
                 'propertyPath' => $propertyPath,
                 'title' => $violation->getMessage(),
+                'parameters' => $violation->getParameters(),
             ];
             if (null !== $code = $violation->getCode()) {
                 $violationEntry['type'] = sprintf('urn:uuid:%s', $code);

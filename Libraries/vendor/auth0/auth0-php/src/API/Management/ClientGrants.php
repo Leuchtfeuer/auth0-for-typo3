@@ -33,11 +33,11 @@ class ClientGrants extends GenericResource
     public function getAll(array $params = [], $page = null, $per_page = null)
     {
         if (null !== $page) {
-            $params['page'] = abs((int) $page);
+            $params['page'] = abs( (int) $page);
         }
 
         if (null !== $per_page) {
-            $params['per_page'] = abs((int) $per_page);
+            $params['per_page'] = abs( (int) $per_page);
         }
 
         return $this->apiClient->method('get')
@@ -169,9 +169,16 @@ class ClientGrants extends GenericResource
             ->call();
     }
 
+    /*
+     * Deprecated
+     */
+
+    // phpcs:disable
+
     /**
      * Get a Client Grant.
-     * TODO: Deprecate, cannot get a Client Grant by ID.
+     *
+     * @deprecated 5.4.0, no such endpoint.
      *
      * @param string      $id       Client Grant ID.
      * @param null|string $audience Client Grant audience to filter by.
@@ -179,10 +186,12 @@ class ClientGrants extends GenericResource
      * @return mixed
      *
      * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     *
+     * @codeCoverageIgnore - Deprecated.
      */
     public function get($id, $audience = null)
     {
-        $request = $this->apiClient->get()
+        $request = $this->apiClient->method('get')
             ->addPath('client-grants');
 
         if ($audience !== null) {
@@ -191,4 +200,6 @@ class ClientGrants extends GenericResource
 
         return $request->call();
     }
+
+    // phpcs:enable
 }

@@ -15,14 +15,25 @@ use Doctrine\Common\Annotations\AnnotationReader;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Type;
+use Symfony\Component\Serializer\Exception\InvalidArgumentException;
 use Symfony\Component\Serializer\Exception\NotNormalizableValueException;
+use Symfony\Component\Serializer\Mapping\ClassDiscriminatorFromClassMetadata;
+use Symfony\Component\Serializer\Mapping\ClassDiscriminatorMapping;
+use Symfony\Component\Serializer\Mapping\ClassMetadata;
+use Symfony\Component\Serializer\Mapping\ClassMetadataInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
+use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactoryInterface;
 use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
 use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerAwareInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Tests\Fixtures\AbstractDummy;
+use Symfony\Component\Serializer\Tests\Fixtures\AbstractDummyFirstChild;
+use Symfony\Component\Serializer\Tests\Fixtures\AbstractDummySecondChild;
+use Symfony\Component\Serializer\Tests\Fixtures\DummySecondChildQuux;
 
 class AbstractObjectNormalizerTest extends TestCase
 {
@@ -47,12 +58,10 @@ class AbstractObjectNormalizerTest extends TestCase
         $this->assertInstanceOf(__NAMESPACE__.'\Dummy', $normalizer->instantiateObject($data, $class, $context, new \ReflectionClass($class), []));
     }
 
-    /**
-     * @expectedException \Symfony\Component\Serializer\Exception\ExtraAttributesException
-     * @expectedExceptionMessage Extra attributes are not allowed ("fooFoo", "fooBar" are unknown).
-     */
     public function testDenormalizeWithExtraAttributes()
     {
+        $this->expectException('Symfony\Component\Serializer\Exception\ExtraAttributesException');
+        $this->expectExceptionMessage('Extra attributes are not allowed ("fooFoo", "fooBar" are unknown).');
         $factory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
         $normalizer = new AbstractObjectNormalizerDummy($factory);
         $normalizer->denormalize(
@@ -63,12 +72,10 @@ class AbstractObjectNormalizerTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException \Symfony\Component\Serializer\Exception\ExtraAttributesException
-     * @expectedExceptionMessage Extra attributes are not allowed ("fooFoo", "fooBar" are unknown).
-     */
     public function testDenormalizeWithExtraAttributesAndNoGroupsWithMetadataFactory()
     {
+        $this->expectException('Symfony\Component\Serializer\Exception\ExtraAttributesException');
+        $this->expectExceptionMessage('Extra attributes are not allowed ("fooFoo", "fooBar" are unknown).');
         $normalizer = new AbstractObjectNormalizerWithMetadata();
         $normalizer->denormalize(
             ['fooFoo' => 'foo', 'fooBar' => 'bar', 'bar' => 'bar'],
@@ -93,7 +100,7 @@ class AbstractObjectNormalizerTest extends TestCase
         );
 
         $this->assertInstanceOf(DummyCollection::class, $dummyCollection);
-        $this->assertInternalType('array', $dummyCollection->children);
+        $this->assertIsArray($dummyCollection->children);
         $this->assertCount(1, $dummyCollection->children);
         $this->assertInstanceOf(DummyChild::class, $dummyCollection->children[0]);
     }
@@ -114,7 +121,7 @@ class AbstractObjectNormalizerTest extends TestCase
         );
 
         $this->assertInstanceOf(DummyCollection::class, $dummyCollection);
-        $this->assertInternalType('array', $dummyCollection->children);
+        $this->assertIsArray($dummyCollection->children);
         $this->assertCount(2, $dummyCollection->children);
         $this->assertInstanceOf(DummyChild::class, $dummyCollection->children[0]);
         $this->assertInstanceOf(DummyChild::class, $dummyCollection->children[1]);
@@ -147,29 +154,53 @@ class AbstractObjectNormalizerTest extends TestCase
         return $denormalizer;
     }
 
+    public function testDenormalizeWithDiscriminatorMapUsesCorrectClassname()
+    {
+        $factory = new ClassMetadataFactory(new AnnotationLoader(new AnnotationReader()));
+
+        $loaderMock = new class() implements ClassMetadataFactoryInterface {
+            public function getMetadataFor($value): ClassMetadataInterface
+            {
+                if (AbstractDummy::class === $value) {
+                    return new ClassMetadata(
+                        AbstractDummy::class,
+                        new ClassDiscriminatorMapping('type', [
+                            'first' => AbstractDummyFirstChild::class,
+                            'second' => AbstractDummySecondChild::class,
+                        ])
+                    );
+                }
+
+                throw new InvalidArgumentException;
+            }
+
+            public function hasMetadataFor($value): bool
+            {
+                return $value === AbstractDummy::class;
+            }
+        };
+
+        $discriminatorResolver = new ClassDiscriminatorFromClassMetadata($loaderMock);
+        $normalizer = new AbstractObjectNormalizerDummy($factory, null, new PhpDocExtractor(), $discriminatorResolver);
+        $serializer = new Serializer([$normalizer]);
+        $normalizer->setSerializer($serializer);
+        $normalizedData = $normalizer->denormalize(['foo' => 'foo', 'baz' => 'baz', 'quux' => ['value' => 'quux'], 'type' => 'second'], AbstractDummy::class);
+
+        $this->assertInstanceOf(DummySecondChildQuux::class, $normalizedData->quux);
+    }
+
     /**
      * Test that additional attributes throw an exception if no metadata factory is specified.
-     *
-     * @expectedException \Symfony\Component\Serializer\Exception\LogicException
-     * @expectedExceptionMessage A class metadata factory must be provided in the constructor when setting "allow_extra_attributes" to false.
      */
     public function testExtraAttributesException()
     {
+        $this->expectException('Symfony\Component\Serializer\Exception\LogicException');
+        $this->expectExceptionMessage('A class metadata factory must be provided in the constructor when setting "allow_extra_attributes" to false.');
         $normalizer = new ObjectNormalizer();
 
         $normalizer->denormalize([], \stdClass::class, 'xml', [
             'allow_extra_attributes' => false,
         ]);
-    }
-
-    public function testSkipNullValues()
-    {
-        $dummy = new Dummy();
-        $dummy->bar = 'present';
-
-        $normalizer = new ObjectNormalizer();
-        $result = $normalizer->normalize($dummy, null, [AbstractObjectNormalizer::SKIP_NULL_VALUES => true]);
-        $this->assertSame(['bar' => 'present'], $result);
     }
 }
 
@@ -190,7 +221,7 @@ class AbstractObjectNormalizerDummy extends AbstractObjectNormalizer
 
     protected function isAllowedAttribute($classOrObject, $attribute, $format = null, array $context = [])
     {
-        return \in_array($attribute, ['foo', 'baz']);
+        return \in_array($attribute, ['foo', 'baz', 'quux', 'value']);
     }
 
     public function instantiateObject(array &$data, $class, array &$context, \ReflectionClass $reflectionClass, $allowedAttributes, string $format = null)
@@ -265,6 +296,8 @@ class SerializerCollectionDummy implements SerializerInterface, DenormalizerInte
                 return $normalizer->denormalize($data, $type, $format, $context);
             }
         }
+
+        return null;
     }
 
     public function supportsDenormalization($data, $type, $format = null)
@@ -319,13 +352,13 @@ class ArrayDenormalizerDummy implements DenormalizerInterface, SerializerAwareIn
      *
      * @throws NotNormalizableValueException
      */
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize($data, $type, $format = null, array $context = [])
     {
         $serializer = $this->serializer;
-        $class = substr($class, 0, -2);
+        $type = substr($type, 0, -2);
 
         foreach ($data as $key => $value) {
-            $data[$key] = $serializer->denormalize($value, $class, $format, $context);
+            $data[$key] = $serializer->denormalize($value, $type, $format, $context);
         }
 
         return $data;

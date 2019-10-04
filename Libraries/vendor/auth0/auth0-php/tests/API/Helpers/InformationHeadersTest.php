@@ -103,30 +103,23 @@ class InformationHeadersTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Extend existing headers and make sure existing data stays intact.
-     *
-     * @link https://github.com/auth0/jwt-auth-bundle/blob/master/src/JWTAuthBundle.php
-     * @link https://github.com/auth0/laravel-auth0/blob/master/src/Auth0/Login/LoginServiceProvider.php
+     * Check that setting the core package works correctly.
      *
      * @return void
      */
-    public function testThatExtendedHeadersBuildCorrectly()
+    public function testThatCorePackageIsSet()
     {
-        $headers     = ApiClient::getInfoHeadersData();
-        $new_headers = InformationHeaders::Extend($headers);
+        $header = new InformationHeaders;
+        $header->setCorePackage();
+        $header_data = $header->get();
 
-        $new_headers->setEnvironment('test_env_name_5', '8.9.10');
-        $new_headers->setPackage('test_name_4', '7.8.9');
+        $this->assertArrayHasKey( 'name', $header_data );
+        $this->assertArrayHasKey( 'version', $header_data );
+        $this->assertArrayHasKey( 'env', $header_data );
+        $this->assertArrayHasKey( 'php', $header_data['env'] );
 
-        $new_header_data = $new_headers->get();
-
-        $this->assertEquals( 'test_name_4', $new_header_data['name'] );
-        $this->assertEquals( '7.8.9', $new_header_data['version'] );
-
-        $this->assertArrayHasKey('env', $new_header_data);
-        $this->assertArrayHasKey('php', $new_header_data['env']);
-        $this->assertEquals( phpversion(), $new_header_data['env']['php'] );
-        $this->assertArrayHasKey('auth0-php', $new_header_data['env']);
-        $this->assertEquals(ApiClient::API_VERSION, $new_header_data['env']['auth0-php']);
+        $this->assertEquals( 'auth0-php', $header_data['name'] );
+        $this->assertEquals( ApiClient::API_VERSION, $header_data['version'] );
+        $this->assertEquals( phpversion(), $header_data['env']['php'] );
     }
 }

@@ -24,9 +24,27 @@ class CsvEncoderTest extends TestCase
      */
     private $encoder;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->encoder = new CsvEncoder();
+    }
+
+    public function testTrueFalseValues()
+    {
+        $data = [
+            'string' => 'foo',
+            'int' => 2,
+            'false' => false,
+            'true' => true,
+        ];
+
+        // Check that true and false are appropriately handled
+        $this->assertEquals(<<<'CSV'
+string,int,false,true
+foo,2,0,1
+
+CSV
+    , $this->encoder->encode($data, 'csv'));
     }
 
     public function testSupportEncoding()
@@ -309,6 +327,18 @@ CSV
             ]));
     }
 
+    public function testEncodeWithoutHeader()
+    {
+        $this->assertSame(<<<'CSV'
+a,b
+c,d
+
+CSV
+            , $this->encoder->encode([['a', 'b'], ['c', 'd']], 'csv', [
+                CsvEncoder::NO_HEADERS_KEY => true,
+            ]));
+    }
+
     public function testSupportsDecoding()
     {
         $this->assertTrue($this->encoder->supportsDecoding('csv'));
@@ -479,5 +509,17 @@ CSV
     public function testDecodeEmptyArray()
     {
         $this->assertEquals([], $this->encoder->decode('', 'csv'));
+    }
+
+    public function testDecodeWithoutHeader()
+    {
+        $this->assertEquals([['a', 'b'], ['c', 'd']], $this->encoder->decode(<<<'CSV'
+a,b
+c,d
+
+CSV
+        , 'csv', [
+            CsvEncoder::NO_HEADERS_KEY => true,
+        ]));
     }
 }

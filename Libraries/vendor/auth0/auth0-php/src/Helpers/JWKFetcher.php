@@ -62,47 +62,43 @@ class JWKFetcher
         return $output;
     }
 
-    // phpcs:disable
     /**
-     * Appends the default JWKS path to a token issuer to return all keys from a JWKS.
-     * TODO: Deprecate, use $this->getJwksX5c() instead and explain why/how.
+     * Gets an array of keys from the JWKS as kid => x5c.
      *
-     * @param string $iss
+     * @param string $jwks_url Full URL to the JWKS.
      *
-     * @return array|mixed|null
-     *
-     * @throws \Exception
-     *
-     * @codeCoverageIgnore
+     * @return array
      */
-    public function fetchKeys($iss)
+    public function getKeys($jwks_url)
     {
-        $url = "{$iss}.well-known/jwks.json";
-
-        if (($secret = $this->cache->get($url)) === null) {
-            $secret = [];
-
-            $request = new RequestBuilder([
-                'domain' => $iss,
-                'basePath' => '.well-known/jwks.json',
-                'method' => 'GET',
-                'guzzleOptions' => $this->guzzleOptions
-            ]);
-            $jwks    = $request->call();
-
-            foreach ($jwks['keys'] as $key) {
-                $secret[$key['kid']] = $this->convertCertToPem($key['x5c'][0]);
-            }
-
-            $this->cache->set($url, $secret);
+        $keys = $this->cache->get($jwks_url);
+        if (is_array($keys) && ! empty($keys)) {
+            return $keys;
         }
 
-        return $secret;
+        $jwks = $this->requestJwks($jwks_url);
+
+        if (empty( $jwks ) || empty( $jwks['keys'] )) {
+            return [];
+        }
+
+        $keys = [];
+        foreach ($jwks['keys'] as $key) {
+            if (empty( $key['kid'] ) || empty( $key['x5c'] ) || empty( $key['x5c'][0] )) {
+                continue;
+            }
+
+            $keys[$key['kid']] = $this->convertCertToPem( $key['x5c'][0] );
+        }
+
+        $this->cache->set($jwks_url, $keys);
+        return $keys;
     }
-    // phpcs:enable
 
     /**
      * Fetch x509 cert for RS256 token decoding.
+     *
+     * @deprecated 5.6.0, use $this->getKeys().
      *
      * @param string      $jwks_url URL to the JWKS.
      * @param string|null $kid      Key ID to use; returns first JWK if $kid is null or empty.
@@ -155,6 +151,8 @@ class JWKFetcher
     /**
      * Get a JWK from a JWKS using a key ID, if provided.
      *
+     * @deprecated 5.6.0, use $this->getKeys().
+     *
      * @param array       $jwks JWKS to parse.
      * @param null|string $kid  Key ID to return; returns first JWK if $kid is null or empty.
      *
@@ -184,6 +182,8 @@ class JWKFetcher
     /**
      * Check if an array within an array has a non-empty first item.
      *
+     * @deprecated 5.6.0, not used.
+     *
      * @param array|null $array Main array to check.
      * @param string     $key   Key pointing to a sub-array.
      *
@@ -195,4 +195,48 @@ class JWKFetcher
     {
         return empty($array) || ! is_array($array[$key]) || empty($array[$key][0]);
     }
+
+    /*
+     * Deprecated
+     */
+
+    // phpcs:disable
+    /**
+     * Appends the default JWKS path to a token issuer to return all keys from a JWKS.
+     *
+     * @deprecated 5.4.0, use requestJwkX5c instead.
+     *
+     * @param string $iss
+     *
+     * @return array|mixed|null
+     *
+     * @throws \Exception
+     *
+     * @codeCoverageIgnore
+     */
+    public function fetchKeys($iss)
+    {
+        $url = "{$iss}.well-known/jwks.json";
+
+        if (($secret = $this->cache->get($url)) === null) {
+            $secret = [];
+
+            $request = new RequestBuilder([
+                'domain' => $iss,
+                'basePath' => '.well-known/jwks.json',
+                'method' => 'GET',
+                'guzzleOptions' => $this->guzzleOptions
+            ]);
+            $jwks    = $request->call();
+
+            foreach ($jwks['keys'] as $key) {
+                $secret[$key['kid']] = $this->convertCertToPem($key['x5c'][0]);
+            }
+
+            $this->cache->set($url, $secret);
+        }
+
+        return $secret;
+    }
+    // phpcs:enable
 }

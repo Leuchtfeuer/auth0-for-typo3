@@ -261,7 +261,6 @@ class XmlEncoder implements EncoderInterface, DecoderInterface, NormalizationAwa
     }
 
     /**
-     * @param \DOMNode             $node
      * @param \DOMDocumentFragment $fragment
      */
     final protected function appendDocumentFragment(\DOMNode $node, $fragment): bool
@@ -339,7 +338,7 @@ class XmlEncoder implements EncoderInterface, DecoderInterface, NormalizationAwa
         $typeCastAttributes = (bool) ($context[self::TYPE_CASE_ATTRIBUTES] ?? $this->defaultContext[self::TYPE_CASE_ATTRIBUTES]);
 
         foreach ($node->attributes as $attr) {
-            if (!is_numeric($attr->nodeValue) || !$typeCastAttributes) {
+            if (!is_numeric($attr->nodeValue) || !$typeCastAttributes || (isset($attr->nodeValue[1]) && '0' === $attr->nodeValue[0])) {
                 $data['@'.$attr->nodeName] = $attr->nodeValue;
 
                 continue;

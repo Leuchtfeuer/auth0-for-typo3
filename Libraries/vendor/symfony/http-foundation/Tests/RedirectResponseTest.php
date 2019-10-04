@@ -26,19 +26,15 @@ class RedirectResponseTest extends TestCase
         ));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testRedirectResponseConstructorNullUrl()
     {
+        $this->expectException('InvalidArgumentException');
         $response = new RedirectResponse(null);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testRedirectResponseConstructorWrongStatusCode()
     {
+        $this->expectException('InvalidArgumentException');
         $response = new RedirectResponse('foo.bar', 404);
     }
 
@@ -65,11 +61,9 @@ class RedirectResponseTest extends TestCase
         $this->assertEquals('baz.beep', $response->getTargetUrl());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testSetTargetUrlNull()
     {
+        $this->expectException('InvalidArgumentException');
         $response = new RedirectResponse('foo.bar');
         $response->setTargetUrl(null);
     }
@@ -88,6 +82,10 @@ class RedirectResponseTest extends TestCase
         $this->assertFalse($response->headers->hasCacheControlDirective('no-cache'));
 
         $response = new RedirectResponse('foo.bar', 301, ['cache-control' => 'max-age=86400']);
+        $this->assertFalse($response->headers->hasCacheControlDirective('no-cache'));
+        $this->assertTrue($response->headers->hasCacheControlDirective('max-age'));
+
+        $response = new RedirectResponse('foo.bar', 301, ['Cache-Control' => 'max-age=86400']);
         $this->assertFalse($response->headers->hasCacheControlDirective('no-cache'));
         $this->assertTrue($response->headers->hasCacheControlDirective('max-age'));
 

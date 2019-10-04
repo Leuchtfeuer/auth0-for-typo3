@@ -2,6 +2,9 @@
 
 namespace Auth0\SDK\API\Management;
 
+use Auth0\SDK\Exception\EmptyOrInvalidParameterException;
+use Auth0\SDK\Exception\InvalidPermissionsArrayException;
+
 /**
  * Class Users.
  * Handles requests to the Users endpoint of the v2 Management API.
@@ -77,19 +80,19 @@ class Users extends GenericResource
             throw new \Exception('Missing required "connection" field.');
         }
 
+        // A phone number is required for sms connections.
         if ('sms' === $data['connection'] && empty($data['phone_number'])) {
-            // "phone_number" field is required for an sms connection.
             throw new \Exception('Missing required "phone_number" field for sms connection.');
-        } else if ('sms' !== $data['connection']) {
-            // "email" field is required for email and DB connections.
-            if (empty($data['email'])) {
-                throw new \Exception('Missing required "email" field.');
-            }
+        }
 
-            // Passwords are required for DB connections.
-            if ('email' !== $data['connection'] && empty($data['password'])) {
-                throw new \Exception('Missing required "password" field for "'.$data['connection'].'" connection.');
-            }
+        // An email is required for email and DB connections.
+        if ('sms' !== $data['connection'] && empty($data['email'])) {
+            throw new \Exception('Missing required "email" field.');
+        }
+
+        // A password is required for DB connections.
+        if (! in_array( $data['connection'], [ 'email', 'sms' ] ) && empty($data['password'])) {
+            throw new \Exception('Missing required "password" field for "'.$data['connection'].'" connection.');
         }
 
         return $this->apiClient->method('post')
@@ -123,8 +126,6 @@ class Users extends GenericResource
      */
     public function getAll(array $params = [], $fields = null, $include_fields = null, $page = null, $per_page = null)
     {
-        $params = is_array($params) ? $params : [];
-
         // Fields to include/exclude.
         if (! isset($params['fields']) && null !== $fields) {
             $params['fields'] = $fields;
@@ -140,37 +141,12 @@ class Users extends GenericResource
             }
         }
 
-        // Keep existing pagination params if passed (backwards-compat), override with non-null function param if not.
-        if (! isset($params['page']) && null !== $page) {
-            $params['page'] = abs((int) $page);
-        }
-
-        if (! isset($params['per_page']) && null !== $per_page) {
-            $params['per_page'] = abs((int) $per_page);
-        }
+        $params = $this->normalizePagination( $params, $page, $per_page );
 
         return $this->apiClient->method('get')
             ->addPath('users')
             ->withDictParams($params)
             ->call();
-    }
-
-    /**
-     * Wrapper for self::search().
-     *
-     * TODO: Deprecate, replaced with getAll above.
-     *
-     * @param array $params Search parameters to send.
-     *
-     * @return mixed|string
-     *
-     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
-     *
-     * @see self::getAll()
-     */
-    public function search(array $params = [])
-    {
-        return $this->getAll($params);
     }
 
     /**
@@ -236,24 +212,8 @@ class Users extends GenericResource
         return $this->apiClient->method('delete')
             ->addPath('users', $user_id)
             ->addPath('identities', $provider)
-            ->addPathVariable($identity_id)
+            ->addPath($identity_id)
             ->call();
-    }
-
-    /**
-     * Unlink device.
-     * TODO: Deprecate, endpoint does not exist.
-     *
-     * @param string $user_id   User ID.
-     * @param string $device_id Device ID.
-     *
-     * @return void
-     *
-     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
-     */
-    public function unlinkDevice($user_id, $device_id)
-    {
-        throw new \Exception('Endpoint /api/v2/users/{user_id}/devices/{device_id} does not exist.');
     }
 
     /**
@@ -267,6 +227,8 @@ class Users extends GenericResource
      * @return mixed|string
      *
      * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     *
+     * @link https://auth0.com/docs/api/management/v2#!/Users/delete_multifactor_by_provider
      */
     public function deleteMultifactorProvider($user_id, $mfa_provider)
     {
@@ -275,4 +237,328 @@ class Users extends GenericResource
             ->addPath('multifactor', $mfa_provider)
             ->call();
     }
+
+    /**
+     * Get all roles assigned to a specific user.
+     * Required scopes:
+     *      - "read:users"
+     *      - "read:roles"
+     *
+     * @param string $user_id User ID to get roles for.
+     * @param array  $params  Additional listing params like page, per_page, and include_totals.
+     *
+     * @throws EmptyOrInvalidParameterException Thrown if the user_id parameter is empty or is not a string.
+     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     *
+     * @return mixed
+     *
+     * @link https://auth0.com/docs/api/management/v2#!/Users/get_user_roles
+     */
+    public function getRoles($user_id, array $params = [])
+    {
+        $this->checkEmptyOrInvalidString($user_id, 'user_id');
+
+        $params = $this->normalizePagination( $params );
+        $params = $this->normalizeIncludeTotals( $params );
+
+        return $this->apiClient->method('get')
+            ->addPath('users', $user_id)
+            ->addPath('roles')
+            ->withDictParams($params)
+            ->call();
+    }
+
+    /**
+     * Remove one or more roles from a specific user.
+     * Required scope: "update:users"
+     *
+     * @param string $user_id User ID to remove roles from.
+     * @param array  $roles   Array of permissions to remove.
+     *
+     * @throws EmptyOrInvalidParameterException Thrown if the user_id parameter is empty or is not a string.
+     * @throws EmptyOrInvalidParameterException Thrown if the roles parameter is empty.
+     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     *
+     * @return mixed
+     *
+     * @link https://auth0.com/docs/api/management/v2#!/Users/delete_user_roles
+     */
+    public function removeRoles($user_id, array $roles)
+    {
+        $this->checkEmptyOrInvalidString($user_id, 'user_id');
+
+        if (empty($roles)) {
+            throw new EmptyOrInvalidParameterException('roles');
+        }
+
+        $data = [ 'roles' => $roles ];
+
+        return $this->apiClient->method('delete')
+            ->addPath('users', $user_id)
+            ->addPath('roles')
+            ->withBody(json_encode($data))
+            ->call();
+    }
+
+    /**
+     * Add one or more roles to a specific user.
+     * Required scopes:
+     *      - "update:users"
+     *      - "read:roles"
+     *
+     * @param string $user_id User ID to add roles to.
+     * @param array  $roles   Array of roles to add.
+     *
+     * @throws EmptyOrInvalidParameterException Thrown if the user_id parameter is empty or is not a string.
+     * @throws EmptyOrInvalidParameterException Thrown if the roles parameter is empty.
+     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     *
+     * @return mixed
+     *
+     * @link https://auth0.com/docs/api/management/v2#!/Users/post_user_roles
+     */
+    public function addRoles($user_id, array $roles)
+    {
+        $this->checkEmptyOrInvalidString($user_id, 'user_id');
+
+        if (empty($roles)) {
+            throw new EmptyOrInvalidParameterException('roles');
+        }
+
+        $data = [ 'roles' => $roles ];
+
+        return $this->apiClient->method('post')
+            ->addPath('users', $user_id)
+            ->addPath('roles')
+            ->withBody(json_encode($data))
+            ->call();
+    }
+
+    /**
+     * Get all Guardian enrollments for a specific user.
+     * Required scope: "read:users"
+     *
+     * @param string $user_id User ID to get enrollments for.
+     *
+     * @throws EmptyOrInvalidParameterException Thrown if the user_id parameter is empty or is not a string.
+     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     *
+     * @return mixed
+     *
+     * @link https://auth0.com/docs/api/management/v2#!/Users/get_enrollments
+     */
+    public function getEnrollments($user_id)
+    {
+        $this->checkEmptyOrInvalidString($user_id, 'user_id');
+
+        return $this->apiClient->method('get')
+            ->addPath('users', $user_id)
+            ->addPath('enrollments')
+            ->call();
+    }
+
+    /**
+     * Get all permissions for a specific user.
+     * Required scope: "read:users"
+     *
+     * @param string $user_id User ID to get permissions for.
+     * @param array  $params  Additional listing params like page, per_page, and include_totals.
+     *
+     * @throws EmptyOrInvalidParameterException Thrown if the user_id parameter is empty or is not a string.
+     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     *
+     * @return mixed
+     *
+     * @link https://auth0.com/docs/api/management/v2#!/Users/get_permissions
+     */
+    public function getPermissions($user_id, array $params = [])
+    {
+        $this->checkEmptyOrInvalidString($user_id, 'user_id');
+
+        $params = $this->normalizePagination( $params );
+        $params = $this->normalizeIncludeTotals( $params );
+
+        return $this->apiClient->method('get')
+            ->addPath('users', $user_id)
+            ->addPath('permissions')
+            ->withDictParams($params)
+            ->call();
+    }
+
+    /**
+     * Remove one or more permissions from a specific user.
+     * Required scope: "update:users"
+     *
+     * @param string $user_id     User ID to remove permissions from.
+     * @param array  $permissions Array of permissions to remove.
+     *
+     * @throws EmptyOrInvalidParameterException Thrown if the user_id parameter is empty or is not a string.
+     * @throws InvalidPermissionsArrayException Thrown if the permissions parameter is malformed.
+     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     *
+     * @return mixed
+     *
+     * @link https://auth0.com/docs/api/management/v2#!/Users/delete_permissions
+     */
+    public function removePermissions($user_id, array $permissions)
+    {
+        $this->checkEmptyOrInvalidString($user_id, 'user_id');
+        $this->checkInvalidPermissions( $permissions );
+
+        $data = [ 'permissions' => $permissions ];
+
+        return $this->apiClient->method('delete')
+            ->addPath('users', $user_id)
+            ->addPath('permissions')
+            ->withBody(json_encode($data))
+            ->call();
+    }
+
+    /**
+     * Add one or more permissions to a specific user.
+     * Required scope: "update:users"
+     *
+     * @param string $user_id     User ID to add permissions to.
+     * @param array  $permissions Array of permissions to add.
+     *
+     * @throws EmptyOrInvalidParameterException Thrown if the user_id parameter is empty or is not a string.
+     * @throws InvalidPermissionsArrayException Thrown if the permissions parameter is malformed.
+     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     *
+     * @return mixed
+     *
+     * @link https://auth0.com/docs/api/management/v2#!/Users/post_permissions
+     */
+    public function addPermissions($user_id, array $permissions)
+    {
+        $this->checkEmptyOrInvalidString($user_id, 'user_id');
+        $this->checkInvalidPermissions( $permissions );
+
+        $data = [ 'permissions' => $permissions ];
+
+        return $this->apiClient->method('post')
+            ->addPath('users', $user_id)
+            ->addPath('permissions')
+            ->withBody(json_encode($data))
+            ->call();
+    }
+
+    /**
+     * Get log entries for a specific user.
+     * Required scope: "read:logs"
+     *
+     * @param string $user_id User ID to get logs entries for.
+     * @param array  $params  Additional listing params like page, per_page, sort, and include_totals.
+     *
+     * @throws EmptyOrInvalidParameterException Thrown if the user_id parameter is empty or is not a string.
+     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     *
+     * @return mixed
+     *
+     * @link https://auth0.com/docs/api/management/v2#!/Users/get_logs_by_user
+     */
+    public function getLogs($user_id, array $params = [])
+    {
+        $this->checkEmptyOrInvalidString($user_id, 'user_id');
+
+        $params = $this->normalizePagination( $params );
+        $params = $this->normalizeIncludeTotals( $params );
+
+        return $this->apiClient->method('get')
+            ->addPath('users', $user_id)
+            ->addPath('logs')
+            ->withDictParams($params)
+            ->call();
+    }
+
+    /**
+     * Removes the current Guardian recovery code and generates and returns a new one.
+     * Required scope: "update:users"
+     *
+     * @param string $user_id User ID to remove and generate recovery codes for.
+     *
+     * @throws EmptyOrInvalidParameterException Thrown if the user_id parameter is empty or is not a string.
+     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     *
+     * @return mixed
+     *
+     * @link https://auth0.com/docs/api/management/v2#!/Users/post_recovery_code_regeneration
+     */
+    public function generateRecoveryCode($user_id)
+    {
+        $this->checkEmptyOrInvalidString($user_id, 'user_id');
+
+        return $this->apiClient->method('post')
+            ->addPath('users', $user_id)
+            ->addPath('recovery-code-regeneration')
+            ->call();
+    }
+
+    /**
+     * Invalidates all remembered browsers for all authentication factors for a specific user.
+     * Required scope: "update:users"
+     *
+     * @param string $user_id User ID to invalidate browsers for.
+     *
+     * @throws EmptyOrInvalidParameterException Thrown if the user_id parameter is empty or is not a string.
+     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     *
+     * @return mixed
+     *
+     * @link https://auth0.com/docs/api/management/v2#!/Users/post_invalidate_remember_browser
+     */
+    public function invalidateBrowsers($user_id)
+    {
+        $this->checkEmptyOrInvalidString($user_id, 'user_id');
+
+        return $this->apiClient->method('post')
+            ->addPath('users', $user_id)
+            ->addPath('multifactor/actions/invalidate-remember-browser')
+            ->call();
+    }
+
+    /*
+     * Deprecated
+     */
+
+    // phpcs:disable
+
+    /**
+     * Wrapper for self::getAll().
+     *
+     * @deprecated 5.4.0, use $this->getAll instead.
+     *
+     * @param array $params Search parameters to send.
+     *
+     * @return mixed|string
+     *
+     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     *
+     * @codeCoverageIgnores - Deprecated
+     */
+    public function search(array $params = [])
+    {
+        return $this->getAll($params);
+    }
+
+    /**
+     * Unlink device.
+     *
+     * @deprecated 5.4.0, endpoint does not exist.
+     *
+     * @param string $user_id   User ID.
+     * @param string $device_id Device ID.
+     *
+     * @return void
+     *
+     * @throws \Exception Thrown by the HTTP client when there is a problem with the API call.
+     *
+     * @codeCoverageIgnores - Deprecated
+     */
+    public function unlinkDevice($user_id, $device_id)
+    {
+        throw new \Exception('Endpoint /api/v2/users/{user_id}/devices/{device_id} does not exist.');
+    }
+
+    // phpcs:enable
 }

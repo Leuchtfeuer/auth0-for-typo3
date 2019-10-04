@@ -26,7 +26,7 @@ class ChainEncoderTest extends TestCase
     private $encoder1;
     private $encoder2;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->encoder1 = $this
             ->getMockBuilder('Symfony\Component\Serializer\Encoder\EncoderInterface')
@@ -34,12 +34,12 @@ class ChainEncoderTest extends TestCase
 
         $this->encoder1
             ->method('supportsEncoding')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 [self::FORMAT_1, [], true],
                 [self::FORMAT_2, [], false],
                 [self::FORMAT_3, [], false],
                 [self::FORMAT_3, ['foo' => 'bar'], true],
-            ]));
+            ]);
 
         $this->encoder2 = $this
             ->getMockBuilder('Symfony\Component\Serializer\Encoder\EncoderInterface')
@@ -47,11 +47,11 @@ class ChainEncoderTest extends TestCase
 
         $this->encoder2
             ->method('supportsEncoding')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 [self::FORMAT_1, [], false],
                 [self::FORMAT_2, [], true],
                 [self::FORMAT_3, [], false],
-            ]));
+            ]);
 
         $this->chainEncoder = new ChainEncoder([$this->encoder1, $this->encoder2]);
     }
@@ -72,11 +72,9 @@ class ChainEncoderTest extends TestCase
         $this->chainEncoder->encode(['foo' => 123], self::FORMAT_2);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Serializer\Exception\RuntimeException
-     */
     public function testEncodeUnsupportedFormat()
     {
+        $this->expectException('Symfony\Component\Serializer\Exception\RuntimeException');
         $this->chainEncoder->encode(['foo' => 123], self::FORMAT_3);
     }
 

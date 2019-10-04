@@ -104,7 +104,7 @@ class PropertyNormalizer extends AbstractObjectNormalizer
 
         do {
             foreach ($reflectionObject->getProperties() as $property) {
-                if (!$this->isAllowedAttribute($reflectionObject->getName(), $property->name)) {
+                if (!$this->isAllowedAttribute($reflectionObject->getName(), $property->name, $format, $context)) {
                     continue;
                 }
 
@@ -123,7 +123,7 @@ class PropertyNormalizer extends AbstractObjectNormalizer
         try {
             $reflectionProperty = $this->getReflectionProperty($object, $attribute);
         } catch (\ReflectionException $reflectionException) {
-            return;
+            return null;
         }
 
         // Override visibility

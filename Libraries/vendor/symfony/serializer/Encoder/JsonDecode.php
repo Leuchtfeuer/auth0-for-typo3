@@ -84,7 +84,7 @@ class JsonDecode implements DecoderInterface
      *
      * @throws NotEncodableValueException
      *
-     * @see http://php.net/json_decode json_decode
+     * @see https://php.net/json_decode
      */
     public function decode($data, $format, array $context = [])
     {
@@ -92,7 +92,15 @@ class JsonDecode implements DecoderInterface
         $recursionDepth = $context[self::RECURSION_DEPTH] ?? $this->defaultContext[self::RECURSION_DEPTH];
         $options = $context[self::OPTIONS] ?? $this->defaultContext[self::OPTIONS];
 
-        $decodedData = json_decode($data, $associative, $recursionDepth, $options);
+        try {
+            $decodedData = json_decode($data, $associative, $recursionDepth, $options);
+        } catch (\JsonException $e) {
+            throw new NotEncodableValueException($e->getMessage(), 0, $e);
+        }
+
+        if (\PHP_VERSION_ID >= 70300 && (JSON_THROW_ON_ERROR & $options)) {
+            return $decodedData;
+        }
 
         if (JSON_ERROR_NONE !== json_last_error()) {
             throw new NotEncodableValueException(json_last_error_msg());

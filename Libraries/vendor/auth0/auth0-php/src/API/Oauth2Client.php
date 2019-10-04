@@ -11,7 +11,7 @@ use OAuth2\Client;
 /**
  * This class provides access to Auth0 Platform.
  *
- * @deprecated - Deprecated in 5.2.1; use \Auth0\SDK\Auth0 instead.
+ * @deprecated 5.2.1, use \Auth0\SDK\Auth0 instead.
  *
  * @codeCoverageIgnore - Deprecated
  */
@@ -131,7 +131,7 @@ class Oauth2Client
     /**
      * BaseAuth0 Constructor.
      *
-     * @deprecated - Deprecated in 5.2.1; use \Auth0\SDK\Auth0 instead.
+     * @deprecated 5.2.1, use \Auth0\SDK\Auth0 instead.
      *
      * Configuration:
      *     - domain (String) - Required. Should match your Auth0 domain
@@ -340,8 +340,6 @@ class Oauth2Client
      * Updates the user metadata. This end up calling the path /users/{id_user}
      * To delete an attribute, just set it null. ie: [ 'old_attr' => null ]
      * It will only update the existing attrs and keep the others untouched
-     *
-     * TODO: Replace Auth0Api with Management
      *
      * @see https://auth0.com/docs/apiv2#!/users/patch_users_by_id
      *
