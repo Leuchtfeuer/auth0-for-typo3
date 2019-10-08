@@ -7,23 +7,10 @@ config.tx_extbase {
                 }
             }
 
-            TYPO3\CMS\Extbase\Domain\Model\FrontendUserGroup {
-                subclasses {
-                    Tx_Auth0_FrontendUserGroup = Bitmotion\Auth0\Domain\Model\FrontendUserGroup
-                }
-            }
-
             Bitmotion\Auth0\Domain\Model\FrontendUser {
                 mapping {
                     tableName = fe_users
                     recordType = Tx_Auth0_FrontendUser
-                }
-            }
-
-            Bitmotion\Auth0\Domain\Model\FrontendUserGroup {
-                mapping {
-                    tableName = fe_groups
-                    recordType = Tx_Auth0_FrontendUserGroup
                 }
             }
         }
