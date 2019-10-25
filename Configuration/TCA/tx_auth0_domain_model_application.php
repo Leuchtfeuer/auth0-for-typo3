@@ -27,15 +27,15 @@ return [
                 --palette--;;client,
                 audience,
             --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
-                --palette--;;hidden,'
+                --palette--;;hidden,',
         ],
     ],
     'palettes' => [
         'client' => [
-            'showitem' => 'id,secret'
+            'showitem' => 'id,secret',
         ],
         'domain' => [
-            'showitem' => 'title,domain,'
+            'showitem' => 'title,domain,',
         ],
         'hidden' => [
             'showitem' => 'hidden;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:field.default.hidden',
@@ -52,7 +52,7 @@ return [
                     [
                         0 => '',
                         1 => '',
-                        'invertStateDisplay' => true
+                        'invertStateDisplay' => true,
                     ],
                 ],
             ],
