@@ -9,13 +9,14 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
 class Auth0Middleware implements MiddlewareInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
     /**
-     * Creates an Auth0 session when there is an logged in frontend user.
+     * Log off user in TYPO3 or Auth0 if there is no corresponding session in Auth0 or TYPO3.
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -23,11 +24,22 @@ class Auth0Middleware implements MiddlewareInterface, LoggerAwareInterface
         $sessionStore = new SessionStore();
         $userInfo = $sessionStore->get('user');
 
-        if ($userInfo === null && is_array($feUserAuthentication->user) && isset($feUserAuthentication->user['auth0_user_id']) && !empty($feUserAuthentication->user['auth0_user_id'])) {
+        if ($userInfo === null && $this->loggedInUserIsAuth0User($feUserAuthentication)) {
+            // Log off user from TYPO3 as there is no valid Auth0 session
             $this->logger->notice('Logoff user.');
             $feUserAuthentication->logoff();
+        } elseif ($userInfo && !is_array($feUserAuthentication->user) && !isset($feUserAuthentication->user['auth0_user_id'])) {
+            // Destroy Auth0 session as there is no valid TYPO3 frontend user
+            $sessionStore->delete('user');
         }
 
         return $handler->handle($request);
+    }
+
+    protected function loggedInUserIsAuth0User(FrontendUserAuthentication $feUserAuthentication): bool
+    {
+        return is_array($feUserAuthentication->user)
+            && isset($feUserAuthentication->user['auth0_user_id'])
+            && !empty($feUserAuthentication->user['auth0_user_id']);
     }
 }
