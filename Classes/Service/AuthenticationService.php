@@ -162,6 +162,11 @@ class AuthenticationService extends \TYPO3\CMS\Sv\AuthenticationService
                 'read:current_user openid profile'
             );
             $this->tokenInfo = $authenticationApi->getUser();
+
+            if (!$this->tokenInfo || !isset($this->tokenInfo['sub'])) {
+                return false;
+            }
+
             $managementApi = GeneralUtility::makeInstance(ManagementApi::class, $application);
             $this->auth0User = $managementApi->getUserById($this->tokenInfo['sub']);
 
