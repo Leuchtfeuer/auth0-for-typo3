@@ -44,7 +44,7 @@
     }
   },
   "replace": {
-    "auth0": "self.version",
+    "bitmotion/auth0": "self.version",
     "typo3-ter/auth0": "self.version"
   }
 }
