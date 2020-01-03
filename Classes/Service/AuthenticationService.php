@@ -313,7 +313,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      */
     public function getUser()
     {
-        if ($this->login['status'] !== 'login') {
+        if ($this->login['status'] !== 'login' || empty($this->tokenInfo)) {
             return false;
         }
 
