@@ -5,28 +5,31 @@
 		<header/>
 		<body>
 			<trans-unit id="backend.enable_backend_login" xml:space="preserve">
-				<source>Enable Auth0 log in for TYPO3 backend</source>
+				<source>Backend Log In: Enable Auth0 log in for TYPO3 backend</source>
 			</trans-unit>
 			<trans-unit id="backend.backend_connection" xml:space="preserve">
-				<source>Application identifier for backend login</source>
+				<source>Application: Application identifier for backend login</source>
 			</trans-unit>
 			<trans-unit id="backend.reactivate_disabled_backend_users" xml:space="preserve">
-				<source>Allow log in for disabled backend users</source>
+				<source>Reactivate Disabled Users: Allow log in for disabled backend users</source>
 			</trans-unit>
 			<trans-unit id="backend.reactivate_deleted_backend_users" xml:space="preserve">
-				<source>Allow log in for deleted backend users</source>
+				<source>Reactivate Deleted Users: Allow log in for deleted backend users</source>
 			</trans-unit>
 			<trans-unit id="backend.soft_logout" xml:space="preserve">
-				<source>Logout from TYPO3 only (not from Auth0)</source>
+				<source>Soft Log Out: Logout from TYPO3 only (not from Auth0)</source>
+			</trans-unit>
+			<trans-unit id="backend.additional_authorize_parameters" xml:space="preserve">
+				<source><![CDATA[Additional Query Parameters: Additional query parameters for backend authentication (e.g. "access_type=offline&connection=google-oauth2")]]></source>
 			</trans-unit>
 			<trans-unit id="frontend.user_storage_page" xml:space="preserve">
-				<source>Storage page for frontend user</source>
+				<source>Storage Page: Storage page for frontend user</source>
 			</trans-unit>
 			<trans-unit id="frontend.reactivate_disabled_frontend_users" xml:space="preserve">
-				<source>Allow log in for disabled frontend users</source>
+				<source>Reactivate Disabled Users: Allow log in for disabled frontend users</source>
 			</trans-unit>
 			<trans-unit id="frontend.reactivate_deleted_frontend_users" xml:space="preserve">
-				<source>Allow log in for deleted frontend users</source>
+				<source>Reactivate Deleted Users: Allow log in for deleted frontend users</source>
 			</trans-unit>
 		</body>
 	</file>

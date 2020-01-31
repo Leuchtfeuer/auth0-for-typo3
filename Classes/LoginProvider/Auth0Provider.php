@@ -138,7 +138,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         } elseif ($this->userInfo === null && $this->action === self::ACTION_LOGIN) {
             // Login user to Auth0
             $this->logger->notice('Handle backend login.');
-            $this->auth0->login();
+            $this->auth0->login(null, null, $this->configuration->getAdditionalAuthorizeParameters());
         }
     }
 

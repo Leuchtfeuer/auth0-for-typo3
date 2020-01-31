@@ -37,6 +37,8 @@ class EmAuth0Configuration implements SingletonInterface
 
     protected $softLogout = false;
 
+    protected $additionalAuthorizeParameters = '';
+
     /**
      * @throws ExtensionConfigurationExtensionNotConfiguredException
      * @throws ExtensionConfigurationPathDoesNotExistException
@@ -97,5 +99,21 @@ class EmAuth0Configuration implements SingletonInterface
     public function isSoftLogout(): bool
     {
         return (bool)$this->softLogout;
+    }
+
+    public function getAdditionalAuthorizeParameters(): array
+    {
+        if (empty($this->additionalAuthorizeParameters)) {
+            return [];
+        }
+
+        $additionalParameters = [];
+
+        foreach (explode('&', $this->additionalAuthorizeParameters) as $additionalParameter) {
+            [$key, $value] = explode('=', $additionalParameter, 2);
+            $additionalParameters[trim($key)] = trim($value);
+        }
+
+        return $additionalParameters;
     }
 }

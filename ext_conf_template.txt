@@ -13,6 +13,9 @@ reactivateDeletedBackendUsers = 0
 # cat=Backend/50; type=boolean; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.soft_logout
 softLogout = 0
 
+# cat=Backend/60; type=string; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.additional_authorize_parameters
+additionalAuthorizeParameters =
+
 # cat=Frontend/10 type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:frontend.user_storage_page
 userStoragePage = 0
 
