@@ -292,9 +292,9 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
             $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $this->application);
             $callback = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/typo3/?loginProvider=' . Auth0Provider::LOGIN_PROVIDER . '&auth0[action]=login';
             $this->auth0 = $apiUtility->getAuth0($callback);
-            $this->tokenInfo = $this->auth0->getUser();
+            $this->tokenInfo = $this->auth0->getUser() ?? [];
 
-            if ($this->getAuth0User() === false) {
+            if (empty($this->tokenInfo) || $this->getAuth0User() === false) {
                 return false;
             }
 
