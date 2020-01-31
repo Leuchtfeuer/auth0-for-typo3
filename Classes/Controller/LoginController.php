@@ -119,7 +119,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
         if ($userInfo === null || $feUserAuthentication->user === null) {
             $this->logger->notice('Try to login user to Auth0.');
-            $this->getAuth0()->login();
+            $this->getAuth0()->login(null, null, $this->settings['frontend']['login']['additionalAuthorizeParameters'] ?? []);
         }
 
         $this->redirect('form');

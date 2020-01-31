@@ -37,6 +37,14 @@ plugin.tx_auth0 {
                 targetPageType = {$plugin.tx_auth0.settings.frontend.logout.targetPageType}
                 targetPageUid = {$plugin.tx_auth0.settings.frontend.logout.targetPageUid}
             }
+
+            login {
+                additionalAuthorizeParameters {
+                    # key = value
+                    # Example: access_type = offline
+                    # Example: connection = google-oauth2
+                }
+            }
         }
 
         # maps auth0 roles to TYPO3 fe_groups or be_groups
