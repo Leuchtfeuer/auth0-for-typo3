@@ -20,7 +20,8 @@ class Auth0Middleware implements MiddlewareInterface, LoggerAwareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $feUserAuthentication = $GLOBALS['TSFE']->fe_user;
+        // TODO: Remove the $GLOBALS array when dropping TYPO3 9 LTS support
+        $feUserAuthentication = $request->getAttribute('frontend.user') ?? $GLOBALS['TSFE']->fe_user;
         $sessionStore = new SessionStore();
         $userInfo = $sessionStore->get('user');
 
