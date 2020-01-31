@@ -111,9 +111,10 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
 
         if ($this->loginViaSession === true) {
             $this->login['status'] = 'login';
-            $this->handleLogin($loginData);
+            $this->login['responsible'] = true;
+            $this->handleLogin();
         } elseif ($this->initializeAuth0Connections()) {
-            $this->handleLogin($loginData);
+            $this->handleLogin();
         }
     }
 
@@ -163,6 +164,8 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     protected function setDefaults(array $authInfo, string $mode, array $loginData, AbstractUserAuthentication $pObj)
     {
         $authInfo['db_user']['check_pid_clause'] = false;
+        $loginData['responsible'] = false;
+
         $this->db_user = $authInfo['db_user'];
         $this->db_groups = $authInfo['db_groups'];
         $this->authInfo = $authInfo;
@@ -174,15 +177,16 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     protected function initSessionStore(): bool
     {
         $sessionStore = new SessionStore();
-        $tokenInfo = $sessionStore->get('user');
+        $tokenInfo = $sessionStore->get('user') ?? [];
 
-        if (is_array($tokenInfo) && isset($tokenInfo['sub'])) {
+        if (!empty($tokenInfo['sub'])) {
             $this->logger->debug('Try to login user via Auth0 session');
             try {
                 $this->tokenInfo = $tokenInfo;
                 $this->setApplicationByUser($tokenInfo['sub']);
                 $this->getAuth0User();
                 $this->loginViaSession = true;
+                $this->login['responsible'] = false;
 
                 return true;
             } catch (\Exception $exception) {
@@ -215,17 +219,18 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
      * @throws \TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException
      */
-    protected function handleLogin(array $loginData)
+    protected function handleLogin()
     {
-        // Handle login for frontend or backend
-        if ($this->mode === 'getUserFE' && !empty($loginData)) {
-            $this->logger->notice('Handle Auth0 login for frontend users');
-            $this->insertOrUpdateUser();
-        } elseif ($this->mode === 'getUserBE' && !empty($loginData)) {
-            $this->logger->notice('Handle Auth0 login for backend users');
-            $this->insertOrUpdateUser();
-        } else {
-            $this->logger->notice('Login data is empty. Could not login user.');
+        if ($this->login['responsible'] === true) {
+            switch ($this->mode) {
+                case 'getUserFE':
+                case 'getUserBE':
+                    $this->logger->notice('Handle Auth0 login');
+                    $this->insertOrUpdateUser();
+                    break;
+                default:
+                    $this->logger->notice('Login data is empty. Could not login user.');
+            }
         }
     }
 
@@ -294,10 +299,11 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
             $this->auth0 = $apiUtility->getAuth0($callback);
             $this->tokenInfo = $this->auth0->getUser() ?? [];
 
-            if (empty($this->tokenInfo) || $this->getAuth0User() === false) {
+            if (!isset($this->tokenInfo['sub']) || $this->getAuth0User() === false) {
                 return false;
             }
 
+            $this->login['responsible'] = true;
             $this->logger->notice(sprintf('User found: %s', $this->auth0User->getEmail()));
 
             return true;
@@ -313,7 +319,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      */
     public function getUser()
     {
-        if ($this->login['status'] !== 'login') {
+        if ($this->login['status'] !== 'login' || $this->login['responsible'] === false) {
             return false;
         }
 
