@@ -331,7 +331,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
             }
 
             $this->writelog(255, 3, 3, 2, 'Login-attempt from ###IP###, username \'%s\' not found!!', [$this->login['uname']]);
-            $this->logger->info('Login-atttttttempt from username \'' . $this->login['uname'] . '\' not found!', [
+            $this->logger->info('Login-attempt from username \'' . $this->login['uname'] . '\' not found!', [
                 'REMOTE_ADDR' => $this->authInfo['REMOTE_ADDR'],
             ]);
         }
