@@ -319,7 +319,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      */
     public function getUser()
     {
-        if ($this->login['status'] !== 'login' || $this->login['responsible'] === false) {
+        if ($this->login['status'] !== 'login' || $this->login['responsible'] === false || !isset($this->tokenInfo['sub'])) {
             return false;
         }
 
@@ -342,9 +342,9 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     public function authUser(array $user): int
     {
         // Login user
-        if ($user['auth0_user_id'] !== '' && $user['auth0_user_id'] == $this->tokenInfo['sub']) {
+        if ($this->login['responsible'] && !empty($user['auth0_user_id']) && $user['auth0_user_id'] === $this->tokenInfo['sub']) {
             // Do not login if email address is not verified
-            if ($this->auth0User->isEmailVerified() === false && ($this->mode === 'getUserBE' || (bool)$this->auth0Data['loginIfMailIsNotVerified'] === false)) {
+            if (!$this->auth0User->isEmailVerified()) {
                 $this->logger->notice('Email not verified. Do not login user.');
 
                 return 0;
