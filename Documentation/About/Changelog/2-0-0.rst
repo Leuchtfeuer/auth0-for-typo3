@@ -1,0 +1,71 @@
+﻿.. include:: ../../Includes.txt
+
+==========================
+Version 2.0.0 - 2018/12/21
+==========================
+
+This release is a new major release, it was published almost three years after the migration from former EXT:naw_securedl to this
+extension. It introduces support for TYPO3 9 LTS as well as for PHP 7.2. TYPO3 7 LTS and PHP 5.x are not supported anymore.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/bitmotion/auth0-for-typo3/releases/tag/2.0.0>`__.
+
+Added
+=====
+
+* Support for TYPO3 v9
+* Support for PHP 7.2
+
+Changed
+=======
+
+* Respect :php:`$GLOBALS['TSFE']->absRefPrefix` when parsing HTML output
+* Renamed protected method :php:`\Bitmotion\SecureDownloads\Resource\FileDelivery::readfile_chunked` to :php:`readFileFactional`
+
+Deprecated
+==========
+
+* Member properties of :php:`\Bitmotion\SecureDownloads\Domain\Model\Log`:
+
+   * :php:`$bytesDownloaded`
+   * :php:`$typo3Mode`
+
+Removed
+=======
+
+* Support for TYPO3 v7
+* Support for PHP 5
+* Protected method :php:`\Bitmotion\SecureDownloads\Request\RequestContext::initializeBackendContext`
+* Protected member property :php:`\Bitmotion\SecureDownloads\Resource\FileDelivery::$logRowUid`
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+   2018-12-21 [RELEASE] Release of version 2.0.0 (Commit 4703827 by Florian Wessels)
+   2018-12-19 [TASK] Update README (Commit 7544f6c by Florian Wessels)
+   2018-12-19 [TASK] Migrate CommandController to Symfony Command (Commit 7e2f25d by Florian Wessels)
+   2018-12-19 [TASK] Refactor login stuff (Commit c4294e7 by Florian Wessels)
+   2018-12-19 [TASK] Refactor controller (Commit ef387af by Florian Wessels)
+   2018-12-19 [TASK] Remove comments (Commit 284d67a by Florian Wessels)
+   2018-12-19 [TASK] Refactor constructor (Commit eeadcfb by Florian Wessels)
+   2018-12-19 [TASK] Do not use static methods (Commit 7fe46dc by Florian Wessels)
+   2018-12-19 [TASK] Use LoggerAwareTrait (Commit a3084c1 by Florian Wessels)
+   2018-12-19 [TASK] Remove obsolete class comments (Commit 833cda5 by Florian Wessels)
+   2018-12-19 [TASK] Ignore Libraries directory (Commit 3f383b4 by Florian Wessels)
+   2018-12-19 [BUGFIX] Update BE user on every login (Commit 1065357 by Florian Wessels)
+   2018-12-19 [TASK] Use dedicated method (Commit b5b5d11 by Florian Wessels)
+   2018-12-19 [TASK] Use default template for backend login when there is no TypoScript (Commit bbb757c by Florian Wessels)
+   2018-12-18 [BUGFIX] Use proper language label (Commit 9d052b6 by Florian Wessels)
+   2018-12-18 [TASK] Set state to stable (Commit e8646ab by Florian Wessels)
+   2018-12-18 [TASK] Get rid of TSFE stuff in AuthenticationService (Commit ef4dc23 by Florian Wessels)
+   2018-12-18 [TASK] Move language phrases (Commit 5249279 by Florian Wessels)
+   2018-12-18 [TASK] Update README file (Commit 8152a08 by Florian Wessels)
+   2018-12-18 [TASK] Update README file (Commit abc0cc2 by Florian Wessels)
+   2018-12-18 [TASK] Use hide not as excludefield (Commit 714dfaa by Florian Wessels)
+   2018-12-18 [WIP] Introduce TYPO3 9 LTS compatibitlity (Commit 5d779ee by Florian Wessels)
+   2018-12-18 [TASK] Remove validate annotations from domain models (Commit 44122fe by Florian Wessels)

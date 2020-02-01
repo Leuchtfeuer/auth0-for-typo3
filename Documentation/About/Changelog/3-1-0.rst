@@ -1,0 +1,80 @@
+﻿.. include:: ../../Includes.txt
+
+==========================
+Version 3.1.0 - TBA
+==========================
+
+This release is a new major release, it was published almost three years after the migration from former EXT:naw_securedl to this
+extension. It introduces support for TYPO3 9 LTS as well as for PHP 7.2. TYPO3 7 LTS and PHP 5.x are not supported anymore.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/bitmotion/auth0-for-typo3/releases/tag/3.1.0>`__.
+
+Added
+=====
+
+* Support for TYPO3 v9
+* Support for PHP 7.2
+
+Changed
+=======
+
+* Respect :php:`$GLOBALS['TSFE']->absRefPrefix` when parsing HTML output
+* Renamed protected method :php:`\Bitmotion\SecureDownloads\Resource\FileDelivery::readfile_chunked` to :php:`readFileFactional`
+
+Deprecated
+==========
+
+* Member properties of :php:`\Bitmotion\SecureDownloads\Domain\Model\Log`:
+
+   * :php:`$bytesDownloaded`
+   * :php:`$typo3Mode`
+
+Removed
+=======
+
+* Support for TYPO3 v7
+* Support for PHP 5
+* Protected method :php:`\Bitmotion\SecureDownloads\Request\RequestContext::initializeBackendContext`
+* Protected member property :php:`\Bitmotion\SecureDownloads\Resource\FileDelivery::$logRowUid`
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+   2020-02-01 [TASK] Apply CS (Commit 646a345 by Florian Wessels)
+   2020-02-01 [TASK] Use TYPO3 core php_cs configuration (Commit 86401fc by Florian Wessels)
+   2020-02-01 [TASK] Add void return type (Commit 46a3939 by Florian Wessels)
+   2020-02-01 [TASK] Import classes (Commit c0dc4b4 by Florian Wessels)
+   2020-02-01 [TASK] Use class name as string (Commit 1fa21e1 by Florian Wessels)
+   2020-02-01 [TASK] Prevent log in of uses without tokens (Commit 1898aa9 by Florian Wessels)
+   2020-02-01 [BUGFIX] Use proper syntax (Commit 701100e by Florian Wessels)
+   2020-02-01 [TASK] Disable plug in when frontend log in is disabled (Commit efbe967 by Florian Wessels)
+   2020-02-01 [TASK] Fix spelling (Commit bb68e54 by Florian Wessels)
+   2020-02-01 [TASK] Force return alue to be a string (Commit f1ee2df by Florian Wessels)
+   2020-02-01 [FEATURE] Allow to disable FE log in (Commit 17bf93c by Florian Wessels)
+   2020-02-01 [TASK] Remove unused class (Commit da6c1e9 by Florian Wessels)
+   2020-02-01 [TASK] Add missing copyright and link to license file (Commit c94a075 by Florian Wessels)
+   2020-02-01 [TASK] Add license file (Commit 4ecab27 by Florian Wessels)
+   2020-02-01 [TASK] Use is-getter for boolean properties (Commit 3f45fda by Florian Wessels)
+   2020-01-31 [TASK] Fetch user only if responsible (Commit 41900ba by Florian Wessels)
+   2020-01-31 [BUGFIX] Use frontend.user request attribute if exists (Commit 99d066a by Florian Wessels)
+   2020-01-31 [TASK] Set version to 3.1.0-dev (Commit f0e4f06 by Florian Wessels)
+   2020-01-31 [FEATURE] Allow to add additional query parameters to frontend login (Commit e048489 by Florian Wessels)
+   2020-01-31 [BUGFIX] Do not try to log in user when there are no tokens (Commit 6af1eb1 by Florian Wessels)
+   2020-01-31 [FEATURE] Allow to add additional query parameters to backend login (Commit fbfed7c by Florian Wessels)
+   2019-12-12 [SECURITY] Update symfony/http-foundation (Commit fd8cedf by Florian Wessels)
+
+
+Contributors
+============
+Following people have contributed to this release:
+
+* Thomas Maroschik
+* Florian Wessels
+
+Thank you very much for your support. The next beer is on us! 🍻

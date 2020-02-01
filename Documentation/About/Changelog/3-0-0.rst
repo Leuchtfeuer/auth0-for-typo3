@@ -1,0 +1,240 @@
+﻿.. include:: ../../Includes.txt
+
+==========================
+Version 3.0.0 - 2019/11/20
+==========================
+
+This release is a new major release, it was published almost three years after the migration from former EXT:naw_securedl to this
+extension. It introduces support for TYPO3 9 LTS as well as for PHP 7.2. TYPO3 7 LTS and PHP 5.x are not supported anymore.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/bitmotion/auth0-for-typo3/releases/tag/3.0.0>`__.
+
+Added
+=====
+
+* Support for TYPO3 v9
+* Support for PHP 7.2
+
+Changed
+=======
+
+* Respect :php:`$GLOBALS['TSFE']->absRefPrefix` when parsing HTML output
+* Renamed protected method :php:`\Bitmotion\SecureDownloads\Resource\FileDelivery::readfile_chunked` to :php:`readFileFactional`
+
+Deprecated
+==========
+
+* Member properties of :php:`\Bitmotion\SecureDownloads\Domain\Model\Log`:
+
+   * :php:`$bytesDownloaded`
+   * :php:`$typo3Mode`
+
+Removed
+=======
+
+* Support for TYPO3 v7
+* Support for PHP 5
+* Protected method :php:`\Bitmotion\SecureDownloads\Request\RequestContext::initializeBackendContext`
+* Protected member property :php:`\Bitmotion\SecureDownloads\Resource\FileDelivery::$logRowUid`
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+   2019-11-20 [RELEASE] Release of version 3.0.0 (Commit 292bf63 by Florian Wessels)
+   2019-11-20 [TASK] Refactor and clean up registration files (Commit 678cd75 by Florian Wessels)
+   2019-11-20 [TASK] Use extension key as string (Commit c4f256a by Florian Wessels)
+   2019-10-25 [TASK] Apply cs (Commit 9685c3e by Florian Wessels)
+   2019-10-25 [TASK] Destroy Auth0 session if there is no FE user (Commit 8d5cb3e by Florian Wessels)
+   2019-10-08 [TASK] Remove obsolete fe_group stuff (Commit aacd97a by Florian Wessels)
+   2019-10-04 [TASK] Support also testing-framework in version 5.0+ (Commit cf5483c by Florian Wessels)
+   2019-10-04 [TASK] Remove php dependency (Commit 5a3ef70 by Florian Wessels)
+   2019-10-04 [TASK] Update libraries (Commit 86005f0 by Florian Wessels)
+   2019-10-04 [FEATURE] Introduce TYPO3 10 compatibility (Commit 8d06bb7 by Florian Wessels)
+   2019-10-04 [TASK] Reorder PSR-15 middleware implementations (Commit 578f3e0 by Florian Wessels)
+   2019-10-04 [TASK] Add some more backend styles (Commit 23175db by Florian Wessels)
+   2019-10-04 [TASK] Update language labels (Commit 5a2a4da by Florian Wessels)
+   2019-10-04 [TASK] Modify TCA (Commit 6ec28f6 by Florian Wessels)
+   2019-10-04 [TASK] Use bool instead of int for on/off configuration (Commit bb7f808 by Florian Wessels)
+   2019-10-04 [TASK] Clean up code (Commit 9138292 by Florian Wessels)
+   2019-10-04 [TASK] Adapt colors (Commit c04336d by Florian Wessels)
+   2019-10-04 [TASK] (Re)introduce redirect user after logout (Commit 069a92c by Florian Wessels)
+   2019-09-11 [TASK] Reorder methods (Commit f345f6a by Florian Wessels)
+   2019-09-11 [TASK] Prevent automated logiin of every page load (Commit 8649e77 by Florian Wessels)
+   2019-09-11 [TASK] Add single log out property to application (Commit db460fd by Florian Wessels)
+   2019-09-11 [TASK] Move configuration class from model to transfer (Commit 63d6cf9 by Florian Wessels)
+   2019-09-11 [TASK] Do not restore Auth0 session (Commit c0f6785 by Florian Wessels)
+   2019-09-10 [TASK] Add return type (Commit 66514ea by Florian Wessels)
+   2019-09-10 [TASK] Improve single log out and unify labels (Commit e1f1f6a by Florian Wessels)
+   2019-09-10 [TASK] Clean up and refactor backend log in view (Commit 0f156b0 by Florian Wessels)
+   2019-09-10 [TASK] Improve redirect generation (Commit f17fb13 by Florian Wessels)
+   2019-09-10 [TASK] Use array as get parameter (Commit 3a546c7 by Florian Wessels)
+   2019-09-10 [BUGFIX] Force integer (Commit 8d99fa7 by Florian Wessels)
+   2019-09-10 [TASK] Mark constant as deprecated and introduce new one (Commit 0fd9a6d by Florian Wessels)
+   2019-09-10 [TASK] Implement hook for logging user off from auth0 (Commit 83b870d by Florian Wessels)
+   2019-09-10 [TASK] Introduce soft logout for TYPO3 backend (Commit c64abd9 by Florian Wessels)
+   2019-09-10 [TASK] Introduce dedicated settings for logout uri (Commit d9ba4d6 by Florian Wessels)
+   2019-09-09 [TASK] Resepct callback settings while getting logout URI (Commit c061703 by Florian Wessels)
+   2019-09-09 [FEATURE] Logoff user from Auth0 tenant (Commit a489bd2 by Florian Wessels)
+   2019-07-02 [BUGFIX] Skip authentication when user has no group (Commit 7592ad9 by Florian Wessels)
+   2019-05-13 [TASK] Force int in condition (Commit 7383936 by Florian Wessels)
+   2019-05-13 [TASK] Log exceptions during BE login (Commit d0e7903 by Florian Wessels)
+   2019-04-17 [BUGFIX] Handle Auth0 user as object (Commit db3193e by Florian Wessels)
+   2019-03-06 [TASK] Adapt license (Commit 24861b5 by Florian Wessels)
+   2019-02-14 [BUGFIX] Login user when there is an active Auth0 session (Commit f07f5a7 by Florian Wessels)
+   2019-02-14 [TASK] Add ext-pdo and ext-json to composer.json (Commit 6064ad0 by Florian Wessels)
+   2019-02-14 [TASK] Use proper namespaces (Commit 99c8066 by Florian Wessels)
+   2019-02-14 [TASK] Use constants for request method (Commit 7fe15dc by Florian Wessels)
+   2019-02-14 [TASK] Get rid of auth0-php management (Commit 30fe7e2 by Florian Wessels)
+   2019-02-13 [BUGFIX] Use proper email in comparison (Commit a57c65f by Florian Wessels)
+   2019-02-13 [BUGFIX] Add missing braces (Commit 1649324 by Florian Wessels)
+   2019-02-13 [TASK] Use unique email and nickname (Commit 56990c4 by Florian Wessels)
+   2019-02-13 [BUGFIX] tear down parent class (Commit 5c33715 by Florian Wessels)
+   2019-02-13 [TASK] Add missing test (Commit 80860da by Florian Wessels)
+   2019-02-13 [TASK] Extend Auth0TestCase instead of FunctionalTestCase (Commit 0265c72 by Florian Wessels)
+   2019-02-13 [TASK] Add getter for missing APIs (Commit 7365ee1 by Florian Wessels)
+   2019-02-13 [TASK] Rename CustomDomainsApi (Commit a412d4a by Florian Wessels)
+   2019-02-13 [BUGFIX] Replace scope update:grants by delete:grants (Commit f17b226 by Florian Wessels)
+   2019-02-13 [TASK] Remove debugging output (Commit 1510344 by Florian Wessels)
+   2019-02-13 [TASK] Add test for user by email api (Commit d048b5d by Florian Wessels)
+   2019-02-13 [BUGFIX] Encode email (Commit 8e3b0c3 by Florian Wessels)
+   2019-02-13 [TASK] Add user block object (Commit 9479831 by Florian Wessels)
+   2019-02-13 [TASK] Use user object in user block api (Commit 7c4a6ec by Florian Wessels)
+   2019-02-13 [TASK] Add test for blacklist api (Commit 360a090 by Florian Wessels)
+   2019-02-13 [TASK] Introduce blacklist api (Commit 457854d by Florian Wessels)
+   2019-02-13 [TASK] Add user fixture (Commit 8a0f7cb by Florian Wessels)
+   2019-02-13 [TASK] Create user before tests will be executed (Commit 573e1af by Florian Wessels)
+   2019-02-13 [TASK] Use user object in ticket api (Commit 9f0ccd2 by Florian Wessels)
+   2019-02-12 [TASK] Remove unused use statement (Commit 1b30b67 by Florian Wessels)
+   2019-02-12 [BUGFIX] Update fe_user via User model (Commit 1470e80 by Daniel Köther)
+   2019-02-12 [TASK] Adapt Authentication (Commit 720e91e by Florian Wessels)
+   2019-02-12 [TASK] Add Connection and Ticket (Commit 7af8ef4 by Florian Wessels)
+   2019-02-12 [TASK] Add User and Enrollment stuff (Commit 5366369 by Florian Wessels)
+   2019-02-11 [TASK] Use proper version of typo3/testing-framework for dev-master (Commit 57f518a by Florian Wessels)
+   2019-02-11 [TASK] Do not rm file (Commit 7c59951 by Florian Wessels)
+   2019-02-11 [TASK] Use uniqid for clients (Commit 047c371 by Florian Wessels)
+   2019-02-11 [BUGFIX] Remove obsolete underscore and cleanup file (Commit 5747068 by Florian Wessels)
+   2019-02-11 [TASK] Generate fixture (Commit 4b0ff91 by Florian Wessels)
+   2019-02-11 [BUGFIX] Remove obsolete " (Commit 1f90be9 by Florian Wessels)
+   2019-02-11 [TASK] Adapt composer config for dev systems (Commit dc4e2c1 by Florian Wessels)
+   2019-02-11 [TASK] Add bootstrap path (Commit 243b3e7 by Florian Wessels)
+   2019-02-11 [TASK] Fix permissions for all files in directory (Commit 4aef663 by Florian Wessels)
+   2019-02-11 [TASK] Fix file permissions before install (Commit 10dd3ff by Florian Wessels)
+   2019-02-11 [TASK] Do not install typo3-cms/saltedpasswords (Commit 73cfb88 by Florian Wessels)
+   2019-02-11 [TASK] Adapt file permissions (Commit 437ae9c by Florian Wessels)
+   2019-02-11 [WIP] Preparations for Travis CI (Commit cc24e46 by Florian Wessels)
+   2019-02-11 [WIP] Preparations for Travis CI (Commit 7bc0490 by Florian Wessels)
+   2019-02-11 [WIP] Preparations for Travis CI (Commit 259ec48 by Florian Wessels)
+   2019-02-11 [WIP] Preparations for Travis CI (Commit 34dfb55 by Florian Wessels)
+   2019-02-11 [TASK] Preparations for Travis CI (Commit 69cc80c by Florian Wessels)
+   2019-02-11 [TASK] Preparations for Travis CI (Commit 68b9dfa by Florian Wessels)
+   2019-02-10 [TASK] Update ResourceServerApi (Commit 71eb6ee by Florian Wessels)
+   2019-02-10 [TASK] Update TenantApi (Commit bbb03aa by Florian Wessels)
+   2019-02-10 [TASK] Update StatApi (Commit e8036f9 by Florian Wessels)
+   2019-02-10 [TASK] Update LogApi (Commit b782741 by Florian Wessels)
+   2019-02-10 [TASK] Update ClientApi (Commit 8f1de1f by Florian Wessels)
+   2019-02-10 [TASK] Add getters for futher APIs (Commit 67405c9 by Florian Wessels)
+   2019-02-10 [TASK] Require symfony/property-info and symfony/http-foundation (Commit cc982b4 by Florian Wessels)
+   2019-02-10 [TASK] Add @covers annotiation (Commit e7404a1 by Florian Wessels)
+   2019-02-10 [TASK] Force covers annotation and add whitelist filter in test setup (Commit afce106 by Florian Wessels)
+   2019-02-10 [TASK] Remove obsolete default values from ClientGrant (Commit 48969b2 by Florian Wessels)
+   2019-02-10 [TASK] Allow to return raw response from API call (Commit 77397aa by Florian Wessels)
+   2019-02-10 [TASK] Allow to modify objectNormalizer (Commit b272207 by Florian Wessels)
+   2019-02-10 [BUGFIX] Use proper scope name (Commit 614d7d0 by Florian Wessels)
+   2019-02-07 [TASK] Add autoload-dev information (Commit d56220c by Florian Wessels)
+   2019-02-07 [TASK] Implement first test cases (Commit 5cc06f5 by Florian Wessels)
+   2019-02-07 [TASK] Introduce ClientGrant and ApiError model (Commit 29f891b by Florian Wessels)
+   2019-02-07 [TASK] Use symfony serializer for mapping Auth0 API responses on objects (Commit 6a68989 by Florian Wessels)
+   2019-02-07 [TASK] Remove obsolete domain models and start to introduce symfony serializer (Commit 83824ea by Florian Wessels)
+   2019-02-06 [TASK] Add missing APIs (Commit 745fb4d by Florian Wessels)
+   2019-02-06 [TASK] Reformat and simplify code (Commit 250a4ba by Florian Wessels)
+   2019-02-06 [TASK] Rewrite device credentials API (Commit fe0ad48 by Florian Wessels)
+   2019-02-06 [TASK] Introduce grant API (Commit 6fa3644 by Florian Wessels)
+   2019-02-06 [TASK] Rewrite log API (Commit 54c43cf by Florian Wessels)
+   2019-02-06 [TASK] Rewrite resources server API (Commit ea6c60e by Florian Wessels)
+   2019-02-06 [TASK] Rewrite rule API (Commit 981720c by Florian Wessels)
+   2019-02-06 [TASK] Introduce rule config API (Commit a817e54 by Florian Wessels)
+   2019-02-06 [TASK] Rewrite User and UserBlock API (Commit 141718b by Florian Wessels)
+   2019-02-06 [TASK] Rewrite Blacklist API (Commit 2621bc5 by Florian Wessels)
+   2019-02-06 [TASK] Rewrite Mail Template Api (Commit 4e7ac47 by Florian Wessels)
+   2019-02-06 [TASK] Rewrite Mail Api (Commit c91e2d6 by Florian Wessels)
+   2019-02-06 [TASK] Introduce guardian API (Commit cc2e62f by Florian Wessels)
+   2019-02-06 [TASK] Rewrite Jobs Api (Commit 798a377 by Florian Wessels)
+   2019-02-06 [TASK] Rewrite Stat Api (Commit 363d53b by Florian Wessels)
+   2019-02-06 [TASK] Rewrite Tenant Api (Commit 404002f by Florian Wessels)
+   2019-02-05 [WIP] Use dedicated classes for API calls (Commit ea0e166 by Florian Wessels)
+   2019-02-05 [WIP] Transform Auth0 Response (Commit 7dc18b0 by Florian Wessels)
+   2019-02-05 [TASK] Introduce Scopes (Commit 4e03f99 by Florian Wessels)
+   2019-02-05 [TASK] Introduce getter for further APIs (Commit fd6eef3 by Florian Wessels)
+   2019-02-04 [TASK] Add getter for APIs (Commit dc1b7a8 by Florian Wessels)
+   2019-02-04 [TASK] Remove @todo annotation (Commit fcefd58 by Florian Wessels)
+   2019-02-04 [TASK] Use sessionStore as parameter for user func (Commit 2db78a2 by Florian Wessels)
+   2019-02-04 [TASK] Add hooks for manipulating data (Commit ea01a65 by Florian Wessels)
+   2019-02-04 [TASK] Set version to 3.0.0-dev (Commit aa5f8a0 by Florian Wessels)
+   2019-02-04 [TASK] Allow to assign scope to Management API (Commit add41a2 by Florian Wessels)
+   2019-01-31 [TASK] Add translations for extension configuration (Commit b847fb2 by Florian Wessels)
+   2019-01-31 [BUGFIX] Do not assign obsolete session data to view (Commit b200146 by Florian Wessels)
+   2019-01-31 [TASK] Set last used authentication during log in process (Commit 7c8703c by Florian Wessels)
+   2019-01-31 [FEATURE] Introduce Middleware for creating Auth0 sessions (Commit c9db257 by Florian Wessels)
+   2019-01-30 [TASK] Add Session Service class (Commit 2d0fe3a by Florian Wessels)
+   2019-01-30 [TASK] Move redirect stuff into redirect service (Commit 31a0d18 by Florian Wessels)
+   2019-01-30 [SECURITY] Escape raw user input (Commit a286c50 by Florian Wessels)
+   2019-01-30 [TASK] Use dedicated utility class for api creation (Commit 9d71214 by Florian Wessels)
+   2019-01-30 [TASK] Add furhter error codes provided by Auth0 (Commit 51c4c5d by Florian Wessels)
+   2019-01-30 [TASK] Enrich view by auth0 error and error description (Commit 44389a9 by Florian Wessels)
+   2019-01-30 [WIP] Bypass auth0 error description (Commit b9cd380 by Florian Wessels)
+   2019-01-30 [WIP] Bypass auth0 error description (Commit d535912 by Florian Wessels)
+   2019-01-30 [WIP] Bypass auth0 error description (Commit 21f4334 by Florian Wessels)
+   2019-01-30 [WIP] Redirect user after sign up in Auth0 (Commit aa69149 by Florian Wessels)
+   2019-01-30 [TASK] Refactor ConfigurationSlot class (Commit d95b8ea by Florian Wessels)
+   2019-01-30 [TASK] Add further cHash excludedParameters (Commit bf2563c by Florian Wessels)
+   2019-01-30 [TASK] Check for Auth0 errors during authentication (Commit 584c5c3 by Florian Wessels)
+   2019-01-30 [TASK] Reformat code (Commit da15dac by Florian Wessels)
+   2019-01-30 [TASK] Clean up code (Commit 530d3a5 by Florian Wessels)
+   2019-01-30 [TASK] Move methods from controller to Routing- and UserUtility (Commit 381ec50 by Florian Wessels)
+   2019-01-30 [TASK] Move methods from controller to Routing- and UserUtility (Commit b7021f2 by Florian Wessels)
+   2019-01-30 [TASK] Store user data in session store (Commit 9c9663f by Florian Wessels)
+   2019-01-30 [TASK] Refresh TYPO3 user session when user is still logged in to Auth0 (Commit 56e14de by Florian Wessels)
+   2019-01-30 [TASK] Fake auth0 userdata when user is logged in to TYPO3 but not to Auth0 (Commit 78d9021 by Florian Wessels)
+   2019-01-25 [TASK] Prevent generating of empty callback uris (Commit ac65c7e by Florian Wessels)
+   2019-01-25 [BUGFIX] Always return array (Commit c54716c by Florian Wessels)
+   2019-01-25 [BUGFIX] Initialize NullWriter (Commit a86a342 by Florian Wessels)
+   2019-01-15 [TASK] Add logging for failed parsing function (Commit 98f02f2 by Florian Wessels)
+   2019-01-15 [BUGFIX] Assign proper variables to backend login view (Commit e6d3d7e by Florian Wessels)
+   2019-01-15 [FEATURE] Introduce fixed callback uri for frontend requests (Commit 3618a70 by Florian Wessels)
+   2019-01-14 [TASK] Add logging (Commit 46e8f49 by Florian Wessels)
+   2019-01-14 [BREAKING] Remove database logic into dedicated repository (Commit bce0910 by Florian Wessels)
+   2019-01-14 [BREAKING] Rewrite ApplicationRepository (Commit 24cf433 by Florian Wessels)
+   2019-01-14 [TASK] Remove unused method (Commit 58d3215 by Florian Wessels)
+   2019-01-14 [TASK] Reactivate deleted/disabled users during authentication (Commit 666d21f by Florian Wessels)
+   2019-01-14 [TASK] Use dedicated class for parsing functions and restructure code (Commit 4410367 by Florian Wessels)
+   2019-01-14 [TASK] Disable logging by default (Commit 702ebd0 by Florian Wessels)
+   2019-01-14 [TASK] Allow to map static values and fix broken update process (Commit 111f5c7 by Florian Wessels)
+   2019-01-14 [TASK] Add logging to AuthenticationService (Commit adcaa9f by Florian Wessels)
+   2019-01-14 [BREAKING] Move TypoScript setting for reactivating users to extension configuartion (Commit d72ce2b by Florian Wessels)
+   2019-01-14 [TASK] Add code and state parameter to excludedParameters option on first install (Commit becc7e0 by Florian Wessels)
+   2019-01-14 [TASK] Throw exception if no TypoScript is included in FE requests (Commit 37a26de by Florian Wessels)
+   2018-12-27 [TASK] Set version to 2.0.1-dev (Commit 0598fdf by Florian Wessels)
+   2018-12-27 [TASK] Refactor LoginProvider (Commit d4e14a6 by Florian Wessels)
+   2018-12-27 [TASK] Do not handle updateUtility as singleton (Commit e4c8cc3 by Florian Wessels)
+   2018-12-27 [TASK] Refactor UpdateUtility (Commit 890f7fa by Florian Wessels)
+   2018-12-27 [TASK] Refactor code (Commit 6190651 by Florian Wessels)
+   2018-12-27 [TASK] Refactore code (Commit 550e4c5 by Florian Wessels)
+   2018-12-27 [TASK] Introduce logger (Commit d5ba05e by Florian Wessels)
+   2018-12-27 [BUGFIX] Update fe_user before redirect (Commit c395137 by Florian Wessels)
+   2018-12-27 [TASK] Use environment service instead of constants (Commit 70be823 by Florian Wessels)
+
+
+Contributors
+============
+Following people have contributed to this release:
+
+* Daniel Köther
+* Florian Wessels
+
+Thank you very much for your support. The next beer is on us! 🍻

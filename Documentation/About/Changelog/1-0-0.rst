@@ -1,0 +1,137 @@
+﻿.. include:: ../../Includes.txt
+
+==========================
+Version 1.0.0 - 2018/12/18
+==========================
+
+This release is a new major release, it was published almost three years after the migration from former EXT:naw_securedl to this
+extension. It introduces support for TYPO3 9 LTS as well as for PHP 7.2. TYPO3 7 LTS and PHP 5.x are not supported anymore.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/bitmotion/auth0-for-typo3/releases/tag/1.0.0>`__.
+
+Added
+=====
+
+* Support for TYPO3 v9
+* Support for PHP 7.2
+
+Changed
+=======
+
+* Respect :php:`$GLOBALS['TSFE']->absRefPrefix` when parsing HTML output
+* Renamed protected method :php:`\Bitmotion\SecureDownloads\Resource\FileDelivery::readfile_chunked` to :php:`readFileFactional`
+
+Deprecated
+==========
+
+* Member properties of :php:`\Bitmotion\SecureDownloads\Domain\Model\Log`:
+
+   * :php:`$bytesDownloaded`
+   * :php:`$typo3Mode`
+
+Removed
+=======
+
+* Support for TYPO3 v7
+* Support for PHP 5
+* Protected method :php:`\Bitmotion\SecureDownloads\Request\RequestContext::initializeBackendContext`
+* Protected member property :php:`\Bitmotion\SecureDownloads\Resource\FileDelivery::$logRowUid`
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+   2018-12-18 [RELEASE] Initial release (Commit 1aa7ad2 by Florian Wessels)
+   2018-12-18 [TASK] Update github issue templates (Commit 6de0336 by Florian Wessels)
+   2018-12-18 Add githug issue templates (Commit 2bd2582 by Florian Wessels)
+   2018-12-18 [TASK] Adapt link (Commit 8e54638 by Florian Wessels)
+   2018-12-18 [TASK] Add hint for EXT:auth0_forms (Commit 9380bd7 by Florian Wessels)
+   2018-12-18 [TASK] Add hint for admin flags (Commit 00500bc by Florian Wessels)
+   2018-12-18 [TASK] Prepare TypoScript for initial release (Commit 5b860ee by Florian Wessels)
+   2018-12-18 [TASK] Remove mapping of user_metadata in TypoScript (Commit 9b0698d by Florian Wessels)
+   2018-12-18 [TASK] Add login behaviour section (Commit 788da24 by Florian Wessels)
+   2018-12-18 [TASK] Use more typoscript constants (Commit 3efb180 by Florian Wessels)
+   2018-12-18 [TASK] Skip login process when there is no auth0 user (Commit 55b21a8 by Florian Wessels)
+   2018-12-18 [TASK] Introduce logger for User Utility (Commit f7063ae by Florian Wessels)
+   2018-12-18 [TASK] Introduce logger for Update Utility (Commit 0324d6b by Florian Wessels)
+   2018-12-18 [TASK] Introduce logger for Management API (Commit 6842178 by Florian Wessels)
+   2018-12-18 [TASK] Update README.md (Commit ffdc367 by Florian Wessels)
+   2018-12-18 [TASK] Add for developers section (Commit eb22cf8 by Florian Wessels)
+   2018-12-18 [TASK] Add roles section (Commit 8dc3680 by Florian Wessels)
+   2018-12-18 [TASK] Add property mapping section (Commit 083788e by Florian Wessels)
+   2018-12-18 [BUGFIX] Do not create new users when it exists allready (Commit aa1b31a by Florian Wessels)
+   2018-12-18 [WIP] Update access and command controller section (Commit 94fa3c6 by Florian Wessels)
+   2018-12-18 [TASK] Rename TypoScript settings (Commit 7ede4b3 by Florian Wessels)
+   2018-12-18 [TASK] Add documentation for backend login view modification (Commit 9dd5d61 by Florian Wessels)
+   2018-12-18 [TASK] Always return array (Commit 5b0e649 by Florian Wessels)
+   2018-12-18 [TASK] Make backend login view configurable (Commit 97b7bf8 by Florian Wessels)
+   2018-12-17 [WIP] Add README (Commit 90dee66 by Florian Wessels)
+   2018-12-17 [TASK] Rename TypoScript constants (Commit 3b4a910 by Florian Wessels)
+   2018-12-17 [TASK] Refactor typoscript view section (Commit 546e8bc by Florian Wessels)
+   2018-12-17 [BUGFIX] Use proper constant (Commit 8cf1db3 by Florian Wessels)
+   2018-12-17 [TASK] Add php_cs file and clean up code (Commit 2450050 by Florian Wessels)
+   2018-12-17 [BUGFIX] Force int (Commit d6a5300 by Florian Wessels)
+   2018-12-16 [CLEAN-UP] Remove obsolete connection stuff (Commit f681af9 by Florian Wessels)
+   2018-12-16 [TASK] Update dependencies (Commit 8f7b79e by Florian Wessels)
+   2018-12-16 [TASK] Remove todos from README.md (Commit 38a681f by Florian Wessels)
+   2018-12-16 [BUGFIX] Fix typo (Commit 0a0ee0f by Florian Wessels)
+   2018-12-16 [BUGFIX] Use proper identifier for FE usergroup (Commit aa886f2 by Florian Wessels)
+   2018-12-16 [TASK] Move extension icon (Commit dc89868 by Florian Wessels)
+   2018-12-16 [TASK] Update Auth0 PHP library (Commit 3a498fc by Florian Wessels)
+   2018-09-10 [BUGFIX] Do not initialize TSFE if request contains no application (Commit 83c740a by Florian Wessels)
+   2018-09-04 [TASK] Update README.md (Commit c7d3b12 by Florian Wessels)
+   2018-09-04 [BUGFIX] Use proper path to Exception classes (Commit b1d4ea2 by Florian Wessels)
+   2018-08-23 [TASK] Update README.md (Commit d7ba74d by Florian Wessels)
+   2018-08-21 [TASK] Remove 'do not use hint' from README.md (Commit dee4b97 by Florian Wessels)
+   2018-08-21 [TASK] Use ApplicationUtility for getting new application instanzes (Commit 69ad285 by Florian Wessels)
+   2018-08-21 [TASK] Add Exception classes (Commit bff719e by Florian Wessels)
+   2018-08-21 [TASK] Load Application only if it is needed (Commit 204089c by Florian Wessels)
+   2018-08-21 [TASK] Improve exception handling (Commit 7ae67a3 by Florian Wessels)
+   2018-08-21 [TASK] Add trim function to audience getter (Commit 54a2db6 by Florian Wessels)
+   2018-08-21 [TASK] Add dependency for TYPO3 9.3 (Commit 8497990 by Florian Wessels)
+   2018-08-21 [TASK] Set version to 1.0.0-dev (Commit 7a82fcd by Florian Wessels)
+   2018-08-21 [TASK] Add email and source information to composer.json (Commit 8c80e45 by Florian Wessels)
+   2018-08-21 [TASK] Introduce default value for audience (Commit 3d89e55 by Florian Wessels)
+   2018-08-21 [TASK] Hash passwords (Commit 2bb8ae9 by Florian Wessels)
+   2018-08-21 [TASK] Adapt ordering of TCA fields (Commit ec5b27e by Florian Wessels)
+   2018-07-29 [TASK] Update css (Commit 885a60a by Florian Wessels)
+   2018-07-29 [TASK] Use EXT:saltedpasswords for generating passwords (Commit e5cbb9d by Florian Wessels)
+   2018-07-29 [TASK] Set state to beta (Commit 49558c3 by Florian Wessels)
+   2018-07-29 [TASK] Update readme file (Commit 8edc656 by Florian Wessels)
+   2018-07-29 [TASK] Finalize clean up command controller (Commit d97e87b by Florian Wessels)
+   2018-07-29 [TASK] Remove third parameter from method (Commit ad2d36b by Florian Wessels)
+   2018-07-29 [TASK] Add propertie to reactivate disabled or deleted users (Commit 2689675 by Florian Wessels)
+   2018-07-29 [BUGFIX] Insert frontend user in proper table (Commit 903a15c by Florian Wessels)
+   2018-07-29 [TASK] Use session store for backend login (Commit 83dad54 by Florian Wessels)
+   2018-07-29 [TASK] Clean up login controller (Commit 8e4d24b by Florian Wessels)
+   2018-07-29 [TASK] Update annotation in RedirectService and update README.md file (Commit 95485f8 by Florian Wessels)
+   2018-07-29 [TASK] Migrate RedirectService to Doctrine queries (Commit 8ec9606 by Florian Wessels)
+   2018-07-29 [TASK] Introduce mapping for auth0 roles to TYPO3 usergroups (Commit 32c068f by Florian Wessels)
+   2018-07-29 [TASK] Add TypoScript for Auth0 role - TYPO3 *_groups mapping (Commit 4ba2d9f by Florian Wessels)
+   2018-07-29 [TASK] Update user during authentication process (Commit 83ae5c4 by Florian Wessels)
+   2018-07-29 [TASK] Do not update user data in extbase controller (Commit a5b7cb4 by Florian Wessels)
+   2018-07-21 [TASK] Implement cleanup task for BE users (Commit 0045b15 by Florian Wessels)
+   2018-07-12 [FOLLOW-UP] Ask for loginProvider only in BE context (Commit 4aff9b2 by Florian Wessels)
+   2018-07-12 [TASK] Try auth0 authentication only if we need to. (Commit ebd69bd by Florian Wessels)
+   2018-07-12 [TASK] Load Auth0 BE mask also, when there is no userInfo set (Commit fe5ad58 by Florian Wessels)
+   2018-07-12 [TASK] Check for existing application before BE login (Commit 206776c by Florian Wessels)
+   2018-07-12 [TASK] Check for included TypoScript before BE login process (Commit 9bde3b5 by Florian Wessels)
+   2018-07-12 [TASK] Exchange labels and update BE login view (Commit 57bd8cc by Florian Wessels)
+   2018-07-12 [TASK] Update BE users metadata directly after creating an new user (Commit 3bda78f by Florian Wessels)
+   2018-07-12 [TASK] Show auth0 error messages in TYPO3 BE login form (Commit 1ca984f by Florian Wessels)
+   2018-07-12 [BUGFIX] Do not try to unserialize an empty string (Commit 2711824 by Florian Wessels)
+   2018-07-10 [TASK] Update licence (Commit 61ce699 by Florian Wessels)
+   2018-07-10 [TASK] Include composer dependencies for non-composer projects (Commit 1fbc9b2 by Florian Wessels)
+   2018-07-10 [TASK] Kickstart CommandController for clean up user data (Commit d514157 by Florian Wessels)
+   2018-07-10 [TASK] Introduce language labels for backend login form (Commit 89526b6 by Florian Wessels)
+   2018-07-10 [TASK] Move CSS for BE loginform from template file into dedicated css file (Commit ddf507e by Florian Wessels)
+   2018-07-10 [TASK] Set auth0/auth0-php as dependency in composer.json file (Commit a6d66a0 by Florian Wessels)
+   2018-07-10 [TASK] Move user related stuff from authentication service to dedicated class (Commit 4cc8dcc by Florian Wessels)
+   2018-07-10 [TASK] Get application uid from callback if TYPO3 is in FE mode (Commit 8df18a4 by Florian Wessels)
+   2018-07-10 [TASK] Use UriBuilder for getting callback URLs (Commit 877537e by Florian Wessels)
+   2018-07-10 [TASK] Initial commit (Commit 746bf33 by Florian Wessels)
