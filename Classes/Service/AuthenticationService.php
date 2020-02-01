@@ -14,6 +14,7 @@ namespace Bitmotion\Auth0\Service;
  ***/
 
 use Auth0\SDK\Exception\ApiException;
+use Auth0\SDK\Exception\CoreException;
 use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\Auth0;
 use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
@@ -25,6 +26,9 @@ use Bitmotion\Auth0\Utility\ApiUtility;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
 use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
+use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Service\EnvironmentService;
@@ -87,16 +91,16 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     protected $application = 0;
 
     /**
-     * @param string                                                    $mode
-     * @param array                                                     $loginData
-     * @param array                                                     $authInfo
-     * @param \TYPO3\CMS\Core\Authentication\AbstractUserAuthentication $pObj
+     * @param string                     $mode      Subtype of the service which is used to call the service.
+     * @param array                      $loginData Submitted login form data
+     * @param array                      $authInfo  Information array. Holds submitted form data etc.
+     * @param AbstractUserAuthentication $pObj      Parent object
      *
-     * @throws \Auth0\SDK\Exception\ApiException
-     * @throws \Auth0\SDK\Exception\CoreException
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
-     * @throws \TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException
+     * @throws ApiException
+     * @throws CoreException
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
+     * @throws InvalidPasswordHashException
      */
     public function initAuth($mode, $loginData, $authInfo, $pObj)
     {
@@ -138,8 +142,8 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     }
 
     /**
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
      */
     protected function initApplication()
     {
@@ -215,9 +219,9 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     }
 
     /**
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
-     * @throws \TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
+     * @throws InvalidPasswordHashException
      */
     protected function handleLogin()
     {
@@ -256,9 +260,9 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     /**
      * Insert or updates user data in TYPO3 database
      *
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
-     * @throws \TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
+     * @throws InvalidPasswordHashException
      */
     protected function insertOrUpdateUser()
     {
@@ -287,8 +291,8 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     /**
      * Initializes the connection to the auth0 server
      *
-     * @throws \Auth0\SDK\Exception\ApiException
-     * @throws \Auth0\SDK\Exception\CoreException
+     * @throws ApiException
+     * @throws CoreException
      * @throws \Exception
      */
     protected function initializeAuth0Connections(): bool

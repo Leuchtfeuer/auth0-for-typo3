@@ -40,7 +40,7 @@ class RuleApi extends GeneralManagementApi
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
-     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
+     * @return object|object[]
      * @see https://auth0.com/docs/api/management/v2#!/Rules/get_rules
      */
     public function list(
@@ -88,7 +88,7 @@ class RuleApi extends GeneralManagementApi
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
-     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
+     * @return object|object[]
      * @see https://auth0.com/docs/api/management/v2#!/Rules/post_rules
      */
     public function create(string $name, string $script, int $order = 0, bool $enable = false)
@@ -125,7 +125,7 @@ class RuleApi extends GeneralManagementApi
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
-     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
+     * @return object|object[]
      * @see https://auth0.com/docs/api/management/v2#!/Rules/get_rules_by_id
      */
     public function get(string $id, string $fields = '', bool $includeFields = true)
@@ -157,7 +157,7 @@ class RuleApi extends GeneralManagementApi
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
-     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
+     * @return object|object[]
      * @see https://auth0.com/docs/api/management/v2#!/Rules/delete_rules_by_id
      */
     public function delete(string $id)
@@ -187,7 +187,7 @@ class RuleApi extends GeneralManagementApi
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
-     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
+     * @return object|object[]
      * @see https://auth0.com/docs/api/management/v2#!/Rules/patch_rules_by_id
      */
     public function update(string $id, string $script = '', string $name = '', int $order = 0, bool $enabled = true)

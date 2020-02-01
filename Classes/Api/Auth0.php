@@ -13,7 +13,9 @@ namespace Bitmotion\Auth0\Api;
  *
  ***/
 
+use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
+use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Auth0 extends \Auth0\SDK\Auth0
@@ -46,8 +48,8 @@ class Auth0 extends \Auth0\SDK\Auth0
     const ERROR_UNAUTHORIZED = 'unauthorized';
 
     /**
-     * @throws \Auth0\SDK\Exception\CoreException
-     * @throws \Bitmotion\Auth0\Exception\InvalidApplicationException
+     * @throws CoreException
+     * @throws InvalidApplicationException
      */
     public function __construct(int $applicationUid, string $redirectUri = '', string $scope = '', array $additionalOptions = [])
     {

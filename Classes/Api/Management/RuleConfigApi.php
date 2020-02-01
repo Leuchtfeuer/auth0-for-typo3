@@ -28,7 +28,7 @@ class RuleConfigApi extends GeneralManagementApi
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
-     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
+     * @return object|object[]
      * @see https://auth0.com/docs/api/management/v2#!/Rules_Configs/get_rules_configs
      */
     public function list()
@@ -52,7 +52,7 @@ class RuleConfigApi extends GeneralManagementApi
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
-     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
+     * @return object|object[]
      * @see https://auth0.com/docs/api/management/v2#!/Rules_Configs/delete_rules_configs_by_key
      */
     public function delete(string $key)
@@ -78,7 +78,7 @@ class RuleConfigApi extends GeneralManagementApi
      * @throws ApiException
      * @throws ClassNotFoundException
      * @throws CoreException
-     * @return object|\TYPO3\CMS\Extbase\Persistence\ObjectStorage
+     * @return object|object[]
      * @see https://auth0.com/docs/api/management/v2#!/Rules_Configs/put_rules_configs_by_key
      */
     public function create(string $key, string $value)
