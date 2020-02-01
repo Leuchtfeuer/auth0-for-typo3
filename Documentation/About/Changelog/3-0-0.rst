@@ -4,8 +4,8 @@
 Version 3.0.0 - 2019/11/20
 ==========================
 
-This release is a new major release, it was published almost three years after the migration from former EXT:naw_securedl to this
-extension. It introduces support for TYPO3 9 LTS as well as for PHP 7.2. TYPO3 7 LTS and PHP 5.x are not supported anymore.
+This release includes a complete refactoring of the whole extension. Please be careful when upgrading to this version as it may
+lead to incompatibilities. However, it introduces TYPO3 10.0 and TYPO3 10.1 Support as well as support for PHP 7.3+.
 
 Download
 ========
@@ -16,30 +16,23 @@ Download this version from the `TYPO3 extension repository <https://extensions.t
 Added
 =====
 
-* Support for TYPO3 v9
-* Support for PHP 7.2
-
-Changed
-=======
-
-* Respect :php:`$GLOBALS['TSFE']->absRefPrefix` when parsing HTML output
-* Renamed protected method :php:`\Bitmotion\SecureDownloads\Resource\FileDelivery::readfile_chunked` to :php:`readFileFactional`
+* Support for TYPO3 v10.1
+* Support for PHP 7.3+
+* Automated testing
 
 Deprecated
 ==========
 
-* Member properties of :php:`\Bitmotion\SecureDownloads\Domain\Model\Log`:
+* Constant :php:`AUTH_LOGIN_PROVIDER` of class :php:`\Bitmotion\Auth0\Service\AuthenticationService`
+* Following methods of the utility class :php:`\Bitmotion\Auth0\Utility\UserUtility`:
 
-   * :php:`$bytesDownloaded`
-   * :php:`$typo3Mode`
+   * :php:`loginUser()`
+   * :php:`logoutUser()`
 
 Removed
 =======
 
 * Support for TYPO3 v7
-* Support for PHP 5
-* Protected method :php:`\Bitmotion\SecureDownloads\Request\RequestContext::initializeBackendContext`
-* Protected member property :php:`\Bitmotion\SecureDownloads\Resource\FileDelivery::$logRowUid`
 
 All Changes
 ===========

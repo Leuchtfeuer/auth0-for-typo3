@@ -4,8 +4,8 @@
 Version 2.0.0 - 2018/12/21
 ==========================
 
-This release is a new major release, it was published almost three years after the migration from former EXT:naw_securedl to this
-extension. It introduces support for TYPO3 9 LTS as well as for PHP 7.2. TYPO3 7 LTS and PHP 5.x are not supported anymore.
+This release is a new major release. It introduces support for TYPO3 9 LTS as well as for PHP 7.2. TYPO3 8 LTS is not
+supported anymore.
 
 Download
 ========
@@ -22,24 +22,14 @@ Added
 Changed
 =======
 
-* Respect :php:`$GLOBALS['TSFE']->absRefPrefix` when parsing HTML output
-* Renamed protected method :php:`\Bitmotion\SecureDownloads\Resource\FileDelivery::readfile_chunked` to :php:`readFileFactional`
-
-Deprecated
-==========
-
-* Member properties of :php:`\Bitmotion\SecureDownloads\Domain\Model\Log`:
-
-   * :php:`$bytesDownloaded`
-   * :php:`$typo3Mode`
+* Extension is now marked as `stable`
+* Extbase Command Controller is migrated to Symfony Command
 
 Removed
 =======
 
-* Support for TYPO3 v7
-* Support for PHP 5
-* Protected method :php:`\Bitmotion\SecureDownloads\Request\RequestContext::initializeBackendContext`
-* Protected member property :php:`\Bitmotion\SecureDownloads\Resource\FileDelivery::$logRowUid`
+* Support for TYPO3 v8
+* Support for PHP 7.0 and PHP 7.1
 
 All Changes
 ===========
