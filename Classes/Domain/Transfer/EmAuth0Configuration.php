@@ -39,6 +39,8 @@ class EmAuth0Configuration implements SingletonInterface
 
     protected $additionalAuthorizeParameters = '';
 
+    protected $enableFrontendLogin = true;
+
     /**
      * @throws ExtensionConfigurationExtensionNotConfiguredException
      * @throws ExtensionConfigurationPathDoesNotExistException
@@ -155,5 +157,10 @@ class EmAuth0Configuration implements SingletonInterface
         }
 
         return $additionalParameters;
+    }
+
+    public function isEnableFrontendLogin(): bool
+    {
+        return (bool)$this->enableFrontendLogin;
     }
 }

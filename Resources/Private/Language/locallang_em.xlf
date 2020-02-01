@@ -22,6 +22,9 @@
 			<trans-unit id="backend.additional_authorize_parameters" xml:space="preserve">
 				<source><![CDATA[Additional Query Parameters: Additional query parameters for backend authentication (e.g. "access_type=offline&connection=google-oauth2")]]></source>
 			</trans-unit>
+			<trans-unit id="frontend.enable_frontend_login" xml:space="preserve">
+				<source>Frontend Log In: Enable Auth0 log in for TYPO3 frontend</source>
+			</trans-unit>
 			<trans-unit id="frontend.user_storage_page" xml:space="preserve">
 				<source>Storage Page: Storage page for frontend user</source>
 			</trans-unit>
