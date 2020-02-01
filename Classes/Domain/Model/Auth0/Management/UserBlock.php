@@ -30,7 +30,7 @@ class UserBlock
         return $this->blockedFor;
     }
 
-    public function setBlockedFor(array $blockedFor)
+    public function setBlockedFor(array $blockedFor): void
     {
         $this->blockedFor = $blockedFor;
     }

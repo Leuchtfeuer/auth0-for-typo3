@@ -52,7 +52,7 @@ class JwtConfiguration
         return $this->lifetimeInSeconds;
     }
 
-    public function setLifetimeInSeconds(int $lifetimeInSeconds)
+    public function setLifetimeInSeconds(int $lifetimeInSeconds): void
     {
         $this->lifetimeInSeconds = $lifetimeInSeconds;
     }
@@ -65,7 +65,7 @@ class JwtConfiguration
         return $this->secretEncoded;
     }
 
-    public function setSecretEncoded(bool $secretEncoded)
+    public function setSecretEncoded(bool $secretEncoded): void
     {
         $this->secretEncoded = $secretEncoded;
     }
@@ -81,7 +81,7 @@ class JwtConfiguration
     /**
      * @param string[] $scopes
      */
-    public function setScopes(array $scopes)
+    public function setScopes(array $scopes): void
     {
         $this->scopes = $scopes;
     }
@@ -94,7 +94,7 @@ class JwtConfiguration
         return $this->alg;
     }
 
-    public function setAlg(string $alg)
+    public function setAlg(string $alg): void
     {
         $this->alg = $alg;
     }

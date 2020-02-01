@@ -133,7 +133,7 @@ class Connection
         return $this->name;
     }
 
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -146,7 +146,7 @@ class Connection
         return $this->options;
     }
 
-    public function setOptions(array $options)
+    public function setOptions(array $options): void
     {
         $this->options = $options;
     }
@@ -159,7 +159,7 @@ class Connection
         return $this->id;
     }
 
-    public function setId(string $id)
+    public function setId(string $id): void
     {
         $this->id = $id;
     }
@@ -172,7 +172,7 @@ class Connection
         return $this->strategy;
     }
 
-    public function setStrategy(string $strategy)
+    public function setStrategy(string $strategy): void
     {
         $this->strategy = $strategy;
     }
@@ -188,7 +188,7 @@ class Connection
     /**
      * @param string[] $realms
      */
-    public function setRealms(array $realms)
+    public function setRealms(array $realms): void
     {
         $this->realms = $realms;
     }
@@ -201,7 +201,7 @@ class Connection
         return $this->isDomainConnection;
     }
 
-    public function setIsDomainConnection(bool $isDomainConnection)
+    public function setIsDomainConnection(bool $isDomainConnection): void
     {
         $this->isDomainConnection = $isDomainConnection;
     }
@@ -214,7 +214,7 @@ class Connection
         return $this->metadata;
     }
 
-    public function setMetadata(array $metadata)
+    public function setMetadata(array $metadata): void
     {
         $this->metadata = $metadata;
     }

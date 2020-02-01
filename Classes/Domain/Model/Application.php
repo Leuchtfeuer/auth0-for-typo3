@@ -52,7 +52,7 @@ class Application extends AbstractEntity
         return $this->title;
     }
 
-    public function setTitle(string $title)
+    public function setTitle(string $title): void
     {
         $this->title = $title;
     }
@@ -62,7 +62,7 @@ class Application extends AbstractEntity
         return $this->id;
     }
 
-    public function setId(string $id)
+    public function setId(string $id): void
     {
         $this->id = $id;
     }
@@ -72,7 +72,7 @@ class Application extends AbstractEntity
         return $this->secret;
     }
 
-    public function setSecret(string $secret)
+    public function setSecret(string $secret): void
     {
         $this->secret = $secret;
     }
@@ -82,7 +82,7 @@ class Application extends AbstractEntity
         return $this->domain;
     }
 
-    public function setDomain(string $domain)
+    public function setDomain(string $domain): void
     {
         $this->domain = $domain;
     }
@@ -93,7 +93,7 @@ class Application extends AbstractEntity
         return trim($this->audience, '/') . '/';
     }
 
-    public function setAudience(string $audience)
+    public function setAudience(string $audience): void
     {
         $this->audience = $audience;
     }

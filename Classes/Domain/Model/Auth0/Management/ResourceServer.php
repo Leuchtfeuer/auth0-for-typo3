@@ -101,7 +101,7 @@ class ResourceServer
         return $this->identifier;
     }
 
-    public function setIdentifier(string $identifier)
+    public function setIdentifier(string $identifier): void
     {
         $this->identifier = $identifier;
     }
@@ -117,7 +117,7 @@ class ResourceServer
     /**
      * @param Scope[] $scopes
      */
-    public function setScopes(array $scopes)
+    public function setScopes(array $scopes): void
     {
         $this->scopes = $scopes;
     }
@@ -130,7 +130,7 @@ class ResourceServer
         return $this->signingAlg;
     }
 
-    public function setSigningAlg(string $signingAlg)
+    public function setSigningAlg(string $signingAlg): void
     {
         $this->signingAlg = $signingAlg;
     }
@@ -143,7 +143,7 @@ class ResourceServer
         return $this->signingSecret;
     }
 
-    public function setSigningSecret(string $signingSecret)
+    public function setSigningSecret(string $signingSecret): void
     {
         $this->signingSecret = $signingSecret;
     }
@@ -156,7 +156,7 @@ class ResourceServer
         return $this->allowOfflineAccess;
     }
 
-    public function setAllowOfflineAccess(bool $allowOfflineAccess)
+    public function setAllowOfflineAccess(bool $allowOfflineAccess): void
     {
         $this->allowOfflineAccess = $allowOfflineAccess;
     }
@@ -169,7 +169,7 @@ class ResourceServer
         return $this->skipConsentForVerifiableFirstPartyClients;
     }
 
-    public function setSkipConsentForVerifiableFirstPartyClients(bool $skipConsentForVerifiableFirstPartyClients)
+    public function setSkipConsentForVerifiableFirstPartyClients(bool $skipConsentForVerifiableFirstPartyClients): void
     {
         $this->skipConsentForVerifiableFirstPartyClients = $skipConsentForVerifiableFirstPartyClients;
     }
@@ -182,7 +182,7 @@ class ResourceServer
         return $this->tokenLifetime;
     }
 
-    public function setTokenLifetime(int $tokenLifetime)
+    public function setTokenLifetime(int $tokenLifetime): void
     {
         $this->tokenLifetime = $tokenLifetime;
     }
@@ -198,7 +198,7 @@ class ResourceServer
     /**
      * @param string $tokenLifetimeForWeb
      */
-    public function setTokenLifetimeForWeb(int $tokenLifetimeForWeb)
+    public function setTokenLifetimeForWeb(int $tokenLifetimeForWeb): void
     {
         $this->tokenLifetimeForWeb = $tokenLifetimeForWeb;
     }
@@ -211,7 +211,7 @@ class ResourceServer
         return $this->id;
     }
 
-    public function setId(string $id)
+    public function setId(string $id): void
     {
         $this->id = $id;
     }
@@ -224,7 +224,7 @@ class ResourceServer
         return $this->name;
     }
 
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -237,7 +237,7 @@ class ResourceServer
         return $this->isSystem;
     }
 
-    public function setIsSystem(bool $isSystem)
+    public function setIsSystem(bool $isSystem): void
     {
         $this->isSystem = $isSystem;
     }

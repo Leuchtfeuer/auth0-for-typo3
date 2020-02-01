@@ -28,7 +28,7 @@ class Ticket
         return $this->ticket;
     }
 
-    public function setTicket(string $ticket)
+    public function setTicket(string $ticket): void
     {
         $this->ticket = $ticket;
     }

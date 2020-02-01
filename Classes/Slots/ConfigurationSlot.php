@@ -25,7 +25,7 @@ class ConfigurationSlot
         'error',
     ];
 
-    public function addCacheHashExcludedParameters()
+    public function addCacheHashExcludedParameters(): void
     {
         $path = ['FE', 'cacheHash', 'excludedParameters'];
         $configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
@@ -36,7 +36,7 @@ class ConfigurationSlot
         $configurationManager->setLocalConfigurationValueByPath($path, $excludeParameters);
     }
 
-    protected function setValues(array &$excludeParameters)
+    protected function setValues(array &$excludeParameters): void
     {
         foreach ($this->excludedParameters as $excludedParameter) {
             if (!in_array($excludedParameter, $excludeParameters)) {

@@ -93,7 +93,7 @@ class Enrollment
         return $this->id;
     }
 
-    public function setId(string $id)
+    public function setId(string $id): void
     {
         $this->id = $id;
     }
@@ -106,7 +106,7 @@ class Enrollment
         return $this->status;
     }
 
-    public function setStatus(string $status)
+    public function setStatus(string $status): void
     {
         $this->status = $status;
     }
@@ -119,7 +119,7 @@ class Enrollment
         return $this->type;
     }
 
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }
@@ -132,7 +132,7 @@ class Enrollment
         return $this->name;
     }
 
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -145,7 +145,7 @@ class Enrollment
         return $this->identity;
     }
 
-    public function setIdentity(string $identity)
+    public function setIdentity(string $identity): void
     {
         $this->identity = $identity;
     }
@@ -158,7 +158,7 @@ class Enrollment
         return $this->phoneNumber;
     }
 
-    public function setPhoneNumber(string $phoneNumber)
+    public function setPhoneNumber(string $phoneNumber): void
     {
         $this->phoneNumber = $phoneNumber;
     }
@@ -171,7 +171,7 @@ class Enrollment
         return $this->authMethod;
     }
 
-    public function setAuthMethod(string $authMethod)
+    public function setAuthMethod(string $authMethod): void
     {
         $this->authMethod = $authMethod;
     }
@@ -184,7 +184,7 @@ class Enrollment
         return $this->enrolledAt;
     }
 
-    public function setEnrolledAt(string $enrolledAt)
+    public function setEnrolledAt(string $enrolledAt): void
     {
         $this->enrolledAt = $enrolledAt;
     }
@@ -197,7 +197,7 @@ class Enrollment
         return $this->lastAuth;
     }
 
-    public function setLastAuth(string $lastAuth)
+    public function setLastAuth(string $lastAuth): void
     {
         $this->lastAuth = $lastAuth;
     }

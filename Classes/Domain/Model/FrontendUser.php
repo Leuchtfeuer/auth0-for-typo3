@@ -50,7 +50,7 @@ class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
         return $this->auth0UserId;
     }
 
-    public function setAuth0UserId(string $auth0UserId)
+    public function setAuth0UserId(string $auth0UserId): void
     {
         $this->auth0UserId = $auth0UserId;
     }
@@ -60,7 +60,7 @@ class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
         return \GuzzleHttp\json_decode($this->auth0Metadata);
     }
 
-    public function setAuth0Metadata(array $auth0Metadata)
+    public function setAuth0Metadata(array $auth0Metadata): void
     {
         $this->auth0Metadata = \GuzzleHttp\json_encode($auth0Metadata);
     }
@@ -70,7 +70,7 @@ class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
         return $this->metadata;
     }
 
-    public function setMetadata(array $metadata)
+    public function setMetadata(array $metadata): void
     {
         $this->metadata = $metadata;
     }
@@ -80,7 +80,7 @@ class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
         return $this->connection;
     }
 
-    public function setConnection(string $connection)
+    public function setConnection(string $connection): void
     {
         $this->connection = $connection;
     }

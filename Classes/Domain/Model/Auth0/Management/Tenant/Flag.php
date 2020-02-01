@@ -59,7 +59,7 @@ class Flag
         return $this->changePwdFlowV1;
     }
 
-    public function setChangePwdFlowV1(bool $changePwdFlowV1)
+    public function setChangePwdFlowV1(bool $changePwdFlowV1): void
     {
         $this->changePwdFlowV1 = $changePwdFlowV1;
     }
@@ -72,7 +72,7 @@ class Flag
         return $this->enableApisSection;
     }
 
-    public function setEnableApisSection(bool $enableApisSection)
+    public function setEnableApisSection(bool $enableApisSection): void
     {
         $this->enableApisSection = $enableApisSection;
     }
@@ -85,7 +85,7 @@ class Flag
         return $this->disableImpersonation;
     }
 
-    public function setDisableImpersonation(bool $disableImpersonation)
+    public function setDisableImpersonation(bool $disableImpersonation): void
     {
         $this->disableImpersonation = $disableImpersonation;
     }
@@ -98,7 +98,7 @@ class Flag
         return $this->enableClientConnections;
     }
 
-    public function setEnableClientConnections(bool $enableClientConnections)
+    public function setEnableClientConnections(bool $enableClientConnections): void
     {
         $this->enableClientConnections = $enableClientConnections;
     }
@@ -111,7 +111,7 @@ class Flag
         return $this->enablePipeline2;
     }
 
-    public function setEnablePipeline2(bool $enablePipeline2)
+    public function setEnablePipeline2(bool $enablePipeline2): void
     {
         $this->enablePipeline2 = $enablePipeline2;
     }

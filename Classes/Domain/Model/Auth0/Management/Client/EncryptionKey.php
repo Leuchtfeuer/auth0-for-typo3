@@ -38,7 +38,7 @@ class EncryptionKey
         return $this->pub;
     }
 
-    public function setPub(string $pub)
+    public function setPub(string $pub): void
     {
         $this->pub = $pub;
     }
@@ -51,7 +51,7 @@ class EncryptionKey
         return $this->cert;
     }
 
-    public function setCert(string $cert)
+    public function setCert(string $cert): void
     {
         $this->cert = $cert;
     }
@@ -61,7 +61,7 @@ class EncryptionKey
         return $this->subject;
     }
 
-    public function setSubject($subject)
+    public function setSubject($subject): void
     {
         $this->subject = $subject;
     }

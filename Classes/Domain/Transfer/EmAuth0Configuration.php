@@ -54,7 +54,7 @@ class EmAuth0Configuration implements SingletonInterface
         }
     }
 
-    protected function setPropertiesFromConfiguration(array $configuration)
+    protected function setPropertiesFromConfiguration(array $configuration): void
     {
         foreach ($configuration as $key => $value) {
             if (property_exists(__CLASS__, $key)) {

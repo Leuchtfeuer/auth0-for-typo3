@@ -62,7 +62,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
     /**
      * @throws InvalidConfigurationTypeException
      */
-    public function render(StandaloneView $standaloneView, PageRenderer $pageRenderer, LoginController $loginController)
+    public function render(StandaloneView $standaloneView, PageRenderer $pageRenderer, LoginController $loginController): void
     {
         $this->logger->notice('Auth0 login is used.');
 
@@ -181,7 +181,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
     /**
      * @throws InvalidApplicationException
      */
-    protected function logoutFromAuth0()
+    protected function logoutFromAuth0(): void
     {
         $this->auth0->logout();
         $this->userInfo = null;

@@ -44,7 +44,7 @@ class TenantTest extends Auth0TestCase
      * @depends instantiateApi
      * @covers \Bitmotion\Auth0\Api\Management\TenantApi::get
      */
-    public function get(TenantApi $tenantApi)
+    public function get(TenantApi $tenantApi): void
     {
         $tenant = $tenantApi->get();
         $this->assertInstanceOf(Tenant::class, $tenant);
@@ -55,7 +55,7 @@ class TenantTest extends Auth0TestCase
      * @depends instantiateApi
      * @covers \Bitmotion\Auth0\Api\Management\TenantApi::update
      */
-    public function update(TenantApi $tenantApi)
+    public function update(TenantApi $tenantApi): void
     {
         $newAddress = 'support+' . time() . '@bitmotion.de';
         $tenant = $tenantApi->get();

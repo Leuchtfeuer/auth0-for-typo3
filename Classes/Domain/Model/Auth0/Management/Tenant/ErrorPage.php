@@ -44,7 +44,7 @@ class ErrorPage
         return $this->html;
     }
 
-    public function setHtml(string $html)
+    public function setHtml(string $html): void
     {
         $this->html = $html;
     }
@@ -57,7 +57,7 @@ class ErrorPage
         return $this->showLogLink;
     }
 
-    public function setShowLogLink(bool $showLogLink)
+    public function setShowLogLink(bool $showLogLink): void
     {
         $this->showLogLink = $showLogLink;
     }
@@ -70,7 +70,7 @@ class ErrorPage
         return $this->url;
     }
 
-    public function setUrl(string $url)
+    public function setUrl(string $url): void
     {
         $this->url = $url;
     }

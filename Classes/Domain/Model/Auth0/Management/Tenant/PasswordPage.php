@@ -37,7 +37,7 @@ class PasswordPage
         return $this->enabled;
     }
 
-    public function setEnabled(bool $enabled)
+    public function setEnabled(bool $enabled): void
     {
         $this->enabled = $enabled;
     }
@@ -50,7 +50,7 @@ class PasswordPage
         return $this->html;
     }
 
-    public function setHtml(string $html)
+    public function setHtml(string $html): void
     {
         $this->html = $html;
     }

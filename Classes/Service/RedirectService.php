@@ -40,7 +40,7 @@ class RedirectService implements SingletonInterface, LoggerAwareInterface
         $this->settings = $redirectSettings;
     }
 
-    public function handleRedirect(array $allowedMethods, array $additionalParameters = [])
+    public function handleRedirect(array $allowedMethods, array $additionalParameters = []): void
     {
         if ((bool)$this->settings['redirectDisable'] === false && !empty($this->settings['redirectMode'])) {
             $this->logger->notice('Try to redirect user.');
@@ -64,7 +64,7 @@ class RedirectService implements SingletonInterface, LoggerAwareInterface
         }
     }
 
-    public function forceRedirectByReferrer($additionalParameters = [])
+    public function forceRedirectByReferrer($additionalParameters = []): void
     {
         $this->setRedirectDisable(false);
         $this->setRedirectMode('referrer');
@@ -191,12 +191,12 @@ class RedirectService implements SingletonInterface, LoggerAwareInterface
         return ((bool)$this->settings['redirectFirstMethod']) ? array_shift($redirectUris) : array_pop($redirectUris);
     }
 
-    public function setRedirectDisable(bool $value)
+    public function setRedirectDisable(bool $value): void
     {
         $this->settings['redirectDisable'] = $value;
     }
 
-    public function setRedirectMode(string $value)
+    public function setRedirectMode(string $value): void
     {
         $this->settings['redirectMode'] = $value;
     }

@@ -65,7 +65,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      * @throws ExtensionConfigurationPathDoesNotExistException
      * @throws InvalidPasswordHashException
      */
-    public function insertUser(string $tableName, User $user)
+    public function insertUser(string $tableName, User $user): void
     {
         switch ($tableName) {
             case 'fe_users':
@@ -86,7 +86,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      * @throws ExtensionConfigurationPathDoesNotExistException
      * @throws InvalidPasswordHashException
      */
-    public function insertFeUser(string $tableName, User $user)
+    public function insertFeUser(string $tableName, User $user): void
     {
         $emConfiguration = new EmAuth0Configuration();
         $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
@@ -108,7 +108,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      *
      * @throws InvalidPasswordHashException
      */
-    public function insertBeUser(string $tableName, User $user)
+    public function insertBeUser(string $tableName, User $user): void
     {
         $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
         $userRepository->insertUser([
@@ -149,7 +149,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     /**
      * @deprecated Use $auth0->login() instead.
      */
-    public function loginUser(Auth0 $auth0)
+    public function loginUser(Auth0 $auth0): void
     {
         try {
             $userInfo = $auth0->getUser();
@@ -169,13 +169,13 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     /**
      * @deprecated Use $auth0->logout() instead.
      */
-    public function logoutUser(Auth0 $auth0)
+    public function logoutUser(Auth0 $auth0): void
     {
         $this->logger->notice('Log out user');
         $auth0->logout();
     }
 
-    public function updateUser(Auth0 $auth0, int $application)
+    public function updateUser(Auth0 $auth0, int $application): void
     {
         try {
             $this->logger->notice('Try to update user.');
@@ -200,7 +200,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         }
     }
 
-    public function setLastUsedApplication(string $auth0UserId, int $application)
+    public function setLastUsedApplication(string $auth0UserId, int $application): void
     {
         $userRepository = GeneralUtility::makeInstance(UserRepository::class, 'fe_users');
         $userRepository->updateUserByAuth0Id(['auth0_last_application' => $application], $auth0UserId);

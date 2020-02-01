@@ -217,7 +217,7 @@ class Client
         return $this->name;
     }
 
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -230,7 +230,7 @@ class Client
         return $this->description;
     }
 
-    public function setDescription(string $description)
+    public function setDescription(string $description): void
     {
         $this->description = $description;
     }
@@ -243,7 +243,7 @@ class Client
         return $this->clientId;
     }
 
-    public function setClientId(string $clientId)
+    public function setClientId(string $clientId): void
     {
         $this->clientId = $clientId;
     }
@@ -256,7 +256,7 @@ class Client
         return $this->clientSecret;
     }
 
-    public function setClientSecret(string $clientSecret)
+    public function setClientSecret(string $clientSecret): void
     {
         $this->clientSecret = $clientSecret;
     }
@@ -269,7 +269,7 @@ class Client
         return $this->appType;
     }
 
-    public function setAppType(string $appType)
+    public function setAppType(string $appType): void
     {
         $this->appType = $appType;
     }
@@ -282,7 +282,7 @@ class Client
         return $this->logoUri;
     }
 
-    public function setLogoUri(string $logoUri)
+    public function setLogoUri(string $logoUri): void
     {
         $this->logoUri = $logoUri;
     }
@@ -295,7 +295,7 @@ class Client
         return $this->isFirstParty;
     }
 
-    public function setIsFirstParty(bool $isFirstParty)
+    public function setIsFirstParty(bool $isFirstParty): void
     {
         $this->isFirstParty = $isFirstParty;
     }
@@ -308,7 +308,7 @@ class Client
         return $this->oidcConformant;
     }
 
-    public function setOidcConformant(bool $oidcConformant)
+    public function setOidcConformant(bool $oidcConformant): void
     {
         $this->oidcConformant = $oidcConformant;
     }
@@ -324,7 +324,7 @@ class Client
     /**
      * @param string[] $callbacks
      */
-    public function setCallbacks(array $callbacks)
+    public function setCallbacks(array $callbacks): void
     {
         $this->callbacks = $callbacks;
     }
@@ -340,7 +340,7 @@ class Client
     /**
      * @param string[] $allowedOrigins
      */
-    public function setAllowedOrigins(array $allowedOrigins)
+    public function setAllowedOrigins(array $allowedOrigins): void
     {
         $this->allowedOrigins = $allowedOrigins;
     }
@@ -356,7 +356,7 @@ class Client
     /**
      * @param string[] $webOrigins
      */
-    public function setWebOrigins(array $webOrigins)
+    public function setWebOrigins(array $webOrigins): void
     {
         $this->webOrigins = $webOrigins;
     }
@@ -372,7 +372,7 @@ class Client
     /**
      * @param string[] $clientAliases
      */
-    public function setClientAliases(array $clientAliases)
+    public function setClientAliases(array $clientAliases): void
     {
         $this->clientAliases = $clientAliases;
     }
@@ -388,7 +388,7 @@ class Client
     /**
      * @param string[] $allowedClients
      */
-    public function setAllowedClients(array $allowedClients)
+    public function setAllowedClients(array $allowedClients): void
     {
         $this->allowedClients = $allowedClients;
     }
@@ -404,7 +404,7 @@ class Client
     /**
      * @param string[] $allowedLogoutUrls
      */
-    public function setAllowedLogoutUrls(array $allowedLogoutUrls)
+    public function setAllowedLogoutUrls(array $allowedLogoutUrls): void
     {
         $this->allowedLogoutUrls = $allowedLogoutUrls;
     }
@@ -417,7 +417,7 @@ class Client
         return $this->jwtConfiguration;
     }
 
-    public function setJwtConfiguration(JwtConfiguration $jwtConfiguration)
+    public function setJwtConfiguration(JwtConfiguration $jwtConfiguration): void
     {
         $this->jwtConfiguration = $jwtConfiguration;
     }
@@ -433,7 +433,7 @@ class Client
     /**
      * @param string[] $signingKeys
      */
-    public function setSigningKeys(array $signingKeys)
+    public function setSigningKeys(array $signingKeys): void
     {
         $this->signingKeys = $signingKeys;
     }
@@ -446,7 +446,7 @@ class Client
         return $this->encryptionKey;
     }
 
-    public function setEncryptionKey(EncryptionKey $encryptionKey)
+    public function setEncryptionKey(EncryptionKey $encryptionKey): void
     {
         $this->encryptionKey = $encryptionKey;
     }
@@ -459,7 +459,7 @@ class Client
         return $this->sso;
     }
 
-    public function setSso(bool $sso)
+    public function setSso(bool $sso): void
     {
         $this->sso = $sso;
     }
@@ -472,7 +472,7 @@ class Client
         return $this->ssoDisabled;
     }
 
-    public function setSsoDisabled(bool $ssoDisabled)
+    public function setSsoDisabled(bool $ssoDisabled): void
     {
         $this->ssoDisabled = $ssoDisabled;
     }
@@ -485,7 +485,7 @@ class Client
         return $this->crossOriginAuth;
     }
 
-    public function setCrossOriginAuth(bool $crossOriginAuth)
+    public function setCrossOriginAuth(bool $crossOriginAuth): void
     {
         $this->crossOriginAuth = $crossOriginAuth;
     }
@@ -498,7 +498,7 @@ class Client
         return $this->crossOriginLoc;
     }
 
-    public function setCrossOriginLoc(string $crossOriginLoc)
+    public function setCrossOriginLoc(string $crossOriginLoc): void
     {
         $this->crossOriginLoc = $crossOriginLoc;
     }
@@ -511,7 +511,7 @@ class Client
         return $this->customLoginPageOn;
     }
 
-    public function setCustomLoginPageOn(bool $customLoginPageOn)
+    public function setCustomLoginPageOn(bool $customLoginPageOn): void
     {
         $this->customLoginPageOn = $customLoginPageOn;
     }
@@ -524,7 +524,7 @@ class Client
         return $this->customLoginPage;
     }
 
-    public function setCustomLoginPage(string $customLoginPage)
+    public function setCustomLoginPage(string $customLoginPage): void
     {
         $this->customLoginPage = $customLoginPage;
     }
@@ -537,7 +537,7 @@ class Client
         return $this->customLoginPagePreview;
     }
 
-    public function setCustomLoginPagePreview(string $customLoginPagePreview)
+    public function setCustomLoginPagePreview(string $customLoginPagePreview): void
     {
         $this->customLoginPagePreview = $customLoginPagePreview;
     }
@@ -550,7 +550,7 @@ class Client
         return $this->formTemplate;
     }
 
-    public function setFormTemplate(string $formTemplate)
+    public function setFormTemplate(string $formTemplate): void
     {
         $this->formTemplate = $formTemplate;
     }
@@ -566,7 +566,7 @@ class Client
     /**
      * @param array $addons
      */
-    public function setAddons(Addon $addons)
+    public function setAddons(Addon $addons): void
     {
         $this->addons = $addons;
     }
@@ -579,7 +579,7 @@ class Client
         return $this->tokenEndpointAuthMethod;
     }
 
-    public function setTokenEndpointAuthMethod(string $tokenEndpointAuthMethod)
+    public function setTokenEndpointAuthMethod(string $tokenEndpointAuthMethod): void
     {
         $this->tokenEndpointAuthMethod = $tokenEndpointAuthMethod;
     }
@@ -592,7 +592,7 @@ class Client
         return $this->clientMetadata;
     }
 
-    public function setClientMetadata(array $clientMetadata)
+    public function setClientMetadata(array $clientMetadata): void
     {
         $this->clientMetadata = $clientMetadata;
     }
@@ -605,7 +605,7 @@ class Client
         return $this->mobile;
     }
 
-    public function setMobile(Mobile $mobile)
+    public function setMobile(Mobile $mobile): void
     {
         $this->mobile = $mobile;
     }
@@ -621,7 +621,7 @@ class Client
     /**
      * @param string[] $grantTypes
      */
-    public function setGrantTypes(array $grantTypes)
+    public function setGrantTypes(array $grantTypes): void
     {
         $this->grantTypes = $grantTypes;
     }

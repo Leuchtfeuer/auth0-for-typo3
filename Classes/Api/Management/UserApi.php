@@ -616,7 +616,7 @@ class UserApi extends GeneralManagementApi
         return false;
     }
 
-    protected function cleanData(array &$data, User $user)
+    protected function cleanData(array &$data, User $user): void
     {
         foreach ($data as $key => $value) {
             $prefix = (gettype($value) === 'boolean') ? 'is' : 'get';
@@ -628,7 +628,7 @@ class UserApi extends GeneralManagementApi
         }
     }
 
-    protected function populateUpdateData(array &$data, bool $updateMailOrPhone, bool $updateCoreData, string $connection, string $client)
+    protected function populateUpdateData(array &$data, bool $updateMailOrPhone, bool $updateCoreData, string $connection, string $client): void
     {
         if ($updateMailOrPhone === true) {
             $data['connection'] = $connection;

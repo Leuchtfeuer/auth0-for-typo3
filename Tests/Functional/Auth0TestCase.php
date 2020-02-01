@@ -72,14 +72,14 @@ abstract class Auth0TestCase extends FunctionalTestCase
      */
     private static $client;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
         self::connect();
         self::insertUser();
     }
 
-    private static function connect()
+    private static function connect(): void
     {
         $xml = new XmlEncoder();
         $file = __DIR__ . '/Fixtures/tx_auth0_domain_model_application.xml';
@@ -103,7 +103,7 @@ abstract class Auth0TestCase extends FunctionalTestCase
         self::setClient($credentials, $application);
     }
 
-    private static function setClient(array $credentials, array $application)
+    private static function setClient(array $credentials, array $application): void
     {
         $informationHeader = new InformationHeaders();
         $informationHeader->setPackage('auth0-typo3-test', '3.0.0');
@@ -128,7 +128,7 @@ abstract class Auth0TestCase extends FunctionalTestCase
         return new Serializer([$normalizer], $encoders);
     }
 
-    private static function insertUser()
+    private static function insertUser(): void
     {
         $serializer = self::getSerializer();
         $file = __DIR__ . '/Fixtures/auth0_user.yml';
@@ -161,7 +161,7 @@ abstract class Auth0TestCase extends FunctionalTestCase
             ->call();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         self::$client
             ->request(Client::METHOD_DELETE)
@@ -173,7 +173,7 @@ abstract class Auth0TestCase extends FunctionalTestCase
         parent::tearDownAfterClass();
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

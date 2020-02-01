@@ -80,7 +80,7 @@ class ClientGrantsTest extends Auth0TestCase
      * @depends loadSingleClientGrant
      * @covers \Bitmotion\Auth0\Api\Management\ClientGrantApi::list
      */
-    public function findClientGrant(ClientGrantApi $clientGrantApi, ClientGrant $clientGrant)
+    public function findClientGrant(ClientGrantApi $clientGrantApi, ClientGrant $clientGrant): void
     {
         $newClientGrant = $clientGrantApi->list($clientGrant->getClientId());
         $this->assertSame($newClientGrant->getId(), $clientGrant->getId());

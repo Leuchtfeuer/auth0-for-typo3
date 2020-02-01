@@ -78,7 +78,7 @@ class ApiUtility implements LoggerAwareInterface
         }
     }
 
-    protected function setScope(array $scopes)
+    protected function setScope(array $scopes): void
     {
         if (!empty($scopes)) {
             try {

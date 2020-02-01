@@ -50,7 +50,7 @@ class ClientTest extends Auth0TestCase
      * @depends instantiateApi
      * @covers \Bitmotion\Auth0\Api\Management\ClientApi::list
      */
-    public function listClients(ClientApi $clientApi)
+    public function listClients(ClientApi $clientApi): void
     {
         $clients = $clientApi->list();
         $this->assertIsArray($clients);
@@ -119,7 +119,7 @@ class ClientTest extends Auth0TestCase
      * @depends createClient
      * @covers \Bitmotion\Auth0\Api\Management\ClientApi::update
      */
-    public function updateClient(ClientApi $clientApi, Client $client)
+    public function updateClient(ClientApi $clientApi, Client $client): void
     {
         $this->assertFalse($client->isOidcConformant());
         $client->setOidcConformant(true);
@@ -135,7 +135,7 @@ class ClientTest extends Auth0TestCase
      * @depends createClient
      * @covers \Bitmotion\Auth0\Api\Management\ClientApi::get
      */
-    public function getClient(ClientApi $clientApi, Client $client)
+    public function getClient(ClientApi $clientApi, Client $client): void
     {
         $newClient = $clientApi->get($client->getClientId());
         $this->assertInstanceOf(Client::class, $newClient);
@@ -148,7 +148,7 @@ class ClientTest extends Auth0TestCase
      * @depends createClient
      * @covers \Bitmotion\Auth0\Api\Management\ClientApi::rotateSecret
      */
-    public function rotateSecret(ClientApi $clientApi, Client $client)
+    public function rotateSecret(ClientApi $clientApi, Client $client): void
     {
         $secret = $client->getClientSecret();
         $newClient = $clientApi->rotateSecret($client->getClientId());
@@ -162,7 +162,7 @@ class ClientTest extends Auth0TestCase
      * @depends createClient
      * @covers \Bitmotion\Auth0\Api\Management\ClientApi::delete
      */
-    public function delete(ClientApi $clientApi, Client $client)
+    public function delete(ClientApi $clientApi, Client $client): void
     {
         $deleted = $clientApi->delete($client->getClientId());
         $this->assertTrue($deleted);

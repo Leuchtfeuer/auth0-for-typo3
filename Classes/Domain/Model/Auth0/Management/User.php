@@ -174,7 +174,7 @@ class User
         return $this->email;
     }
 
-    public function setEmail(string $email)
+    public function setEmail(string $email): void
     {
         $this->email = $email;
     }
@@ -184,7 +184,7 @@ class User
         return $this->emailVerified;
     }
 
-    public function setEmailVerified(bool $emailVerified)
+    public function setEmailVerified(bool $emailVerified): void
     {
         $this->emailVerified = $emailVerified;
     }
@@ -194,7 +194,7 @@ class User
         return $this->username;
     }
 
-    public function setUsername(string $username)
+    public function setUsername(string $username): void
     {
         $this->username = $username;
     }
@@ -204,7 +204,7 @@ class User
         return $this->phoneNumber;
     }
 
-    public function setPhoneNumber(string $phoneNumber)
+    public function setPhoneNumber(string $phoneNumber): void
     {
         $this->phoneNumber = $phoneNumber;
     }
@@ -214,7 +214,7 @@ class User
         return $this->phoneVerified;
     }
 
-    public function setPhoneVerified(bool $phoneVerified)
+    public function setPhoneVerified(bool $phoneVerified): void
     {
         $this->phoneVerified = $phoneVerified;
     }
@@ -224,7 +224,7 @@ class User
         return $this->userId;
     }
 
-    public function setUserId(string $userId)
+    public function setUserId(string $userId): void
     {
         $this->userId = $userId;
     }
@@ -234,7 +234,7 @@ class User
         return $this->createdAt;
     }
 
-    public function setCreatedAt(string $createdAt)
+    public function setCreatedAt(string $createdAt): void
     {
         $this->createdAt = $createdAt;
     }
@@ -244,7 +244,7 @@ class User
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(string $updatedAt)
+    public function setUpdatedAt(string $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
     }
@@ -260,7 +260,7 @@ class User
     /**
      * @param object[] $identities
      */
-    public function setIdentities(array $identities)
+    public function setIdentities(array $identities): void
     {
         $this->identities = $identities;
     }
@@ -270,7 +270,7 @@ class User
         return $this->appMetadata;
     }
 
-    public function setAppMetadata(array $appMetadata)
+    public function setAppMetadata(array $appMetadata): void
     {
         $this->appMetadata = $appMetadata;
     }
@@ -280,7 +280,7 @@ class User
         return $this->userMetadata;
     }
 
-    public function setUserMetadata(array $userMetadata)
+    public function setUserMetadata(array $userMetadata): void
     {
         $this->userMetadata = $userMetadata;
     }
@@ -290,7 +290,7 @@ class User
         return $this->picture;
     }
 
-    public function setPicture(string $picture)
+    public function setPicture(string $picture): void
     {
         $this->picture = $picture;
     }
@@ -300,7 +300,7 @@ class User
         return $this->name;
     }
 
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -310,7 +310,7 @@ class User
         return $this->nickname;
     }
 
-    public function setNickname(string $nickname)
+    public function setNickname(string $nickname): void
     {
         $this->nickname = $nickname;
     }
@@ -326,7 +326,7 @@ class User
     /**
      * @param string[] $multifactor
      */
-    public function setMultifactor(array $multifactor)
+    public function setMultifactor(array $multifactor): void
     {
         $this->multifactor = $multifactor;
     }
@@ -336,7 +336,7 @@ class User
         return $this->lastIp;
     }
 
-    public function setLastIp(string $lastIp)
+    public function setLastIp(string $lastIp): void
     {
         $this->lastIp = $lastIp;
     }
@@ -346,7 +346,7 @@ class User
         return $this->lastLogin;
     }
 
-    public function setLastLogin(string $lastLogin)
+    public function setLastLogin(string $lastLogin): void
     {
         $this->lastLogin = $lastLogin;
     }
@@ -356,7 +356,7 @@ class User
         return $this->loginsCount;
     }
 
-    public function setLoginsCount(int $loginsCount)
+    public function setLoginsCount(int $loginsCount): void
     {
         $this->loginsCount = $loginsCount;
     }
@@ -366,7 +366,7 @@ class User
         return $this->blocked;
     }
 
-    public function setBlocked(bool $blocked)
+    public function setBlocked(bool $blocked): void
     {
         $this->blocked = $blocked;
     }
@@ -376,7 +376,7 @@ class User
         return $this->givenName;
     }
 
-    public function setGivenName(string $givenName)
+    public function setGivenName(string $givenName): void
     {
         $this->givenName = $givenName;
     }
@@ -386,7 +386,7 @@ class User
         return $this->familyName;
     }
 
-    public function setFamilyName(string $familyName)
+    public function setFamilyName(string $familyName): void
     {
         $this->familyName = $familyName;
     }
@@ -396,7 +396,7 @@ class User
         return $this->password;
     }
 
-    public function setPassword($password)
+    public function setPassword($password): void
     {
         $this->password = $password;
     }

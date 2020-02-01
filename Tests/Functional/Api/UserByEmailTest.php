@@ -41,7 +41,7 @@ class UserByEmailTest extends Auth0TestCase
      * @depends instantiateApi
      * @covers \Bitmotion\Auth0\Api\Management\UserByEmailApi::get
      */
-    public function get(UserByEmailApi $userByEmailApi)
+    public function get(UserByEmailApi $userByEmailApi): void
     {
         $user = $userByEmailApi->get($this->getUser()->getEmail());
         $this->assertInstanceOf(User::class, $user);

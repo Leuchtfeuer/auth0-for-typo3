@@ -242,7 +242,7 @@ class ClientApi extends GeneralManagementApi
         return $this->mapResponse($response);
     }
 
-    protected function cleanProperties(array &$data)
+    protected function cleanProperties(array &$data): void
     {
         // TODO: Find a solution for that:
         if (isset($data['jwt_configuration']['secret_encoded'])) {

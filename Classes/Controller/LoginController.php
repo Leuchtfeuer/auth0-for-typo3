@@ -42,7 +42,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
     /**
      * @throws InvalidConfigurationTypeException
      */
-    public function initializeAction()
+    public function initializeAction(): void
     {
         if (!ConfigurationUtility::isLoaded()) {
             throw new InvalidConfigurationTypeException('No TypoScript found.', 1547449321);
@@ -62,7 +62,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
      * @throws CoreException
      * @throws InvalidApplicationException
      */
-    public function formAction()
+    public function formAction(): void
     {
         $feUserAuthentication = $GLOBALS['TSFE']->fe_user;
         $redirectService = GeneralUtility::makeInstance(RedirectService::class, $this->settings);
@@ -109,7 +109,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
      * @throws StopActionException
      * @throws UnsupportedRequestTypeException
      */
-    public function loginAction()
+    public function loginAction(): void
     {
         // Get Auth0 user from session storage
         // ToDo: User Auth0->getUser() instead.
@@ -131,7 +131,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
      * @throws StopActionException
      * @throws UnsupportedRequestTypeException
      */
-    public function logoutAction()
+    public function logoutAction(): void
     {
         $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid((int)$this->settings['application']);
         $logoutSettings = $this->settings['frontend']['logout'] ?? [];

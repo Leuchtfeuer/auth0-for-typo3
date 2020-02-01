@@ -121,7 +121,7 @@ class Client
         return $this->headers;
     }
 
-    public function addHeader(Header $header)
+    public function addHeader(Header $header): void
     {
         $this->headers[] = $header;
     }

@@ -52,7 +52,7 @@ class UpdateUtility implements LoggerAwareInterface
         $this->user = $user;
     }
 
-    public function updateGroups()
+    public function updateGroups(): void
     {
         try {
             $groupMapping = ConfigurationUtility::getSetting('roles', $this->tableName);
@@ -82,7 +82,7 @@ class UpdateUtility implements LoggerAwareInterface
         }
     }
 
-    public function updateUser(bool $reactivateUser = false)
+    public function updateUser(bool $reactivateUser = false): void
     {
         try {
             // Get mapping configuration
@@ -102,7 +102,7 @@ class UpdateUtility implements LoggerAwareInterface
         $this->performUserUpdate($mappingConfiguration, $reactivateUser);
     }
 
-    protected function mapRoles(array $groupMapping, array &$groupsToAssign, bool &$isBeAdmin, bool &$shouldUpdate)
+    protected function mapRoles(array $groupMapping, array &$groupsToAssign, bool &$isBeAdmin, bool &$shouldUpdate): void
     {
         $userRoles = $this->user->getAppMetadata()['roles'];
 
@@ -127,7 +127,7 @@ class UpdateUtility implements LoggerAwareInterface
         }
     }
 
-    protected function performGroupUpdate(array $groupsToAssign, bool $isBeAdmin)
+    protected function performGroupUpdate(array $groupsToAssign, bool $isBeAdmin): void
     {
         $updates = [];
 
@@ -147,7 +147,7 @@ class UpdateUtility implements LoggerAwareInterface
         }
     }
 
-    protected function performUserUpdate(array $mappingConfiguration, bool $reactivateUser)
+    protected function performUserUpdate(array $mappingConfiguration, bool $reactivateUser): void
     {
         $this->logger->debug(sprintf('%s: Prepare update for Auth0 user "%s"', $this->tableName, $this->user->getUserId()));
 
@@ -166,7 +166,7 @@ class UpdateUtility implements LoggerAwareInterface
         $userRepository->updateUserByAuth0Id($updates, $this->user->getUserId());
     }
 
-    protected function addRestrictions(UserRepository &$userRepository)
+    protected function addRestrictions(UserRepository &$userRepository): void
     {
         $emConfiguration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
         $reactivateDeleted = false;
@@ -191,7 +191,7 @@ class UpdateUtility implements LoggerAwareInterface
         }
     }
 
-    protected function mapUserData(array &$updates, array $mappingConfiguration)
+    protected function mapUserData(array &$updates, array $mappingConfiguration): void
     {
         $this->parseFuncUtility = $parseFuncUtility = GeneralUtility::makeInstance(ParseFuncUtility::class);
         $normalizer = new ObjectNormalizer(null, new CamelCaseToSnakeCaseNameConverter());

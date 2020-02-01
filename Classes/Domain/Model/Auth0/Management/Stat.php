@@ -56,7 +56,7 @@ class Stat
     /**
      * @param \DateTime $date
      */
-    public function setDate(\DateTimeInterface $date)
+    public function setDate(\DateTimeInterface $date): void
     {
         $this->date = $date;
     }
@@ -69,7 +69,7 @@ class Stat
         return $this->logins;
     }
 
-    public function setLogins(int $logins)
+    public function setLogins(int $logins): void
     {
         $this->logins = $logins;
     }
@@ -82,7 +82,7 @@ class Stat
         return $this->signups;
     }
 
-    public function setSignups(int $signups)
+    public function setSignups(int $signups): void
     {
         $this->signups = $signups;
     }
@@ -95,7 +95,7 @@ class Stat
         return $this->leakedPasswords;
     }
 
-    public function setLeakedPasswords(int $leakedPasswords)
+    public function setLeakedPasswords(int $leakedPasswords): void
     {
         $this->leakedPasswords = $leakedPasswords;
     }
@@ -108,7 +108,7 @@ class Stat
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTime $createdAt)
+    public function setCreatedAt(\DateTime $createdAt): void
     {
         $this->createdAt = $createdAt;
     }
@@ -121,7 +121,7 @@ class Stat
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(\DateTime $updatedAt)
+    public function setUpdatedAt(\DateTime $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
     }

@@ -74,7 +74,7 @@ class UserRepository implements LoggerAwareInterface
      * Removes DeletedRestriction and / or HiddenRestriction from QueryBuilder.
      * Depends on extension configuration.
      */
-    public function removeRestrictions()
+    public function removeRestrictions(): void
     {
         $environmentService = GeneralUtility::makeInstance(EnvironmentService::class);
         $emConfiguration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
@@ -88,7 +88,7 @@ class UserRepository implements LoggerAwareInterface
         }
     }
 
-    protected function removeFrontendRestrictions(EmAuth0Configuration $emConfiguration)
+    protected function removeFrontendRestrictions(EmAuth0Configuration $emConfiguration): void
     {
         if ($emConfiguration->isReactivateDeletedFrontendUsers()) {
             $this->removeDeletedRestriction();
@@ -98,7 +98,7 @@ class UserRepository implements LoggerAwareInterface
         }
     }
 
-    protected function removeBackendRestrictions(EmAuth0Configuration $emConfiguration)
+    protected function removeBackendRestrictions(EmAuth0Configuration $emConfiguration): void
     {
         if ($emConfiguration->isReactivateDeletedBackendUsers()) {
             $this->removeDeletedRestriction();
@@ -108,13 +108,13 @@ class UserRepository implements LoggerAwareInterface
         }
     }
 
-    protected function removeHiddenRestriction()
+    protected function removeHiddenRestriction(): void
     {
         $this->queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
         $this->logger->debug('Removed HiddenRestriction.');
     }
 
-    protected function removeDeletedRestriction()
+    protected function removeDeletedRestriction(): void
     {
         $this->queryBuilder->getRestrictions()->removeByType(DeletedRestriction::class);
         $this->logger->debug('Removed DeletedRestriction.');
@@ -124,7 +124,7 @@ class UserRepository implements LoggerAwareInterface
      * Get not deleted users.
      * The restriction is not available in some cases.
      */
-    public function addDeletedRestriction()
+    public function addDeletedRestriction(): void
     {
         $this->queryBuilder->andWhere(
             $this->expressionBuilder->eq(
@@ -138,7 +138,7 @@ class UserRepository implements LoggerAwareInterface
      * Get only active users.
      * The restriction is not available in some cases.
      */
-    public function addDisabledRestriction()
+    public function addDisabledRestriction(): void
     {
         $this->queryBuilder->andWhere(
             $this->expressionBuilder->eq(
@@ -151,7 +151,7 @@ class UserRepository implements LoggerAwareInterface
     /**
      * Adds ordering to a select query.
      */
-    public function setOrdering(string $fieldName, string $order = 'ASC')
+    public function setOrdering(string $fieldName, string $order = 'ASC'): void
     {
         $this->queryBuilder->orderBy($fieldName, $order);
     }
@@ -159,7 +159,7 @@ class UserRepository implements LoggerAwareInterface
     /**
      * Adds max results to a select query.
      */
-    public function setMaxResults(int $maxResults)
+    public function setMaxResults(int $maxResults): void
     {
         $this->queryBuilder->setMaxResults($maxResults);
     }
@@ -167,7 +167,7 @@ class UserRepository implements LoggerAwareInterface
     /**
      * Updates a backend or frontend user by given uid.
      */
-    public function updateUserByUid(array $sets, int $uid)
+    public function updateUserByUid(array $sets, int $uid): void
     {
         $this->resolveSets($sets);
         $this->queryBuilder->where(
@@ -179,7 +179,7 @@ class UserRepository implements LoggerAwareInterface
     /**
      * Updates a backend or frontend user by given auth0_user_id.
      */
-    public function updateUserByAuth0Id(array $sets, string $auth0Id)
+    public function updateUserByAuth0Id(array $sets, string $auth0Id): void
     {
         $this->resolveSets($sets);
         $this->queryBuilder->where(
@@ -191,7 +191,7 @@ class UserRepository implements LoggerAwareInterface
     /**
      * Resolves the set array.
      */
-    protected function resolveSets(array $sets)
+    protected function resolveSets(array $sets): void
     {
         foreach ($sets as $key => $value) {
             $this->logger->debug(sprintf('Set property "%s" to: "%s"', $key, $value));
@@ -202,7 +202,7 @@ class UserRepository implements LoggerAwareInterface
     /**
      * Executes the update query.
      */
-    protected function updateUser()
+    protected function updateUser(): void
     {
         $this->queryBuilder->update($this->tableName);
         $this->logger->debug(sprintf('[%s] Executed UPDATE query: %s', $this->tableName, $this->queryBuilder->getSQL()));
@@ -212,7 +212,7 @@ class UserRepository implements LoggerAwareInterface
     /**
      * Inserts a backend or frontend user by given value array.
      */
-    public function insertUser(array $values)
+    public function insertUser(array $values): void
     {
         $this->queryBuilder->insert($this->tableName)->values($values);
         $this->logger->debug(sprintf('[%s] Executed INSERT query: %s', $this->tableName, $this->queryBuilder->getSQL()));

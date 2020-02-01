@@ -61,7 +61,7 @@ class LogTest extends Auth0TestCase
      * @depends search
      * @covers \Bitmotion\Auth0\Api\Management\LogApi::searchByCheckpoint
      */
-    public function searchByCheckpoint(LogApi $logApi, Log $entry)
+    public function searchByCheckpoint(LogApi $logApi, Log $entry): void
     {
         $logs = $logApi->searchByCheckpoint($entry->getLogid(), 5);
         $this->assertIsArray($logs);
@@ -74,7 +74,7 @@ class LogTest extends Auth0TestCase
      * @depends search
      * @covers \Bitmotion\Auth0\Api\Management\LogApi::get
      */
-    public function get(LogApi $logApi, Log $entry)
+    public function get(LogApi $logApi, Log $entry): void
     {
         $log = $logApi->get($entry->getLogId());
         $this->assertInstanceOf(Log::class, $log);

@@ -127,7 +127,7 @@ class Tenant
         return $this->changePassword;
     }
 
-    public function setChangePassword(PasswordPage $changePassword)
+    public function setChangePassword(PasswordPage $changePassword): void
     {
         $this->changePassword = $changePassword;
     }
@@ -140,7 +140,7 @@ class Tenant
         return $this->guradianMfaPage;
     }
 
-    public function setGuradianMfaPage(MfaPage $guradianMfaPage)
+    public function setGuradianMfaPage(MfaPage $guradianMfaPage): void
     {
         $this->guradianMfaPage = $guradianMfaPage;
     }
@@ -153,7 +153,7 @@ class Tenant
         return $this->defaultAudience;
     }
 
-    public function setDefaultAudience(string $defaultAudience)
+    public function setDefaultAudience(string $defaultAudience): void
     {
         $this->defaultAudience = $defaultAudience;
     }
@@ -166,7 +166,7 @@ class Tenant
         return $this->defaultDirectory;
     }
 
-    public function setDefaultDirectory(string $defaultDirectory)
+    public function setDefaultDirectory(string $defaultDirectory): void
     {
         $this->defaultDirectory = $defaultDirectory;
     }
@@ -179,7 +179,7 @@ class Tenant
         return $this->errorPage;
     }
 
-    public function setErrorPage(ErrorPage $errorPage)
+    public function setErrorPage(ErrorPage $errorPage): void
     {
         $this->errorPage = $errorPage;
     }
@@ -192,7 +192,7 @@ class Tenant
         return $this->flags;
     }
 
-    public function setFlags(Flag $flags)
+    public function setFlags(Flag $flags): void
     {
         $this->flags = $flags;
     }
@@ -205,7 +205,7 @@ class Tenant
         return $this->friendlyName;
     }
 
-    public function setFriendlyName(string $friendlyName)
+    public function setFriendlyName(string $friendlyName): void
     {
         $this->friendlyName = $friendlyName;
     }
@@ -218,7 +218,7 @@ class Tenant
         return $this->pictureUrl;
     }
 
-    public function setPictureUrl(string $pictureUrl)
+    public function setPictureUrl(string $pictureUrl): void
     {
         $this->pictureUrl = $pictureUrl;
     }
@@ -231,7 +231,7 @@ class Tenant
         return $this->supportEmail;
     }
 
-    public function setSupportEmail(string $supportEmail)
+    public function setSupportEmail(string $supportEmail): void
     {
         $this->supportEmail = $supportEmail;
     }
@@ -244,7 +244,7 @@ class Tenant
         return $this->supportUrl;
     }
 
-    public function setSupportUrl(string $supportUrl)
+    public function setSupportUrl(string $supportUrl): void
     {
         $this->supportUrl = $supportUrl;
     }
@@ -260,7 +260,7 @@ class Tenant
     /**
      * @param string[] $allowedLogoutUrls
      */
-    public function setAllowedLogoutUrls(array $allowedLogoutUrls)
+    public function setAllowedLogoutUrls(array $allowedLogoutUrls): void
     {
         $this->allowedLogoutUrls = $allowedLogoutUrls;
     }
@@ -273,7 +273,7 @@ class Tenant
         return $this->sessionLifetime;
     }
 
-    public function setSessionLifetime(int $sessionLifetime)
+    public function setSessionLifetime(int $sessionLifetime): void
     {
         $this->sessionLifetime = $sessionLifetime;
     }
@@ -286,7 +286,7 @@ class Tenant
         return $this->idleSessionLifetime;
     }
 
-    public function setIdleSessionLifetime(int $idleSessionLifetime)
+    public function setIdleSessionLifetime(int $idleSessionLifetime): void
     {
         $this->idleSessionLifetime = $idleSessionLifetime;
     }
@@ -299,7 +299,7 @@ class Tenant
         return $this->sandboxVersion;
     }
 
-    public function setSandboxVersion(string $sandboxVersion)
+    public function setSandboxVersion(string $sandboxVersion): void
     {
         $this->sandboxVersion = $sandboxVersion;
     }
@@ -315,7 +315,7 @@ class Tenant
     /**
      * @param string[] $sandboxVersionsAvailable
      */
-    public function setSandboxVersionsAvailable(array $sandboxVersionsAvailable)
+    public function setSandboxVersionsAvailable(array $sandboxVersionsAvailable): void
     {
         $this->sandboxVersionsAvailable = $sandboxVersionsAvailable;
     }

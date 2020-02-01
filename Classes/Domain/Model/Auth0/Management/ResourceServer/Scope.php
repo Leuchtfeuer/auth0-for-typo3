@@ -33,7 +33,7 @@ class Scope
         return $this->description;
     }
 
-    public function setDescription(string $description)
+    public function setDescription(string $description): void
     {
         $this->description = $description;
     }
@@ -46,7 +46,7 @@ class Scope
         return $this->value;
     }
 
-    public function setValue(string $value)
+    public function setValue(string $value): void
     {
         $this->value = $value;
     }

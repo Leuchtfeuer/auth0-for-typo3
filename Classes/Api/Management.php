@@ -142,7 +142,7 @@ class Management implements LoggerAwareInterface
      * @throws ApiException
      * @throws Exception
      */
-    protected function setClient(array $guzzleOptions)
+    protected function setClient(array $guzzleOptions): void
     {
         $clientCredentials = $this->getClientCredentials();
 
@@ -153,7 +153,7 @@ class Management implements LoggerAwareInterface
         $this->client->addHeader(new AuthorizationBearer($clientCredentials['access_token']));
     }
 
-    protected function setAuthentication(string $scope)
+    protected function setAuthentication(string $scope): void
     {
         $this->authentication = new Authentication(
             $this->application['domain'],

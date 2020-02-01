@@ -26,7 +26,7 @@ class ConfigurationUtility implements SingletonInterface
     /**
      * @throws InvalidConfigurationTypeException
      */
-    public static function makeInstance()
+    private static function makeInstance(): void
     {
         $configurationManager = GeneralUtility::makeInstance(ObjectManager::class)->get(ConfigurationManager::class);
         self::$settings = $configurationManager->getConfiguration(

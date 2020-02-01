@@ -66,7 +66,7 @@ class CleanUpCommand extends Command
      */
     protected $configuration;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->addArgument('method', InputArgument::REQUIRED, '"disable", "delete" or "deleteIrrevocable"');
     }
@@ -152,7 +152,7 @@ class CleanUpCommand extends Command
         return !empty($this->users);
     }
 
-    protected function handleUser(array $user)
+    protected function handleUser(array $user): void
     {
         $queryBuilder = $this->getQueryBuilder('users');
 
@@ -183,7 +183,7 @@ class CleanUpCommand extends Command
         return GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableNames[$type]);
     }
 
-    protected function clearSessionData(array $user)
+    protected function clearSessionData(array $user): void
     {
         $queryBuilder = $this->getQueryBuilder('sessions');
         $queryBuilder

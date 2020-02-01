@@ -364,7 +364,7 @@ class Log
         return $this->date;
     }
 
-    public function setDate(\DateTime $date)
+    public function setDate(\DateTime $date): void
     {
         $this->date = $date;
     }
@@ -377,7 +377,7 @@ class Log
         return $this->type;
     }
 
-    public function setType(string $type)
+    public function setType(string $type): void
     {
         $this->type = $type;
     }
@@ -390,7 +390,7 @@ class Log
         return $this->clientId;
     }
 
-    public function setClientId(string $clientId)
+    public function setClientId(string $clientId): void
     {
         $this->clientId = $clientId;
     }
@@ -403,7 +403,7 @@ class Log
         return $this->clientName;
     }
 
-    public function setClientName(string $clientName)
+    public function setClientName(string $clientName): void
     {
         $this->clientName = $clientName;
     }
@@ -416,7 +416,7 @@ class Log
         return $this->ip;
     }
 
-    public function setIp(string $ip)
+    public function setIp(string $ip): void
     {
         $this->ip = $ip;
     }
@@ -429,7 +429,7 @@ class Log
         return $this->locationInfo;
     }
 
-    public function setLocationInfo(array $locationInfo)
+    public function setLocationInfo(array $locationInfo): void
     {
         $this->locationInfo = $locationInfo;
     }
@@ -442,7 +442,7 @@ class Log
         return $this->details;
     }
 
-    public function setDetails(array $details)
+    public function setDetails(array $details): void
     {
         $this->details = $details;
     }
@@ -455,7 +455,7 @@ class Log
         return $this->userId;
     }
 
-    public function setUserId(string $userId)
+    public function setUserId(string $userId): void
     {
         $this->userId = $userId;
     }
@@ -468,7 +468,7 @@ class Log
         return $this->logId;
     }
 
-    public function setLogId(string $logId)
+    public function setLogId(string $logId): void
     {
         $this->logId = $logId;
     }
@@ -481,7 +481,7 @@ class Log
         return $this->description;
     }
 
-    public function setDescription(string $description)
+    public function setDescription(string $description): void
     {
         $this->description = $description;
     }
@@ -494,7 +494,7 @@ class Log
         return $this->userAgent;
     }
 
-    public function setUserAgent(string $userAgent)
+    public function setUserAgent(string $userAgent): void
     {
         $this->userAgent = $userAgent;
     }
@@ -507,7 +507,7 @@ class Log
         return $this->auth0Client;
     }
 
-    public function setAuth0Client(array $auth0Client)
+    public function setAuth0Client(array $auth0Client): void
     {
         $this->auth0Client = $auth0Client;
     }
@@ -520,7 +520,7 @@ class Log
         return $this->isMobile;
     }
 
-    public function setIsMobile(bool $isMobile)
+    public function setIsMobile(bool $isMobile): void
     {
         $this->isMobile = $isMobile;
     }

@@ -43,7 +43,7 @@ class StatTest extends Auth0TestCase
      * @depends instantiateApi
      * @covers \Bitmotion\Auth0\Api\Management\StatApi::getActiveUsersCount
      */
-    public function countUsers(StatApi $statApi)
+    public function countUsers(StatApi $statApi): void
     {
         $userCount = $statApi->getActiveUsersCount();
         $this->assertIsInt($userCount);
@@ -55,7 +55,7 @@ class StatTest extends Auth0TestCase
      * @depends instantiateApi
      * @covers \Bitmotion\Auth0\Api\Management\StatApi::getDailyStats
      */
-    public function getLogs(StatApi $statApi)
+    public function getLogs(StatApi $statApi): void
     {
         $stats = $statApi->getDailyStats();
         $this->assertIsArray($stats);
@@ -70,7 +70,7 @@ class StatTest extends Auth0TestCase
      * @depends instantiateApi
      * @covers \Bitmotion\Auth0\Api\Management\StatApi::getDailyStats
      */
-    public function getByDate(StatApi $statApi)
+    public function getByDate(StatApi $statApi): void
     {
         $dateTime = new \DateTime('2019-02-05T00:00:00.000Z');
         $dateTill = new \DateTime('2019-02-10T00:00:00.000Z');

@@ -37,7 +37,7 @@ class Mobile
         return $this->android;
     }
 
-    public function setAndroid(array $android)
+    public function setAndroid(array $android): void
     {
         $this->android = $android;
     }
@@ -50,7 +50,7 @@ class Mobile
         return $this->ios;
     }
 
-    public function setIos(array $ios)
+    public function setIos(array $ios): void
     {
         $this->ios = $ios;
     }

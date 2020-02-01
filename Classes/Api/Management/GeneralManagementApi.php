@@ -167,7 +167,7 @@ class GeneralManagementApi implements LoggerAwareInterface
     /**
      * @throws ApiException
      */
-    private function getResponseObject(Error $error)
+    private function getResponseObject(Error $error): void
     {
         $errorMessage = sprintf('%s (%s): %s', $error->getError(), $error->getErrorCode(), $error->getMessage());
         $this->logger->critical($errorMessage);
@@ -179,28 +179,28 @@ class GeneralManagementApi implements LoggerAwareInterface
         throw new ApiException($errorMessage, 1549559117);
     }
 
-    protected function addStringProperty(array &$data, string $key, string $value)
+    protected function addStringProperty(array &$data, string $key, string $value): void
     {
         if ($value !== '') {
             $data[$key] = $value;
         }
     }
 
-    protected function addArrayProperty(array &$data, string $key, array $value)
+    protected function addArrayProperty(array &$data, string $key, array $value): void
     {
         if (!empty($value)) {
             $data[$key] = $value;
         }
     }
 
-    protected function addIntegerProperty(array &$data, string $key, int $value)
+    protected function addIntegerProperty(array &$data, string $key, int $value): void
     {
         if ($value !== 0) {
             $data[$key] = $value;
         }
     }
 
-    protected function addBooleanProperty(array &$data, string $key, $value)
+    protected function addBooleanProperty(array &$data, string $key, $value): void
     {
         if ($value !== null) {
             $data[$key] = (bool)$value;

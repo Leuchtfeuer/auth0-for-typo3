@@ -57,7 +57,7 @@ class UserTest extends Auth0TestCase
      * @depends instantiateApi
      * @covers \Bitmotion\Auth0\Api\Management\UserApi::search
      */
-    public function listUsersWithLimit(UserApi $userApi)
+    public function listUsersWithLimit(UserApi $userApi): void
     {
         $users = $userApi->search('*', '', 5);
         $this->assertCount(5, $users);
@@ -68,7 +68,7 @@ class UserTest extends Auth0TestCase
      * @depends instantiateApi
      * @covers \Bitmotion\Auth0\Api\Management\UserApi::getLog
      */
-    public function getLogEntries(UserApi $userApi)
+    public function getLogEntries(UserApi $userApi): void
     {
         $logEntries = $userApi->getLog('google-oauth2|117501050803287717769');
         $this->assertIsArray($logEntries);
@@ -81,7 +81,7 @@ class UserTest extends Auth0TestCase
      * @depends instantiateApi
      * @covers \Bitmotion\Auth0\Api\Management\UserApi::getMetadata
      */
-    public function getMetadata(UserApi $userApi)
+    public function getMetadata(UserApi $userApi): void
     {
         $metadata = $userApi->getMetadata($this->getUser()->getUserId(), UserApi::TYPE_USER);
         $this->assertSame('array', gettype($metadata));
@@ -100,7 +100,7 @@ class UserTest extends Auth0TestCase
      * @depends instantiateApi
      * @covers \Bitmotion\Auth0\Api\Management\UserApi::updateMetadata
      */
-    public function updateMetadata(UserApi $userApi)
+    public function updateMetadata(UserApi $userApi): void
     {
         $time = time();
         $user = $this->getUser();
@@ -121,7 +121,7 @@ class UserTest extends Auth0TestCase
      * @depends instantiateApi
      * @covers \Bitmotion\Auth0\Api\Management\UserApi::get
      */
-    public function getAUser(UserApi $userApi)
+    public function getAUser(UserApi $userApi): void
     {
         $user = $userApi->get($this->getUser()->getUserId());
         $this->assertInstanceOf(User::class, $user);
@@ -141,7 +141,7 @@ class UserTest extends Auth0TestCase
      * @depends instantiateApi
      * @covers \Bitmotion\Auth0\Api\Management\UserApi::update
      */
-    public function updateUser(UserApi $userApi)
+    public function updateUser(UserApi $userApi): void
     {
         $user = $this->getUser();
         $user->setPassword('EWa5^Eml2*ZN');
@@ -158,7 +158,7 @@ class UserTest extends Auth0TestCase
      * @depends instantiateApi
      * @covers \Bitmotion\Auth0\Api\Management\UserApi::getEnrollments
      */
-    public function getEnrollments(UserApi $userApi)
+    public function getEnrollments(UserApi $userApi): void
     {
         $enrollments = $userApi->getEnrollments($this->getUser()->getUserId());
         $this->assertIsArray($enrollments);

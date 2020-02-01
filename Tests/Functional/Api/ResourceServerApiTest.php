@@ -65,7 +65,7 @@ class ResourceServerApiTest extends Auth0TestCase
      * @depends create
      * @covers \Bitmotion\Auth0\Api\Management\ResourceServerApi::get
      */
-    public function get(ResourceServerApi $resourceServerApi, ResourceServer $resourceServer)
+    public function get(ResourceServerApi $resourceServerApi, ResourceServer $resourceServer): void
     {
         $foundResourceServer = $resourceServerApi->get($resourceServer->getId());
         $this->assertInstanceOf(ResourceServer::class, $foundResourceServer);
@@ -78,7 +78,7 @@ class ResourceServerApiTest extends Auth0TestCase
      * @depends create
      * @covers \Bitmotion\Auth0\Api\Management\ResourceServerApi::update
      */
-    public function update(ResourceServerApi $resourceServerApi, ResourceServer $resourceServer)
+    public function update(ResourceServerApi $resourceServerApi, ResourceServer $resourceServer): void
     {
         $originTokenLifetimeForWeb = $resourceServer->getTokenLifetimeForWeb();
         $resourceServer->setTokenLifetimeForWeb($resourceServer->getTokenLifetime());
@@ -93,7 +93,7 @@ class ResourceServerApiTest extends Auth0TestCase
      * @depends create
      * @covers \Bitmotion\Auth0\Api\Management\ResourceServerApi::delete
      */
-    public function delete(ResourceServerApi $resourceServerApi, ResourceServer $resourceServer)
+    public function delete(ResourceServerApi $resourceServerApi, ResourceServer $resourceServer): void
     {
         $response = $resourceServerApi->delete($resourceServer->getId());
         $this->assertTrue($response);

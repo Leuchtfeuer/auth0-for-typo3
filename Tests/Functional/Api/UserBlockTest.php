@@ -27,7 +27,7 @@ class UserBlockTest extends Auth0TestCase
 
     protected $userApi;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -55,7 +55,7 @@ class UserBlockTest extends Auth0TestCase
      * @depends instantiateApi
      * @covers \Bitmotion\Auth0\Api\Management\UserBlockApi::unblock
      */
-    public function unblockUser(UserBlockApi $userBlockApi)
+    public function unblockUser(UserBlockApi $userBlockApi): void
     {
         $this->assertTrue($this->getUser()->isBlocked());
         $success = $userBlockApi->unblockUser($this->getUser());
@@ -70,7 +70,7 @@ class UserBlockTest extends Auth0TestCase
      * @depends instantiateApi
      * @covers \Bitmotion\Auth0\Api\Management\UserBlockApi::getBlocks
      */
-    public function getBlocks(UserBlockApi $userBlockApi)
+    public function getBlocks(UserBlockApi $userBlockApi): void
     {
         $blocks = $userBlockApi->getBlocks($this->getUser()->getEmail());
         $this->assertInstanceOf(UserBlock::class, $blocks);
@@ -81,7 +81,7 @@ class UserBlockTest extends Auth0TestCase
      * @depends instantiateApi
      * @covers \Bitmotion\Auth0\Api\Management\UserBlockApi::getUserBlocks
      */
-    public function getUserBlocks(UserBlockApi $userBlockApi)
+    public function getUserBlocks(UserBlockApi $userBlockApi): void
     {
         $blocks = $userBlockApi->getUserBlocks($this->getUser());
         $this->assertInstanceOf(UserBlock::class, $blocks);
@@ -92,7 +92,7 @@ class UserBlockTest extends Auth0TestCase
      * @depends instantiateApi
      * @covers \Bitmotion\Auth0\Api\Management\UserBlockApi::unblock
      */
-    public function unblock(UserBlockApi $userBlockApi)
+    public function unblock(UserBlockApi $userBlockApi): void
     {
         $success = $userBlockApi->unblock($this->getUser()->getEmail());
         $this->assertTrue($success);

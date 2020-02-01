@@ -102,7 +102,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      * @throws ExtensionConfigurationPathDoesNotExistException
      * @throws InvalidPasswordHashException
      */
-    public function initAuth($mode, $loginData, $authInfo, $pObj)
+    public function initAuth($mode, $loginData, $authInfo, $pObj): void
     {
         if ($this->isResponsible() === false) {
             return;
@@ -145,7 +145,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      * @throws ExtensionConfigurationExtensionNotConfiguredException
      * @throws ExtensionConfigurationPathDoesNotExistException
      */
-    protected function initApplication()
+    protected function initApplication(): void
     {
         if ($this->environmentService->isEnvironmentInFrontendMode()) {
             $this->logger->notice('Handle frontend login.');
@@ -165,7 +165,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         }
     }
 
-    protected function setDefaults(array $authInfo, string $mode, array $loginData, AbstractUserAuthentication $pObj)
+    protected function setDefaults(array $authInfo, string $mode, array $loginData, AbstractUserAuthentication $pObj): void
     {
         $authInfo['db_user']['check_pid_clause'] = false;
         $loginData['responsible'] = false;
@@ -204,7 +204,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         return false;
     }
 
-    protected function setApplicationByUser(string $auth0UserId)
+    protected function setApplicationByUser(string $auth0UserId): void
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableName);
         $application = $queryBuilder
@@ -223,7 +223,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      * @throws ExtensionConfigurationPathDoesNotExistException
      * @throws InvalidPasswordHashException
      */
-    protected function handleLogin()
+    protected function handleLogin(): void
     {
         if ($this->login['responsible'] === true) {
             switch ($this->mode) {
@@ -264,7 +264,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      * @throws ExtensionConfigurationPathDoesNotExistException
      * @throws InvalidPasswordHashException
      */
-    protected function insertOrUpdateUser()
+    protected function insertOrUpdateUser(): void
     {
         $userUtility = GeneralUtility::makeInstance(UserUtility::class);
         $this->user = $userUtility->checkIfUserExists($this->tableName, $this->tokenInfo['sub']);

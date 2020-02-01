@@ -48,7 +48,7 @@ class ConnectionTest extends Auth0TestCase
      * @depends instantiateApi
      * @covers \Bitmotion\Auth0\Api\Management\ConnectionApi::list
      */
-    public function listConnections(ConnectionApi $connectionApi)
+    public function listConnections(ConnectionApi $connectionApi): void
     {
         $connections = $connectionApi->list();
         $this->assertNotEmpty($connections);
