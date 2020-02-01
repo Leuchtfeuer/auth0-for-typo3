@@ -45,7 +45,7 @@ class SingleSignOutHook implements SingletonInterface
      */
     protected function performBackendLogout(): void
     {
-        if ($this->configuration->getEnableBackendLogin() === true && $this->configuration->isSoftLogout() === false) {
+        if ($this->configuration->isEnableBackendLogin() && !$this->configuration->isSoftLogout()) {
             $backendRoot = sprintf('%s/typo3/?%s', GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST'), 'auth0[action]=logout');
             header('Location: ' . $backendRoot);
             exit;

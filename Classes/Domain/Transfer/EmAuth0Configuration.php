@@ -61,7 +61,15 @@ class EmAuth0Configuration implements SingletonInterface
         }
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Use $this->isEnableBackendLogin() instead.
+     */
     public function getEnableBackendLogin(): bool
+    {
+        return $this->isEnableBackendLogin();
+    }
+
+    public function isEnableBackendLogin(): bool
     {
         return (bool)$this->enableBackendLogin;
     }
@@ -76,22 +84,54 @@ class EmAuth0Configuration implements SingletonInterface
         return (int)$this->userStoragePage;
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Use $this->isReactivateDisabledBackendUsers() instead.
+     */
     public function getReactivateDisabledBackendUsers(): bool
+    {
+        return $this->isReactivateDisabledBackendUsers();
+    }
+
+    public function isReactivateDisabledBackendUsers(): bool
     {
         return (bool)$this->reactivateDisabledBackendUsers;
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Use $this->isReactivateDeletedBackendUsers() instead.
+     */
     public function getReactivateDeletedBackendUsers(): bool
+    {
+        return $this->isReactivateDeletedBackendUsers();
+    }
+
+    public function isReactivateDeletedBackendUsers(): bool
     {
         return (bool)$this->reactivateDeletedBackendUsers;
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Use $this->isReactivateDisabledFrontendUsers() instead.
+     */
     public function getReactivateDisabledFrontendUsers(): bool
+    {
+        return $this->isReactivateDisabledFrontendUsers();
+    }
+
+    public function isReactivateDisabledFrontendUsers(): bool
     {
         return (bool)$this->reactivateDisabledFrontendUsers;
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Use $this->isReactivateDeletedFrontendUsers() instead.
+     */
     public function getReactivateDeletedFrontendUsers(): bool
+    {
+        return $this->isReactivateDeletedFrontendUsers();
+    }
+
+    public function isReactivateDeletedFrontendUsers(): bool
     {
         return (bool)$this->reactivateDeletedFrontendUsers;
     }

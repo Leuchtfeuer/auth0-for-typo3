@@ -173,11 +173,11 @@ class UpdateUtility implements LoggerAwareInterface
         $reactivateDisabled = false;
 
         if ($this->tableName === 'fe_users') {
-            $reactivateDeleted = $emConfiguration->getReactivateDeletedFrontendUsers();
-            $reactivateDisabled = $emConfiguration->getReactivateDisabledFrontendUsers();
+            $reactivateDeleted = $emConfiguration->isReactivateDeletedFrontendUsers();
+            $reactivateDisabled = $emConfiguration->isReactivateDisabledFrontendUsers();
         } elseif ($this->tableName === 'be_users') {
-            $reactivateDeleted = $emConfiguration->getReactivateDeletedBackendUsers();
-            $reactivateDisabled = $emConfiguration->getReactivateDisabledBackendUsers();
+            $reactivateDeleted = $emConfiguration->isReactivateDeletedBackendUsers();
+            $reactivateDisabled = $emConfiguration->isReactivateDisabledBackendUsers();
         } else {
             $this->logger->notice('Undefined environment');
         }

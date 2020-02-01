@@ -123,7 +123,7 @@ class CleanUpCommand extends Command
     {
         $configuration = new EmAuth0Configuration();
 
-        if ($configuration->getEnableBackendLogin() === false) {
+        if ($configuration->isEnableBackendLogin() === false) {
             return false;
         }
 

@@ -79,20 +79,20 @@ class UserRepository implements LoggerAwareInterface
 
     protected function removeFrontendRestrictions(EmAuth0Configuration $emConfiguration)
     {
-        if ($emConfiguration->getReactivateDeletedFrontendUsers()) {
+        if ($emConfiguration->isReactivateDeletedFrontendUsers()) {
             $this->removeDeletedRestriction();
         }
-        if ($emConfiguration->getReactivateDisabledFrontendUsers()) {
+        if ($emConfiguration->isReactivateDisabledFrontendUsers()) {
             $this->removeHiddenRestriction();
         }
     }
 
     protected function removeBackendRestrictions(EmAuth0Configuration $emConfiguration)
     {
-        if ($emConfiguration->getReactivateDeletedBackendUsers()) {
+        if ($emConfiguration->isReactivateDeletedBackendUsers()) {
             $this->removeDeletedRestriction();
         }
-        if ($emConfiguration->getReactivateDisabledBackendUsers()) {
+        if ($emConfiguration->isReactivateDisabledBackendUsers()) {
             $this->removeHiddenRestriction();
         }
     }
