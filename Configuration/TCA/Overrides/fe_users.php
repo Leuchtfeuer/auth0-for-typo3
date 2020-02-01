@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 defined('TYPO3_MODE') || die();
 
 if (!isset($GLOBALS['TCA']['fe_users']['ctrl']['type'])) {

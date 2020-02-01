@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 /***
@@ -33,7 +33,7 @@ class DeviceCredentialTest extends Auth0TestCase
     public function instantiateApi(): DeviceCredentialApi
     {
         $deviceCredentialApi = $this->getApiUtility()->getDeviceCredentialApi(...$this->scopes);
-        $this->assertInstanceOf(DeviceCredentialApi::class, $deviceCredentialApi);
+        self::assertInstanceOf(DeviceCredentialApi::class, $deviceCredentialApi);
 
         return $deviceCredentialApi;
     }

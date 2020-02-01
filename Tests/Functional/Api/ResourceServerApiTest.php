@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 /***
@@ -40,7 +40,7 @@ class ResourceServerApiTest extends Auth0TestCase
     public function instantiateApi(): ResourceServerApi
     {
         $resourceServer = $this->getApiUtility()->getResourceServerApi(...$this->scopes);
-        $this->assertInstanceOf(ResourceServerApi::class, $resourceServer);
+        self::assertInstanceOf(ResourceServerApi::class, $resourceServer);
 
         return $resourceServer;
     }
@@ -54,7 +54,7 @@ class ResourceServerApiTest extends Auth0TestCase
     {
         $resourceServer = $this->getNewResourceServer();
         $newServer = $resourceServerApi->create($resourceServer);
-        $this->assertInstanceOf(ResourceServer::class, $newServer);
+        self::assertInstanceOf(ResourceServer::class, $newServer);
 
         return $newServer;
     }
@@ -68,8 +68,8 @@ class ResourceServerApiTest extends Auth0TestCase
     public function get(ResourceServerApi $resourceServerApi, ResourceServer $resourceServer): void
     {
         $foundResourceServer = $resourceServerApi->get($resourceServer->getId());
-        $this->assertInstanceOf(ResourceServer::class, $foundResourceServer);
-        $this->assertEquals($resourceServer->getName(), $foundResourceServer->getName());
+        self::assertInstanceOf(ResourceServer::class, $foundResourceServer);
+        self::assertEquals($resourceServer->getName(), $foundResourceServer->getName());
     }
 
     /**
@@ -83,8 +83,8 @@ class ResourceServerApiTest extends Auth0TestCase
         $originTokenLifetimeForWeb = $resourceServer->getTokenLifetimeForWeb();
         $resourceServer->setTokenLifetimeForWeb($resourceServer->getTokenLifetime());
         $updatedResourceServer = $resourceServerApi->update($resourceServer);
-        $this->assertInstanceOf(ResourceServer::class, $updatedResourceServer);
-        $this->assertNotEquals($originTokenLifetimeForWeb, $updatedResourceServer->getTokenLifetimeForWeb());
+        self::assertInstanceOf(ResourceServer::class, $updatedResourceServer);
+        self::assertNotEquals($originTokenLifetimeForWeb, $updatedResourceServer->getTokenLifetimeForWeb());
     }
 
     /**
@@ -96,7 +96,7 @@ class ResourceServerApiTest extends Auth0TestCase
     public function delete(ResourceServerApi $resourceServerApi, ResourceServer $resourceServer): void
     {
         $response = $resourceServerApi->delete($resourceServer->getId());
-        $this->assertTrue($response);
+        self::assertTrue($response);
     }
 
     protected function getNewResourceServer(): ResourceServer

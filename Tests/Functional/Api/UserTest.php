@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 /***
@@ -33,7 +33,7 @@ class UserTest extends Auth0TestCase
     public function instantiateApi(): UserApi
     {
         $userApi = $this->getApiUtility()->getUserApi(...$this->scopes);
-        $this->assertInstanceOf(UserApi::class, $userApi);
+        self::assertInstanceOf(UserApi::class, $userApi);
 
         return $userApi;
     }
@@ -47,7 +47,7 @@ class UserTest extends Auth0TestCase
     public function listUsers(UserApi $userApi): array
     {
         $users = $userApi->search('*');
-        $this->assertNotEmpty($users);
+        self::assertNotEmpty($users);
 
         return $users;
     }
@@ -60,7 +60,7 @@ class UserTest extends Auth0TestCase
     public function listUsersWithLimit(UserApi $userApi): void
     {
         $users = $userApi->search('*', '', 5);
-        $this->assertCount(5, $users);
+        self::assertCount(5, $users);
     }
 
     /**
@@ -71,9 +71,9 @@ class UserTest extends Auth0TestCase
     public function getLogEntries(UserApi $userApi): void
     {
         $logEntries = $userApi->getLog('google-oauth2|117501050803287717769');
-        $this->assertIsArray($logEntries);
+        self::assertIsArray($logEntries);
         $firstEntry = array_shift($logEntries);
-        $this->assertInstanceOf(Log::class, $firstEntry);
+        self::assertInstanceOf(Log::class, $firstEntry);
     }
 
     /**
@@ -84,15 +84,15 @@ class UserTest extends Auth0TestCase
     public function getMetadata(UserApi $userApi): void
     {
         $metadata = $userApi->getMetadata($this->getUser()->getUserId(), UserApi::TYPE_USER);
-        $this->assertSame('array', gettype($metadata));
+        self::assertSame('array', gettype($metadata));
 
         $metadata = $userApi->getMetadata($this->getUser()->getUserId(), UserApi::TYPE_APP);
-        $this->assertSame('array', gettype($metadata));
+        self::assertSame('array', gettype($metadata));
 
         $metadata = $userApi->getMetadata($this->getUser()->getUserId(), UserApi::TYPE_BOTH);
-        $this->assertCount(2, $metadata);
-        $this->assertTrue(isset($metadata[UserApi::TYPE_APP]));
-        $this->assertTrue(isset($metadata[UserApi::TYPE_USER]));
+        self::assertCount(2, $metadata);
+        self::assertTrue(isset($metadata[UserApi::TYPE_APP]));
+        self::assertTrue(isset($metadata[UserApi::TYPE_USER]));
     }
 
     /**
@@ -108,12 +108,12 @@ class UserTest extends Auth0TestCase
         $updated = $user->getUpdatedAt();
         $metadata['time'] = $time;
 
-        $this->assertTrue($userApi->updateMetadata($user, $metadata, UserApi::TYPE_USER));
+        self::assertTrue($userApi->updateMetadata($user, $metadata, UserApi::TYPE_USER));
 
         $user = $userApi->get($user->getUserId());
-        $this->assertTrue(isset($user->getUserMetadata()['time']));
-        $this->assertEquals($time, $user->getUserMetadata()['time']);
-        $this->assertNotEquals($updated, $user->getUpdatedAt());
+        self::assertTrue(isset($user->getUserMetadata()['time']));
+        self::assertEquals($time, $user->getUserMetadata()['time']);
+        self::assertNotEquals($updated, $user->getUpdatedAt());
     }
 
     /**
@@ -124,16 +124,16 @@ class UserTest extends Auth0TestCase
     public function getAUser(UserApi $userApi): void
     {
         $user = $userApi->get($this->getUser()->getUserId());
-        $this->assertInstanceOf(User::class, $user);
-        $this->assertNotEmpty($user->getName());
+        self::assertInstanceOf(User::class, $user);
+        self::assertNotEmpty($user->getName());
 
         $user = $userApi->get($this->getUser()->getUserId(), 'name');
-        $this->assertEquals($user->getName(), 'John Doe');
-        $this->assertNull($user->getEmail());
+        self::assertEquals($user->getName(), 'John Doe');
+        self::assertNull($user->getEmail());
 
         $user = $userApi->get($this->getUser()->getUserId(), 'name', false);
-        $this->assertNull($user->getName());
-        $this->assertEquals($user->getEmail(), $this->getUser()->getEmail());
+        self::assertNull($user->getName());
+        self::assertEquals($user->getEmail(), $this->getUser()->getEmail());
     }
 
     /**
@@ -146,7 +146,7 @@ class UserTest extends Auth0TestCase
         $user = $this->getUser();
         $user->setPassword('EWa5^Eml2*ZN');
         $user = $userApi->update($user, self::CONNECTION_NAME);
-        $this->assertInstanceOf(User::class, $user);
+        self::assertInstanceOf(User::class, $user);
 
         $this->expectException(ApiException::class);
         $user->setPassword(123);
@@ -161,7 +161,7 @@ class UserTest extends Auth0TestCase
     public function getEnrollments(UserApi $userApi): void
     {
         $enrollments = $userApi->getEnrollments($this->getUser()->getUserId());
-        $this->assertIsArray($enrollments);
+        self::assertIsArray($enrollments);
     }
 
     // TODO: Add test for deleteMultifactorProvider

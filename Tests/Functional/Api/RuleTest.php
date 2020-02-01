@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 /***
@@ -33,7 +33,7 @@ class RuleTest extends Auth0TestCase
     public function instantiateApi(): RuleApi
     {
         $ruleApi = $this->getApiUtility()->getRuleApi(...$this->scopes);
-        $this->assertInstanceOf(RuleApi::class, $ruleApi);
+        self::assertInstanceOf(RuleApi::class, $ruleApi);
 
         return $ruleApi;
     }

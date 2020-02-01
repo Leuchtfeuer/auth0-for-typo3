@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Service;
 
 /***
@@ -233,7 +233,7 @@ class RedirectService implements SingletonInterface, LoggerAwareInterface
      */
     protected function validateRedirectUrl($url)
     {
-        $url = strval($url);
+        $url = (string)$url;
         if ($url === '') {
             return '';
         }
@@ -261,7 +261,7 @@ class RedirectService implements SingletonInterface, LoggerAwareInterface
             // If the relative URL starts with a slash, we need to check if it's within the current site path
             return $parsedUrl['path'][0] !== '/' || GeneralUtility::isFirstPartOfStr(
                 $parsedUrl['path'],
-                    GeneralUtility::getIndpEnv('TYPO3_SITE_PATH')
+                GeneralUtility::getIndpEnv('TYPO3_SITE_PATH')
             );
         }
 

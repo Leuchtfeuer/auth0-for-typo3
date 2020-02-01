@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Utility;
 
 /***
@@ -53,7 +53,8 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
     {
         if (isset($user[$auth0FieldName])) {
             return $user[$auth0FieldName];
-        } elseif (strpos($auth0FieldName, 'user_metadata') !== false) {
+        }
+        if (strpos($auth0FieldName, 'user_metadata') !== false) {
             return $this->getAuth0ValueRecursive($user, explode('.', $auth0FieldName));
         }
 

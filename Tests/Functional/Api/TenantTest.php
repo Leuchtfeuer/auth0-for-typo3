@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 /***
@@ -34,7 +34,7 @@ class TenantTest extends Auth0TestCase
     public function instantiateApi(): TenantApi
     {
         $tenantApi = $this->getApiUtility()->getTenantApi(...$this->scopes);
-        $this->assertInstanceOf(TenantApi::class, $tenantApi);
+        self::assertInstanceOf(TenantApi::class, $tenantApi);
 
         return $tenantApi;
     }
@@ -47,7 +47,7 @@ class TenantTest extends Auth0TestCase
     public function get(TenantApi $tenantApi): void
     {
         $tenant = $tenantApi->get();
-        $this->assertInstanceOf(Tenant::class, $tenant);
+        self::assertInstanceOf(Tenant::class, $tenant);
     }
 
     /**
@@ -62,7 +62,7 @@ class TenantTest extends Auth0TestCase
         $tenant->setSupportEmail($newAddress);
 
         $updatedTenant = $tenantApi->update($tenant);
-        $this->assertInstanceOf(Tenant::class, $updatedTenant);
-        $this->assertEquals($newAddress, $tenant->getSupportEmail());
+        self::assertInstanceOf(Tenant::class, $updatedTenant);
+        self::assertEquals($newAddress, $tenant->getSupportEmail());
     }
 }

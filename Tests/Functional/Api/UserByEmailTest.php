@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 /***
@@ -31,7 +31,7 @@ class UserByEmailTest extends Auth0TestCase
     public function instantiateApi(): UserByEmailApi
     {
         $userByEmailApi = $this->getApiUtility()->getUserByEmailApi(...$this->scopes);
-        $this->assertInstanceOf(UserByEmailApi::class, $userByEmailApi);
+        self::assertInstanceOf(UserByEmailApi::class, $userByEmailApi);
 
         return $userByEmailApi;
     }
@@ -44,7 +44,7 @@ class UserByEmailTest extends Auth0TestCase
     public function get(UserByEmailApi $userByEmailApi): void
     {
         $user = $userByEmailApi->get($this->getUser()->getEmail());
-        $this->assertInstanceOf(User::class, $user);
-        $this->assertEquals($this->getUser()->getEmail(), $user->getEmail());
+        self::assertInstanceOf(User::class, $user);
+        self::assertEquals($this->getUser()->getEmail(), $user->getEmail());
     }
 }

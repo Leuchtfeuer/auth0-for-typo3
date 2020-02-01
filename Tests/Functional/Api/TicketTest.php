@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 /***
@@ -33,7 +33,7 @@ class TicketTest extends Auth0TestCase
     public function instantiateApi(): TicketApi
     {
         $ticketApi = $this->getApiUtility()->getTicketApi(...$this->scopes);
-        $this->assertInstanceOf(TicketApi::class, $ticketApi);
+        self::assertInstanceOf(TicketApi::class, $ticketApi);
 
         return $ticketApi;
     }
@@ -46,8 +46,8 @@ class TicketTest extends Auth0TestCase
     public function createEmailVerificationTicket(TicketApi $ticketApi): void
     {
         $ticket = $ticketApi->createEmailVerificationTicket($this->getUser(), '', 5);
-        $this->assertInstanceOf(Ticket::class, $ticket);
-        $this->assertNotEmpty($ticket->getTicket());
+        self::assertInstanceOf(Ticket::class, $ticket);
+        self::assertNotEmpty($ticket->getTicket());
     }
 
     /**
@@ -58,8 +58,8 @@ class TicketTest extends Auth0TestCase
     public function createPasswordChangeTicket(TicketApi $ticketApi): void
     {
         $ticket = $ticketApi->createPasswordChangeTicket($this->getUser(), '', 5);
-        $this->assertInstanceOf(Ticket::class, $ticket);
-        $this->assertNotEmpty($ticket->getTicket());
+        self::assertInstanceOf(Ticket::class, $ticket);
+        self::assertNotEmpty($ticket->getTicket());
     }
 
     /**
@@ -71,7 +71,7 @@ class TicketTest extends Auth0TestCase
     {
         // TODO: Replace static string
         $ticket = $ticketApi->createPasswordChangeTicketByEmail($this->getUser()->getEmail(), 'con_VAr3ro5CceHHNCwj', '', 5);
-        $this->assertInstanceOf(Ticket::class, $ticket);
-        $this->assertNotEmpty($ticket->getTicket());
+        self::assertInstanceOf(Ticket::class, $ticket);
+        self::assertNotEmpty($ticket->getTicket());
     }
 }

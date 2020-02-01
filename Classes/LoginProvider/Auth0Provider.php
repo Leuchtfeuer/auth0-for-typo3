@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\LoginProvider;
 
 /***
@@ -47,7 +47,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
     /**
      * @var ?array
      */
-    protected $userInfo = null;
+    protected $userInfo;
 
     /**
      * @var EmAuth0Configuration
@@ -57,7 +57,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
     /**
      * @var ?string
      */
-    protected $action = null;
+    protected $action;
 
     /**
      * @throws InvalidConfigurationTypeException

@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Api\Management;
 
 /***
@@ -43,10 +43,8 @@ class GrantApi extends GeneralManagementApi
         string $client = '',
         string $audience = '',
         int $page = 0,
-        int
-        $perPage = 50,
-        bool
-        $includeTotals = false,
+        int $perPage = 50,
+        bool $includeTotals = false,
         array $scopes = []
     ) {
         $params = [

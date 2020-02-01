@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 /***
@@ -30,7 +30,7 @@ class BlacklistTest extends Auth0TestCase
     public function instantiateApi(): BlacklistApi
     {
         $blacklistApi = $this->getApiUtility()->getBlacklistApi(...$this->scopes);
-        $this->assertInstanceOf(BlacklistApi::class, $blacklistApi);
+        self::assertInstanceOf(BlacklistApi::class, $blacklistApi);
 
         return $blacklistApi;
     }

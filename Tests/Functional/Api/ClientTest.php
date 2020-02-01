@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 /***
@@ -40,7 +40,7 @@ class ClientTest extends Auth0TestCase
     public function instantiateApi(): ClientApi
     {
         $clientApi = $this->getApiUtility()->getClientApi(...$this->scopes);
-        $this->assertInstanceOf(ClientApi::class, $clientApi);
+        self::assertInstanceOf(ClientApi::class, $clientApi);
 
         return $clientApi;
     }
@@ -53,11 +53,11 @@ class ClientTest extends Auth0TestCase
     public function listClients(ClientApi $clientApi): void
     {
         $clients = $clientApi->list();
-        $this->assertIsArray($clients);
-        $this->assertNotEmpty($clients);
+        self::assertIsArray($clients);
+        self::assertNotEmpty($clients);
 
         $client = array_shift($clients);
-        $this->assertInstanceOf(Client::class, $client);
+        self::assertInstanceOf(Client::class, $client);
     }
 
     /**
@@ -108,7 +108,7 @@ class ClientTest extends Auth0TestCase
 
         $client = $clientApi->create($client);
 
-        $this->assertInstanceOf(Client::class, $client);
+        self::assertInstanceOf(Client::class, $client);
 
         return $client;
     }
@@ -121,12 +121,12 @@ class ClientTest extends Auth0TestCase
      */
     public function updateClient(ClientApi $clientApi, Client $client): void
     {
-        $this->assertFalse($client->isOidcConformant());
+        self::assertFalse($client->isOidcConformant());
         $client->setOidcConformant(true);
         $updatedClient = $clientApi->update($client);
 
-        $this->assertInstanceOf(Client::class, $updatedClient);
-        $this->assertTrue($updatedClient->isOidcConformant());
+        self::assertInstanceOf(Client::class, $updatedClient);
+        self::assertTrue($updatedClient->isOidcConformant());
     }
 
     /**
@@ -138,8 +138,8 @@ class ClientTest extends Auth0TestCase
     public function getClient(ClientApi $clientApi, Client $client): void
     {
         $newClient = $clientApi->get($client->getClientId());
-        $this->assertInstanceOf(Client::class, $newClient);
-        $this->assertEquals($client->getClientId(), $newClient->getClientId());
+        self::assertInstanceOf(Client::class, $newClient);
+        self::assertEquals($client->getClientId(), $newClient->getClientId());
     }
 
     /**
@@ -153,7 +153,7 @@ class ClientTest extends Auth0TestCase
         $secret = $client->getClientSecret();
         $newClient = $clientApi->rotateSecret($client->getClientId());
         $newSecret = $newClient->getClientSecret();
-        $this->assertNotEquals($secret, $newSecret);
+        self::assertNotEquals($secret, $newSecret);
     }
 
     /**
@@ -165,6 +165,6 @@ class ClientTest extends Auth0TestCase
     public function delete(ClientApi $clientApi, Client $client): void
     {
         $deleted = $clientApi->delete($client->getClientId());
-        $this->assertTrue($deleted);
+        self::assertTrue($deleted);
     }
 }

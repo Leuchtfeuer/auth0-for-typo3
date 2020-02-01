@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Hooks;
 
 /***
@@ -67,9 +67,9 @@ class PageLayoutViewHook
             ->from('tx_auth0_domain_model_application')
             ->where(
                 $queryBuilder->expr()->eq(
-                'uid',
-                $queryBuilder->createNamedParameter($applicationUid, \PDO::PARAM_INT)
-            )
+                    'uid',
+                    $queryBuilder->createNamedParameter($applicationUid, \PDO::PARAM_INT)
+                )
             )->execute()
             ->fetchColumn();
     }

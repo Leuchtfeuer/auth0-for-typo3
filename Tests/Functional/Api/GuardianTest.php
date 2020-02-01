@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 /***
@@ -31,7 +31,7 @@ class GuardianTest extends Auth0TestCase
     public function instantiateApi(): GuardianApi
     {
         $guardianApi = $this->getApiUtility()->getGuardianApi(...$this->scopes);
-        $this->assertInstanceOf(GuardianApi::class, $guardianApi);
+        self::assertInstanceOf(GuardianApi::class, $guardianApi);
 
         return $guardianApi;
     }

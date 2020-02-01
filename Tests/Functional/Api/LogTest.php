@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 /***
@@ -33,7 +33,7 @@ class LogTest extends Auth0TestCase
     public function instantiateApi(): LogApi
     {
         $logApi = $this->getApiUtility()->getLogApi(...$this->scopes);
-        $this->assertInstanceOf(LogApi::class, $logApi);
+        self::assertInstanceOf(LogApi::class, $logApi);
 
         return $logApi;
     }
@@ -46,11 +46,11 @@ class LogTest extends Auth0TestCase
     public function search(LogApi $logApi)
     {
         $logs = $logApi->search('');
-        $this->assertIsArray($logs);
-        $this->assertCount(50, $logs);
+        self::assertIsArray($logs);
+        self::assertCount(50, $logs);
 
         $entry = $logs[10];
-        $this->assertInstanceOf(Log::class, $entry);
+        self::assertInstanceOf(Log::class, $entry);
 
         return $entry;
     }
@@ -64,8 +64,8 @@ class LogTest extends Auth0TestCase
     public function searchByCheckpoint(LogApi $logApi, Log $entry): void
     {
         $logs = $logApi->searchByCheckpoint($entry->getLogid(), 5);
-        $this->assertIsArray($logs);
-        $this->assertCount(5, $logs);
+        self::assertIsArray($logs);
+        self::assertCount(5, $logs);
     }
 
     /**
@@ -77,7 +77,7 @@ class LogTest extends Auth0TestCase
     public function get(LogApi $logApi, Log $entry): void
     {
         $log = $logApi->get($entry->getLogId());
-        $this->assertInstanceOf(Log::class, $log);
-        $this->assertEquals($entry->getLogId(), $log->getLogId());
+        self::assertInstanceOf(Log::class, $log);
+        self::assertEquals($entry->getLogId(), $log->getLogId());
     }
 }

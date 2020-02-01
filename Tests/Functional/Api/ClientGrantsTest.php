@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 /***
@@ -36,7 +36,7 @@ class ClientGrantsTest extends Auth0TestCase
     public function instantiateApi(): ClientGrantApi
     {
         $clientGrantApi = $this->getApiUtility()->getClientGrantApi(...$this->scopes);
-        $this->assertInstanceOf(ClientGrantApi::class, $clientGrantApi);
+        self::assertInstanceOf(ClientGrantApi::class, $clientGrantApi);
 
         return $clientGrantApi;
     }
@@ -51,8 +51,8 @@ class ClientGrantsTest extends Auth0TestCase
     public function listClientGrants(ClientGrantApi $clientGrantApi): array
     {
         $clientGrants = $clientGrantApi->list();
-        $this->assertIsArray($clientGrants);
-        $this->assertNotEmpty($clientGrants);
+        self::assertIsArray($clientGrants);
+        self::assertNotEmpty($clientGrants);
 
         return $clientGrants;
     }
@@ -67,7 +67,7 @@ class ClientGrantsTest extends Auth0TestCase
     public function loadSingleClientGrant(array $clientGrants): ClientGrant
     {
         $clientGrant = array_shift($clientGrants);
-        $this->assertInstanceOf(ClientGrant::class, $clientGrant);
+        self::assertInstanceOf(ClientGrant::class, $clientGrant);
 
         return $clientGrant;
     }
@@ -83,6 +83,6 @@ class ClientGrantsTest extends Auth0TestCase
     public function findClientGrant(ClientGrantApi $clientGrantApi, ClientGrant $clientGrant): void
     {
         $newClientGrant = $clientGrantApi->list($clientGrant->getClientId());
-        $this->assertSame($newClientGrant->getId(), $clientGrant->getId());
+        self::assertSame($newClientGrant->getId(), $clientGrant->getId());
     }
 }

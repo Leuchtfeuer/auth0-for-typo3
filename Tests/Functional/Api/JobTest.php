@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 /***
@@ -35,7 +35,7 @@ class JobTest extends Auth0TestCase
     {
         $jobApi = $this->getApiUtility()
                        ->getJobApi(...$this->scopes);
-        $this->assertInstanceOf(JobApi::class, $jobApi);
+        self::assertInstanceOf(JobApi::class, $jobApi);
 
         return $jobApi;
     }

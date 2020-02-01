@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Api\Management;
 
 /***
@@ -39,7 +39,7 @@ class GeneralManagementApi implements LoggerAwareInterface
 
     protected $serializeFormat = 'json';
 
-    protected $extractor = null;
+    protected $extractor;
 
     protected $defaultContext = [];
 

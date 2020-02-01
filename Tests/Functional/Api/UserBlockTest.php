@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 /***
@@ -45,7 +45,7 @@ class UserBlockTest extends Auth0TestCase
     public function instantiateApi(): UserBlockApi
     {
         $userBlockApi = $this->getApiUtility()->getUserBlockApi(...$this->scopes);
-        $this->assertInstanceOf(UserBlockApi::class, $userBlockApi);
+        self::assertInstanceOf(UserBlockApi::class, $userBlockApi);
 
         return $userBlockApi;
     }
@@ -57,9 +57,9 @@ class UserBlockTest extends Auth0TestCase
      */
     public function unblockUser(UserBlockApi $userBlockApi): void
     {
-        $this->assertTrue($this->getUser()->isBlocked());
+        self::assertTrue($this->getUser()->isBlocked());
         $success = $userBlockApi->unblockUser($this->getUser());
-        $this->assertTrue($success);
+        self::assertTrue($success);
 //        $user = $this->userApi->get($this->getUser()->getUserId());
         // TODO: Users blocked by Admin or API call (setBlocked) can not be unblocked this way
         // $this->assertFalse($user->isBlocked());
@@ -73,7 +73,7 @@ class UserBlockTest extends Auth0TestCase
     public function getBlocks(UserBlockApi $userBlockApi): void
     {
         $blocks = $userBlockApi->getBlocks($this->getUser()->getEmail());
-        $this->assertInstanceOf(UserBlock::class, $blocks);
+        self::assertInstanceOf(UserBlock::class, $blocks);
     }
 
     /**
@@ -84,7 +84,7 @@ class UserBlockTest extends Auth0TestCase
     public function getUserBlocks(UserBlockApi $userBlockApi): void
     {
         $blocks = $userBlockApi->getUserBlocks($this->getUser());
-        $this->assertInstanceOf(UserBlock::class, $blocks);
+        self::assertInstanceOf(UserBlock::class, $blocks);
     }
 
     /**
@@ -95,6 +95,6 @@ class UserBlockTest extends Auth0TestCase
     public function unblock(UserBlockApi $userBlockApi): void
     {
         $success = $userBlockApi->unblock($this->getUser()->getEmail());
-        $this->assertTrue($success);
+        self::assertTrue($success);
     }
 }

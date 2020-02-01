@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 /***
@@ -31,7 +31,7 @@ class GrantTest extends Auth0TestCase
     public function instantiateApi(): GrantApi
     {
         $grantApi = $this->getApiUtility()->getGrantApi(...$this->scopes);
-        $this->assertInstanceOf(GrantApi::class, $grantApi);
+        self::assertInstanceOf(GrantApi::class, $grantApi);
 
         return $grantApi;
     }

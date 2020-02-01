@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 /***
@@ -36,7 +36,7 @@ class ConnectionTest extends Auth0TestCase
     public function instantiateApi(): ConnectionApi
     {
         $connectionApi = $this->getApiUtility()->getConnectionApi(...$this->scopes);
-        $this->assertInstanceOf(ConnectionApi::class, $connectionApi);
+        self::assertInstanceOf(ConnectionApi::class, $connectionApi);
 
         return $connectionApi;
     }
@@ -51,7 +51,7 @@ class ConnectionTest extends Auth0TestCase
     public function listConnections(ConnectionApi $connectionApi): void
     {
         $connections = $connectionApi->list();
-        $this->assertNotEmpty($connections);
+        self::assertNotEmpty($connections);
 
         $connections = $connectionApi->list(Connection::STRATEGY_AUTH0);
         // TODO ???
@@ -66,8 +66,8 @@ class ConnectionTest extends Auth0TestCase
     public function getConnection(ConnectionApi $connectionApi): Connection
     {
         $connection = $connectionApi->get('con_VAr3ro5CceHHNCwj');
-        $this->assertInstanceOf(Connection::class, $connection);
-        $this->assertEquals($connection->getStrategy(), Connection::STRATEGY_AUTH0);
+        self::assertInstanceOf(Connection::class, $connection);
+        self::assertEquals($connection->getStrategy(), Connection::STRATEGY_AUTH0);
 
         return $connection;
     }

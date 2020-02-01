@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 /***
@@ -33,7 +33,7 @@ class StatTest extends Auth0TestCase
     public function instantiateApi(): StatApi
     {
         $statApi = $this->getApiUtility()->getStatApi(...$this->scopes);
-        $this->assertInstanceOf(StatApi::class, $statApi);
+        self::assertInstanceOf(StatApi::class, $statApi);
 
         return $statApi;
     }
@@ -46,8 +46,8 @@ class StatTest extends Auth0TestCase
     public function countUsers(StatApi $statApi): void
     {
         $userCount = $statApi->getActiveUsersCount();
-        $this->assertIsInt($userCount);
-        $this->assertGreaterThan(0, $userCount);
+        self::assertIsInt($userCount);
+        self::assertGreaterThan(0, $userCount);
     }
 
     /**
@@ -58,11 +58,11 @@ class StatTest extends Auth0TestCase
     public function getLogs(StatApi $statApi): void
     {
         $stats = $statApi->getDailyStats();
-        $this->assertIsArray($stats);
-        $this->assertNotEmpty($stats);
+        self::assertIsArray($stats);
+        self::assertNotEmpty($stats);
 
         $stat = array_shift($stats);
-        $this->assertInstanceOf(Stat::class, $stat);
+        self::assertInstanceOf(Stat::class, $stat);
     }
 
     /**
@@ -76,6 +76,6 @@ class StatTest extends Auth0TestCase
         $dateTill = new \DateTime('2019-02-10T00:00:00.000Z');
         $stats = $statApi->getDailyStats($dateTime, $dateTill);
         $stat = array_shift($stats);
-        $this->assertSame($dateTime->getTimestamp(), $stat->getDate()->getTimestamp());
+        self::assertSame($dateTime->getTimestamp(), $stat->getDate()->getTimestamp());
     }
 }

@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Api\Management;
 
 /***
@@ -499,7 +499,7 @@ class UserApi extends GeneralManagementApi
      *
      * @see https://auth0.com/docs/api/management/v2#!/Users/post_identities
      */
-    private function linkAccountByToken(string $id, string $linkWith)
+    public function linkAccountByToken(string $id, string $linkWith)
     {
         // TODO: Authorization Header Bearer PRIMARY_ACCOUNT_JWT
         $response = $this->client

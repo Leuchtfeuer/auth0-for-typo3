@@ -1,5 +1,5 @@
 <?php
-declare(strict_types=1);
+declare(strict_types = 1);
 namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 /***
@@ -32,7 +32,7 @@ class CustomDomainTest extends Auth0TestCase
     public function instantiateApi(): CustomDomainApi
     {
         $customDomainApi = $this->getApiUtility()->getCustomDomainApi(...$this->scopes);
-        $this->assertInstanceOf(CustomDomainApi::class, $customDomainApi);
+        self::assertInstanceOf(CustomDomainApi::class, $customDomainApi);
 
         return $customDomainApi;
     }
