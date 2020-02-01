@@ -5,20 +5,24 @@ declare(strict_types=1);
 //   PLUGINS   //
 /////////////////
 
-// Register LoginForm PlugIn
-if (version_compare(TYPO3_version, '10.0.0', '>=')) {
-    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
-        'Auth0',
-        'LoginForm',
-        'Auth0: Login form'
-    );
-} else {
-    // TODO: Remove this when dropping TYPO3 9 LTS support.
-    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
-        'Bitmotion.Auth0',
-        'LoginForm',
-        'Auth0: Login form'
-    );
+$configuration = new \Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration();
+
+if ($configuration->isEnableFrontendLogin()) {
+    // Register LoginForm PlugIn
+    if (version_compare(TYPO3_version, '10.0.0', '>=')) {
+        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
+            'Auth0',
+            'LoginForm',
+            'Auth0: Login form'
+        );
+    } else {
+        // TODO: Remove this when dropping TYPO3 9 LTS support.
+        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
+            'Bitmotion.Auth0',
+            'LoginForm',
+            'Auth0: Login form'
+        );
+    }
 }
 
 ///////////////////
