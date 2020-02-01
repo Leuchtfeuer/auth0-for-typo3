@@ -1,7 +1,7 @@
 # cat=Backend/10; type=boolean; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.enable_backend_login
 enableBackendLogin = 0
 
-# cat=Backend/20; type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.backend_connection
+# cat=Backend/20; type=int+; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.backend_connection
 backendConnection = 1
 
 # cat=Backend/30; type=boolean; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.reactivate_disabled_backend_users
@@ -16,10 +16,10 @@ softLogout = 0
 # cat=Backend/60; type=string; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.additional_authorize_parameters
 additionalAuthorizeParameters =
 
-# cat=Frontend/10 type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:frontend.enable_frontend_login
+# cat=Frontend/10; type=boolean; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:frontend.enable_frontend_login
 enableFrontendLogin = 1
 
-# cat=Frontend/20 type=int; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:frontend.user_storage_page
+# cat=Frontend/20; type=int+; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:frontend.user_storage_page
 userStoragePage = 0
 
 # cat=Frontend/30; type=boolean; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:frontend.reactivate_disabled_frontend_users
