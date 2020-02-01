@@ -62,7 +62,7 @@ class PageLayoutViewHook
 
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_auth0_domain_model_application');
 
-        return $queryBuilder
+        return (string)$queryBuilder
             ->select('title')
             ->from('tx_auth0_domain_model_application')
             ->where(
