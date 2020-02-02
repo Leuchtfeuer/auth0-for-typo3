@@ -1,18 +1,19 @@
 <?php
 namespace Auth0\Tests\Api\Helpers;
 
-use Auth0\Tests\API\Management\MockManagementApi;
-use Auth0\Tests\API\Authentication\MockAuthenticationApi;
-use Auth0\SDK\API\Helpers\InformationHeaders;
 use Auth0\SDK\API\Helpers\ApiClient;
+use Auth0\SDK\API\Helpers\InformationHeaders;
+use Auth0\Tests\API\Authentication\MockAuthenticationApi;
+use Auth0\Tests\API\Management\MockManagementApi;
 use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class InformationHeadersExtendTest
  *
  * @package Auth0\Tests\Api\Helpers
  */
-class InformationHeadersExtendTest extends \PHPUnit_Framework_TestCase
+class InformationHeadersExtendTest extends TestCase
 {
 
     public static function tearDownAfterClass()
@@ -21,37 +22,6 @@ class InformationHeadersExtendTest extends \PHPUnit_Framework_TestCase
         $reset_headers->setCorePackage();
         ApiClient::setInfoHeadersData($reset_headers);
         parent::tearDownAfterClass();
-    }
-
-    /**
-     * Extend existing headers and make sure existing data stays intact.
-     *
-     * @link https://github.com/auth0/jwt-auth-bundle/blob/master/src/JWTAuthBundle.php
-     * @link https://github.com/auth0/laravel-auth0/blob/master/src/Auth0/Login/LoginServiceProvider.php
-     *
-     * @return void
-     */
-    public function testThatExtendedHeadersBuildCorrectly()
-    {
-        $new_headers = self::setExtendedHeaders('test-extend-sdk-1', '1.2.3');
-        $new_headers->setEnvironment('test-extend-env', '2.3.4');
-
-        $new_header_data = $new_headers->get();
-
-        // Look for new SDK name and version.
-        $this->assertEquals( 'test-extend-sdk-1', $new_header_data['name'] );
-        $this->assertEquals( '1.2.3', $new_header_data['version'] );
-
-        // Look for original env data.
-        $this->assertArrayHasKey('env', $new_header_data);
-        $this->assertArrayHasKey('php', $new_header_data['env']);
-        $this->assertEquals( phpversion(), $new_header_data['env']['php'] );
-        $this->assertArrayHasKey('auth0-php', $new_header_data['env']);
-        $this->assertEquals(ApiClient::API_VERSION, $new_header_data['env']['auth0-php']);
-
-        // Look for extended env data.
-        $this->assertArrayHasKey('test-extend-env', $new_header_data['env']);
-        $this->assertEquals('2.3.4', $new_header_data['env']['test-extend-env']);
     }
 
     /**
@@ -64,7 +34,7 @@ class InformationHeadersExtendTest extends \PHPUnit_Framework_TestCase
         $new_headers = self::setExtendedHeaders('test-extend-sdk-2', '2.3.4');
 
         $api = new MockManagementApi( [ new Response( 200 ) ] );
-        $api->call()->connections->getAll();
+        $api->call()->connections()->getAll();
         $headers = $api->getHistoryHeaders();
 
         $this->assertEquals( $new_headers->build(), $headers['Auth0-Client'][0] );
@@ -79,7 +49,10 @@ class InformationHeadersExtendTest extends \PHPUnit_Framework_TestCase
     {
         $new_headers = self::setExtendedHeaders('test-extend-sdk-3', '3.4.5');
 
-        $api = new MockAuthenticationApi( [ new Response( 200 ) ] );
+        $api = new MockAuthenticationApi( [
+            new Response( 200, [ 'Content-Type' => 'application/json' ], '{}' )
+        ] );
+
         $api->call()->oauth_token( [ 'grant_type' => uniqid() ] );
         $headers = $api->getHistoryHeaders();
 

@@ -1,12 +1,14 @@
 <?php
+namespace Auth0\Tests\Store;
 
 use Auth0\SDK\Store\SessionStore;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class SessionStoreTest.
  * Tests the SessionStore class.
  */
-class SessionStoreTest extends PHPUnit_Framework_TestCase
+class SessionStoreTest extends TestCase
 {
     /**
      * Session key for test values.
@@ -62,9 +64,6 @@ class SessionStoreTest extends PHPUnit_Framework_TestCase
 
         // Make sure we have a session to check.
         $this->assertNotEmpty(session_id());
-
-        $cookieParams = session_get_cookie_params();
-        $this->assertEquals(self::COOKIE_LIFETIME, $cookieParams['lifetime']);
     }
 
     /**
@@ -88,7 +87,7 @@ class SessionStoreTest extends PHPUnit_Framework_TestCase
     public function testSet()
     {
         // Make sure this key does not exist yet so we can test that it was set.
-        $this->assertFalse(isset($_SESSION[self::$sessionKey]));
+        $_SESSION = [];
 
         // Suppressing "headers already sent" warning related to cookies.
         // phpcs:ignore
@@ -148,28 +147,5 @@ class SessionStoreTest extends PHPUnit_Framework_TestCase
         // phpcs:ignore
         @self::$sessionStore->set(self::TEST_KEY, self::TEST_VALUE);
         $this->assertEquals(self::TEST_VALUE, self::$sessionStore->get(self::TEST_KEY));
-    }
-
-    /**
-     * Test that custom cookie expires can be set.
-     *
-     * @return void
-     *
-     * @runInSeparateProcess
-     */
-    public function testCustomCookieExpires()
-    {
-        $custom_expires = mt_rand( 11111, 99999 );
-
-        $this->assertEmpty(session_id());
-        self::$sessionStore = new SessionStore( null, $custom_expires );
-
-        // Suppressing "headers already sent" warning related to cookies.
-        // phpcs:ignore
-        @self::$sessionStore->set(self::TEST_KEY, self::TEST_VALUE);
-
-        $this->assertNotEmpty(session_id());
-        $cookieParams = session_get_cookie_params();
-        $this->assertEquals($custom_expires, $cookieParams['lifetime']);
     }
 }

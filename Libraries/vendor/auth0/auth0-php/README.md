@@ -8,8 +8,6 @@
 
 The Auth0 PHP SDK provides straight-forward and tested methods for accessing Authentication and Management API endpoints. This README describes how to get started and provides simple examples of how to use the SDK.
 
-For more details about how to install this SDK into an existing project or how to download a preconfigured seed project, see:
-
 ## Table of Contents
 
 - [Documentation](#documentation)
@@ -49,7 +47,7 @@ $auth0 = new Auth0([
 	'domain' => 'your-tenant.auth0.com',
 	'client_id' => 'application_client_id',
 	'client_secret' => 'application_client_secret',
-	
+
 	// This is your application URL that will be used to process the login.
 	// Save this URL in the "Allowed Callback URLs" field on the Application settings tab
 	'redirect_uri' => 'https://yourdomain.com/auth/callback',
@@ -70,7 +68,7 @@ We appreciate feedback and contribution to this repo! Before you get started, pl
 
 - Use [Community](https://community.auth0.com/) for usage, questions, specific cases
 - Use [Issues](https://github.com/auth0/auth0-PHP/issues) here for code-level support and bug reports
-- Customers with a paid Auth0 subscription can use the [Support Center](https://support.auth0.com/) to submit a ticket to our support specialists. 
+- Customers with a paid Auth0 subscription can use the [Support Center](https://support.auth0.com/) to submit a ticket to our support specialists.
 
 ## Vulnerability Reporting
 

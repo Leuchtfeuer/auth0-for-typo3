@@ -25,6 +25,8 @@ Changed
 =======
 
 * Improved handling of authentication of frontend and backend user
+* Updated Auth0 PHP Library to Version 7.0. Please see the
+  `Migration guide <https://github.com/auth0/auth0-PHP/blob/master/MIGRATE-v5-TO-v7.md>`__ if you use one of these classes
 
 Deprecated
 ==========

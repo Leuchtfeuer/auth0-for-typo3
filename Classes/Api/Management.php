@@ -13,7 +13,7 @@ namespace Bitmotion\Auth0\Api;
  *
  ***/
 
-use Auth0\SDK\API\Header\Authorization\AuthorizationBearer;
+use Auth0\SDK\API\Header\AuthorizationBearer;
 use Auth0\SDK\Exception\ApiException;
 use Bitmotion\Auth0\Api\Management\BlacklistApi;
 use Bitmotion\Auth0\Api\Management\ClientApi;

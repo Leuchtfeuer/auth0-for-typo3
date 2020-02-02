@@ -1,35 +1,49 @@
 <?php
+declare(strict_types=1);
 
 namespace Auth0\SDK\Store;
 
-/*
- * This file is part of Auth0-PHP package.
- *
- * (c) Auth0
- *
- * For the full copyright and license information, please view the LICENSE file
- * that was distributed with this source code.
- */
-
-
-
 /**
- * This class is a mockup store, that discards the values, its a way of saying no store.
+ * Class EmptyStore.
+ * Used to fulfill an interface without providing actual storage.
  *
- * @author Auth0
+ * @package Auth0\SDK\Store
  */
 class EmptyStore implements StoreInterface
 {
-    public function set($key, $value)
+    /**
+     * Do nothing.
+     *
+     * @param string $key   Key to set.
+     * @param mixed  $value Value to set.
+     *
+     * @return void
+     */
+    public function set(string $key, $value) : void
     {
     }
 
-    public function get($key, $default = null)
+    /**
+     * Return the default.
+     *
+     * @param string      $key     Key to get.
+     * @param null|string $default Return value if key not found.
+     *
+     * @return mixed
+     */
+    public function get(string $key, $default = null)
     {
         return $default;
     }
 
-    public function delete($key)
+    /**
+     * Do nothing.
+     *
+     * @param string $key Key to delete.
+     *
+     * @return void
+     */
+    public function delete(string $key) : void
     {
     }
 }

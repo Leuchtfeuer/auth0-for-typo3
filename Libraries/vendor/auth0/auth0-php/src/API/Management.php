@@ -1,6 +1,10 @@
 <?php
+declare(strict_types=1);
+
 namespace Auth0\SDK\API;
 
+use Auth0\SDK\API\Header\AuthorizationBearer;
+use Auth0\SDK\API\Helpers\ApiClient;
 use Auth0\SDK\API\Management\Blacklists;
 use Auth0\SDK\API\Management\Clients;
 use Auth0\SDK\API\Management\ClientGrants;
@@ -9,6 +13,7 @@ use Auth0\SDK\API\Management\DeviceCredentials;
 use Auth0\SDK\API\Management\Emails;
 use Auth0\SDK\API\Management\EmailTemplates;
 use Auth0\SDK\API\Management\Grants;
+use Auth0\SDK\API\Management\Guardian;
 use Auth0\SDK\API\Management\Jobs;
 use Auth0\SDK\API\Management\Logs;
 use Auth0\SDK\API\Management\ResourceServers;
@@ -21,211 +26,183 @@ use Auth0\SDK\API\Management\UserBlocks;
 use Auth0\SDK\API\Management\Users;
 use Auth0\SDK\API\Management\UsersByEmail;
 
-use Auth0\SDK\API\Helpers\ApiClient;
-use Auth0\SDK\API\Header\Authorization\AuthorizationBearer;
-
+/**
+ * Class Management
+ *
+ * @package Auth0\SDK\API
+ */
 class Management
 {
 
     /**
-     *
-     * @var string
-     */
-    private $token;
-
-    /**
-     *
-     * @var string
-     */
-    private $domain;
-
-    /**
+     * Instance of Auth0\SDK\API\Helpers\ApiClient
      *
      * @var ApiClient
      */
     private $apiClient;
 
     /**
-     *
-     * @var array
-     */
-    private $guzzleOptions;
-
-    /**
-     *
-     * @var string
-     */
-    private $returnType;
-
-    /**
-     * @deprecated 5.6.0, will lose public access; use $this->blacklists() instead.
+     * Instance of Auth0\SDK\API\Management\Blacklists
      *
      * @var Blacklists
      */
-    public $blacklists;
+    private $blacklists;
 
     /**
-     * @deprecated 5.6.0, will lose public access; use $this->clients() instead.
+     * Instance of Auth0\SDK\API\Management\Clients
      *
      * @var Clients
      */
-    public $clients;
+    private $clients;
 
     /**
-     * @deprecated 5.6.0, will be renamed and lose public access; use $this->clientGrants() instead.
+     * Instance of Auth0\SDK\API\Management\ClientGrants
      *
      * @var ClientGrants
      */
-    public $client_grants;
+    private $clientGrants;
 
     /**
-     * @deprecated 5.6.0, will lose public access; use $this->connections() instead.
+     * Instance of Auth0\SDK\API\Management\Connections
      *
      * @var Connections
      */
-    public $connections;
+    private $connections;
 
     /**
-     * @deprecated 5.6.0, will lose public access; use $this->deviceCredentials() instead.
+     * Instance of Auth0\SDK\API\Management\DeviceCredentials
      *
      * @var DeviceCredentials
      */
-    public $deviceCredentials;
+    private $deviceCredentials;
 
     /**
-     * @deprecated 5.6.0, will lose public access; use $this->emails() instead.
+     * Instance of Auth0\SDK\API\Management\Emails
      *
      * @var Emails
      */
-    public $emails;
+    private $emails;
 
     /**
-     * @deprecated 5.6.0, will lose public access; use $this->emailTemplates() instead.
+     * Instance of Auth0\SDK\API\Management\EmailTemplates
      *
      * @var EmailTemplates
      */
-    public $emailTemplates;
+    private $emailTemplates;
 
     /**
-     * @deprecated 5.6.0, will lose public access; use $this->jobs() instead.
+     * Instance of Auth0\SDK\API\Management\Jobs
      *
      * @var Jobs
      */
-    public $jobs;
+    private $jobs;
 
     /**
-     * @deprecated 5.6.0, will lose public access; use $this->grants() instead.
+     * Instance of Auth0\SDK\API\Management\Grants
      *
      * @var Grants
      */
-    public $grants;
+    private $grants;
 
     /**
-     * @deprecated 5.6.0, will lose public access; use $this->logs() instead.
+     * Instance of Auth0\SDK\API\Management\Guardian
+     *
+     * @var Guardian
+     */
+    private $guardian;
+
+    /**
+     * Instance of Auth0\SDK\API\Management\Logs
      *
      * @var Logs
      */
-    public $logs;
+    private $logs;
 
     /**
-     * @deprecated 5.6.0, will lose public access; use $this->roles() instead.
+     * Instance of Auth0\SDK\API\Management\Roles
      *
      * @var Roles
      */
-    public $roles;
+    private $roles;
 
     /**
-     * @deprecated 5.6.0, will lose public access; use $this->rules() instead.
+     * Instance of Auth0\SDK\API\Management\Rules
      *
      * @var Rules
      */
-    public $rules;
+    private $rules;
 
     /**
-     * @deprecated 5.6.0, will be renamed and lose public access; use $this->resourceServers() instead.
+     * Instance of Auth0\SDK\API\Management\ResourceServers
      *
      * @var ResourceServers
      */
-    public $resource_servers;
+    private $resourceServers;
 
     /**
-     * @deprecated 5.6.0, will lose public access; use $this->stats() instead.
+     * Instance of Auth0\SDK\API\Management\Stats
      *
      * @var Stats
      */
-    public $stats;
+    private $stats;
 
     /**
-     * @deprecated 5.6.0, will lose public access; use $this->tenants() instead.
+     * Instance of Auth0\SDK\API\Management\Tenants
      *
      * @var Tenants
      */
-    public $tenants;
+    private $tenants;
 
     /**
-     * @deprecated 5.6.0, will lose public access; use $this->tickets() instead.
+     * Instance of Auth0\SDK\API\Management\Tickets
      *
      * @var Tickets
      */
-    public $tickets;
+    private $tickets;
 
     /**
-     * @deprecated 5.6.0, will lose public access; use $this->userBlocks() instead.
+     * Instance of Auth0\SDK\API\Management\UserBlocks
      *
      * @var UserBlocks
      */
-    public $userBlocks;
+    private $userBlocks;
 
     /**
-     * @deprecated 5.6.0, will lose public access; use $this->users() instead.
+     * Instance of Auth0\SDK\API\Management\Users
      *
      * @var Users
      */
-    public $users;
+    private $users;
 
     /**
-     * @deprecated 5.6.0, will lose public access; use $this->usersByEmail() instead.
+     * Instance of Auth0\SDK\API\Management\UsersByEmail
      *
      * @var UsersByEmail
      */
-    public $usersByEmail;
+    private $usersByEmail;
 
     /**
      * Management constructor.
      *
-     * @param string      $token
-     * @param string      $domain
-     * @param array       $guzzleOptions
-     * @param string|null $returnType
+     * @param string      $token         Access token for the Management API.
+     * @param string      $domain        Management API domain.
+     * @param array       $guzzleOptions Options for the Guzzle HTTP library.
+     * @param null|string $returnType    Return type for the HTTP request. Can be one of:
+     *         - `headers` to return only the response headers.
+     *         - `body` (default) to return only the response body.
+     *         - `object` to return the entire Reponse object.
      */
-    public function __construct($token, $domain, $guzzleOptions = [], $returnType = null)
+    public function __construct(string $token, string $domain, array $guzzleOptions = [], ?string $returnType = null)
     {
-        $this->token         = $token;
-        $this->domain        = $domain;
-        $this->guzzleOptions = $guzzleOptions;
-        $this->returnType    = $returnType;
-
-        $this->setApiClient();
-
-        $this->blacklists        = new Blacklists($this->apiClient);
-        $this->clients           = new Clients($this->apiClient);
-        $this->client_grants     = new ClientGrants($this->apiClient);
-        $this->connections       = new Connections($this->apiClient);
-        $this->deviceCredentials = new DeviceCredentials($this->apiClient);
-        $this->emails            = new Emails($this->apiClient);
-        $this->emailTemplates    = new EmailTemplates($this->apiClient);
-        $this->grants            = new Grants($this->apiClient);
-        $this->jobs              = new Jobs($this->apiClient);
-        $this->logs              = new Logs($this->apiClient);
-        $this->roles             = new Roles($this->apiClient);
-        $this->rules             = new Rules($this->apiClient);
-        $this->resource_servers  = new ResourceServers($this->apiClient);
-        $this->stats             = new Stats($this->apiClient);
-        $this->tenants           = new Tenants($this->apiClient);
-        $this->tickets           = new Tickets($this->apiClient);
-        $this->userBlocks        = new UserBlocks($this->apiClient);
-        $this->users             = new Users($this->apiClient);
-        $this->usersByEmail      = new UsersByEmail($this->apiClient);
+        $this->apiClient = new ApiClient([
+            'domain' => 'https://'.$domain,
+            'basePath' => '/api/v2/',
+            'guzzleOptions' => $guzzleOptions,
+            'returnType' => $returnType,
+            'headers' => [
+                new AuthorizationBearer($token)
+            ]
+        ]);
     }
 
     /**
@@ -233,7 +210,7 @@ class Management
      *
      * @return Blacklists
      */
-    public function blacklists()
+    public function blacklists() : Blacklists
     {
         if (! $this->blacklists instanceof Blacklists) {
             $this->blacklists = new Blacklists($this->apiClient);
@@ -247,7 +224,7 @@ class Management
      *
      * @return Clients
      */
-    public function clients()
+    public function clients() : Clients
     {
         if (! $this->clients instanceof Clients) {
             $this->clients = new Clients($this->apiClient);
@@ -261,13 +238,13 @@ class Management
      *
      * @return ClientGrants
      */
-    public function clientGrants()
+    public function clientGrants() : ClientGrants
     {
-        if (! $this->client_grants instanceof ClientGrants) {
-            $this->client_grants = new ClientGrants($this->apiClient);
+        if (! $this->clientGrants instanceof ClientGrants) {
+            $this->clientGrants = new ClientGrants($this->apiClient);
         }
 
-        return $this->client_grants;
+        return $this->clientGrants;
     }
 
     /**
@@ -275,7 +252,7 @@ class Management
      *
      * @return Connections
      */
-    public function connections()
+    public function connections() : Connections
     {
         if (! $this->connections instanceof Connections) {
             $this->connections = new Connections($this->apiClient);
@@ -289,7 +266,7 @@ class Management
      *
      * @return DeviceCredentials
      */
-    public function deviceCredentials()
+    public function deviceCredentials() : DeviceCredentials
     {
         if (! $this->deviceCredentials instanceof DeviceCredentials) {
             $this->deviceCredentials = new DeviceCredentials($this->apiClient);
@@ -303,7 +280,7 @@ class Management
      *
      * @return Emails
      */
-    public function emails()
+    public function emails() : Emails
     {
         if (! $this->emails instanceof Emails) {
             $this->emails = new Emails($this->apiClient);
@@ -317,7 +294,7 @@ class Management
      *
      * @return EmailTemplates
      */
-    public function emailTemplates()
+    public function emailTemplates() : EmailTemplates
     {
         if (! $this->emailTemplates instanceof EmailTemplates) {
             $this->emailTemplates = new EmailTemplates($this->apiClient);
@@ -331,7 +308,7 @@ class Management
      *
      * @return Grants
      */
-    public function grants()
+    public function grants() : Grants
     {
         if (! $this->grants instanceof Grants) {
             $this->grants = new Grants($this->apiClient);
@@ -341,11 +318,25 @@ class Management
     }
 
     /**
+     * Return an instance of the Guardian class.
+     *
+     * @return Guardian
+     */
+    public function guardian() : Guardian
+    {
+        if (! $this->guardian instanceof Guardian) {
+            $this->guardian = new Guardian($this->apiClient);
+        }
+
+        return $this->guardian;
+    }
+
+    /**
      * Return an instance of the Jobs class.
      *
      * @return Jobs
      */
-    public function jobs()
+    public function jobs() : Jobs
     {
         if (! $this->jobs instanceof Jobs) {
             $this->jobs = new Jobs($this->apiClient);
@@ -359,7 +350,7 @@ class Management
      *
      * @return Logs
      */
-    public function logs()
+    public function logs() : Logs
     {
         if (! $this->logs instanceof Logs) {
             $this->logs = new Logs($this->apiClient);
@@ -373,7 +364,7 @@ class Management
      *
      * @return Roles
      */
-    public function roles()
+    public function roles() : Roles
     {
         if (! $this->roles instanceof Roles) {
             $this->roles = new Roles($this->apiClient);
@@ -387,7 +378,7 @@ class Management
      *
      * @return Rules
      */
-    public function rules()
+    public function rules() : Rules
     {
         if (! $this->rules instanceof Rules) {
             $this->rules = new Rules($this->apiClient);
@@ -401,13 +392,13 @@ class Management
      *
      * @return ResourceServers
      */
-    public function resourceServers()
+    public function resourceServers() : ResourceServers
     {
-        if (! $this->resource_servers instanceof ResourceServers) {
-            $this->resource_servers = new ResourceServers($this->apiClient);
+        if (! $this->resourceServers instanceof ResourceServers) {
+            $this->resourceServers = new ResourceServers($this->apiClient);
         }
 
-        return $this->resource_servers;
+        return $this->resourceServers;
     }
 
     /**
@@ -415,7 +406,7 @@ class Management
      *
      * @return Stats
      */
-    public function stats()
+    public function stats() : Stats
     {
         if (! $this->stats instanceof Stats) {
             $this->stats = new Stats($this->apiClient);
@@ -429,7 +420,7 @@ class Management
      *
      * @return Tenants
      */
-    public function tenants()
+    public function tenants() : Tenants
     {
         if (! $this->tenants instanceof Tenants) {
             $this->tenants = new Tenants($this->apiClient);
@@ -443,7 +434,7 @@ class Management
      *
      * @return Tickets
      */
-    public function tickets()
+    public function tickets() : Tickets
     {
         if (! $this->tickets instanceof Tickets) {
             $this->tickets = new Tickets($this->apiClient);
@@ -457,7 +448,7 @@ class Management
      *
      * @return UserBlocks
      */
-    public function userBlocks()
+    public function userBlocks() : UserBlocks
     {
         if (! $this->userBlocks instanceof UserBlocks) {
             $this->userBlocks = new UserBlocks($this->apiClient);
@@ -471,7 +462,7 @@ class Management
      *
      * @return Users
      */
-    public function users()
+    public function users() : Users
     {
         if (! $this->users instanceof Users) {
             $this->users = new Users($this->apiClient);
@@ -485,29 +476,12 @@ class Management
      *
      * @return UsersByEmail
      */
-    public function usersByEmail()
+    public function usersByEmail() : UsersByEmail
     {
         if (! $this->usersByEmail instanceof UsersByEmail) {
             $this->usersByEmail = new UsersByEmail($this->apiClient);
         }
 
         return $this->usersByEmail;
-    }
-
-    protected function setApiClient()
-    {
-        $apiDomain = "https://{$this->domain}";
-
-        $client = new ApiClient([
-            'domain' => $apiDomain,
-            'basePath' => '/api/v2/',
-            'guzzleOptions' => $this->guzzleOptions,
-            'returnType' => $this->returnType,
-            'headers' => [
-                new AuthorizationBearer($this->token)
-            ]
-        ]);
-
-        $this->apiClient = $client;
     }
 }

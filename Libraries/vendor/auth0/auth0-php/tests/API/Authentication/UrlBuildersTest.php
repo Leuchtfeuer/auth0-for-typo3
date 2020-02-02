@@ -2,9 +2,9 @@
 namespace Auth0\Tests\API\Authentication;
 
 use Auth0\SDK\API\Authentication;
-use Auth0\SDK\API\Helpers\InformationHeaders;
+use PHPUnit\Framework\TestCase;
 
-class UrlBuildersTest extends \PHPUnit_Framework_TestCase
+class UrlBuildersTest extends TestCase
 {
 
     public function testThatBasicAuthorizeLinkIsBuiltCorrectly()
@@ -105,7 +105,7 @@ class UrlBuildersTest extends \PHPUnit_Framework_TestCase
         $logout_link_query = parse_url($api->get_logout_link(null, null, true), PHP_URL_QUERY);
         $logout_link_query = explode( '&', $logout_link_query );
 
-        $this->assertContains('federated=', $logout_link_query);
+        $this->assertContains('federated=federated', $logout_link_query);
     }
 
     public function testThatSamlLinkIsBuiltProperly()
@@ -172,7 +172,7 @@ class UrlBuildersTest extends \PHPUnit_Framework_TestCase
 
     public function testThatWsFedMetadataLinkIsBuiltProperly()
     {
-        $api = new Authentication('test-domain.auth0.com');
+        $api = new Authentication('test-domain.auth0.com', 'test-client-id-1');
 
         $this->assertEquals(
             'https://test-domain.auth0.com/wsfed/FederationMetadata/2007-06/FederationMetadata.xml',

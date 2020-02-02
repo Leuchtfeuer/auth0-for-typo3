@@ -56,13 +56,11 @@ class Auth0 extends \Auth0\SDK\Auth0
         $applicationRepository = GeneralUtility::makeInstance(ApplicationRepository::class);
         $application = $applicationRepository->findByUid($applicationUid);
 
-        // Todo: Add debug key in development mode
-
         $config = [
             'domain' => $application['domain'],
             'client_id' => $application['id'],
-            'client_secret' => $application['secret'],
             'redirect_uri' => $redirectUri,
+            'client_secret' => $application['secret'],
             'audience' => 'https://' . $application['domain'] . '/' . $application['audience'],
             'scope' => $scope,
             'persist_access_token' => true,

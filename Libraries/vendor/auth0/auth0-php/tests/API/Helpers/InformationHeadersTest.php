@@ -3,13 +3,14 @@ namespace Auth0\Tests\Api\Helpers;
 
 use Auth0\SDK\API\Helpers\InformationHeaders;
 use Auth0\SDK\API\Helpers\ApiClient;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class InformationHeadersTest
  *
  * @package Auth0\Tests\Api\Helpers
  */
-class InformationHeadersTest extends \PHPUnit_Framework_TestCase
+class InformationHeadersTest extends TestCase
 {
 
     /**
@@ -51,31 +52,6 @@ class InformationHeadersTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('3.4.5', $header_data['env']['test_env_name']);
 
         $header->setEnvProperty( 'test_env_name_2', '4.5.6' );
-        $header_data = $header->get();
-        $this->assertEquals('4.5.6', $header_data['env']['test_env_name_2']);
-    }
-
-    /**
-     * Set and override an env property with the deprecated method and make sure it's returned correctly.
-     *
-     * @return void
-     */
-    public function testThatSetEnvironmentSetsDataCorrectly()
-    {
-        $header = new InformationHeaders();
-        $header->setEnvironment( 'test_env_name', '2.3.4' );
-        $header_data = $header->get();
-
-        $this->assertArrayHasKey('env', $header_data);
-        $this->assertCount(1, $header_data['env']);
-        $this->assertArrayHasKey('test_env_name', $header_data['env']);
-        $this->assertEquals('2.3.4', $header_data['env']['test_env_name']);
-
-        $header->setEnvironment( 'test_env_name', '3.4.5' );
-        $header_data = $header->get();
-        $this->assertEquals('3.4.5', $header_data['env']['test_env_name']);
-
-        $header->setEnvironment( 'test_env_name_2', '4.5.6' );
         $header_data = $header->get();
         $this->assertEquals('4.5.6', $header_data['env']['test_env_name_2']);
     }

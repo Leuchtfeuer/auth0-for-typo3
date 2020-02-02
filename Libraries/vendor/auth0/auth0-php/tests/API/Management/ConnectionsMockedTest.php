@@ -1,17 +1,18 @@
 <?php
 namespace Auth0\Tests\API\Management;
 
-use Auth0\Tests\Traits\ErrorHelpers;
 use Auth0\SDK\API\Helpers\InformationHeaders;
 use Auth0\SDK\API\Management;
+use Auth0\Tests\Traits\ErrorHelpers;
 use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class ConnectionsTestMocked.
  *
  * @package Auth0\Tests\API\Management
  */
-class ConnectionsTestMocked extends \PHPUnit_Framework_TestCase
+class ConnectionsTestMocked extends TestCase
 {
 
     use ErrorHelpers;
@@ -38,15 +39,6 @@ class ConnectionsTestMocked extends \PHPUnit_Framework_TestCase
         $infoHeadersData = new InformationHeaders;
         $infoHeadersData->setCorePackage();
         self::$expectedTelemetry = $infoHeadersData->build();
-    }
-
-    public function testThatMethodAndPropertyReturnSameClass()
-    {
-        $api = new Management(uniqid(), uniqid());
-        $this->assertInstanceOf( Management\Connections::class, $api->connections );
-        $this->assertInstanceOf( Management\Connections::class, $api->connections() );
-        $api->connections = null;
-        $this->assertInstanceOf( Management\Connections::class, $api->connections() );
     }
 
     /**

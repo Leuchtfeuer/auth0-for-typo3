@@ -33,17 +33,18 @@ class ComposerStaticInitcd064bfa049f3dcf6166ee81e13cb4e1
         ),
         'P' => 
         array (
+            'Psr\\SimpleCache\\' => 16,
             'Psr\\Http\\Message\\' => 17,
+        ),
+        'L' => 
+        array (
+            'Lcobucci\\JWT\\' => 13,
         ),
         'G' => 
         array (
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
-        ),
-        'F' => 
-        array (
-            'Firebase\\JWT\\' => 13,
         ),
         'A' => 
         array (
@@ -92,9 +93,17 @@ class ComposerStaticInitcd064bfa049f3dcf6166ee81e13cb4e1
         array (
             0 => __DIR__ . '/..' . '/symfony/http-foundation',
         ),
+        'Psr\\SimpleCache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/simple-cache/src',
+        ),
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'Lcobucci\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/lcobucci/jwt/src',
         ),
         'GuzzleHttp\\Psr7\\' => 
         array (
@@ -108,10 +117,6 @@ class ComposerStaticInitcd064bfa049f3dcf6166ee81e13cb4e1
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
-        'Firebase\\JWT\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
-        ),
         'Auth0\\SDK\\' => 
         array (
             0 => __DIR__ . '/..' . '/auth0/auth0-php/src',
@@ -120,7 +125,7 @@ class ComposerStaticInitcd064bfa049f3dcf6166ee81e13cb4e1
 
     public static $classMap = array (
         'Auth0\\SDK\\API\\Authentication' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Authentication.php',
-        'Auth0\\SDK\\API\\Header\\Authorization\\AuthorizationBearer' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Header/Authorization/AuthorizationBearer.php',
+        'Auth0\\SDK\\API\\Header\\AuthorizationBearer' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Header/AuthorizationBearer.php',
         'Auth0\\SDK\\API\\Header\\ContentType' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Header/ContentType.php',
         'Auth0\\SDK\\API\\Header\\ForwardedFor' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Header/ForwardedFor.php',
         'Auth0\\SDK\\API\\Header\\Header' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Header/Header.php',
@@ -128,10 +133,6 @@ class ComposerStaticInitcd064bfa049f3dcf6166ee81e13cb4e1
         'Auth0\\SDK\\API\\Helpers\\ApiClient' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Helpers/ApiClient.php',
         'Auth0\\SDK\\API\\Helpers\\InformationHeaders' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Helpers/InformationHeaders.php',
         'Auth0\\SDK\\API\\Helpers\\RequestBuilder' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Helpers/RequestBuilder.php',
-        'Auth0\\SDK\\API\\Helpers\\State\\DummyStateHandler' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Helpers/State/DummyStateHandler.php',
-        'Auth0\\SDK\\API\\Helpers\\State\\SessionStateHandler' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Helpers/State/SessionStateHandler.php',
-        'Auth0\\SDK\\API\\Helpers\\State\\StateHandler' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Helpers/State/StateHandler.php',
-        'Auth0\\SDK\\API\\Helpers\\TokenGenerator' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Helpers/TokenGenerator.php',
         'Auth0\\SDK\\API\\Management' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Management.php',
         'Auth0\\SDK\\API\\Management\\Blacklists' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Management/Blacklists.php',
         'Auth0\\SDK\\API\\Management\\ClientGrants' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Management/ClientGrants.php',
@@ -142,6 +143,7 @@ class ComposerStaticInitcd064bfa049f3dcf6166ee81e13cb4e1
         'Auth0\\SDK\\API\\Management\\Emails' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Management/Emails.php',
         'Auth0\\SDK\\API\\Management\\GenericResource' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Management/GenericResource.php',
         'Auth0\\SDK\\API\\Management\\Grants' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Management/Grants.php',
+        'Auth0\\SDK\\API\\Management\\Guardian' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Management/Guardian.php',
         'Auth0\\SDK\\API\\Management\\Jobs' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Management/Jobs.php',
         'Auth0\\SDK\\API\\Management\\Logs' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Management/Logs.php',
         'Auth0\\SDK\\API\\Management\\ResourceServers' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Management/ResourceServers.php',
@@ -153,28 +155,23 @@ class ComposerStaticInitcd064bfa049f3dcf6166ee81e13cb4e1
         'Auth0\\SDK\\API\\Management\\UserBlocks' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Management/UserBlocks.php',
         'Auth0\\SDK\\API\\Management\\Users' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Management/Users.php',
         'Auth0\\SDK\\API\\Management\\UsersByEmail' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Management/UsersByEmail.php',
-        'Auth0\\SDK\\API\\Oauth2Client' => __DIR__ . '/..' . '/auth0/auth0-php/src/API/Oauth2Client.php',
         'Auth0\\SDK\\Auth0' => __DIR__ . '/..' . '/auth0/auth0-php/src/Auth0.php',
-        'Auth0\\SDK\\Auth0Api' => __DIR__ . '/..' . '/auth0/auth0-php/src/Auth0Api.php',
-        'Auth0\\SDK\\Auth0AuthApi' => __DIR__ . '/..' . '/auth0/auth0-php/src/Auth0AuthApi.php',
-        'Auth0\\SDK\\Auth0JWT' => __DIR__ . '/..' . '/auth0/auth0-php/src/Auth0JWT.php',
         'Auth0\\SDK\\Exception\\ApiException' => __DIR__ . '/..' . '/auth0/auth0-php/src/Exception/ApiException.php',
         'Auth0\\SDK\\Exception\\CoreException' => __DIR__ . '/..' . '/auth0/auth0-php/src/Exception/CoreException.php',
         'Auth0\\SDK\\Exception\\EmptyOrInvalidParameterException' => __DIR__ . '/..' . '/auth0/auth0-php/src/Exception/EmptyOrInvalidParameterException.php',
         'Auth0\\SDK\\Exception\\InvalidPermissionsArrayException' => __DIR__ . '/..' . '/auth0/auth0-php/src/Exception/InvalidPermissionsArrayException.php',
         'Auth0\\SDK\\Exception\\InvalidTokenException' => __DIR__ . '/..' . '/auth0/auth0-php/src/Exception/InvalidTokenException.php',
-        'Auth0\\SDK\\Helpers\\Cache\\CacheHandler' => __DIR__ . '/..' . '/auth0/auth0-php/src/Helpers/Cache/CacheHandler.php',
-        'Auth0\\SDK\\Helpers\\Cache\\FileSystemCacheHandler' => __DIR__ . '/..' . '/auth0/auth0-php/src/Helpers/Cache/FileSystemCacheHandler.php',
         'Auth0\\SDK\\Helpers\\Cache\\NoCacheHandler' => __DIR__ . '/..' . '/auth0/auth0-php/src/Helpers/Cache/NoCacheHandler.php',
         'Auth0\\SDK\\Helpers\\JWKFetcher' => __DIR__ . '/..' . '/auth0/auth0-php/src/Helpers/JWKFetcher.php',
-        'Auth0\\SDK\\JWTVerifier' => __DIR__ . '/..' . '/auth0/auth0-php/src/JWTVerifier.php',
+        'Auth0\\SDK\\Helpers\\Tokens\\AsymmetricVerifier' => __DIR__ . '/..' . '/auth0/auth0-php/src/Helpers/Tokens/AsymmetricVerifier.php',
+        'Auth0\\SDK\\Helpers\\Tokens\\IdTokenVerifier' => __DIR__ . '/..' . '/auth0/auth0-php/src/Helpers/Tokens/IdTokenVerifier.php',
+        'Auth0\\SDK\\Helpers\\Tokens\\SignatureVerifier' => __DIR__ . '/..' . '/auth0/auth0-php/src/Helpers/Tokens/SignatureVerifier.php',
+        'Auth0\\SDK\\Helpers\\Tokens\\SymmetricVerifier' => __DIR__ . '/..' . '/auth0/auth0-php/src/Helpers/Tokens/SymmetricVerifier.php',
+        'Auth0\\SDK\\Helpers\\TransientStoreHandler' => __DIR__ . '/..' . '/auth0/auth0-php/src/Helpers/TransientStoreHandler.php',
+        'Auth0\\SDK\\Store\\CookieStore' => __DIR__ . '/..' . '/auth0/auth0-php/src/Store/CookieStore.php',
         'Auth0\\SDK\\Store\\EmptyStore' => __DIR__ . '/..' . '/auth0/auth0-php/src/Store/EmptyStore.php',
         'Auth0\\SDK\\Store\\SessionStore' => __DIR__ . '/..' . '/auth0/auth0-php/src/Store/SessionStore.php',
         'Auth0\\SDK\\Store\\StoreInterface' => __DIR__ . '/..' . '/auth0/auth0-php/src/Store/StoreInterface.php',
-        'Firebase\\JWT\\BeforeValidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/BeforeValidException.php',
-        'Firebase\\JWT\\ExpiredException' => __DIR__ . '/..' . '/firebase/php-jwt/src/ExpiredException.php',
-        'Firebase\\JWT\\JWT' => __DIR__ . '/..' . '/firebase/php-jwt/src/JWT.php',
-        'Firebase\\JWT\\SignatureInvalidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/SignatureInvalidException.php',
         'GuzzleHttp\\Client' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Client.php',
         'GuzzleHttp\\ClientInterface' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/ClientInterface.php',
         'GuzzleHttp\\Cookie\\CookieJar' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Cookie/CookieJar.php',
@@ -186,6 +183,7 @@ class ComposerStaticInitcd064bfa049f3dcf6166ee81e13cb4e1
         'GuzzleHttp\\Exception\\ClientException' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Exception/ClientException.php',
         'GuzzleHttp\\Exception\\ConnectException' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Exception/ConnectException.php',
         'GuzzleHttp\\Exception\\GuzzleException' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Exception/GuzzleException.php',
+        'GuzzleHttp\\Exception\\InvalidArgumentException' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Exception/InvalidArgumentException.php',
         'GuzzleHttp\\Exception\\RequestException' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Exception/RequestException.php',
         'GuzzleHttp\\Exception\\SeekException' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Exception/SeekException.php',
         'GuzzleHttp\\Exception\\ServerException' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/Exception/ServerException.php',
@@ -244,6 +242,39 @@ class ComposerStaticInitcd064bfa049f3dcf6166ee81e13cb4e1
         'GuzzleHttp\\RetryMiddleware' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/RetryMiddleware.php',
         'GuzzleHttp\\TransferStats' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/TransferStats.php',
         'GuzzleHttp\\UriTemplate' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/UriTemplate.php',
+        'Lcobucci\\JWT\\Builder' => __DIR__ . '/..' . '/lcobucci/jwt/src/Builder.php',
+        'Lcobucci\\JWT\\Claim' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim.php',
+        'Lcobucci\\JWT\\Claim\\Basic' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim/Basic.php',
+        'Lcobucci\\JWT\\Claim\\EqualsTo' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim/EqualsTo.php',
+        'Lcobucci\\JWT\\Claim\\Factory' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim/Factory.php',
+        'Lcobucci\\JWT\\Claim\\GreaterOrEqualsTo' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim/GreaterOrEqualsTo.php',
+        'Lcobucci\\JWT\\Claim\\LesserOrEqualsTo' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim/LesserOrEqualsTo.php',
+        'Lcobucci\\JWT\\Claim\\Validatable' => __DIR__ . '/..' . '/lcobucci/jwt/src/Claim/Validatable.php',
+        'Lcobucci\\JWT\\Parser' => __DIR__ . '/..' . '/lcobucci/jwt/src/Parser.php',
+        'Lcobucci\\JWT\\Parsing\\Decoder' => __DIR__ . '/..' . '/lcobucci/jwt/src/Parsing/Decoder.php',
+        'Lcobucci\\JWT\\Parsing\\Encoder' => __DIR__ . '/..' . '/lcobucci/jwt/src/Parsing/Encoder.php',
+        'Lcobucci\\JWT\\Signature' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signature.php',
+        'Lcobucci\\JWT\\Signer' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer.php',
+        'Lcobucci\\JWT\\Signer\\BaseSigner' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/BaseSigner.php',
+        'Lcobucci\\JWT\\Signer\\Ecdsa' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa.php',
+        'Lcobucci\\JWT\\Signer\\Ecdsa\\MultibyteStringConverter' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/MultibyteStringConverter.php',
+        'Lcobucci\\JWT\\Signer\\Ecdsa\\Sha256' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/Sha256.php',
+        'Lcobucci\\JWT\\Signer\\Ecdsa\\Sha384' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/Sha384.php',
+        'Lcobucci\\JWT\\Signer\\Ecdsa\\Sha512' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/Sha512.php',
+        'Lcobucci\\JWT\\Signer\\Ecdsa\\SignatureConverter' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Ecdsa/SignatureConverter.php',
+        'Lcobucci\\JWT\\Signer\\Hmac' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Hmac.php',
+        'Lcobucci\\JWT\\Signer\\Hmac\\Sha256' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Hmac/Sha256.php',
+        'Lcobucci\\JWT\\Signer\\Hmac\\Sha384' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Hmac/Sha384.php',
+        'Lcobucci\\JWT\\Signer\\Hmac\\Sha512' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Hmac/Sha512.php',
+        'Lcobucci\\JWT\\Signer\\Key' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Key.php',
+        'Lcobucci\\JWT\\Signer\\Keychain' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Keychain.php',
+        'Lcobucci\\JWT\\Signer\\OpenSSL' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/OpenSSL.php',
+        'Lcobucci\\JWT\\Signer\\Rsa' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Rsa.php',
+        'Lcobucci\\JWT\\Signer\\Rsa\\Sha256' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Rsa/Sha256.php',
+        'Lcobucci\\JWT\\Signer\\Rsa\\Sha384' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Rsa/Sha384.php',
+        'Lcobucci\\JWT\\Signer\\Rsa\\Sha512' => __DIR__ . '/..' . '/lcobucci/jwt/src/Signer/Rsa/Sha512.php',
+        'Lcobucci\\JWT\\Token' => __DIR__ . '/..' . '/lcobucci/jwt/src/Token.php',
+        'Lcobucci\\JWT\\ValidationData' => __DIR__ . '/..' . '/lcobucci/jwt/src/ValidationData.php',
         'Psr\\Http\\Message\\MessageInterface' => __DIR__ . '/..' . '/psr/http-message/src/MessageInterface.php',
         'Psr\\Http\\Message\\RequestInterface' => __DIR__ . '/..' . '/psr/http-message/src/RequestInterface.php',
         'Psr\\Http\\Message\\ResponseInterface' => __DIR__ . '/..' . '/psr/http-message/src/ResponseInterface.php',
@@ -251,6 +282,9 @@ class ComposerStaticInitcd064bfa049f3dcf6166ee81e13cb4e1
         'Psr\\Http\\Message\\StreamInterface' => __DIR__ . '/..' . '/psr/http-message/src/StreamInterface.php',
         'Psr\\Http\\Message\\UploadedFileInterface' => __DIR__ . '/..' . '/psr/http-message/src/UploadedFileInterface.php',
         'Psr\\Http\\Message\\UriInterface' => __DIR__ . '/..' . '/psr/http-message/src/UriInterface.php',
+        'Psr\\SimpleCache\\CacheException' => __DIR__ . '/..' . '/psr/simple-cache/src/CacheException.php',
+        'Psr\\SimpleCache\\CacheInterface' => __DIR__ . '/..' . '/psr/simple-cache/src/CacheInterface.php',
+        'Psr\\SimpleCache\\InvalidArgumentException' => __DIR__ . '/..' . '/psr/simple-cache/src/InvalidArgumentException.php',
         'Symfony\\Component\\HttpFoundation\\AcceptHeader' => __DIR__ . '/..' . '/symfony/http-foundation/AcceptHeader.php',
         'Symfony\\Component\\HttpFoundation\\AcceptHeaderItem' => __DIR__ . '/..' . '/symfony/http-foundation/AcceptHeaderItem.php',
         'Symfony\\Component\\HttpFoundation\\ApacheRequest' => __DIR__ . '/..' . '/symfony/http-foundation/ApacheRequest.php',

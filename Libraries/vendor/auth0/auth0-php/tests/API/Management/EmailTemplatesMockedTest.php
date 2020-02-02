@@ -2,17 +2,18 @@
 
 namespace Auth0\Tests\API\Management;
 
-use Auth0\Tests\Traits\ErrorHelpers;
 use Auth0\SDK\API\Helpers\InformationHeaders;
 use Auth0\SDK\API\Management;
+use Auth0\Tests\Traits\ErrorHelpers;
 use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class EmailTemplatesMockedTest
  *
  * @package Auth0\Tests\API\Management
  */
-class EmailTemplatesMockedTest extends \PHPUnit_Framework_TestCase
+class EmailTemplatesMockedTest extends TestCase
 {
 
     use ErrorHelpers;
@@ -39,15 +40,6 @@ class EmailTemplatesMockedTest extends \PHPUnit_Framework_TestCase
         $infoHeadersData = new InformationHeaders;
         $infoHeadersData->setCorePackage();
         self::$expectedTelemetry = $infoHeadersData->build();
-    }
-
-    public function testThatMethodAndPropertyReturnSameClass()
-    {
-        $api = new Management(uniqid(), uniqid());
-        $this->assertInstanceOf( Management\EmailTemplates::class, $api->emailTemplates );
-        $this->assertInstanceOf( Management\EmailTemplates::class, $api->emailTemplates() );
-        $api->emailTemplates = null;
-        $this->assertInstanceOf( Management\EmailTemplates::class, $api->emailTemplates() );
     }
 
     /**

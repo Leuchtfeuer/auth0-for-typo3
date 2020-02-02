@@ -1,11 +1,17 @@
 <?php
+declare(strict_types=1);
 
 namespace Auth0\SDK\Store;
 
 /**
- * This class provides a layer to persist user access using PHP Sessions.
+ * Class SessionStore
+ * This class provides a layer to persist data using PHP Sessions.
  *
- * @author Auth0
+ * NOTE: If you are using this storage method for the transient_store option in the Auth0 class along with a
+ * response_mode of form_post, the session cookie MUST be set to SameSite=None and Secure using
+ * session_set_cookie_params() or another method. This combination will be enforced by browsers in early 2020.
+ *
+ * @package Auth0\SDK\Store
  */
 class SessionStore implements StoreInterface
 {
@@ -15,34 +21,20 @@ class SessionStore implements StoreInterface
     const BASE_NAME = 'auth0_';
 
     /**
-     * Default session cookie expiration.
-     */
-    const COOKIE_EXPIRES = 604800;
-
-    /**
      * Session base name, configurable on instantiation.
      *
      * @var string
      */
-    protected $session_base_name = self::BASE_NAME;
-
-    /**
-     * Session cookie expiration, configurable on instantiation.
-     *
-     * @var integer
-     */
-    protected $session_cookie_expires;
+    protected $session_base_name;
 
     /**
      * SessionStore constructor.
      *
-     * @param string  $base_name      Session base name.
-     * @param integer $cookie_expires Session expiration in seconds; default is 1 week.
+     * @param string $base_name Session base name.
      */
-    public function __construct($base_name = self::BASE_NAME, $cookie_expires = self::COOKIE_EXPIRES)
+    public function __construct($base_name = self::BASE_NAME)
     {
-        $this->session_base_name      = (string) $base_name;
-        $this->session_cookie_expires = (int) $cookie_expires;
+        $this->session_base_name = (string) $base_name;
     }
 
     /**
@@ -51,13 +43,9 @@ class SessionStore implements StoreInterface
      *
      * @return void
      */
-    private function initSession()
+    private function initSession() : void
     {
         if (! session_id()) {
-            if (! empty( $this->session_cookie_expires )) {
-                session_set_cookie_params($this->session_cookie_expires);
-            }
-
             session_start();
         }
     }
@@ -70,7 +58,7 @@ class SessionStore implements StoreInterface
      *
      * @return void
      */
-    public function set($key, $value)
+    public function set(string $key, $value) : void
     {
         $this->initSession();
         $key_name            = $this->getSessionKeyName($key);
@@ -86,7 +74,7 @@ class SessionStore implements StoreInterface
      *
      * @return mixed
      */
-    public function get($key, $default = null)
+    public function get(string $key, $default = null)
     {
         $this->initSession();
         $key_name = $this->getSessionKeyName($key);
@@ -105,7 +93,7 @@ class SessionStore implements StoreInterface
      *
      * @return void
      */
-    public function delete($key)
+    public function delete(string $key) : void
     {
         $this->initSession();
         $key_name = $this->getSessionKeyName($key);
@@ -119,7 +107,7 @@ class SessionStore implements StoreInterface
      *
      * @return string
      */
-    public function getSessionKeyName($key)
+    public function getSessionKeyName(string $key) : string
     {
         $key_name = $key;
         if (! empty( $this->session_base_name )) {
