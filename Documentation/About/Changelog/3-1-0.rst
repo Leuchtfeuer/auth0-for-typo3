@@ -20,6 +20,10 @@ Added
 * Dedicated license file
 * Frontend log in can be disabled
 * Documentation
+* Application record:
+
+   * You can now choose a signature algorithm: `RS256` (default) or `HS256`
+   * Client secrets can be `base64` encoded
 
 Changed
 =======
