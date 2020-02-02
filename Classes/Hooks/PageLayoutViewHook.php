@@ -14,7 +14,6 @@ namespace Bitmotion\Auth0\Hooks;
  ***/
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Lang\LanguageService;
 
 class PageLayoutViewHook
 {
@@ -47,7 +46,11 @@ class PageLayoutViewHook
         return $header . $content;
     }
 
-    protected function getLanguageService(): LanguageService
+    /**
+     * @todo Adapt this when dropping TYPO3 9 support.
+     * @return TYPO3\CMS\Core\Localization\LanguageService|TYPO3\CMS\Lang\LanguageService
+     */
+    protected function getLanguageService()
     {
         return $GLOBALS['LANG'];
     }

@@ -20,6 +20,7 @@
 								<maxitems>1</maxitems>
 								<minitems>1</minitems>
 								<show_thumbs>1</show_thumbs>
+								<renderType>selectSingle</renderType>
 							</config>
 						</TCEforms>
 					</settings.application>
