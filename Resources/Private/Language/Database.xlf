@@ -45,7 +45,20 @@
 				<source>Audience</source>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_application.single_log_out">
-				<source>Single log out</source>
+				<source>Single Log Out</source>
+			</trans-unit>
+			<trans-unit id="tx_auth0_domain_model_application.secret_base64_encoded">
+				<source>Client Secret Base64 Encoded</source>
+			</trans-unit>
+			<trans-unit id="tx_auth0_domain_model_application.signature_algorithm">
+				<source>JWT Signature Algorithm</source>
+			</trans-unit>
+
+			<trans-unit id="tabs.basic">
+				<source>Basic</source>
+			</trans-unit>
+			<trans-unit id="tabs.features">
+				<source>Features</source>
 			</trans-unit>
 
 			<trans-unit id="fe_users.tx_extbase_type.Tx_Auth0_FrontendUser">

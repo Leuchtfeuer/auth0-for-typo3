@@ -1,6 +1,8 @@
 <?php
 declare(strict_types = 1);
 
+use Bitmotion\Auth0\Domain\Model\Application;
+
 return [
     'ctrl' => [
         'title' => 'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_application',
@@ -21,24 +23,22 @@ return [
     ],
     'types' => [
         '1' => ['showitem' => '
-            --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:general,
-                single_log_out,
-                --palette--;;domain,
+            --div--;LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tabs.basic,
+                title,domain,
                 --palette--;;client,
                 audience,
+            --div--;LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tabs.features,
+                single_log_out,
             --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
                 --palette--;;hidden,',
         ],
     ],
     'palettes' => [
         'client' => [
-            'showitem' => 'id,secret',
-        ],
-        'domain' => [
-            'showitem' => 'title,domain,',
+            'showitem' => 'id,secret,--linebreak--,signature_algorithm,secret_base64_encoded',
         ],
         'hidden' => [
-            'showitem' => 'hidden;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:field.default.hidden',
+            'showitem' => 'hidden',
         ],
     ],
     'columns' => [
@@ -117,5 +117,31 @@ return [
                 'default' => 'api/v2/',
             ],
         ],
+        'secret_base64_encoded' => [
+            'label' => 'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_application.secret_base64_encoded',
+            'config' => [
+                'type' => 'check',
+                'renderType' => 'checkboxToggle',
+                'items' => [
+                    [
+                        0 => '',
+                        1 => '',
+                    ],
+                ],
+                'default' => 0,
+            ],
+        ],
+        'signature_algorithm' => [
+            'label' => 'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_application.signature_algorithm',
+            'config' => [
+                'type' => 'select',
+                'renderType' => 'selectSingle',
+                'items' => [
+                    [ Application::SIGNATURE_RS256, Application::SIGNATURE_RS256 ],
+                    [ Application::SIGNATURE_HS256, Application::SIGNATURE_HS256 ],
+                ],
+                'default' => Application::SIGNATURE_RS256,
+            ],
+        ]
     ],
 ];

@@ -17,6 +17,10 @@ use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 class Application extends AbstractEntity
 {
+    public const SIGNATURE_HS256 = 'HS256';
+
+    public const SIGNATURE_RS256 = 'RS256';
+
     /**
      * @var string
      */
@@ -33,6 +37,11 @@ class Application extends AbstractEntity
     protected $secret = '';
 
     /**
+     * @var bool
+     */
+    protected $secretBase64Encoded = false;
+
+    /**
      * @var string
      */
     protected $domain = '';
@@ -46,6 +55,11 @@ class Application extends AbstractEntity
      * @var bool
      */
     protected $singleLogOut = false;
+
+    /**
+     * @var string
+     */
+    protected $signatureAlgorithm = self::SIGNATURE_RS256;
 
     public function getTitle(): string
     {
@@ -106,5 +120,25 @@ class Application extends AbstractEntity
     public function setSingleLogOut(bool $singleLogOut): void
     {
         $this->singleLogOut = $singleLogOut;
+    }
+
+    public function isSecretBase64Encoded(): bool
+    {
+        return $this->secretBase64Encoded;
+    }
+
+    public function setSecretBase64Encoded(bool $secretBase64Encoded): void
+    {
+        $this->secretBase64Encoded = $secretBase64Encoded;
+    }
+
+    public function getSignatureAlgorithm(): string
+    {
+        return $this->signatureAlgorithm;
+    }
+
+    public function setSignatureAlgorithm(string $signatureAlgorithm): void
+    {
+        $this->signatureAlgorithm = $signatureAlgorithm;
     }
 }

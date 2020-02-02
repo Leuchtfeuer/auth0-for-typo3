@@ -14,6 +14,7 @@ namespace Bitmotion\Auth0\Api;
  ***/
 
 use Auth0\SDK\Exception\CoreException;
+use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -55,6 +56,7 @@ class Auth0 extends \Auth0\SDK\Auth0
     {
         $applicationRepository = GeneralUtility::makeInstance(ApplicationRepository::class);
         $application = $applicationRepository->findByUid($applicationUid);
+        $idTokenAlg = !empty($application['signature_algorithm']) ? $application['signature_algorithm'] : Application::SIGNATURE_RS256;
 
         $config = [
             'domain' => $application['domain'],
@@ -66,6 +68,8 @@ class Auth0 extends \Auth0\SDK\Auth0
             'persist_access_token' => true,
             'persist_refresh_token' => true,
             'persist_id_token' => true,
+            'id_token_alg' => $idTokenAlg,
+            'secret_base64_encoded' => (bool)$application['secret_base64_encoded'],
         ];
 
         parent::__construct(array_merge($config, $additionalOptions));
