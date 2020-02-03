@@ -36,6 +36,5 @@ Next Steps
 .. toctree::
     :maxdepth: 3
     :hidden:
-    :glob:
 
     Changelog/Index

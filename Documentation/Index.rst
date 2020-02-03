@@ -68,7 +68,6 @@ You also need access to an `Auth0 <https://auth0.com/>`__ instance.
 .. toctree::
     :maxdepth: 3
     :hidden:
-    :glob:
 
     Administration/Index
     Developing/Index

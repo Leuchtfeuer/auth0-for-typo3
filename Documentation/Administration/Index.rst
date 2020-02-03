@@ -59,7 +59,6 @@ Please take a look at the :ref:`administration-command` section.
 .. toctree::
     :maxdepth: 3
     :hidden:
-    :glob:
 
     ConsoleCommand/Index
     DataType/Index
