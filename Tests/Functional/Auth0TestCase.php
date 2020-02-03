@@ -14,7 +14,7 @@ namespace Bitmotion\Auth0\Tests\Functional;
  ***/
 
 use Auth0\SDK\API\Authentication;
-use Auth0\SDK\API\Header\Authorization\AuthorizationBearer;
+use Auth0\SDK\API\Header\AuthorizationBearer;
 use Auth0\SDK\API\Header\ContentType;
 use Auth0\SDK\API\Header\Header;
 use Auth0\SDK\API\Helpers\InformationHeaders;
