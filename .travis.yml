@@ -23,6 +23,11 @@ env:
   - TYPO3_VERSION="dev-master"
 
 jobs:
+  exclude:
+    - php: 7.4
+      env: TYPO3_VERSION="^9.5"
+    - php: 7.4
+      env: TYPO3_VERSION="9.5.x-dev"
   fast_finish: true
   allow_failures:
     - env: TYPO3_VERSION="dev-master"
