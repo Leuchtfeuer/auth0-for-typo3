@@ -25,8 +25,10 @@ Auth0 helps you to:
 * Pull data from other sources and add it to the user profile, through
   `JavaScript rules <https://auth0.com/docs/rules/current>`__.
 
-.. toctree::
-    :maxdepth: 3
-    :titlesonly:
+Next Steps
+==========
 
-    Changelog/Index
+* Allow to override TYPO3 User Avatar with the Auth0 profile avatar
+* Move connection parameter from TypoScript :typoscript:`plugin.tx_auth0.settings.frontend.login.additionalAuthorizeParameters` to
+  application data record or plugin setting
+* Support custom domains (different audience in class Auth0 constructor)
