@@ -13,7 +13,7 @@ List of versions
 ================
 
 .. toctree::
-    :maxdepth: 5
+    :maxdepth: 3
     :titlesonly:
     :glob:
 

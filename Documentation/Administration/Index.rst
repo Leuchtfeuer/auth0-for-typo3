@@ -55,3 +55,14 @@ There is one scheduler task available which takes care of inactive or removed Au
 only TYPO3 backend users (for now).
 
 Please take a look at the :ref:`administration-command` section.
+
+.. toctree::
+    :maxdepth: 3
+    :hidden:
+    :glob:
+
+    ConsoleCommand/Index
+    DataType/Index
+    ExtensionConfiguration/Index
+    Plugin/Index
+    TypoScript/Index
