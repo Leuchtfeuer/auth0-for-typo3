@@ -19,22 +19,24 @@ APPLICATION_FILE="Tests/Functional/Fixtures/tx_auth0_domain_model_application.xm
 exec 6>&1
 exec > $APPLICATION_FILE
 
-echo '<?xml version="1.0" encoding="UTF-8" ?>'
-echo '<dataset>'
-echo '<tx_auth0_domain_model_application>'
-echo '<uid>1</uid>'
-echo '<pid>0</pid>'
-echo '<tstamp>1539156784</tstamp>'
-echo '<crdate>1539156784</crdate>'
-echo '<cruser_id>1</cruser_id>'
-echo '<deleted>0</deleted>'
-echo '<hidden>0</hidden>'
-echo "<title>${APPLICATION}</title>"
-echo "<id>${CLIENT_ID}</id>"
-echo "<secret>${CLIENT_SECRET}</secret>"
-echo "<domain>${CLIENT_DOMAIN}</domain>"
-echo "<audience>api/v2/</audience>"
-echo "</tx_auth0_domain_model_application>"
+echo "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
+echo "<dataset>"
+echo "  <tx_auth0_domain_model_application>"
+echo "    <uid>1</uid>"
+echo "    <pid>0</pid>"
+echo "    <tstamp>1539156784</tstamp>"
+echo "    <crdate>1539156784</crdate>"
+echo "    <cruser_id>1</cruser_id>"
+echo "    <deleted>0</deleted>"
+echo "    <hidden>0</hidden>"
+echo "    <title>${APPLICATION}</title>"
+echo "    <id>${CLIENT_ID}</id>"
+echo "    <secret>${CLIENT_SECRET}</secret>"
+echo "    <domain>${CLIENT_DOMAIN}</domain>"
+echo "    <secret_base64_encoded>0</secret_base64_encoded>"
+echo "    <signature_algorithm>RS256</signature_algorithm>"
+echo "    <audience>api/v2/</audience>"
+echo "  </tx_auth0_domain_model_application>"
 echo "</dataset>"
 
 exec 1>&6 6>&-

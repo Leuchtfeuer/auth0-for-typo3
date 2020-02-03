@@ -59,6 +59,7 @@
   },
   "scripts": {
     "post-autoload-dump": [
+      "TYPO3\\TestingFramework\\Composer\\ExtensionTestEnvironment::prepare",
       "mkdir -p .Build/web/typo3conf/ext/",
       "[ -L .Build/web/typo3conf/ext/auth0 ] || ln -snvf ../../../../. .Build/web/typo3conf/ext/auth0"
     ]
@@ -66,7 +67,8 @@
   "extra": {
     "typo3/cms": {
       "cms-package-dir": "{$vendor-dir}/typo3/cms",
-      "web-dir": ".Build/web"
+      "web-dir": ".Build/web",
+      "extension-key": "auth0"
     }
   }
 }
