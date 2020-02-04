@@ -41,7 +41,7 @@ plugin.tx_auth0 {
             login {
                 additionalAuthorizeParameters {
                     # key = value
-                    # Example: access_type = offline
+                    # Example: login_hint = 'You will log in to our Shop system.'
                     # Example: connection = google-oauth2
                 }
             }
