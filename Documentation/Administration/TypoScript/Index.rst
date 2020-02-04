@@ -8,6 +8,7 @@ TypoScript
 
 Templating
 ----------
+
 Set alternative Layout/Template/Partial path individually to use your own Fluid templates. There are some TypoScript
 constants which you can simply override:
 
@@ -22,6 +23,7 @@ constants which you can simply override:
 
 Backend Login
 ~~~~~~~~~~~~~
+
 You have also the option to use your own template files for the backend login. Just adapt the following TypoScript constants:
 
 .. code-block:: typoscript
@@ -37,6 +39,7 @@ flag for backend users, depending on an Auth0 properties__.
 
 Login Behaviour
 ---------------
+
 Configure whether disabled or deleted frontend or backend users should be able to login by adapting the following TypoScript
 constants:
 
@@ -65,6 +68,7 @@ Mapping
 
 Roles
 ~~~~~
+
 Configure `fe_groups` and `be_groups` mappings to match Auth0 roles. Use the Auth0 role identifier as key and the TYPO3 frontend
 or backend user group ID as value.
 
@@ -91,6 +95,7 @@ an Auth0 role.
 
 Properties
 ~~~~~~~~~~
+
 Auth0 properties can be mapped to existing properties of TYPO3 backend or frontend users. You can configure this mapping via
 TypoScript. In this case, the key is the name of the TYPO3 database column and the value is the field key of the Auth0 user.
 
@@ -130,6 +135,7 @@ within the metadata property (e.g. `user_metadata.address.primary.zip`).
 
 Parsing Functions
 """""""""""""""""
+
 Parsing functions (parseFunc) are used to change properties before they are persisted in the database.
 
 To apply multiple parsing functions you can simply use the pipe to delimiter them. These functions will then be applied in the

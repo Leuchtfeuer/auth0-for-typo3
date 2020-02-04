@@ -225,6 +225,7 @@ This is a list of all changes in this release::
 
 Contributors
 ============
+
 Following people have contributed to this release:
 
 * Daniel Köther

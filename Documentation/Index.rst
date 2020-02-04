@@ -37,13 +37,14 @@ We support `TYPO3 8 LTS <https://get.typo3.org/version/8>`__ and `TYPO3 9 LTS <h
 Please use the version 1.x of this extension for TYPO3 8 LTS and version 2.x for TYPO3 9 LTS.
 You also need access to an `Auth0 <https://auth0.com/>`__ instance.
 
+
+
 **TYPO3**
 
-   The content of this document is related to TYPO3 CMS,
-   a GNU/GPL CMS/Framework available from `typo3.org
-   <https://typo3.org/>`_ .
+   The content of this document is related to TYPO3 CMS, a GNU/GPL CMS/Framework available from
+   `typo3.org <https://typo3.org/>`__.
 
-**Community Documentation:**
+**Community Documentation**
 
    This documentation is community documentation for the TYPO3 extension {extension.name}
 
@@ -58,12 +59,11 @@ You also need access to an `Auth0 <https://auth0.com/>`__ instance.
 
 **For Contributors**
 
-   You are welcome to help improve this guide. Just click on "Edit me on GitHub"
-   on the top right to submit your change request.
+   You are welcome to help improve this guide. Just click on "Edit me on GitHub" on the top right to submit your change request.
 
-**Table of Contents:**
 
-   :ref:`sitemap`
+
+:ref:`sitemap`
 
 .. toctree::
     :maxdepth: 3

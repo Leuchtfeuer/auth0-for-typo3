@@ -32,6 +32,9 @@ Next Steps
 * Move connection parameter from TypoScript :typoscript:`plugin.tx_auth0.settings.frontend.login.additionalAuthorizeParameters` to
   application data record or plugin setting
 * Support custom domains (different audience in class Auth0 constructor)
+* Backend Module for Auth0 Administration
+
+
 
 .. toctree::
     :maxdepth: 3
