@@ -57,13 +57,14 @@ class Auth0 extends \Auth0\SDK\Auth0
         $applicationRepository = GeneralUtility::makeInstance(ApplicationRepository::class);
         $application = $applicationRepository->findByUid($applicationUid);
         $idTokenAlg = !empty($application['signature_algorithm']) ? $application['signature_algorithm'] : Application::SIGNATURE_RS256;
+        $audience = filter_var($application['audience'], FILTER_VALIDATE_URL) ? $application['audience'] : 'https://' . $application['domain'] . '/' . $application['audience'];
 
         $config = [
             'domain' => $application['domain'],
             'client_id' => $application['id'],
             'redirect_uri' => $redirectUri,
             'client_secret' => $application['secret'],
-            'audience' => 'https://' . $application['domain'] . '/' . $application['audience'],
+            'audience' => $audience,
             'scope' => $scope,
             'persist_access_token' => true,
             'persist_refresh_token' => true,
