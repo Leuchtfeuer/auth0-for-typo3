@@ -1,7 +1,13 @@
 {
   "name": "bitmotion/auth0",
   "description": "Auth0 is the solution you need for web, mobile, IoT, and internal applications. Loved by developers and trusted by enterprises.",
-  "keywords": ["TYPO3", "Auth0", "SSO", "Login", "User"],
+  "keywords": [
+    "TYPO3",
+    "Auth0",
+    "SSO",
+    "Login",
+    "User"
+  ],
   "type": "typo3-cms-extension",
   "license": "GPL-2.0-or-later",
   "homepage": "https://www.bitmotion.de",
@@ -16,7 +22,8 @@
   "support": {
     "issues": "https://github.com/bitmotion/auth0-for-typo3/issues",
     "source": "https://github.com/bitmotion/auth0-for-typo3",
-    "email": "typo3-ext@bitmotion.de"
+    "email": "typo3-ext@bitmotion.de",
+    "docs": "https://docs.typo3.org/p/bitmotion/auth0/master/en-us/"
   },
   "require": {
     "typo3/cms-core": "^9.5 || ^10.2",
