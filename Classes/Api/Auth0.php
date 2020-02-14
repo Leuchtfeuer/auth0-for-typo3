@@ -14,7 +14,6 @@ namespace Bitmotion\Auth0\Api;
  ***/
 
 use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -52,25 +51,22 @@ class Auth0 extends \Auth0\SDK\Auth0
      * @throws CoreException
      * @throws InvalidApplicationException
      */
-    public function __construct(int $applicationUid, string $redirectUri = '', string $scope = '', array $additionalOptions = [])
+    public function __construct(int $applicationId, string $redirectUri = '', ?string $scope = null, array $additionalOptions = [])
     {
-        $applicationRepository = GeneralUtility::makeInstance(ApplicationRepository::class);
-        $application = $applicationRepository->findByUid($applicationUid);
-        $idTokenAlg = !empty($application['signature_algorithm']) ? $application['signature_algorithm'] : Application::SIGNATURE_RS256;
-        $audience = filter_var($application['audience'], FILTER_VALIDATE_URL) ? $application['audience'] : 'https://' . $application['domain'] . '/' . $application['audience'];
+        $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationId, true);
 
         $config = [
-            'domain' => $application['domain'],
-            'client_id' => $application['id'],
-            'redirect_uri' => $redirectUri,
-            'client_secret' => $application['secret'],
-            'audience' => $audience,
-            'scope' => $scope,
+            'audience' => $application->getAudience(true),
+            'client_id' => $application->getClientId(),
+            'client_secret' => $application->getClientSecret(),
+            'domain' => $application->getDomain(),
+            'id_token_alg' => $application->getSignatureAlgorithm(),
             'persist_access_token' => true,
-            'persist_refresh_token' => true,
             'persist_id_token' => true,
-            'id_token_alg' => $idTokenAlg,
-            'secret_base64_encoded' => (bool)$application['secret_base64_encoded'],
+            'persist_refresh_token' => true,
+            'redirect_uri' => $redirectUri,
+            'scope' => $scope,
+            'secret_base64_encoded' => $application->isSecretBase64Encoded(),
         ];
 
         parent::__construct(array_merge($config, $additionalOptions));

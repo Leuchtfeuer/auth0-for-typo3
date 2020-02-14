@@ -186,9 +186,10 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         $this->auth0->logout();
         $this->userInfo = null;
 
-        $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid((int)$this->configuration->getBackendConnection());
+        $applicationRepository = GeneralUtility::makeInstance(ApplicationRepository::class);
+        $application = $applicationRepository->findByUid((int)$this->configuration->getBackendConnection(), true);
         $redirectUri = str_replace('auth0[action]=logout', '', GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
-        $logoutUri = $this->auth0->getLogoutUri(rtrim($redirectUri, '&'), $application['id']);
+        $logoutUri = $this->auth0->getLogoutUri(rtrim($redirectUri, '&'), $application->getClientId());
 
         header('Location: ' . $logoutUri);
         exit;

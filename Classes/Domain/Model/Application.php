@@ -61,6 +61,11 @@ class Application extends AbstractEntity
      */
     protected $signatureAlgorithm = self::SIGNATURE_RS256;
 
+    /**
+     * @var bool
+     */
+    protected $customDomain = false;
+
     public function getTitle(): string
     {
         return $this->title;
@@ -71,7 +76,15 @@ class Application extends AbstractEntity
         $this->title = $title;
     }
 
+    /**
+     * @deprecated Use $this->getClientId() instead.
+     */
     public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getClientId(): string
     {
         return $this->id;
     }
@@ -81,7 +94,15 @@ class Application extends AbstractEntity
         $this->id = $id;
     }
 
+    /**
+     * @deprecated Use $this->getClientSecret() instead.
+     */
     public function getSecret(): string
+    {
+        return $this->secret;
+    }
+
+    public function getClientSecret(): string
     {
         return $this->secret;
     }
@@ -101,15 +122,28 @@ class Application extends AbstractEntity
         $this->domain = $domain;
     }
 
-    public function getAudience(): string
+    public function getFullDomain()
     {
-        // Audience have to look like this: api/v2/
-        return trim($this->audience, '/') . '/';
+        return sprintf('https://%s', rtrim($this->domain, '/'));
+    }
+
+    public function getAudience(bool $asFullDomain = false): string
+    {
+        if ($asFullDomain && !$this->isCustomDomain()) {
+            return sprintf('https://%s/%s', $this->domain, $this->audience);
+        }
+
+        return $this->audience;
     }
 
     public function setAudience(string $audience): void
     {
-        $this->audience = $audience;
+        $this->audience = trim($audience, '/') . '/';
+    }
+
+    public function getApiBasePath()
+    {
+        return sprintf('/%s/', trim(parse_url($this->getAudience(true), PHP_URL_PATH), '/'));
     }
 
     public function isSingleLogOut(): bool
@@ -140,5 +174,10 @@ class Application extends AbstractEntity
     public function setSignatureAlgorithm(string $signatureAlgorithm): void
     {
         $this->signatureAlgorithm = $signatureAlgorithm;
+    }
+
+    public function isCustomDomain(): bool
+    {
+        return filter_var($this->audience, FILTER_VALIDATE_URL) !== false;
     }
 }

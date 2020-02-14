@@ -133,9 +133,9 @@ class LoginController extends ActionController implements LoggerAwareInterface
      */
     public function logoutAction(): void
     {
-        $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid((int)$this->settings['application']);
+        $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid((int)$this->settings['application'], true);
         $logoutSettings = $this->settings['frontend']['logout'] ?? [];
-        $singleLogOut = isset($this->settings['softLogout']) ? !(bool)$this->settings['softLogout'] : (bool)$application['single_log_out'];
+        $singleLogOut = isset($this->settings['softLogout']) ? !(bool)$this->settings['softLogout'] : $application->isSingleLogOut();
 
         $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
         $routingUtility->setCallback((int)$logoutSettings['targetPageUid'], (int)$logoutSettings['targetPageType']);
@@ -149,9 +149,10 @@ class LoginController extends ActionController implements LoggerAwareInterface
             $this->redirectToUri($routingUtility->getUri());
         }
 
-        $this->getAuth0()->logout();
         $this->logger->notice('Proceed with single log out.');
-        $logoutUri = $this->getAuth0()->getLogoutUri($routingUtility->getUri(), $application['id']);
+        $auth0 = $this->getAuth0();
+        $auth0->logout();
+        $logoutUri = $auth0->getLogoutUri($routingUtility->getUri(), $application->getClientId());
 
         $this->redirectToUri($logoutUri);
     }

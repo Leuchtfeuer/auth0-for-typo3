@@ -70,12 +70,6 @@ class Management implements LoggerAwareInterface
         'http_errors' => false,
     ];
 
-    protected $audience = '';
-
-    protected $domain = '';
-
-    protected $basePath;
-
     protected $clientGrantApi;
 
     protected $clientApi;
@@ -125,46 +119,33 @@ class Management implements LoggerAwareInterface
      */
     public function __construct(int $applicationUid = 0, string $scope = null, array $guzzleOptions = [])
     {
-        $applicationRepository = GeneralUtility::makeInstance(ApplicationRepository::class);
-        $application = $applicationRepository->findByUid($applicationUid);
-        $this->application = $application;
-        $this->domain = sprintf('https://%s', rtrim($this->application['domain'], '/'));
-        $guzzleOptions = array_merge($this->guzzleOptions, $guzzleOptions);
-
-        if (filter_var($application['audience'], FILTER_VALIDATE_URL)) {
-            $audience = $application['audience'];
-            $this->basePath = sprintf('/%s/', trim(parse_url($audience, PHP_URL_PATH), '/'));
-            $this->setAuthentication($scope, $audience);
-            $this->setClient($guzzleOptions, $audience);
-        } else {
-            $this->audience = sprintf('/%s/', trim($this->application['audience'], '/'));
-            $this->setAuthentication($scope);
-            $this->setClient($guzzleOptions);
-        }
+        $this->application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationUid, true);
+        $this->setAuthentication($scope);
+        $this->setClient(array_merge($this->guzzleOptions, $guzzleOptions));
     }
 
     /**
      * @throws ApiException
      * @throws Exception
      */
-    protected function setClient(array $guzzleOptions, ?string $audience = null): void
+    protected function setClient(array $guzzleOptions): void
     {
-        $clientCredentials = $this->getClientCredentials($audience);
+        $clientCredentials = $this->getClientCredentials();
 
         $this->client = new Client();
-        $this->client->setDomain($this->domain);
-        $this->client->setBasePath($this->basePath ?? $this->audience);
+        $this->client->setDomain($this->application->getFullDomain());
+        $this->client->setBasePath($this->application->getApiBasePath());
         $this->client->setGuzzleOptions($guzzleOptions);
         $this->client->addHeader(new AuthorizationBearer($clientCredentials['access_token']));
     }
 
-    protected function setAuthentication(string $scope, ?string $audience = null): void
+    protected function setAuthentication(string $scope): void
     {
         $this->authentication = new Authentication(
-            $this->application['domain'],
-            $this->application['id'],
-            $this->application['secret'],
-            $audience ?? sprintf('https://%s/%s', $this->domain, $this->audience),
+            $this->application->getDomain(),
+            $this->application->getClientId(),
+            $this->application->getClientSecret(),
+            $this->application->getAudience(true),
             $scope
         );
     }
@@ -172,12 +153,12 @@ class Management implements LoggerAwareInterface
     /**
      * @throws ApiException
      */
-    protected function getClientCredentials(?string $audience): array
+    protected function getClientCredentials(): array
     {
         $result = $this->authentication->client_credentials([
-            'client_secret' => $this->application['secret'],
-            'client_id' => $this->application['id'],
-            'audience' => $audience ?? 'https://' . $this->application['domain'] . '/' . $this->application['audience'],
+            'client_secret' => $this->application->getClientSecret(),
+            'client_id' => $this->application->getClientId(),
+            'audience' => $this->application->getAudience(true),
         ]);
 
         return $result ?: [];

@@ -44,6 +44,12 @@ Deprecated
    * :php:`getReactivateDisabledFrontendUser()`
    * :php:`getReactivateDeletedFrontendUser()`
 
+* Retrieving application as array from the database
+* Following methods of the domain model object :php:`\Bitmotion\Auth0\Domain\Model\Application`:
+
+   * :php:`getId()`
+   * :php:`getSecret()`
+
 Removed
 =======
 
