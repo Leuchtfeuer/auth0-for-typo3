@@ -72,8 +72,8 @@ class Auth0 extends \Auth0\SDK\Auth0
         parent::__construct(array_merge($config, $additionalOptions));
     }
 
-    public function getLogoutUri(string $returnUrl, string $applicationId): string
+    public function getLogoutUri(string $returnUrl, string $clientId, bool $federated = false): string
     {
-        return $this->authentication->get_logout_link($returnUrl, $applicationId);
+        return $this->authentication->get_logout_link($returnUrl, $clientId, $federated);
     }
 }

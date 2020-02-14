@@ -21,6 +21,7 @@ Added
 * Frontend log in can be disabled
 * Documentation
 * Support for custom domains
+* Third parameter :php:`federated` of the method :php:`\Bitmotion\Auth0\Api\Auth0::getLogoutUri()`
 * Application record:
 
    * You can now choose a signature algorithm: `RS256` (default) or `HS256`
