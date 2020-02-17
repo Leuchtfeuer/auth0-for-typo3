@@ -51,6 +51,8 @@ Deprecated
    * :php:`getId()`
    * :php:`getSecret()`
 
+* :php:`\Bitmotion\Auth0\Utility\UserUtility::convertAuth0UserToUserInfo`
+
 Removed
 =======
 
