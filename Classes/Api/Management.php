@@ -155,13 +155,13 @@ class Management implements LoggerAwareInterface
      */
     protected function getClientCredentials(): array
     {
-        $result = $this->authentication->client_credentials([
+        $clientCredentials = $this->authentication->client_credentials([
             'client_secret' => $this->application->getClientSecret(),
             'client_id' => $this->application->getClientId(),
             'audience' => $this->application->getAudience(true),
         ]);
 
-        return $result ?: [];
+        return $clientCredentials ?: [];
     }
 
     public function getClientGrantApi(): ClientGrantApi
