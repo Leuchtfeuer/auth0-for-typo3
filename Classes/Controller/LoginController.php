@@ -21,6 +21,7 @@ use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Service\RedirectService;
 use Bitmotion\Auth0\Utility\ApiUtility;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
+use Bitmotion\Auth0\Utility\ParametersUtility;
 use Bitmotion\Auth0\Utility\RoutingUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
 use Psr\Log\LoggerAwareInterface;
@@ -119,7 +120,8 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
         if ($userInfo === null || $feUserAuthentication->user === null) {
             $this->logger->notice('Try to login user to Auth0.');
-            $this->getAuth0()->login(null, null, $this->settings['frontend']['login']['additionalAuthorizeParameters'] ?? []);
+            $additionalParams = !empty($this->settings['additionalAuthorizeParameters']) ? ParametersUtility::transformUrlParameters($this->settings['additionalAuthorizeParameters']) : null;
+            $this->getAuth0()->login(null, null, $additionalParams ?? $this->settings['frontend']['login']['additionalAuthorizeParameters'] ?? []);
         }
 
         $this->redirect('form');

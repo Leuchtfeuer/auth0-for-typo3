@@ -13,6 +13,7 @@ namespace Bitmotion\Auth0\Domain\Transfer;
  *
  ***/
 
+use Bitmotion\Auth0\Utility\ParametersUtility;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
@@ -145,18 +146,7 @@ class EmAuth0Configuration implements SingletonInterface
 
     public function getAdditionalAuthorizeParameters(): array
     {
-        if (empty($this->additionalAuthorizeParameters)) {
-            return [];
-        }
-
-        $additionalParameters = [];
-
-        foreach (explode('&', $this->additionalAuthorizeParameters) as $additionalParameter) {
-            [$key, $value] = explode('=', $additionalParameter, 2);
-            $additionalParameters[trim($key)] = trim($value);
-        }
-
-        return $additionalParameters;
+        return ParametersUtility::transformUrlParameters($this->additionalAuthorizeParameters);
     }
 
     public function isEnableFrontendLogin(): bool

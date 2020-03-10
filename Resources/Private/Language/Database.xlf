@@ -74,6 +74,9 @@
 			<trans-unit id="tt_content.pi_flexform.softLogout">
 				<source>Logout from TYPO3 only (not from Auth0)</source>
 			</trans-unit>
+			<trans-unit id="tt_content.pi_flexform.additionalAuthorizeParameters">
+				<source><![CDATA[Additional Query Parameters: Additional query parameters for backend authentication (e.g. "access_type=offline&connection=google-oauth2")]]></source>
+			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.sheet_redirect">
 				<source>Redirects</source>
 			</trans-unit>
