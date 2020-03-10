@@ -45,8 +45,8 @@ class ApplicationRepository implements LoggerAwareInterface
                 ->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($uid, \PDO::PARAM_INT)));
 
         $this->logger->debug(
-                sprintf('[%s] Executed SELECT query: %s', 'tx_auth0_domain_model_application', $queryBuilder->getSQL())
-            );
+            sprintf('[%s] Executed SELECT query: %s', 'tx_auth0_domain_model_application', $queryBuilder->getSQL())
+        );
 
         $application = $queryBuilder->execute()->fetch();
 
