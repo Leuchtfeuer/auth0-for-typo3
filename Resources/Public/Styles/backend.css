@@ -32,11 +32,10 @@
 	margin: 20px 0;
 }
 
-.auth0-login .btn-auth0 {
+.auth0-login .btn-auth0, .auth0-login .btn-auth0:visited {
 	color: #fff;
 	background-color: #5C666F;
 	border-color: #5C666F;
-	padding: auto 20px;
 }
 
 .auth0-login .btn-auth0:focus, .auth0-login:active .btn-auth0:active, .auth0-login:hover .btn-auth0:hover {

@@ -106,7 +106,6 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
     {
         try {
             $this->configuration = new EmAuth0Configuration();
-
             $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, (int)$this->configuration->getBackendConnection());
             $this->auth0 = $apiUtility->getAuth0(GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
         } catch (\Exception $exception) {
