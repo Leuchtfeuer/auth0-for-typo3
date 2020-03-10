@@ -25,7 +25,7 @@ class MockJwks extends MockApi
      */
     public function setClient(array $guzzleOptions, array $config = [])
     {
-        $cache        = isset( $config['cache'] ) && $config['cache'] instanceof CacheInterface ? $config['cache'] : null;
+        $cache = isset( $config['cache'] ) && $config['cache'] instanceof CacheInterface ? $config['cache'] : null;
         $this->client = new JWKFetcher( $cache, $guzzleOptions );
     }
 }

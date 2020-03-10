@@ -32,7 +32,7 @@
     "typo3/cms-extensionmanager": "^9.5 || ^10.2",
     "typo3/cms-fluid": "^9.5 || ^10.2",
     "typo3/cms-frontend": "^9.5 || ^10.2",
-    "auth0/auth0-php": "^7.0",
+    "auth0/auth0-php": "^7.1",
     "symfony/serializer": "^4.2 || ^5.0",
     "symfony/property-access": "^4.2 || ^5.0",
     "symfony/property-info": "^4.2 || ^5.0",

@@ -49,6 +49,7 @@ return array(
     'Auth0\\SDK\\Helpers\\Tokens\\IdTokenVerifier' => $vendorDir . '/auth0/auth0-php/src/Helpers/Tokens/IdTokenVerifier.php',
     'Auth0\\SDK\\Helpers\\Tokens\\SignatureVerifier' => $vendorDir . '/auth0/auth0-php/src/Helpers/Tokens/SignatureVerifier.php',
     'Auth0\\SDK\\Helpers\\Tokens\\SymmetricVerifier' => $vendorDir . '/auth0/auth0-php/src/Helpers/Tokens/SymmetricVerifier.php',
+    'Auth0\\SDK\\Helpers\\Tokens\\TokenVerifier' => $vendorDir . '/auth0/auth0-php/src/Helpers/Tokens/TokenVerifier.php',
     'Auth0\\SDK\\Helpers\\TransientStoreHandler' => $vendorDir . '/auth0/auth0-php/src/Helpers/TransientStoreHandler.php',
     'Auth0\\SDK\\Store\\CookieStore' => $vendorDir . '/auth0/auth0-php/src/Store/CookieStore.php',
     'Auth0\\SDK\\Store\\EmptyStore' => $vendorDir . '/auth0/auth0-php/src/Store/EmptyStore.php',

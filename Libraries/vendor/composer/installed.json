@@ -1,17 +1,17 @@
 [
     {
         "name": "auth0/auth0-php",
-        "version": "7.0.0",
-        "version_normalized": "7.0.0.0",
+        "version": "7.1.0",
+        "version_normalized": "7.1.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/auth0/auth0-PHP.git",
-            "reference": "ca935c6e1635bed8352f2d7d2e5256bc35cc8ead"
+            "reference": "6e82ad3bec0028af31bf29aa20f340b4c70d86f0"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/auth0/auth0-PHP/zipball/ca935c6e1635bed8352f2d7d2e5256bc35cc8ead",
-            "reference": "ca935c6e1635bed8352f2d7d2e5256bc35cc8ead",
+            "url": "https://api.github.com/repos/auth0/auth0-PHP/zipball/6e82ad3bec0028af31bf29aa20f340b4c70d86f0",
+            "reference": "6e82ad3bec0028af31bf29aa20f340b4c70d86f0",
             "shasum": ""
         },
         "require": {
@@ -29,7 +29,7 @@
             "phpunit/phpunit": "^7.0",
             "squizlabs/php_codesniffer": "^3.2"
         },
-        "time": "2020-01-16T16:54:47+00:00",
+        "time": "2020-02-19T18:18:50+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
