@@ -74,14 +74,14 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
             return;
         }
 
+        $this->prepareView($standaloneView, $pageRenderer);
+
         // Throw error if there is no application
         if (!$this->setAuth0()) {
             $standaloneView->assign('error', 'no_application');
 
             return;
         }
-
-        $this->prepareView($standaloneView, $pageRenderer);
 
         // Try to get user info from session storage
         $store = new SessionStore();
