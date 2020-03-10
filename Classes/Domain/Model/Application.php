@@ -168,7 +168,8 @@ class Application extends AbstractEntity
 
     public function getSignatureAlgorithm(): string
     {
-        return $this->signatureAlgorithm;
+        // TODO: Keep this condition until dropping TYPO3 9 Support
+        return !empty($this->signatureAlgorithm) ? $this->signatureAlgorithm : self::SIGNATURE_RS256;
     }
 
     public function setSignatureAlgorithm(string $signatureAlgorithm): void
