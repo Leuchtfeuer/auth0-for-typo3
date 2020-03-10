@@ -15,12 +15,14 @@ Download this version from the `TYPO3 extension repository <https://extensions.t
 Added
 =====
 
-* Support for TYPO3 v10.2
+* Support for TYPO3 v10.3
 * Additional URL query parameters for Auth0 authentication can now be set
 * Dedicated license file
 * Frontend log in can be disabled
 * Documentation
 * Support for custom domains
+* Support for base64 encoded secrets
+* Allow to change signature algorithm
 * Third parameter :php:`federated` of the method :php:`\Bitmotion\Auth0\Api\Auth0::getLogoutUri()`
 * Application record:
 
@@ -31,7 +33,7 @@ Changed
 =======
 
 * Improved handling of authentication of frontend and backend user
-* Updated Auth0 PHP Library to Version 7.0. Please see the
+* Updated Auth0 PHP Library to Version 7.1. Please see the
   `Migration guide <https://github.com/auth0/auth0-PHP/blob/master/MIGRATE-v5-TO-v7.md>`__ if you use one of these classes
 
 Deprecated
@@ -63,6 +65,34 @@ All Changes
 
 This is a list of all changes in this release::
 
+   2020-03-10 [FEATURE] Introduce compatibility for TYPO3 10.3 (Commit 29d1de9 by Florian Wessels)
+   2020-03-10 [BUGFIX] Prevent signature algorithm from beeing empty (Commit b5ac57d by Florian Wessels)
+   2020-03-10 [TASK] Apply CS (Commit 7dad610 by Florian Wessels)
+   2020-03-10 [BUGFIX] Prepare view prior to sending (Commit 7aa85eb by Florian Wessels)
+   2020-03-10 [TASK] Update auth0/auth0-php to version 7.1.0 (Commit 14dbc79 by Florian Wessels)
+   2020-02-17 [TASK] Mark convertAuth0UserToUserInfo method as deprecated (Commit f5ba9e8 by Florian Wessels)
+   2020-02-17 [TASK] Use proper variable name (Commit 5f45600 by Florian Wessels)
+   2020-02-14 [TASK] Add docs link to composer file (Commit f5fc949 by Florian Wessels)
+   2020-02-14 [BUGFIX] Correct spelling (Commit 2bc3503 by Florian Wessels)
+   2020-02-14 [FEATURE] Allow federated log off (Commit eb3244c by Florian Wessels)
+   2020-02-14 [TASK] Do not handle application as array (Commit 6e589b6 by Florian Wessels)
+   2020-02-14 [FEATURE] Support custom domains (Commit ed3cd72 by Florian Wessels)
+   2020-02-04 [DOC] Update documentation structure (Commit 15edddd by Florian Wessels)
+   2020-02-04 [TASK] Update example (Commit a83fe44 by Florian Wessels)
+   2020-02-03 [TASK] Exclude tests for TYPO3 9 and PHP 7.4 (Commit dbd8e06 by Florian Wessels)
+   2020-02-03 [BUGFIX] Fix tests (Commit c5ce8f3 by Florian Wessels)
+   2020-02-03 [WIP] Fix automated testing (Commit 8db26e3 by Florian Wessels)
+   2020-02-03 [WIP] Fix automated testing (Commit c4b631a by Florian Wessels)
+   2020-02-03 [TASK] Update .gitattributes file (Commit eac0b09 by Florian Wessels)
+   2020-02-03 [DOC] Do not glob toctree (Commit f5ed0a1 by Florian Wessels)
+   2020-02-03 [DOC] Add toctrees on subpages (Commit 3b681ac by Florian Wessels)
+   2020-02-03 [DOC] Add some kind of roadmap (Commit c4376f2 by Florian Wessels)
+   2020-02-02 [FEATURE] Allow to choose signature algorithm (Commit bc9a0c2 by Florian Wessels)
+   2020-02-02 [FEATURE] Allow base64 encoded secrets (Commit debc2b2 by Florian Wessels)
+   2020-02-02 [TASK] Update auth0/auth0-php to version 7 (Commit a12e6eb by Florian Wessels)
+   2020-02-02 [TASK] Add support for TYPO3 10.2 (Commit 85619d2 by Florian Wessels)
+   2020-02-01 [DOC] Update changelog (Commit 962786c by Florian Wessels)
+   2020-02-01 [WIP] Add documentation (Commit e74046a by Florian Wessels)
    2020-02-01 [TASK] Apply CS (Commit 646a345 by Florian Wessels)
    2020-02-01 [TASK] Use TYPO3 core php_cs configuration (Commit 86401fc by Florian Wessels)
    2020-02-01 [TASK] Add void return type (Commit 46a3939 by Florian Wessels)
