@@ -119,6 +119,11 @@
 			<trans-unit id="tt_content.pi_flexform.redirectDisable">
 				<source>Disable Redirect</source>
 			</trans-unit>
+
+
+			<trans-unit id="backend.page.view.additionalAuthorizeParameters">
+				<source>Authorize Parameters</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
