@@ -8,6 +8,12 @@ Extension Configuration
 
 All configuration is made in the "Extension Configuration" section of the "Settings" module beneath the "Admin Tools".
 
+.. image:: ../../Images/extension-configuration.png
+   :alt: Extension Configuration
+   :class: with-shadow
+
+   The extension configuration can be found in the admin tools.
+
 Properties
 ==========
 
