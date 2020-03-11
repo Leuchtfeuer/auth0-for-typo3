@@ -40,16 +40,16 @@
 							</config>
 						</TCEforms>
 					</settings.softLogout>
-					<settings.additionalAuthorizeParameters>
+					<settings.rawAdditionalAuthorizeParameters>
 						<TCEforms>
-							<label>LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.additionalAuthorizeParameters</label>
+							<label>LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.rawAdditionalAuthorizeParameters</label>
 							<config>
 								<type>input</type>
 								<size>30</size>
 								<eval>trim</eval>
 							</config>
 						</TCEforms>
-					</settings.additionalAuthorizeParameters>
+					</settings.rawAdditionalAuthorizeParameters>
 				</el>
 			</ROOT>
 		</sDEF>
