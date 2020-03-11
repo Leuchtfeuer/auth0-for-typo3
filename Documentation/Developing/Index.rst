@@ -14,7 +14,8 @@ You can easily access the data of the current logged in user by calling the foll
    $userInfo = $sessionStore->get('user');
 
 
-User metadata is also stored as plain JSON in the TYPO3 fe_user field `auth0_metadata`.
+User metadata is also stored as plain JSON in the TYPO3 fe_user field `auth0_metadata`. Beside of that, the last used application
+is stored in the `auth0_last_application` property of the fe_user.
 
 If you want to enrich the user metadata or remove some information, you can do it this way:
 

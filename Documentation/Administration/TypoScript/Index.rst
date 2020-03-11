@@ -7,7 +7,7 @@ TypoScript
 ==========
 
 Templating
-----------
+==========
 
 Set alternative Layout/Template/Partial path individually to use your own Fluid templates. There are some TypoScript
 constants which you can simply override:
@@ -22,7 +22,7 @@ constants which you can simply override:
 
 
 Backend Login
-~~~~~~~~~~~~~
+-------------
 
 You have also the option to use your own template files for the backend login. Just adapt the following TypoScript constants:
 
@@ -34,11 +34,11 @@ You have also the option to use your own template files for the backend login. J
        stylesheet = EXT:your_key/Resources/Public/Styles/Backend.css
    }
 
-Please make also sure that you configure the roles__ from Auth0 roles to TYPO3 user groups. Maybe you also want to set the admin
-flag for backend users, depending on an Auth0 properties__.
+Please make also sure that you configure the role-mapping__ from Auth0 roles to TYPO3 user groups. Maybe you also want to set the admin
+flag for backend users, depending on an Auth0 property-mapping__.
 
 Login Behaviour
----------------
+===============
 
 Configure whether disabled or deleted frontend or backend users should be able to login by adapting the following TypoScript
 constants:
@@ -63,14 +63,44 @@ constants:
        }
    }
 
-Mapping
--------
+Frontend Settings
+=================
 
-Roles
-~~~~~
+You can configure generic logon and logoff URLs for your system so that the number of callbacks to be configured in Auth0 remains
+manageable. You can specify individual page IDs and page types for login and logout. The configuration can be done with the
+following TypoScript constants:
+
+.. code-block:: typoscript
+
+   plugin.tx_auth0.settings.frontend {
+      callback {
+         targetPageType = 1547536919
+         targetPageUid = 1
+      }
+
+      logout {
+         targetPageType = 0
+         targetPageUid = 1
+      }
+   }
+
+It is also possible to append additional parameters to the Auth0 login URL. For example, you can preselect a specific connection
+or open the registration tab (instead of the login tab). This can be implemented by the following TypoScript setup:
+
+.. code-block:: typoscript
+
+   plugin.tx_auth0.settings.frontend.login.additionalAuthorizeParameters {
+      # key = value
+      login_hint = You will log in to our shop system.
+      connection = google-oauth2
+   }
+
+
+Role Mapping
+============
 
 Configure `fe_groups` and `be_groups` mappings to match Auth0 roles. Use the Auth0 role identifier as key and the TYPO3 frontend
-or backend user group ID as value.
+or backend user group ID as value. These settings must be made in your TypoScript setup (not constants).
 
 Keep in mind, that there is one special option for backend users: You can set the admin flag by assigning the value `admin` to
 an Auth0 role.
@@ -93,16 +123,18 @@ an Auth0 role.
        }
    }
 
-Properties
-~~~~~~~~~~
+Property Mapping
+================
 
 Auth0 properties can be mapped to existing properties of TYPO3 backend or frontend users. You can configure this mapping via
 TypoScript. In this case, the key is the name of the TYPO3 database column and the value is the field key of the Auth0 user.
 
 You can access the `user_metadata` or `app_metadata` values via dot syntax. Using the same way you can access arrays or objects
-within the metadata property (e.g. `user_metadata.address.primary.zip`).
+within the metadata property (e.g. `user_metadata.address.primary.zip`).  These settings must be made in your TypoScript setup
+(not constants).
 
 .. code-block:: typoscript
+
    plugin.tx_auth0.settings.propertyMapping {
        be_users {
            username = nickname
@@ -134,7 +166,7 @@ within the metadata property (e.g. `user_metadata.address.primary.zip`).
    }
 
 Parsing Functions
-"""""""""""""""""
+-----------------
 
 Parsing functions (parseFunc) are used to change properties before they are persisted in the database.
 

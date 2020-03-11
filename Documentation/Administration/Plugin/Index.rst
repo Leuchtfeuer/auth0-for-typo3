@@ -12,7 +12,16 @@ new content element.
 Configuration
 =============
 
-In general there are two configurations you have to care about. First of all, you need to select one Auth0 application you want to
-communicate with. Afterwards you can configure where the user should be redirected to. The configuration of that is similar to the
-standard TYPO3 frontend login form plugin. Please take a look into the official TYPO3
-`documentation <https://docs.typo3.org/typo3cms/extensions/felogin/LoginMechanism/RedirectModes/Index.html>`__ for more details.
+In general there is only one configuration you have to care about: the Auth0 application you want to communicate with. Besides of
+that, you can configure whether the user should be logged off from your TYPO3 instance only (soft log out), or if be logged off
+from Auth0, too (single log out). Furthermore you can configure some additional URL query parameters for the authentication
+(e.g: :code:`mode=signUp` or :code:`access_type=offline&connection=google-oauth2`. This setting will overwrite your TypoScript
+setting :typoscript:`plugin.tx_auth0.settings.login.additionalAuthorizeParameters`.
+
+Redirects
+=========
+
+You can configure where the user should be redirected to. The configuration of that is similar to the
+standard TYPO3 frontend login form plugin. Please take a look into the official
+`TYPO3 documentation <https://docs.typo3.org/typo3cms/extensions/felogin/LoginMechanism/RedirectModes/Index.html>`__ for further
+details.
