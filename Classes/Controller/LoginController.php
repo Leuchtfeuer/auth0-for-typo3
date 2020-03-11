@@ -13,6 +13,7 @@ namespace Bitmotion\Auth0\Controller;
  *
  ***/
 
+use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Api\Auth0;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
@@ -67,7 +68,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
      * @throws InvalidApplicationException
      * @throws StopActionException
      * @throws UnsupportedRequestTypeException
-     * @throws \Auth0\SDK\Exception\ApiException
+     * @throws ApiException
      */
     public function formAction(): void
     {
@@ -186,7 +187,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
      */
     protected function getAuth0(): Auth0
     {
-        if ($this->auth0 !== null) {
+        if ($this->auth0 instanceof Auth0) {
             return $this->auth0;
         }
 
@@ -200,8 +201,9 @@ class LoginController extends ActionController implements LoggerAwareInterface
             ->addArgument('referrer', $referrer)
             ->setCallback((int)$callbackSettings['targetPageUid'], (int)$callbackSettings['targetPageType'])
             ->getUri();
+        $this->auth0 = $apiUtility->getAuth0($redirectUri);
 
-        return $apiUtility->getAuth0($redirectUri);
+        return $this->auth0;
     }
 
     protected function addLogoutRedirect(): string
