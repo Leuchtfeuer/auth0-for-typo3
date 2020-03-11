@@ -4,12 +4,12 @@ namespace Bitmotion\Auth0\Tests\Functional\Api;
 
 /***
  *
- * This file is part of the "Auth0 for TYPO3" Extension for TYPO3 CMS.
+ * This file is part of the "Auth0" extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  *
- *  (c) 2018 Florian Wessels <f.wessels@bitmotion.de>, Bitmotion GmbH
+ *  (c) 2018 Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  *
  ***/
 
@@ -57,7 +57,7 @@ class TenantTest extends Auth0TestCase
      */
     public function update(TenantApi $tenantApi): void
     {
-        $newAddress = 'support+' . time() . '@bitmotion.de';
+        $newAddress = 'support+' . time() . '@Leuchtfeuer.com';
         $tenant = $tenantApi->get();
         $tenant->setSupportEmail($newAddress);
 

@@ -19,10 +19,10 @@ Auth0 for TYPO3
    2018-2020
 
 :Authors:
-   Florian Wessels, Bitmotion GmbH
+   Florian Wessels, Leuchtfeuer Digital Marketing
 
 :Email:
-   typo3-ext@bitmotion.de
+   dev@Leuchtfeuer.com
 
 :License:
    This extension documentation is published under the

@@ -14,15 +14,15 @@
   "authors": [
     {
       "name": "Florian Wessels",
-      "email": "f.wessels@bitmotion.de",
+      "email": "f.wessels@Leuchtfeuer.com",
       "role": "Developer",
-      "homepage": "https://www.bitmotion.de"
+      "homepage": "https://www.Leuchtfeuer.com"
     }
   ],
   "support": {
     "issues": "https://github.com/bitmotion/auth0-for-typo3/issues",
     "source": "https://github.com/bitmotion/auth0-for-typo3",
-    "email": "typo3-ext@bitmotion.de",
+    "email": "dev@Leuchtfeuer.com",
     "docs": "https://docs.typo3.org/p/bitmotion/auth0/master/en-us/"
   },
   "require": {
