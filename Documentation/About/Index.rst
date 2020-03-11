@@ -11,9 +11,9 @@ This extension allows you to log on to a TYPO3 front- or backend with `Auth0 <ht
 Requirements
 ============
 
-You need access to an [Auth0](https://auth0.com/) instance. We are currently supporting following TYPO3 versions:
+You need access to an Auth0 instance. We are currently supporting following TYPO3 versions:
 
-.. table::
+.. table:: Version Matrix
    :align: left
 
    ================= ================== =============== ===============

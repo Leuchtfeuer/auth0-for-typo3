@@ -22,7 +22,7 @@ from Auth0, too (single log out). Furthermore you can configure some additional 
 (e.g: :code:`mode=signUp` or :code:`access_type=offline&connection=google-oauth2`. This setting will overwrite your TypoScript
 setting :typoscript:`plugin.tx_auth0.settings.frontend.login.additionalAuthorizeParameters`.
 
-.. image:: ../../Images/plugin-configuration-general.png
+.. figure:: ../../Images/plugin-configuration-general.png
    :alt: General Plugin Configuration
    :class: with-shadow
 
