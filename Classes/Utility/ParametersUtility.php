@@ -15,7 +15,7 @@ namespace Bitmotion\Auth0\Utility;
 
 class ParametersUtility
 {
-    public static function transformUrlParameters(string $url): array
+    public static function transformUrlParameters(?string $url): array
     {
         if (empty($url)) {
             return [];
