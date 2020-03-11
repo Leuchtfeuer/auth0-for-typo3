@@ -67,14 +67,6 @@ class LoginController extends ActionController implements LoggerAwareInterface
      * @throws InvalidApplicationException
      * @throws StopActionException
      * @throws UnsupportedRequestTypeException
-     */
-
-    /**
-     * @throws AspectNotFoundException
-     * @throws CoreException
-     * @throws InvalidApplicationException
-     * @throws StopActionException
-     * @throws UnsupportedRequestTypeException
      * @throws \Auth0\SDK\Exception\ApiException
      */
     public function formAction(): void
