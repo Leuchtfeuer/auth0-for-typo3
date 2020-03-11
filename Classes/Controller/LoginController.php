@@ -40,6 +40,8 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
     protected $errorDescription = '';
 
+    protected $auth0;
+
     /**
      * @throws InvalidConfigurationTypeException
      */
@@ -165,6 +167,10 @@ class LoginController extends ActionController implements LoggerAwareInterface
      */
     protected function getAuth0(): Auth0
     {
+        if ($this->auth0 !== null) {
+            return $this->auth0;
+        }
+
         $callbackSettings = $this->settings['frontend']['callback'] ?? [];
         $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, (int)$this->settings['application']);
         $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
