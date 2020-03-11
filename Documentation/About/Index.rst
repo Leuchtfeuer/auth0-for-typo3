@@ -8,21 +8,19 @@ About
 
 This extension allows you to log on to a TYPO3 front- or backend with `Auth0 <https://auth0.com/>`__.
 
-Requirements
-============
+Compatibility
+=============
 
 You need access to an Auth0 instance. We are currently supporting following TYPO3 versions:
 
-.. table:: Version Matrix
+.. csv-table:: Version Matrix
+   :header: "Extension Version", "TYPO3 10.3 Support", "TYPO3 9 Support", "TYPO3 8 Support"
    :align: left
 
-   ================= ================== =============== ===============
-   Extension Version TYPO3 10.3 Support TYPO3 9 Support TYPO3 8 Support
-   ================= ================== =============== ===============
-   3.1.x             x                  x               -
-   3.0.x             -                  x               -
-   2.x               -                  x               -
-   1.x               -                  -               x
+        "3.1.x", "x", "x", "-"
+        "3.0.x", "-", "x", "-"
+        "2.x", "-", "x", "-"
+        "1.x", "-", "-", "x"
 
 
 About Auth0
