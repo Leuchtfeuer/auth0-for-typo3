@@ -131,7 +131,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
      * @throws StopActionException
      * @throws UnsupportedRequestTypeException
      */
-    public function loginAction(): void
+    public function loginAction(?string $rawAdditionalAuthorizeParameters = null): void
     {
         $context = GeneralUtility::makeInstance(Context::class);
         $typo3User = $context->getPropertyFromAspect('frontend.user', 'id');

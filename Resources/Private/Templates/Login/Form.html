@@ -16,7 +16,8 @@
 			</f:link.action>
 		</f:then>
 		<f:else>
-			<f:link.action action="login" class="btn btn-block btn-primary">
+			<f:link.action action="login" arguments="{rawAdditionalAuthorizeParameters: settings.rawAdditionalAuthorizeParameters}"
+			               class="btn btn-block btn-primary">
 				<f:translate key="plugin.login.login" />
 			</f:link.action>
 		</f:else>

@@ -36,11 +36,22 @@ class PageLayoutViewHook
         $content = '';
 
         if (!empty($this->flexFormData)) {
-            $content = '<strong>';
-            $content .= $this->getLanguageService()->sL('LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_application');
-            $content .= ':';
-            $content .= '</strong>';
-            $content .= '<span style="padding-left: 15px">' . $this->getApplicationName() . '</span>';
+            $content = sprintf(
+                '<strong>%s</strong><span style="padding-left: 15px">%s</span><br/>',
+                $this->getLanguageService()->sL('LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_application'),
+                $this->getApplicationName()
+            );
+
+            if (isset($this->flexFormData['data']['sDEF']['lDEF']['settings.rawAdditionalAuthorizeParameters'])) {
+                $additionalAuthorizeParameters = $this->flexFormData['data']['sDEF']['lDEF']['settings.rawAdditionalAuthorizeParameters']['vDEF'];
+                if (!empty($additionalAuthorizeParameters)) {
+                    $content .= sprintf(
+                        '<strong>%s</strong><span style="padding-left: 15px">%s</span><br/>',
+                        $this->getLanguageService()->sL('LLL:EXT:auth0/Resources/Private/Language/Database.xlf:backend.page.view.additionalAuthorizeParameters'),
+                        $additionalAuthorizeParameters
+                    );
+                }
+            }
         }
 
         return $header . $content;
