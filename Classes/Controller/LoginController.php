@@ -14,7 +14,6 @@ namespace Bitmotion\Auth0\Controller;
  ***/
 
 use Auth0\SDK\Exception\CoreException;
-use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\Auth0;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
@@ -26,6 +25,8 @@ use Bitmotion\Auth0\Utility\RoutingUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -61,23 +62,38 @@ class LoginController extends ActionController implements LoggerAwareInterface
     }
 
     /**
-     * @throws \Exception
+     * @throws AspectNotFoundException
      * @throws CoreException
      * @throws InvalidApplicationException
+     * @throws StopActionException
+     * @throws UnsupportedRequestTypeException
+     */
+
+    /**
+     * @throws AspectNotFoundException
+     * @throws CoreException
+     * @throws InvalidApplicationException
+     * @throws StopActionException
+     * @throws UnsupportedRequestTypeException
+     * @throws \Auth0\SDK\Exception\ApiException
      */
     public function formAction(): void
     {
-        $feUserAuthentication = $GLOBALS['TSFE']->fe_user;
+        $context = GeneralUtility::makeInstance(Context::class);
+        $typo3User = $context->getPropertyFromAspect('frontend.user', 'id');
         $redirectService = GeneralUtility::makeInstance(RedirectService::class, $this->settings);
 
-        if ($feUserAuthentication->user !== null) {
+        if ($typo3User > 0) {
             // Get Auth0 user from session storage
-            // ToDo: User Auth0->getUser() instead.
-            $sessionStore = new SessionStore();
-            $userInfo = $sessionStore->get('user');
+            try {
+                $auth0User = $this->getAuth0()->getUser();
+            } catch (\Exception $exception) {
+                $this->logger->warning(sprintf('%s: %s', $exception->getCode(), $exception->getMessage()));
+                $auth0User = null;
+            }
 
             // Redirect when user just logged in (and update him)
-            if (GeneralUtility::_GET('logintype') === 'login' && $userInfo !== null) {
+            if (GeneralUtility::_GET('logintype') === 'login' && $auth0User !== null) {
                 if (!empty(GeneralUtility::_GP('referrer'))) {
                     $this->logger->notice('Handle referrer redirect prior to updating user.');
                     $redirectService->forceRedirectByReferrer(['logintype' => 'login']);
@@ -107,6 +123,9 @@ class LoginController extends ActionController implements LoggerAwareInterface
     }
 
     /**
+     * @param string $rawAdditionalAuthorizeParameters
+     *
+     * @throws AspectNotFoundException
      * @throws CoreException
      * @throws InvalidApplicationException
      * @throws StopActionException
@@ -114,16 +133,24 @@ class LoginController extends ActionController implements LoggerAwareInterface
      */
     public function loginAction(): void
     {
-        // Get Auth0 user from session storage
-        // ToDo: User Auth0->getUser() instead.
-        $store = new SessionStore();
-        $userInfo = $store->get('user');
-        $feUserAuthentication = $GLOBALS['TSFE']->fe_user;
+        $context = GeneralUtility::makeInstance(Context::class);
+        $typo3User = $context->getPropertyFromAspect('frontend.user', 'id');
+        $auth0 = $this->getAuth0();
 
-        if ($userInfo === null || $feUserAuthentication->user === null) {
-            $this->logger->notice('Try to login user to Auth0.');
-            $additionalParams = !empty($this->settings['additionalAuthorizeParameters']) ? ParametersUtility::transformUrlParameters($this->settings['additionalAuthorizeParameters']) : null;
-            $this->getAuth0()->login(null, null, $additionalParams ?? $this->settings['frontend']['login']['additionalAuthorizeParameters'] ?? []);
+        try {
+            $auth0User = $auth0->getUser();
+        } catch (\Exception $exception) {
+            $this->logger->warning(sprintf('%s: %s', $exception->getCode(), $exception->getMessage()));
+            $auth0User = null;
+        }
+
+        if ($auth0User === null || $typo3User === 0) {
+            $additionalAuthorizeParameters = !empty($rawAdditionalAuthorizeParameters)
+                ? ParametersUtility::transformUrlParameters($rawAdditionalAuthorizeParameters)
+                : $this->settings['frontend']['login']['additionalAuthorizeParameters'] ?? [];
+
+            $this->logger->notice('Try to login user.');
+            $auth0->login(null, null, $additionalAuthorizeParameters);
         }
 
         $this->redirect('form');
