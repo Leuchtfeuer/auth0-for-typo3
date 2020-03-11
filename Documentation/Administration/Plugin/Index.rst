@@ -16,7 +16,7 @@ In general there is only one configuration you have to care about: the Auth0 app
 that, you can configure whether the user should be logged off from your TYPO3 instance only (soft log out), or if be logged off
 from Auth0, too (single log out). Furthermore you can configure some additional URL query parameters for the authentication
 (e.g: :code:`mode=signUp` or :code:`access_type=offline&connection=google-oauth2`. This setting will overwrite your TypoScript
-setting :typoscript:`plugin.tx_auth0.settings.login.additionalAuthorizeParameters`.
+setting :typoscript:`plugin.tx_auth0.settings.frontend.login.additionalAuthorizeParameters`.
 
 Redirects
 =========
