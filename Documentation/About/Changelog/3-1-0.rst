@@ -1,7 +1,7 @@
 ﻿.. include:: ../../Includes.txt
 
 ==========================
-Version 3.1.0 - TBA
+Version 3.1.0 - 2020/03/11
 ==========================
 
 This is a future release. The release is planned for the first quarter of 2020.
@@ -65,6 +65,28 @@ All Changes
 
 This is a list of all changes in this release::
 
+   2020-03-11 [DOC] Use CSV-Table (Commit dad92c0 by Florian Wessels)
+   2020-03-11 [DOC][BUGFIX] Fix syntax errors (Commit 182d653 by Florian Wessels)
+   2020-03-11 [DOC] Add screenshots (Commit 90ff6bc by Florian Wessels)
+   2020-03-11 [DOC][BUGFIX] Use porper TypoScript path (Commit c51271f by Florian Wessels)
+   2020-03-11 [DOC] Add version matrix (Commit 4b66528 by Florian Wessels)
+   2020-03-11 [TASK] Use 10.3 as TYPO3 version in automated tests (Commit 994c66a by Florian Wessels)
+   2020-03-11 [DOC] Add missing documentation (Commit 3f04ec7 by Florian Wessels)
+   2020-03-11 [TASK] Update copyright and author information (Commit 5487ec2 by Florian Wessels)
+   2020-03-11 [TASK] Add todo for deprecated Commands.php (Commit c18c12b by Florian Wessels)
+   2020-03-11 [FOLLOW-UP] Do only instantiate Auth0 once (Commit f5546d4 by Florian Wessels)
+   2020-03-11 [CLEAN-UP] Remove unused code block (Commit 17ac8ac by Florian Wessels)
+   2020-03-11 [TASK] Update label (Commit 643bcc9 by Florian Wessels)
+   2020-03-11 [TASK] Rename parameter (Commit adac583 by Florian Wessels)
+   2020-03-11 [FEATURE] Allow to set additional authorize parameters via argument (Commit 7026c37 by Florian Wessels)
+   2020-03-11 [TASK] Do not use TSFE global (Commit 2de8515 by Florian Wessels)
+   2020-03-11 [BUGFIX] Allow null values (Commit 7e093ca by Florian Wessels)
+   2020-03-11 [TASK] Do only instantiate Auth0 once (Commit 8f8a69b by Florian Wessels)
+   2020-03-10 [FOLLOW-UP] Allow to override additional authorize parameters by plug in (Commit 97dac87 by Florian Wessels)
+   2020-03-10 [TASK] Modify checkbox appearance (Commit 68ebad5 by Florian Wessels)
+   2020-03-10 [FEATURE] Allow to override additional authorize parameters by plug in (Commit 3431cb0 by Florian Wessels)
+   2020-03-10 [FOLLOW-UP] Introduce compatibility for TYPO3 10.3 (Commit 3de1ef8 by Florian Wessels)
+   2020-03-10 [DOC] Update changelog (Commit 421879c by Florian Wessels)
    2020-03-10 [FEATURE] Introduce compatibility for TYPO3 10.3 (Commit 29d1de9 by Florian Wessels)
    2020-03-10 [BUGFIX] Prevent signature algorithm from beeing empty (Commit b5ac57d by Florian Wessels)
    2020-03-10 [TASK] Apply CS (Commit 7dad610 by Florian Wessels)

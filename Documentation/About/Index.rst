@@ -15,7 +15,7 @@ You need access to an Auth0 instance. We are currently supporting following TYPO
 
 .. csv-table:: Version Matrix
    :header: "Extension Version", "TYPO3 10.3 Support", "TYPO3 9 Support", "TYPO3 8 Support"
-   :align: left
+   :align: center
 
         "3.1.x", "x", "x", "-"
         "3.0.x", "-", "x", "-"
