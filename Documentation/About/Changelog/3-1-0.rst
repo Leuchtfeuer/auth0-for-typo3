@@ -10,7 +10,7 @@ Download
 ========
 
 Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
-`GitHub <https://github.com/bitmotion/auth0-for-typo3/releases/tag/3.1.0>`__.
+`GitHub <https://github.com/bitmotion/auth0-for-typo3/releases/tag/v3.1.0>`__.
 
 Added
 =====
@@ -65,6 +65,7 @@ All Changes
 
 This is a list of all changes in this release::
 
+   2020-03-11 [RELEASE] Release of version 3.1.0 (Commit 15c2e7c by Florian Wessels)
    2020-03-11 [DOC] Use CSV-Table (Commit dad92c0 by Florian Wessels)
    2020-03-11 [DOC][BUGFIX] Fix syntax errors (Commit 182d653 by Florian Wessels)
    2020-03-11 [DOC] Add screenshots (Commit 90ff6bc by Florian Wessels)
@@ -88,7 +89,7 @@ This is a list of all changes in this release::
    2020-03-10 [FOLLOW-UP] Introduce compatibility for TYPO3 10.3 (Commit 3de1ef8 by Florian Wessels)
    2020-03-10 [DOC] Update changelog (Commit 421879c by Florian Wessels)
    2020-03-10 [FEATURE] Introduce compatibility for TYPO3 10.3 (Commit 29d1de9 by Florian Wessels)
-   2020-03-10 [BUGFIX] Prevent signature algorithm from beeing empty (Commit b5ac57d by Florian Wessels)
+   2020-03-10 [BUGFIX] Prevent signature algorithm from being empty (Commit b5ac57d by Florian Wessels)
    2020-03-10 [TASK] Apply CS (Commit 7dad610 by Florian Wessels)
    2020-03-10 [BUGFIX] Prepare view prior to sending (Commit 7aa85eb by Florian Wessels)
    2020-03-10 [TASK] Update auth0/auth0-php to version 7.1.0 (Commit 14dbc79 by Florian Wessels)
