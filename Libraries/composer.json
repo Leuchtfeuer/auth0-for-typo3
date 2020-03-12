@@ -10,6 +10,7 @@
     "symfony/serializer": "^4.2",
     "symfony/property-access": "^4.2",
     "symfony/property-info": "^4.2",
-    "symfony/http-foundation": "^4.2"
+    "symfony/http-foundation": "^4.2",
+    "guzzlehttp/guzzle": "6.4.1"
   }
 }
