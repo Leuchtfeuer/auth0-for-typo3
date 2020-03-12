@@ -1,0 +1,23 @@
+.. include:: ../../Includes.txt
+
+==========================
+Version 3.1.1 - TBA
+==========================
+
+This release is a bug fix release and is only valid for non-composer setups. It contains bug fixes only.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/bitmotion/auth0-for-typo3/releases/tag/v3.1.1>`__.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+   2016-07-22 [RELEASE] Release version 2.0.1 (Commit b4a8ba4 by Florian Wessels)
+   2016-07-22 [TASK] Convert documentation to odt (Commit 5eab1ac by Florian Wessels)
+   2016-07-21 Merge pull request #2 from helhum/patch-1 (Commit 4e9fe1b by Florian Wessels)
+   2016-07-21 [!!!][TASK] Fix and streamline composer.json (Commit 5f433cf by Helmut Hummel)
