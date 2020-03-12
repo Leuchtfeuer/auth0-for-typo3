@@ -17,7 +17,7 @@ All Changes
 
 This is a list of all changes in this release::
 
-   2016-07-22 [RELEASE] Release version 2.0.1 (Commit b4a8ba4 by Florian Wessels)
-   2016-07-22 [TASK] Convert documentation to odt (Commit 5eab1ac by Florian Wessels)
-   2016-07-21 Merge pull request #2 from helhum/patch-1 (Commit 4e9fe1b by Florian Wessels)
-   2016-07-21 [!!!][TASK] Fix and streamline composer.json (Commit 5f433cf by Helmut Hummel)
+   2020-03-12 [DOC] Add change log for future version 3.1.1 (Commit fd08f03 by Florian Wessels)
+   2020-03-12 [TASK] Update release notes (Commit 11dd943 by Florian Wessels)
+   2020-03-12 [TASK] Set version to 3.1.1-dev (Commit 7d7389f by Florian Wessels)
+   2020-03-12 [BUGFIX] Downgrade guzzlehttp/guzzle (Commit eb33ba6 by Florian Wessels)
