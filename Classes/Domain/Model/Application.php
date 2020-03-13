@@ -13,13 +13,20 @@ namespace Bitmotion\Auth0\Domain\Model;
  *
  ***/
 
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Client\JwtConfiguration;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 class Application extends AbstractEntity
 {
-    public const SIGNATURE_HS256 = 'HS256';
+    /**
+     * @deprecated Use JwtConfiguration::ALG_HS256 instead
+     */
+    public const SIGNATURE_HS256 = JwtConfiguration::ALG_HS256;
 
-    public const SIGNATURE_RS256 = 'RS256';
+    /**
+     * @deprecated Use JwtConfiguration::ALG_RS256 instead
+     */
+    public const SIGNATURE_RS256 = JwtConfiguration::ALG_RS256;
 
     /**
      * @var string
@@ -59,7 +66,7 @@ class Application extends AbstractEntity
     /**
      * @var string
      */
-    protected $signatureAlgorithm = self::SIGNATURE_RS256;
+    protected $signatureAlgorithm = JwtConfiguration::ALG_RS256;
 
     /**
      * @var bool
@@ -169,7 +176,7 @@ class Application extends AbstractEntity
     public function getSignatureAlgorithm(): string
     {
         // TODO: Keep this condition until dropping TYPO3 9 Support
-        return !empty($this->signatureAlgorithm) ? $this->signatureAlgorithm : self::SIGNATURE_RS256;
+        return !empty($this->signatureAlgorithm) ? $this->signatureAlgorithm : JwtConfiguration::ALG_RS256;
     }
 
     public function setSignatureAlgorithm(string $signatureAlgorithm): void

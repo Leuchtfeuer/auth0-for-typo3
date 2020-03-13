@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-use Bitmotion\Auth0\Domain\Model\Application;
+use Bitmotion\Auth0\Domain\Model\Auth0\Management\Client\JwtConfiguration;
 
 return [
     'ctrl' => [
@@ -137,10 +137,10 @@ return [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'items' => [
-                    [ Application::SIGNATURE_RS256, Application::SIGNATURE_RS256 ],
-                    [ Application::SIGNATURE_HS256, Application::SIGNATURE_HS256 ],
+                    [ JwtConfiguration::ALG_RS256, JwtConfiguration::ALG_RS256 ],
+                    [ JwtConfiguration::ALG_HS256, JwtConfiguration::ALG_HS256 ],
                 ],
-                'default' => Application::SIGNATURE_RS256,
+                'default' => JwtConfiguration::ALG_RS256,
             ],
         ]
     ],

@@ -4,13 +4,19 @@
 Version 3.1.1 - TBA
 ==========================
 
-This release is a bug fix release and is only valid for non-composer setups. It contains bug fixes only.
+This release is a bug fix release and is only valid for non-composer setups.
 
 Download
 ========
 
 Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
 `GitHub <https://github.com/bitmotion/auth0-for-typo3/releases/tag/v3.1.1>`__.
+
+Deprecated
+==========
+
+* The signature constants of domain model `Application` are deprecated. You can use the constants of transfer object
+`JwtConfiguration` instead.
 
 All Changes
 ===========
