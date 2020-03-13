@@ -1,10 +1,10 @@
 .. include:: ../../Includes.txt
 
 ==========================
-Version 3.1.1 - TBA
+Version 3.1.1 - 2020/03/13
 ==========================
 
-This release is a bug fix release and is only valid for non-composer setups.
+This release is a bug fix release which fixes issues regarding non-composer setups.
 
 Download
 ========
@@ -23,6 +23,8 @@ All Changes
 
 This is a list of all changes in this release::
 
+   2020-03-13 [TASK] Mark constants of application model as deprecated (Commit 4c1b34e by Florian Wessels)
+   2020-03-12 [DOC] Update list of commits (Commit d669e63 by Florian Wessels)
    2020-03-12 [DOC] Add change log for future version 3.1.1 (Commit fd08f03 by Florian Wessels)
    2020-03-12 [TASK] Update release notes (Commit 11dd943 by Florian Wessels)
    2020-03-12 [TASK] Set version to 3.1.1-dev (Commit 7d7389f by Florian Wessels)
