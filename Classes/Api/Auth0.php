@@ -16,6 +16,7 @@ namespace Bitmotion\Auth0\Api;
 use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
+use Bitmotion\Auth0\Factory\SessionFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Auth0 extends \Auth0\SDK\Auth0
@@ -67,6 +68,7 @@ class Auth0 extends \Auth0\SDK\Auth0
             'redirect_uri' => $redirectUri,
             'scope' => $scope,
             'secret_base64_encoded' => $application->isSecretBase64Encoded(),
+            'store' => (new SessionFactory())->getSessionStoreForApplication($applicationId),
         ];
 
         parent::__construct(array_merge($config, $additionalOptions));

@@ -44,6 +44,8 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
     protected $auth0;
 
+    protected $application = 0;
+
     /**
      * @throws InvalidConfigurationTypeException
      */
@@ -60,6 +62,8 @@ class LoginController extends ActionController implements LoggerAwareInterface
         if (!empty(GeneralUtility::_GET('error_description'))) {
             $this->errorDescription = htmlspecialchars((string)GeneralUtility::_GET('error_description'));
         }
+
+        $this->application = (int)($this->settings['application'] ?? GeneralUtility::_GET('application'));
     }
 
     /**
