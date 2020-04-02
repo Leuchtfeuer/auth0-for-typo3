@@ -17,6 +17,7 @@ use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Api\Auth0;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
+use Bitmotion\Auth0\ErrorCode;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\Service\RedirectService;
@@ -100,8 +101,8 @@ class LoginController extends ActionController implements LoggerAwareInterface
         }
 
         // Force redirect due to Auth0 sign up or log in errors
-        // TODO: Extend this to other error codes
-        if (!empty(GeneralUtility::_GET('referrer')) && $this->error === Auth0::ERROR_UNAUTHORIZED) {
+        $validErrorCodes = (new \ReflectionClass(ErrorCode::class))->getConstants();
+        if (!empty(GeneralUtility::_GET('referrer')) && in_array($this->error, $validErrorCodes)) {
             $this->logger->notice('Handle referrer redirect because of Auth0 errors.');
             $redirectService->forceRedirectByReferrer([
                 'error' => $this->error,

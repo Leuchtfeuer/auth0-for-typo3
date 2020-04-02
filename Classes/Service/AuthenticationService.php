@@ -18,6 +18,7 @@ use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Api\Auth0;
 use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Bitmotion\Auth0\ErrorCode;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\LoginProvider\Auth0Provider;
@@ -141,8 +142,10 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
             $responsible = false;
         }
 
-        $auth0ErrorCode = GeneralUtility::_GET('error');
-        if ($auth0ErrorCode === Auth0::ERROR_ACCESS_DENIED || $auth0ErrorCode === Auth0::ERROR_UNAUTHORIZED) {
+        // Check whether there was an error during Auth0 calls
+        $validErrorCodes = (new \ReflectionClass(ErrorCode::class))->getConstants();
+        $auth0ErrorCode = GeneralUtility::_GET('error') ?? '';
+        if ($auth0ErrorCode && in_array($auth0ErrorCode, $validErrorCodes)) {
             $this->logger->notice('Access denied. Skip.');
             $responsible = false;
         }
