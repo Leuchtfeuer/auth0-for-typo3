@@ -42,11 +42,13 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
 
     /**
      * @var \stdClass
+     * @deprecated This property is no longer used.
      */
     protected $auth0Response;
 
     /**
      * @var array
+     * @deprecated This property is no longer used.
      */
     protected $auth0Data = [];
 
