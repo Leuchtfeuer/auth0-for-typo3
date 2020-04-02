@@ -109,7 +109,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
         }
 
         $this->view->assignMultiple([
-            'userInfo' => $userInfo ?? null,
+            'userInfo' => $auth0User ?? [],
             'auth0Error' => $this->error,
             'auth0ErrorDescription' => $this->errorDescription,
         ]);
