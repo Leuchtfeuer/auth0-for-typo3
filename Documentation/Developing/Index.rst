@@ -10,8 +10,8 @@ You can easily access the data of the current logged in user by calling the foll
 
 .. code-block:: php
 
-   $sessionStore = new \Auth0\SDK\Store\SessionStore();
-   $userInfo = $sessionStore->get('user');
+   $session = (new Bitmotion\Auth0\Factory\SessionFactory())->getSessionStoreForApplication();
+   $userInfo = $session->getUserInfo();
 
 
 User metadata is also stored as plain JSON in the TYPO3 fe_user field `auth0_metadata`. Beside of that, the last used application
@@ -22,8 +22,8 @@ If you want to enrich the user metadata or remove some information, you can do i
 .. code-block:: php
 
    // Get the user Id
-   $sessionStore = new SessionStore();
-   $user = $store->get('user');
+   $sessionStore = (new SessionFactory())->getSessionStoreForApplication();
+   $user = $session->getUserInfo();
    $userId = $user['sub'];
 
    // Prepare data

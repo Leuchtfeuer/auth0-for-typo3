@@ -13,11 +13,11 @@ namespace Bitmotion\Auth0\LoginProvider;
  *
  ***/
 
-use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\Auth0;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
+use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\Utility\ApiUtility;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use Psr\Log\LoggerAwareInterface;
@@ -45,9 +45,9 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
     protected $auth0;
 
     /**
-     * @var ?array
+     * @var array
      */
-    protected $userInfo;
+    protected $userInfo = [];
 
     /**
      * @var EmAuth0Configuration
@@ -84,12 +84,11 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         }
 
         // Try to get user info from session storage
-        $store = new SessionStore();
-        $this->userInfo = $store->get('user');
+        $this->userInfo = (new SessionFactory())->getSessionStoreForApplication($this->configuration->getBackendConnection())->getUserInfo();
         $urlData = GeneralUtility::_GP('auth0') ?? [];
         $this->action = $urlData['action'] ?? null;
 
-        if (($this->userInfo === null && $this->action === self::ACTION_LOGIN) || $this->action === self::ACTION_LOGOUT) {
+        if ((empty($this->userInfo) && $this->action === self::ACTION_LOGIN) || $this->action === self::ACTION_LOGOUT) {
             $this->handleRequest();
         }
 
@@ -120,7 +119,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
     protected function handleRequest(): void
     {
         // Try to get user via Auth0 API
-        if ($this->userInfo === null) {
+        if (empty($this->userInfo)) {
             try {
                 $this->logger->notice('Try to get user via Auth0 API');
                 $this->userInfo = $this->auth0->getUser();
@@ -134,7 +133,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
             // Logout user from Auth0
             $this->logger->notice('Logout user.');
             $this->logoutFromAuth0();
-        } elseif ($this->userInfo === null && $this->action === self::ACTION_LOGIN) {
+        } elseif (empty($this->userInfo) && $this->action === self::ACTION_LOGIN) {
             // Login user to Auth0
             $this->logger->notice('Handle backend login.');
             $this->auth0->login(null, null, $this->configuration->getAdditionalAuthorizeParameters());

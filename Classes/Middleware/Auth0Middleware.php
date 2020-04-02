@@ -13,7 +13,7 @@ namespace Bitmotion\Auth0\Middleware;
  *
  ***/
 
-use Auth0\SDK\Store\SessionStore;
+use Bitmotion\Auth0\Factory\SessionFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -33,16 +33,17 @@ class Auth0Middleware implements MiddlewareInterface, LoggerAwareInterface
     {
         // TODO: Remove the $GLOBALS array when dropping TYPO3 9 LTS support
         $feUserAuthentication = $request->getAttribute('frontend.user') ?? $GLOBALS['TSFE']->fe_user;
-        $sessionStore = new SessionStore();
-        $userInfo = $sessionStore->get('user');
 
-        if ($userInfo === null && $this->loggedInUserIsAuth0User($feUserAuthentication)) {
+        $session =  (new SessionFactory())->getSessionStoreForApplication();
+        $userInfo = $session->getUserInfo();
+
+        if (empty($userInfo) && $this->loggedInUserIsAuth0User($feUserAuthentication)) {
             // Log off user from TYPO3 as there is no valid Auth0 session
             $this->logger->notice('Logoff user.');
             $feUserAuthentication->logoff();
-        } elseif ($userInfo && !is_array($feUserAuthentication->user) && !isset($feUserAuthentication->user['auth0_user_id'])) {
+        } elseif (!empty($userInfo) && !is_array($feUserAuthentication->user) && !isset($feUserAuthentication->user['auth0_user_id'])) {
             // Destroy Auth0 session as there is no valid TYPO3 frontend user
-            $sessionStore->delete('user');
+            $session->deleteUserInfo();
         }
 
         return $handler->handle($request);

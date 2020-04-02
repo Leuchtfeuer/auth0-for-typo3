@@ -15,11 +15,11 @@ namespace Bitmotion\Auth0\Service;
 
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
-use Auth0\SDK\Store\SessionStore;
 use Bitmotion\Auth0\Api\Auth0;
 use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
+use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\LoginProvider\Auth0Provider;
 use Bitmotion\Auth0\Scope;
 use Bitmotion\Auth0\Utility\ApiUtility;
@@ -57,8 +57,14 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
 
     /**
      * @var array
+     * @deprecated This property is no longer used.
      */
     protected $tokenInfo = [];
+
+    /**
+     * @var array
+     */
+    protected $userInfo = [];
 
     /**
      * @var string
@@ -180,14 +186,15 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
 
     protected function initSessionStore(): bool
     {
-        $sessionStore = new SessionStore();
-        $tokenInfo = $sessionStore->get('user') ?? [];
+        // TODO: Add application UID
+        $session = (new SessionFactory())->getSessionStoreForApplication(0);
+        $userInfo = $session->getUserInfo();
 
-        if (!empty($tokenInfo['sub'])) {
+        if (!empty($userInfo['sub'])) {
             $this->logger->debug('Try to login user via Auth0 session');
             try {
-                $this->tokenInfo = $tokenInfo;
-                $this->setApplicationByUser($tokenInfo['sub']);
+                $this->userInfo = $userInfo;
+                $this->setApplicationByUser($userInfo['sub']);
                 $this->getAuth0User();
                 $this->loginViaSession = true;
                 $this->login['responsible'] = false;
@@ -195,9 +202,9 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
                 return true;
             } catch (\Exception $exception) {
                 $this->logger->debug('Could not login user via Auth0 session');
-                $this->tokenInfo = [];
+                $this->userInfo = [];
                 $this->auth0User = null;
-                $sessionStore->delete('user');
+                $session->deleteUserInfo();
             }
         }
 
@@ -243,11 +250,9 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      */
     protected function getAuth0User()
     {
-        $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $this->application);
-        $userApi = $apiUtility->getUserApi(Scope::USER_READ);
-
         try {
-            $this->auth0User = $userApi->get($this->tokenInfo['sub']);
+            $userApi =  GeneralUtility::makeInstance(ApiUtility::class, $this->application)->getUserApi(Scope::USER_READ);
+            $this->auth0User = $userApi->get($this->userInfo['sub']);
         } catch (ApiException $apiException) {
             $this->logger->error('No Auth0 user found.');
 
@@ -267,7 +272,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     protected function insertOrUpdateUser(): void
     {
         $userUtility = GeneralUtility::makeInstance(UserUtility::class);
-        $this->user = $userUtility->checkIfUserExists($this->tableName, $this->tokenInfo['sub']);
+        $this->user = $userUtility->checkIfUserExists($this->tableName, $this->userInfo['sub']);
 
         // Insert a new user into database
         if (empty($this->user)) {
@@ -298,12 +303,10 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
     protected function initializeAuth0Connections(): bool
     {
         try {
-            $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $this->application);
-            $callback = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/typo3/?loginProvider=' . Auth0Provider::LOGIN_PROVIDER . '&auth0[action]=login';
-            $this->auth0 = $apiUtility->getAuth0($callback);
-            $this->tokenInfo = $this->auth0->getUser() ?? [];
+            $this->auth0 = GeneralUtility::makeInstance(ApiUtility::class, $this->application)->getAuth0();
+            $this->userInfo = $this->auth0->getUser() ?? [];
 
-            if (!isset($this->tokenInfo['sub']) || $this->getAuth0User() === false) {
+            if (!isset($this->userInfo['sub']) || $this->getAuth0User() === false) {
                 return false;
             }
 
@@ -323,11 +326,11 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      */
     public function getUser()
     {
-        if ($this->login['status'] !== 'login' || $this->login['responsible'] === false || !isset($this->tokenInfo['sub'])) {
+        if ($this->login['status'] !== 'login' || $this->login['responsible'] === false || !isset($this->userInfo['sub'])) {
             return false;
         }
 
-        $user = $this->fetchUserRecord($this->login['uname'], 'auth0_user_id = "' . $this->tokenInfo['sub'] . '"');
+        $user = $this->fetchUserRecord($this->login['uname'], 'auth0_user_id = "' . $this->userInfo['sub'] . '"');
 
         if (!is_array($user)) {
             if ($this->auth0User !== null) {

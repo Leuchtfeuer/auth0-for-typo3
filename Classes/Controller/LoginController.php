@@ -18,6 +18,7 @@ use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Api\Auth0;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
+use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\Service\RedirectService;
 use Bitmotion\Auth0\Utility\ApiUtility;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
@@ -81,15 +82,10 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
         if ($context->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
             // Get Auth0 user from session storage
-            try {
-                $auth0User = $this->getAuth0()->getUser();
-            } catch (\Exception $exception) {
-                $this->logger->warning(sprintf('%s: %s', $exception->getCode(), $exception->getMessage()));
-                $auth0User = null;
-            }
+            $userInfo = (new SessionFactory())->getSessionStoreForApplication($this->application)->getUserInfo();
 
             // Redirect when user just logged in (and update him)
-            if (GeneralUtility::_GET('logintype') === 'login' && $auth0User !== null) {
+            if (GeneralUtility::_GET('logintype') === 'login' && !empty($userInfo)) {
                 if (!empty(GeneralUtility::_GP('referrer'))) {
                     $this->logger->notice('Handle referrer redirect prior to updating user.');
                     $redirectService->forceRedirectByReferrer(['logintype' => 'login']);
@@ -99,10 +95,12 @@ class LoginController extends ActionController implements LoggerAwareInterface
                 $redirectService->handleRedirect(['groupLogin', 'userLogin', 'login', 'getpost', 'referrer']);
             }
         } elseif (GeneralUtility::_GET('logintype') === 'logout' && !empty(GeneralUtility::_GET('referrer'))) {
+            // User was logged out prior to this method. That's why there is no valid TYPO3 frontend user anymore.
             $this->redirectToUri(GeneralUtility::_GET('referrer'));
         }
 
         // Force redirect due to Auth0 sign up or log in errors
+        // TODO: Extend this to other error codes
         if (!empty(GeneralUtility::_GET('referrer')) && $this->error === Auth0::ERROR_UNAUTHORIZED) {
             $this->logger->notice('Handle referrer redirect because of Auth0 errors.');
             $redirectService->forceRedirectByReferrer([
@@ -112,7 +110,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
         }
 
         $this->view->assignMultiple([
-            'userInfo' => $auth0User ?? [],
+            'userInfo' => $userInfo ?? [],
             'auth0Error' => $this->error,
             'auth0ErrorDescription' => $this->errorDescription,
         ]);
@@ -130,19 +128,19 @@ class LoginController extends ActionController implements LoggerAwareInterface
     public function loginAction(?string $rawAdditionalAuthorizeParameters = null): void
     {
         $context = GeneralUtility::makeInstance(Context::class);
-        $typo3User = $context->getPropertyFromAspect('frontend.user', 'id');
-        $auth0 = $this->getAuth0();
+        $userInfo = (new SessionFactory())->getSessionStoreForApplication($this->application)->getUserInfo();
 
         // Log in user to auth0 when there is neither a TYPO3 frontend user nor an Auth0 user
         if (!$context->getPropertyFromAspect('frontend.user', 'isLoggedIn') || empty($userInfo)) {
 
-        if ($auth0User === null || $typo3User === 0) {
-            $additionalAuthorizeParameters = !empty($rawAdditionalAuthorizeParameters)
-                ? ParametersUtility::transformUrlParameters($rawAdditionalAuthorizeParameters)
-                : $this->settings['frontend']['login']['additionalAuthorizeParameters'] ?? [];
+            if (!empty($rawAdditionalAuthorizeParameters)) {
+                $additionalAuthorizeParameters = ParametersUtility::transformUrlParameters($rawAdditionalAuthorizeParameters);
+            } else {
+                $additionalAuthorizeParameters = $this->settings['frontend']['login']['additionalAuthorizeParameters'] ?? [];
+            }
 
             $this->logger->notice('Try to login user.');
-            $auth0->login(null, null, $additionalAuthorizeParameters);
+            $this->getAuth0()->login(null, null, $additionalAuthorizeParameters);
         }
 
         $this->redirect('form');
@@ -156,7 +154,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
      */
     public function logoutAction(): void
     {
-        $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid((int)$this->settings['application'], true);
+        $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($this->application, true);
         $logoutSettings = $this->settings['frontend']['logout'] ?? [];
         $singleLogOut = isset($this->settings['softLogout']) ? !(bool)$this->settings['softLogout'] : $application->isSingleLogOut();
 
