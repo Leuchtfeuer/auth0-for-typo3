@@ -106,7 +106,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
     {
         try {
             $this->configuration = new EmAuth0Configuration();
-            $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, (int)$this->configuration->getBackendConnection());
+            $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $this->configuration->getBackendConnection());
             $this->auth0 = $apiUtility->getAuth0(GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
         } catch (\Exception $exception) {
             $this->logger->critical($exception->getMessage());
@@ -183,10 +183,10 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
     protected function logoutFromAuth0(): void
     {
         $this->auth0->logout();
-        $this->userInfo = null;
+        $this->userInfo = [];
 
         $applicationRepository = GeneralUtility::makeInstance(ApplicationRepository::class);
-        $application = $applicationRepository->findByUid((int)$this->configuration->getBackendConnection(), true);
+        $application = $applicationRepository->findByUid($this->configuration->getBackendConnection(), true);
         $redirectUri = str_replace('auth0[action]=logout', '', GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
         $logoutUri = $this->auth0->getLogoutUri(rtrim($redirectUri, '&'), $application->getClientId());
 
