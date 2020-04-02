@@ -15,6 +15,7 @@ namespace Bitmotion\Auth0\Api;
 
 use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
+use Bitmotion\Auth0\ErrorCode;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Factory\SessionFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -27,26 +28,44 @@ class Auth0 extends \Auth0\SDK\Auth0
      */
 
     // Sign up errors
-    const ERROR_INVALID_PASSWORD = 'invalid_password';
-    const ERROR_PASSWORD_DICTIONARY = 'password_dictionary_error';
-    const ERROR_PASSWORD_NO_USER_INFO = 'password_no_user_info_error';
-    const ERROR_PASSWORD_STRENGTH_SIGN_UP = 'password_strength_error';
-    const ERROR_USER_EXISTS = 'user_exists';
-    const ERROR_USERNAME_EXISTS = 'username_exists';
+    /** @deprecated Use ErrorCodes class instead */
+    const ERROR_INVALID_PASSWORD = ErrorCode::ERROR_INVALID_PASSWORD;
+    /** @deprecated Use ErrorCodes class instead */
+    const ERROR_INVALID_SIGNUP = ErrorCode::ERROR_INVALID_SIGNUP;
+    /** @deprecated Use ErrorCodes class instead */
+    const ERROR_PASSWORD_DICTIONARY = ErrorCode::ERROR_PASSWORD_DICTIONARY;
+    /** @deprecated Use ErrorCodes class instead */
+    const ERROR_PASSWORD_NO_USER_INFO = ErrorCode::ERROR_PASSWORD_NO_USER_INFO;
+    /** @deprecated Use ErrorCodes class instead */
+    const ERROR_PASSWORD_STRENGTH_SIGN_UP = ErrorCode::ERROR_PASSWORD_STRENGTH_SIGN_UP;
+    /** @deprecated Use ErrorCodes class instead */
+    const ERROR_USER_EXISTS = ErrorCode::ERROR_USER_EXISTS;
+    /** @deprecated Use ErrorCodes class instead */
+    const ERROR_USERNAME_EXISTS = ErrorCode::ERROR_USERNAME_EXISTS;
 
     // Log in errors
-    const ERROR_ACCESS_DENIED = 'access_denied';
-    const ERROR_INVALID_USER_PASSWORD = 'invalid_user_password';
-    const ERROR_MFA_INVALID_CODE = 'mfa_invalid_code';
-    const ERROR_MFA_REGISTRATION_REQUIRED = 'mfa_registration_required';
-    const ERROR_MFA_REQUIRED = 'mfa_required';
-    const ERROR_PASSWORD_LEAKED = 'password_leaked';
-    const ERROR_PASSWORD_HISTORY = 'PasswordHistoryError';
-    const ERROR_PASSWORD_STRENGTH_LOG_IN = 'PasswordStrengthError';
-    const ERROR_TOO_MANY_ATTEMPTS = 'too_many_attempts';
+    /** @deprecated Use ErrorCodes class instead. */
+    const ERROR_ACCESS_DENIED = ErrorCode::ERROR_ACCESS_DENIED;
+    /** @deprecated Use ErrorCodes class instead. */
+    const ERROR_INVALID_USER_PASSWORD = ErrorCode::ERROR_INVALID_USER_PASSWORD;
+    /** @deprecated Use ErrorCodes class instead. */
+    const ERROR_MFA_INVALID_CODE = ErrorCode::ERROR_MFA_INVALID_CODE;
+    /** @deprecated Use ErrorCodes class instead. */
+    const ERROR_MFA_REGISTRATION_REQUIRED = ErrorCode::ERROR_MFA_REGISTRATION_REQUIRED;
+    /** @deprecated Use ErrorCodes class instead. */
+    const ERROR_MFA_REQUIRED = ErrorCode::ERROR_MFA_REQUIRED;
+    /** @deprecated Use ErrorCodes class instead. */
+    const ERROR_PASSWORD_LEAKED = ErrorCode::ERROR_PASSWORD_LEAKED;
+    /** @deprecated Use ErrorCodes class instead. */
+    const ERROR_PASSWORD_HISTORY = ErrorCode::ERROR_PASSWORD_HISTORY;
+    /** @deprecated Use ErrorCodes class instead. */
+    const ERROR_PASSWORD_STRENGTH_LOG_IN = ErrorCode::ERROR_PASSWORD_STRENGTH_LOG_IN;
+    /** @deprecated Use ErrorCodes class instead. */
+    const ERROR_TOO_MANY_ATTEMPTS = ErrorCode::ERROR_TOO_MANY_ATTEMPTS;
 
     // Errors occures in log in and sign up
-    const ERROR_UNAUTHORIZED = 'unauthorized';
+    /** @deprecated Use ErrorCodes class instead. */
+    const ERROR_UNAUTHORIZED = ErrorCode::ERROR_UNAUTHORIZED;
 
     /**
      * @throws CoreException
