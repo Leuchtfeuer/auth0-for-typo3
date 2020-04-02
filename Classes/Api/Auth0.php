@@ -71,7 +71,7 @@ class Auth0 extends \Auth0\SDK\Auth0
      * @throws CoreException
      * @throws InvalidApplicationException
      */
-    public function __construct(int $applicationId, string $redirectUri = '', ?string $scope = null, array $additionalOptions = [])
+    public function __construct(int $applicationId, string $redirectUri = '/', ?string $scope = null, array $additionalOptions = [])
     {
         $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationId, true);
 

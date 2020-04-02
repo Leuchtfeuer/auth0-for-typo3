@@ -60,7 +60,7 @@ class ApiUtility implements LoggerAwareInterface
      * @throws CoreException
      * @throws InvalidApplicationException
      */
-    public function getAuth0(string $redirectUri, string ...$scopes): Auth0
+    public function getAuth0(string $redirectUri = '/', string ...$scopes): Auth0
     {
         try {
             $this->setScope($scopes);
