@@ -304,6 +304,11 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      */
     protected function initializeAuth0Connections(): bool
     {
+        if ($this->application === 0) {
+            $this->logger->error('No application given.');
+            return false;
+        }
+
         try {
             $this->auth0 = GeneralUtility::makeInstance(ApiUtility::class, $this->application)->getAuth0();
             $this->userInfo = $this->auth0->getUser() ?? [];
