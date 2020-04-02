@@ -135,8 +135,9 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         $this->environmentService = GeneralUtility::makeInstance(EnvironmentService::class);
         $responsible = true;
 
+        // Service is not responsible when environment is in backend mode and the given loginProvider does not match the expected one.
         if ($this->environmentService->isEnvironmentInBackendMode() && (int)GeneralUtility::_GP('loginProvider') !== Auth0Provider::LOGIN_PROVIDER) {
-            $this->logger->notice('Not an Auth0 backend login. Skip.');
+            $this->logger->debug('Not an Auth0 backend login. Skip.');
             $responsible = false;
         }
 
@@ -161,11 +162,10 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
             $this->tableName = 'fe_users';
         } elseif ($this->environmentService->isEnvironmentInBackendMode()) {
             $this->logger->notice('Handle backend login.');
-            $emConfiguration = new EmAuth0Configuration();
-            $this->application = $emConfiguration->getBackendConnection();
+            $this->application = (new EmAuth0Configuration())->getBackendConnection();
             $this->tableName = 'be_users';
         } else {
-            $this->logger->error('Environment is neither in frontend nor in backend mode');
+            $this->logger->error('Environment is neither in frontend nor in backend mode.');
         }
 
         if ($this->application === 0 && $this->initSessionStore() === false) {
@@ -186,6 +186,10 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         $this->pObj = $pObj;
     }
 
+    /**
+     * TODO: Maybe deprecate this as the user might not be logged in into Auth0 (Single Log Out).
+     * TODO: Or check whether there is a valid Auth0 session.
+     */
     protected function initSessionStore(): bool
     {
         // TODO: Add application UID
@@ -238,7 +242,6 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
             switch ($this->mode) {
                 case 'getUserFE':
                 case 'getUserBE':
-                    $this->logger->notice('Handle Auth0 login');
                     $this->insertOrUpdateUser();
                     break;
                 default:
@@ -285,12 +288,10 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
         // Update existing user on every login when we are in BE context
         if ($this->environmentService->isEnvironmentInBackendMode()) {
             $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User);
-            $this->logger->notice('Update user.');
             $updateUtility->updateUser();
-            $this->logger->notice('Update user groups.');
             $updateUtility->updateGroups();
         } else {
-            // Update last uses application
+            // Update last used application
             $userUtility->setLastUsedApplication($this->auth0User->getUserId(), $this->application);
         }
     }
@@ -321,7 +322,7 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
             $this->logger->notice(sprintf('User found: %s', $this->auth0User->getEmail()));
 
             return true;
-        } catch (InvalidApplicationException $exception) {
+        } catch (\Exception $exception) {
             $this->logger->emergency(sprintf('Error %s: %s', $exception->getCode(), $exception->getMessage()));
         }
 
