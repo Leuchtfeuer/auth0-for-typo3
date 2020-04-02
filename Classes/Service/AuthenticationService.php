@@ -359,39 +359,40 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
 
     public function authUser(array $user): int
     {
-        // Login user
-        if ($this->login['responsible'] && !empty($user['auth0_user_id']) && $user['auth0_user_id'] === $this->tokenInfo['sub']) {
-            // Do not login if email address is not verified
-            if (!$this->auth0User->isEmailVerified()) {
-                $this->logger->notice('Email not verified. Do not login user.');
-
-                return 0;
-            }
-
-            // Skip when there is an Auth0 session but the corresponding TYPO3 user hast no user group assigned.
-            if (empty($user['usergroup']) && $this->loginViaSession === true) {
-                $this->logger->notice('Could not login user via session as it has no group assigned.');
-
-                if (!$this->auth0 instanceof Auth0) {
-                    $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $this->application);
-                    $callback = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . '/typo3/?loginProvider=' . Auth0Provider::LOGIN_PROVIDER . '&auth0[action]=login';
-                    $this->auth0 = $apiUtility->getAuth0($callback);
-                }
-
-                $this->auth0->logout();
-
-                return 0;
-            }
-
-            // Success
-            $this->logger->notice(sprintf('Auth0 User %s (UID: %s) successfully logged in.', $user['auth0_user_id'], $user['uid']));
-
-            return 200;
+        if ($this->login['responsible'] === false) {
+            // Service is not responsible. Check other services.
+            return 100;
         }
 
-        // Service is not responsible for login request
-        $this->logger->notice('Auth0 service is not responsible for this request.');
+        if (empty($user['auth0_user_id']) || $user['auth0_user_id'] !== $this->userInfo['sub']) {
+            // Verification failed as identifier does not match. Maybe other services can handle this login.
+            return 100;
+        }
 
-        return 100;
+        // Do not login if email address is not verified
+        if (!$this->auth0User->isEmailVerified()) {
+            $this->logger->warning('Email not verified. Do not login user.');
+
+            // Responsible, authentication failed, do NOT check other services
+            return 0;
+        }
+
+        // Skip when there is an Auth0 session but the corresponding TYPO3 user has no user group assigned.
+        if (empty($user['usergroup']) && $this->loginViaSession === true) {
+            $this->logger->warning('Could not login user via session as it has no group assigned.');
+
+            if ($this->auth0 instanceof Auth0 === false) {
+                $this->auth0 = GeneralUtility::makeInstance(ApiUtility::class, $this->application)->getAuth0();
+            }
+
+            $this->auth0->logout();
+
+            // Responsible, authentication failed, do NOT check other services
+            return 0;
+        }
+
+        // Success
+        $this->logger->notice(sprintf('Auth0 User %s (UID: %s) successfully logged in.', $user['auth0_user_id'], $user['uid']));
+        return 200;
     }
 }
