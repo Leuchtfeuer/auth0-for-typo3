@@ -34,6 +34,7 @@ class Auth0Middleware implements MiddlewareInterface, LoggerAwareInterface
         // TODO: Remove the $GLOBALS array when dropping TYPO3 9 LTS support
         $feUserAuthentication = $request->getAttribute('frontend.user') ?? $GLOBALS['TSFE']->fe_user;
 
+        // TODO: Add application ID
         $session =  (new SessionFactory())->getSessionStoreForApplication();
         $userInfo = $session->getUserInfo();
 

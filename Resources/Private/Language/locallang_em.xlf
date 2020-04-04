@@ -34,6 +34,15 @@
 			<trans-unit id="frontend.reactivate_deleted_frontend_users" xml:space="preserve">
 				<source>Reactivate Deleted Users: Allow log in for deleted frontend users</source>
 			</trans-unit>
+			<trans-unit id="token.generic_callback" xml:space="preserve">
+				<source>Generic Callback: A generic callback URI for all requests (frontend and backend) will be used. The callback URI will be https://www.example.com/auth0/callback. Please note, that this configuration will become default in future releases.</source>
+			</trans-unit>
+			<trans-unit id="token.private_key_file" xml:space="preserve">
+				<source>Private Key File: The absolute path to your private key file on your server. If set, this key will be used for signing the generated tokens. Otherwise, TYPO3's encryption key will be used. Only RSA keys are supported for now.</source>
+			</trans-unit>
+			<trans-unit id="token.public_key_file" xml:space="preserve">
+				<source>Public Key File: The absolute path to your public key file on your server.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

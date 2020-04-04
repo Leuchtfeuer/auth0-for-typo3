@@ -4,7 +4,9 @@
 Version 3.1.0 - 2020/03/11
 ==========================
 
-This is a future release. The release is planned for the first quarter of 2020.
+This release is feature release. It contains bug fixes and some new features. It is now possible to use Auth0's custom domains and
+handle base64 encoded client secrets. Also it is now possible to configure the used signature algorithm and to disable the
+frontend login.
 
 Download
 ========

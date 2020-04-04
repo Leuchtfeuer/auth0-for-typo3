@@ -18,8 +18,10 @@ use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Factory\SessionFactory;
+use Bitmotion\Auth0\Middleware\CallbackMiddleware;
 use Bitmotion\Auth0\Utility\ApiUtility;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
+use Bitmotion\Auth0\Utility\TokenUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\Controller\LoginController;
@@ -84,8 +86,8 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         }
 
         // Try to get user info from session storage
-        $this->userInfo = (new SessionFactory())->getSessionStoreForApplication($this->configuration->getBackendConnection())->getUserInfo();
-        $urlData = GeneralUtility::_GP('auth0') ?? [];
+        $this->userInfo = $this->getUserInfo();
+        $urlData = GeneralUtility::_GET('auth0') ?? [];
         $this->action = $urlData['action'] ?? null;
 
         if ((empty($this->userInfo) && $this->action === self::ACTION_LOGIN) || $this->action === self::ACTION_LOGOUT) {
@@ -94,8 +96,8 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
 
         // Assign variables and Auth0 response to view
         $standaloneView->assignMultiple([
-            'auth0Error' => GeneralUtility::_GP('error'),
-            'auth0ErrorDescription' => GeneralUtility::_GP('error_description'),
+            'auth0Error' => GeneralUtility::_GET('error'),
+            'auth0ErrorDescription' => GeneralUtility::_GET('error_description'),
             'code' => GeneralUtility::_GET('code'),
             'userInfo' => $this->userInfo,
         ]);
@@ -106,7 +108,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         try {
             $this->configuration = new EmAuth0Configuration();
             $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $this->configuration->getBackendConnection());
-            $this->auth0 = $apiUtility->getAuth0(GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
+            $this->auth0 = $apiUtility->getAuth0($this->getCallbackUri());
         } catch (\Exception $exception) {
             $this->logger->critical($exception->getMessage());
 
@@ -116,24 +118,50 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         return true;
     }
 
-    protected function handleRequest(): void
+    protected function getCallbackUri()
     {
-        // Try to get user via Auth0 API
-        if (empty($this->userInfo)) {
+        $callback = GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL');
+
+        if ($this->configuration->isGenericCallback()) {
+            $tokenUtility = new TokenUtility();
+            $tokenUtility->withPayload('application', $this->configuration->getBackendConnection());
+
+            $callback = sprintf(
+                '%s%s?%s=%s',
+                $tokenUtility->getIssuer(),
+                CallbackMiddleware::PATH,
+                CallbackMiddleware::TOKEN_PARAMETER,
+                $tokenUtility->buildToken()
+            );
+        }
+
+        return $callback;
+    }
+
+    protected function getUserInfo()
+    {
+        $userInfo = (new SessionFactory())->getSessionStoreForApplication($this->configuration->getBackendConnection())->getUserInfo();
+
+        if (empty($userInfo)) {
             try {
                 $this->logger->notice('Try to get user via Auth0 API');
-                $this->userInfo = $this->auth0->getUser();
+                $userInfo = $this->auth0->getUser();
             } catch (\Exception $exception) {
                 $this->logger->critical($exception->getMessage());
                 $this->auth0->deleteAllPersistentData();
             }
         }
 
+        return $userInfo;
+    }
+
+    protected function handleRequest(): void
+    {
         if ($this->action === self::ACTION_LOGOUT) {
             // Logout user from Auth0
             $this->logger->notice('Logout user.');
             $this->logoutFromAuth0();
-        } elseif (empty($this->userInfo) && $this->action === self::ACTION_LOGIN) {
+        } elseif ($this->action === self::ACTION_LOGIN) {
             // Login user to Auth0
             $this->logger->notice('Handle backend login.');
             $this->auth0->login(null, null, $this->configuration->getAdditionalAuthorizeParameters());
@@ -182,7 +210,6 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
     protected function logoutFromAuth0(): void
     {
         $this->auth0->logout();
-        $this->userInfo = [];
 
         $applicationRepository = GeneralUtility::makeInstance(ApplicationRepository::class);
         $application = $applicationRepository->findByUid($this->configuration->getBackendConnection(), true);

@@ -1,0 +1,78 @@
+﻿.. include:: ../../Includes.txt
+
+==========================
+Version 3.2.0 - TBA
+==========================
+
+This is a future release. It is planned for the second quarter of 2020 and it will make the communication between Auth0 and TYPO3
+easier and even more secure. This will be the last release introducing deprecations, that will be dropped with version 4 of this
+extension.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/bitmotion/auth0-for-typo3/releases/tag/v3.2.0>`__.
+
+Added
+=====
+
+* Separate sessions for frontend and backend log ins are now be used
+* Dedicated class :php:`\Bitmotion\Auth0\ErrorCode` containing all valid Auth0 error codes
+* A default value for the redirect URI within oauth2 requests will now be used when there is no valid callback URI
+* A new PSR-15 Middleware will take care of all Auth0 callbacks
+* JSON Web Tokens are used for transmitting information between TYPO3 and Auth0
+
+Changed
+=======
+
+* A dedicated factory class is now responsible for creating user sessions
+* User related data is now retrieved from the frontend user aspect (where possible)
+* Logging levels of :php:`\Bitmotion\Auth0\Service\AuthenticationService`
+* Constants of class :php:`\Bitmotion\Auth0\Api\Auth0` were moved into dedicated class :php:`\Bitmotion\Auth0\ErrorCode`
+
+Deprecated
+==========
+
+* Member unused properties of :php:`\Bitmotion\Auth0\Service\AuthenticationService`
+
+   * :php:`$auth0Response`
+   * :php:`$auth0Data`
+   * :php:`$tokenInfo`
+
+* All constants containing error codes of class :php:`\Bitmotion\Auth0\Api\Auth0`
+* Following TypoScript settings and constants are now deprecated. You should consider to use the newly introduced generic callback
+
+   *:typoscript:`plugin.tx_auth0.settings.frontend.logout.targetPageUid`
+   *:typoscript:`plugin.tx_auth0.settings.frontend.logout.targetPageType`
+   *:typoscript:`plugin.tx_auth0.settings.frontend.callback.targetPageUid`
+   *:typoscript:`plugin.tx_auth0.settings.frontend.callback.targetPageType`
+
+* The TypoScript page type 1547536919 is now deprecated. You should consider to use the newly introduced generic callback
+
+Removed
+=======
+
+* Class :php:`\Bitmotion\Auth0\Api\Authorization`
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+   2020-04-04 [TASK] Dependent libraries updated (Commit 985ec4b by Florian Wessels)
+   2020-04-02 [TASK] Refactor authUser method (Commit 43c4ad2 by Florian Wessels)
+   2020-04-02 [TASK] Take care of all possible oauth2 errors (Commit f8a1f1f by Florian Wessels)
+   2020-04-02 [TASK] Adapt logging levels (Commit 20aae4c by Florian Wessels)
+   2020-04-02 [BUGFIX] Do not authenticate user when there is no application (Commit 2bea68d by Florian Wessels)
+   2020-04-02 [TASK] Mark unused properties as deprecated (Commit 09c3620 by Florian Wessels)
+   2020-04-02 [TASK] Use default value for redirectUri (Commit df3880e by Florian Wessels)
+   2020-04-02 [TASK] Introduce dedicated class containing Auth0 error codes (Commit 69d809b by Florian Wessels)
+   2020-04-02 [TASK] Use session factory (Commit 5fc3bec by Florian Wessels)
+   2020-04-02 [TASK] Use  property from UserAspect (Commit 241048b by Florian Wessels)
+   2020-04-02 [TASK] Set current application uid during initialization (Commit c7e2580 by Florian Wessels)
+   2020-04-02 [FEATURE] Introduce factory for building sessions (Commit 6d9bbba by Florian Wessels)
+   2020-04-02 [CLEAN-UP] Forcing int is not necessary as method returns an int (Commit 142c7ba by Florian Wessels)
+   2020-04-02 [BUGFIX] Assign proper value to view (Commit c7a70a2 by Florian Wessels)
+   2020-04-02 [BUGFIX] Use get parameter when there are no settings (Commit e4fc43b by Florian Wessels)
+   2020-03-13 [TASK] Set version to 3.1.2-dev (Commit d65c1c2 by Florian Wessels)

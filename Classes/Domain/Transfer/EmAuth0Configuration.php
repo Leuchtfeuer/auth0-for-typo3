@@ -43,6 +43,15 @@ class EmAuth0Configuration implements SingletonInterface
     protected $enableFrontendLogin = true;
 
     /**
+     * @deprecated Will be removed in next major version and become default
+     */
+    protected $genericCallback = false;
+
+    protected $privateKeyFile = '';
+
+    protected $publicKeyFile = '';
+
+    /**
      * @throws ExtensionConfigurationExtensionNotConfiguredException
      * @throws ExtensionConfigurationPathDoesNotExistException
      */
@@ -152,5 +161,28 @@ class EmAuth0Configuration implements SingletonInterface
     public function isEnableFrontendLogin(): bool
     {
         return (bool)$this->enableFrontendLogin;
+    }
+
+    /**
+     * @deprecated Will be removed in version 4 and becomes default.
+     */
+    public function isGenericCallback(): bool
+    {
+        return (bool)$this->genericCallback;
+    }
+
+    public function getPrivateKeyFile(): string
+    {
+        return 'file://' . $this->privateKeyFile;
+    }
+
+    public function getPublicKeyFile(): string
+    {
+        return 'file://' . $this->publicKeyFile;
+    }
+
+    public function useKeyFiles(): bool
+    {
+        return !empty($this->publicKeyFile) && !empty($this->privateKeyFile);
     }
 }

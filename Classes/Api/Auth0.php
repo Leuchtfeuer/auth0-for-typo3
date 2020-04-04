@@ -18,6 +18,7 @@ use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\ErrorCode;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Factory\SessionFactory;
+use Bitmotion\Auth0\Middleware\CallbackMiddleware;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Auth0 extends \Auth0\SDK\Auth0
@@ -71,7 +72,7 @@ class Auth0 extends \Auth0\SDK\Auth0
      * @throws CoreException
      * @throws InvalidApplicationException
      */
-    public function __construct(int $applicationId, string $redirectUri = '/', ?string $scope = null, array $additionalOptions = [])
+    public function __construct(int $applicationId, ?string $redirectUri = null, ?string $scope = null, array $additionalOptions = [])
     {
         $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationId, true);
 
@@ -84,7 +85,7 @@ class Auth0 extends \Auth0\SDK\Auth0
             'persist_access_token' => true,
             'persist_id_token' => true,
             'persist_refresh_token' => true,
-            'redirect_uri' => $redirectUri,
+            'redirect_uri' => $redirectUri ?? $this->getCallbackUri(),
             'scope' => $scope,
             'secret_base64_encoded' => $application->isSecretBase64Encoded(),
             'store' => (new SessionFactory())->getSessionStoreForApplication($applicationId),
@@ -96,5 +97,10 @@ class Auth0 extends \Auth0\SDK\Auth0
     public function getLogoutUri(string $returnUrl, string $clientId, bool $federated = false): string
     {
         return $this->authentication->get_logout_link($returnUrl, $clientId, $federated);
+    }
+
+    protected function getCallbackUri(): string
+    {
+        return GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . CallbackMiddleware::PATH;
     }
 }

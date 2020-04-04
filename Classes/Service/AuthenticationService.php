@@ -19,12 +19,14 @@ use Bitmotion\Auth0\Api\Auth0;
 use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\ErrorCode;
-use Bitmotion\Auth0\Exception\InvalidApplicationException;
+use Bitmotion\Auth0\Exception\TokenException;
 use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\LoginProvider\Auth0Provider;
+use Bitmotion\Auth0\Middleware\CallbackMiddleware;
 use Bitmotion\Auth0\Scope;
 use Bitmotion\Auth0\Utility\ApiUtility;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
+use Bitmotion\Auth0\Utility\TokenUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
 use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
@@ -117,7 +119,9 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
             return;
         }
 
-        $this->initApplication();
+        if ($this->initApplication() === false) {
+            return;
+        }
 
         // Set default values
         $this->setDefaults($authInfo, $mode, $loginData, $pObj);
@@ -157,11 +161,11 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      * @throws ExtensionConfigurationExtensionNotConfiguredException
      * @throws ExtensionConfigurationPathDoesNotExistException
      */
-    protected function initApplication(): void
+    protected function initApplication(): bool
     {
         if ($this->environmentService->isEnvironmentInFrontendMode()) {
             $this->logger->notice('Handle frontend login.');
-            $this->application = (int)GeneralUtility::_GP('application');
+            $this->application = $this->retrieveApplicationFromUrlQuery();
             $this->tableName = 'fe_users';
         } elseif ($this->environmentService->isEnvironmentInBackendMode()) {
             $this->logger->notice('Handle backend login.');
@@ -173,7 +177,34 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
 
         if ($this->application === 0 && $this->initSessionStore() === false) {
             $this->logger->error('No Auth0 application UID given.');
+
+            return false;
         }
+
+        return true;
+    }
+
+    protected function retrieveApplicationFromUrlQuery(): int
+    {
+        $application = (int)GeneralUtility::_GET('application');
+
+        if ($application !== 0) {
+            return $application;
+        }
+
+        $tokenUtility = GeneralUtility::makeInstance(TokenUtility::class);
+
+        if (!$tokenUtility->verifyToken((string)GeneralUtility::_GET(CallbackMiddleware::TOKEN_PARAMETER))) {
+            return 0;
+        }
+
+        try {
+            $token = $tokenUtility->getToken();
+        } catch (TokenException $exception) {
+            return 0;
+        }
+
+        return (int)$token->getClaim('application');
     }
 
     protected function setDefaults(array $authInfo, string $mode, array $loginData, AbstractUserAuthentication $pObj): void
@@ -308,11 +339,6 @@ class AuthenticationService extends \TYPO3\CMS\Core\Authentication\Authenticatio
      */
     protected function initializeAuth0Connections(): bool
     {
-        if ($this->application === 0) {
-            $this->logger->error('No application given.');
-            return false;
-        }
-
         try {
             $this->auth0 = GeneralUtility::makeInstance(ApiUtility::class, $this->application)->getAuth0();
             $this->userInfo = $this->auth0->getUser() ?? [];

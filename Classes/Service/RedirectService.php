@@ -18,7 +18,6 @@ use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\FrontendRestrictionContainer;
-use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Felogin\Controller\FrontendLoginController;
@@ -26,7 +25,7 @@ use TYPO3\CMS\Felogin\Controller\FrontendLoginController;
 /**
  * @see FrontendLoginController
  */
-class RedirectService implements SingletonInterface, LoggerAwareInterface
+class RedirectService implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 

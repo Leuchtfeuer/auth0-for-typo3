@@ -39,6 +39,9 @@ class RoutingUtility implements LoggerAwareInterface
         $this->targetPage = (int)$GLOBALS['TSFE']->id;
     }
 
+    /**
+     * @deprecated Use PSR-15 Middleware instead.
+     */
     public function setCallback(int $pageUid, int $pageType): self
     {
         if ($pageUid !== 0) {
