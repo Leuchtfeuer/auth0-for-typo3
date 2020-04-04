@@ -53,7 +53,7 @@ class DataUriNormalizer implements NormalizerInterface, DenormalizerInterface, C
                 $mimeTypeGuesser = MimeTypeGuesser::getInstance();
             }
         } elseif (!$mimeTypeGuesser instanceof MimeTypes) {
-            throw new \TypeError(sprintf('Argument 1 passed to "%s()" must be an instance of "%s" or null, %s given.', __METHOD__, MimeTypes::class, \is_object($mimeTypeGuesser) ? \get_class($mimeTypeGuesser) : \gettype($mimeTypeGuesser)));
+            throw new \TypeError(sprintf('Argument 1 passed to "%s()" must be an instance of "%s" or null, "%s" given.', __METHOD__, MimeTypes::class, \is_object($mimeTypeGuesser) ? \get_class($mimeTypeGuesser) : \gettype($mimeTypeGuesser)));
         }
 
         $this->mimeTypeGuesser = $mimeTypeGuesser;
@@ -138,15 +138,13 @@ class DataUriNormalizer implements NormalizerInterface, DenormalizerInterface, C
      */
     public function hasCacheableSupportsMethod(): bool
     {
-        return __CLASS__ === \get_class($this);
+        return __CLASS__ === static::class;
     }
 
     /**
      * Gets the mime type of the object. Defaults to application/octet-stream.
-     *
-     * @return string
      */
-    private function getMimeType(\SplFileInfo $object)
+    private function getMimeType(\SplFileInfo $object): string
     {
         if ($object instanceof File) {
             return $object->getMimeType();
@@ -165,10 +163,8 @@ class DataUriNormalizer implements NormalizerInterface, DenormalizerInterface, C
 
     /**
      * Returns the \SplFileObject instance associated with the given \SplFileInfo instance.
-     *
-     * @return \SplFileObject
      */
-    private function extractSplFileObject(\SplFileInfo $object)
+    private function extractSplFileObject(\SplFileInfo $object): \SplFileObject
     {
         if ($object instanceof \SplFileObject) {
             return $object;

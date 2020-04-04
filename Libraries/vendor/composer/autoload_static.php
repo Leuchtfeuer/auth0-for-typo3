@@ -543,6 +543,7 @@ class ComposerStaticInitdb3601d45bf6243df16fadf011bd67cd
         'Symfony\\Component\\Serializer\\Normalizer\\NormalizerInterface' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/NormalizerInterface.php',
         'Symfony\\Component\\Serializer\\Normalizer\\ObjectNormalizer' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/ObjectNormalizer.php',
         'Symfony\\Component\\Serializer\\Normalizer\\ObjectToPopulateTrait' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/ObjectToPopulateTrait.php',
+        'Symfony\\Component\\Serializer\\Normalizer\\ProblemNormalizer' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/ProblemNormalizer.php',
         'Symfony\\Component\\Serializer\\Normalizer\\PropertyNormalizer' => __DIR__ . '/..' . '/symfony/serializer/Normalizer/PropertyNormalizer.php',
         'Symfony\\Component\\Serializer\\Serializer' => __DIR__ . '/..' . '/symfony/serializer/Serializer.php',
         'Symfony\\Component\\Serializer\\SerializerAwareInterface' => __DIR__ . '/..' . '/symfony/serializer/SerializerAwareInterface.php',

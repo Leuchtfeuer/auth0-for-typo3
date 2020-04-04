@@ -425,6 +425,7 @@ return array(
     'Symfony\\Component\\Serializer\\Normalizer\\NormalizerInterface' => $vendorDir . '/symfony/serializer/Normalizer/NormalizerInterface.php',
     'Symfony\\Component\\Serializer\\Normalizer\\ObjectNormalizer' => $vendorDir . '/symfony/serializer/Normalizer/ObjectNormalizer.php',
     'Symfony\\Component\\Serializer\\Normalizer\\ObjectToPopulateTrait' => $vendorDir . '/symfony/serializer/Normalizer/ObjectToPopulateTrait.php',
+    'Symfony\\Component\\Serializer\\Normalizer\\ProblemNormalizer' => $vendorDir . '/symfony/serializer/Normalizer/ProblemNormalizer.php',
     'Symfony\\Component\\Serializer\\Normalizer\\PropertyNormalizer' => $vendorDir . '/symfony/serializer/Normalizer/PropertyNormalizer.php',
     'Symfony\\Component\\Serializer\\Serializer' => $vendorDir . '/symfony/serializer/Serializer.php',
     'Symfony\\Component\\Serializer\\SerializerAwareInterface' => $vendorDir . '/symfony/serializer/SerializerAwareInterface.php',

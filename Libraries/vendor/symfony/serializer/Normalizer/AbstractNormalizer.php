@@ -316,7 +316,7 @@ abstract class AbstractNormalizer implements NormalizerInterface, DenormalizerIn
      */
     protected function handleCircularReference($object/*, string $format = null, array $context = []*/)
     {
-        if (\func_num_args() < 2 && __CLASS__ !== \get_class($this) && __CLASS__ !== (new \ReflectionMethod($this, __FUNCTION__))->getDeclaringClass()->getName() && !$this instanceof \PHPUnit\Framework\MockObject\MockObject && !$this instanceof \Prophecy\Prophecy\ProphecySubjectInterface) {
+        if (\func_num_args() < 2 && __CLASS__ !== static::class && __CLASS__ !== (new \ReflectionMethod($this, __FUNCTION__))->getDeclaringClass()->getName() && !$this instanceof \PHPUnit\Framework\MockObject\MockObject && !$this instanceof \Prophecy\Prophecy\ProphecySubjectInterface) {
             @trigger_error(sprintf('The "%s()" method will have two new "string $format = null" and "array $context = []" arguments in version 5.0, not defining it is deprecated since Symfony 4.2.', __METHOD__), E_USER_DEPRECATED);
         }
         $format = \func_num_args() > 1 ? func_get_arg(1) : null;
@@ -327,7 +327,7 @@ abstract class AbstractNormalizer implements NormalizerInterface, DenormalizerIn
             return $circularReferenceHandler($object, $format, $context);
         }
 
-        throw new CircularReferenceException(sprintf('A circular reference has been detected when serializing the object of class "%s" (configured limit: %d)', \get_class($object), $this->circularReferenceLimit));
+        throw new CircularReferenceException(sprintf('A circular reference has been detected when serializing the object of class "%s" (configured limit: %d).', \get_class($object), $this->circularReferenceLimit));
     }
 
     /**
@@ -472,7 +472,7 @@ abstract class AbstractNormalizer implements NormalizerInterface, DenormalizerIn
                 if ($constructorParameter->isVariadic()) {
                     if ($allowed && !$ignored && (isset($data[$key]) || \array_key_exists($key, $data))) {
                         if (!\is_array($data[$paramName])) {
-                            throw new RuntimeException(sprintf('Cannot create an instance of %s from serialized data because the variadic parameter %s can only accept an array.', $class, $constructorParameter->name));
+                            throw new RuntimeException(sprintf('Cannot create an instance of "%s" from serialized data because the variadic parameter "%s" can only accept an array.', $class, $constructorParameter->name));
                         }
 
                         $variadicParameters = [];
@@ -502,7 +502,7 @@ abstract class AbstractNormalizer implements NormalizerInterface, DenormalizerIn
                 } elseif ($constructorParameter->isDefaultValueAvailable()) {
                     $params[] = $constructorParameter->getDefaultValue();
                 } else {
-                    throw new MissingConstructorArgumentsException(sprintf('Cannot create an instance of %s from serialized data because its constructor requires parameter "%s" to be present.', $class, $constructorParameter->name));
+                    throw new MissingConstructorArgumentsException(sprintf('Cannot create an instance of "%s" from serialized data because its constructor requires parameter "%s" to be present.', $class, $constructorParameter->name));
                 }
             }
 
@@ -524,7 +524,7 @@ abstract class AbstractNormalizer implements NormalizerInterface, DenormalizerIn
         try {
             if (null !== $parameter->getClass()) {
                 if (!$this->serializer instanceof DenormalizerInterface) {
-                    throw new LogicException(sprintf('Cannot create an instance of %s from serialized data because the serializer inject in "%s" is not a denormalizer', $parameter->getClass(), self::class));
+                    throw new LogicException(sprintf('Cannot create an instance of "%s" from serialized data because the serializer inject in "%s" is not a denormalizer.', $parameter->getClass(), self::class));
                 }
                 $parameterClass = $parameter->getClass()->getName();
                 $parameterData = $this->serializer->denormalize($parameterData, $parameterClass, $format, $this->createChildContext($context, $parameterName, $format));
@@ -544,15 +544,12 @@ abstract class AbstractNormalizer implements NormalizerInterface, DenormalizerIn
     /**
      * @param string $attribute Attribute name
      *
-     * @return array
-     *
      * @internal
      */
-    protected function createChildContext(array $parentContext, $attribute/*, ?string $format */)
+    protected function createChildContext(array $parentContext, $attribute/*, ?string $format */): array
     {
         if (\func_num_args() < 3) {
-            @trigger_error(sprintf('Method "%s::%s()" will have a third "?string $format" argument in version 5.0; not defining it is deprecated since Symfony 4.3.', \get_class($this), __FUNCTION__), E_USER_DEPRECATED);
-            $format = null;
+            @trigger_error(sprintf('Method "%s::%s()" will have a third "?string $format" argument in version 5.0; not defining it is deprecated since Symfony 4.3.', static::class, __FUNCTION__), E_USER_DEPRECATED);
         }
         if (isset($parentContext[self::ATTRIBUTES][$attribute])) {
             $parentContext[self::ATTRIBUTES] = $parentContext[self::ATTRIBUTES][$attribute];
