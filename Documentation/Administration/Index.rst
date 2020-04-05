@@ -36,23 +36,19 @@ and upload the zip file to the extension manager of your TYPO3 instance and acti
 
 .. important::
 
-   Please make sure that you include all TypoScript files.
+   Please make sure to include all TypoScript files.
 
 Global Configuration
 ====================
 
-You have to add following parameters to the :php:`$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters']` configuration:
-`code`, `state`, `error_description` and `error`.
-
-On the first installation, the extension will do that for you.
+You have to add following parameters to the :php:`$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters']`
+configuration: `code`, `state`, `error_description` and `error`. On the first installation, the extension will do that for you.
 
 Access Rights
 =============
 
-You need to allow editors to modify the record type (*Tables (modify)*).
-
-Editors can create or update plugins when they are allowed to modify the page content type *Insert Plugin* and the page content
-plugin *Auth0: Login form*.
+You need to allow editors to modify the record type (*Tables (modify)*). Editors can create or update plugins when they are
+allowed to modify the page content type *Insert Plugin* and the page content plugin *Auth0: Login form*.
 
 Scheduler Task
 ==============
@@ -60,7 +56,7 @@ Scheduler Task
 There is one scheduler task available which takes care of inactive or removed Auth0 users. Please notice that this task affects
 only TYPO3 backend users (for now).
 
-Please take a look at the :ref:`administration-command` section.
+Please take a look at the :ref:`command <command>` section.
 
 
 
@@ -68,6 +64,7 @@ Please take a look at the :ref:`administration-command` section.
     :maxdepth: 3
     :hidden:
 
+    Callback/Index
     ConsoleCommand/Index
     DataType/Index
     ExtensionConfiguration/Index

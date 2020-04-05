@@ -32,6 +32,9 @@ Properties
    userStoragePage_                     Frontend                             positive integer
    reactivateDisabledFrontendUsers_     Frontend                             boolean
    reactivateDeletedFrontendUsers_      Frontend                             boolean
+   genericCallback_                     Token                                boolean
+   privateKeyFile_                      Token                                string
+   publicKeyFile_                       Token                                string
    ==================================== ==================================== ==================
 
 .. ### BEGIN~OF~TABLE ###
@@ -127,7 +130,7 @@ additionalAuthorizeParameters
    Data type
          string
    Default
-         :code:``
+         unset
    Description
          Additional query parameters for backend authentication (e.g. `access_type=offline&connection=google-oauth2`).
 
@@ -194,3 +197,53 @@ reactivateDeletedFrontendUsers
          :code:`true`
    Description
          Allow log in for deleted frontend users.
+
+
+.. _admin-configuration-genericCallback:
+
+genericCallback
+---------------
+.. container:: table-row
+
+   Property
+         genericCallback
+   Data type
+         boolean
+   Default
+         :code:`true`
+   Description
+         A generic callback URI for all requests (frontend and backend) will be used. The callback URI will be
+         https://www.example.com/auth0/callback.
+
+
+.. _admin-configuration-privateKeyFile:
+
+privateKeyFile
+--------------
+.. container:: table-row
+
+   Property
+         privateKeyFile
+   Data type
+         string
+   Default
+         unset
+   Description
+         The absolute path to your private key file on your server. If set, this key will be used for signing the generated
+         tokens. Otherwise, TYPO3's encryption key will be used. Only RSA keys are supported for now.
+
+
+.. _admin-configuration-publicKeyFile:
+
+publicKeyFile
+-------------
+.. container:: table-row
+
+   Property
+         publicKeyFile
+   Data type
+         string
+   Default
+         unset
+   Description
+         The absolute path to your public key file on your server.

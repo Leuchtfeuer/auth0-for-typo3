@@ -34,8 +34,8 @@ You have also the option to use your own template files for the backend login. J
        stylesheet = EXT:your_key/Resources/Public/Styles/Backend.css
    }
 
-Please make also sure that you configure the role-mapping__ from Auth0 roles to TYPO3 user groups. Maybe you also want to set the admin
-flag for backend users, depending on an Auth0 property-mapping__.
+Please make also sure that you configure the :ref:`role mapping <admin-typoscript-roleMapping>` from Auth0 roles to TYPO3 user groups. Maybe you also want to set the admin
+flag for backend users, depending on an Auth0 :ref:`role mapping <admin-typoscript-propertyMapping>`.
 
 Login Behaviour
 ===============
@@ -66,9 +66,9 @@ constants:
 Frontend Settings
 =================
 
-You can configure generic logon and logoff URLs for your system so that the number of callbacks to be configured in Auth0 remains
-manageable. You can specify individual page IDs and page types for login and logout. The configuration can be done with the
-following TypoScript constants:
+Please note that this setting is considered deprecated: You can configure generic logon and logoff URLs for your system so that
+the number of callbacks to be configured in Auth0 remains manageable. You can specify individual page IDs and page types for
+login and logout. The configuration can be done with the following TypoScript constants:
 
 .. code-block:: typoscript
 
@@ -95,12 +95,15 @@ or open the registration tab (instead of the login tab). This can be implemented
       connection = google-oauth2
    }
 
+.. _admin-typoscript-roleMapping:
 
 Role Mapping
 ============
 
 Configure `fe_groups` and `be_groups` mappings to match Auth0 roles. Use the Auth0 role identifier as key and the TYPO3 frontend
-or backend user group ID as value. These settings must be made in your TypoScript setup (not constants).
+or backend user group ID as value. These settings must be made in your TypoScript setup (not constants). The Auth0 roles are
+expected in the `app_metadata` of the user under the roles key. Anyhow, you can configure the key by setting the TypoScript
+constant :typoscript:`plugin.tx_auth0.settings.roles.key` to a different value.
 
 Keep in mind, that there is one special option for backend users: You can set the admin flag by assigning the value `admin` to
 an Auth0 role.
@@ -108,9 +111,11 @@ an Auth0 role.
 .. code-block:: typoscript
 
    plugin.tx_auth0.settings.roles {
+       key = roles
+
        # be_group mappings for be_users
        be_users {
-           #mapping for auth0 role to be_groups
+           # mapping for Auth0 role to be_groups
 
            # special: sets the admin flag
            admin = admin
@@ -118,10 +123,12 @@ an Auth0 role.
 
        # fe_group mappings for fe_users
        fe_users {
-           # mapping for auth0 role to fe_groups
+           # mapping for Auth0 role to fe_groups
            admin = 1
        }
    }
+
+.. _admin-typoscript-propertyMapping:
 
 Property Mapping
 ================
