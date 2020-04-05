@@ -24,6 +24,7 @@ use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 
 class UpdateUtility implements LoggerAwareInterface
 {
@@ -104,15 +105,14 @@ class UpdateUtility implements LoggerAwareInterface
 
     protected function mapRoles(array $groupMapping, array &$groupsToAssign, bool &$isBeAdmin, bool &$shouldUpdate): void
     {
-        $userRoles = $this->user->getAppMetadata()['roles'];
-
-        if (empty($userRoles)) {
-            $this->logger->notice('No Auth0 roles defined.');
-
-            return;
+        try {
+            // TODO: Support dot syntax for roles; e.g. roles.application
+            $rolesKey = ConfigurationUtility::getSetting('roles', 'key') ?? 'roles';
+        } catch (InvalidConfigurationTypeException $exception) {
+            $rolesKey = 'roles';
         }
 
-        foreach ($userRoles as $role) {
+        foreach ($this->user->getAppMetadata()[$rolesKey] ?? [] as $role) {
             if (isset($groupMapping[$role])) {
                 if ($this->tableName === 'be_users' && $groupMapping[$role] === 'admin') {
                     $isBeAdmin = true;

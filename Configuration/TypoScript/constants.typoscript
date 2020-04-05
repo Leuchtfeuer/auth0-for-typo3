@@ -29,6 +29,8 @@ plugin.tx_auth0 {
                 targetPageUid = 1
             }
         }
+
+        roles.key = roles
     }
 }
 
