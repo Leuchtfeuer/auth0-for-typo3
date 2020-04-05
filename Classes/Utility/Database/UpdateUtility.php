@@ -57,7 +57,7 @@ class UpdateUtility implements LoggerAwareInterface
     {
         try {
             $groupMapping = ConfigurationUtility::getSetting('roles', $this->tableName);
-        } catch (\Exception $exception) {
+        } catch (InvalidConfigurationTypeException $exception) {
             $this->logger->error($exception->getCode() . ': ' . $exception->getMessage());
 
             return;
@@ -88,7 +88,7 @@ class UpdateUtility implements LoggerAwareInterface
         try {
             // Get mapping configuration
             $mappingConfiguration = ConfigurationUtility::getSetting('propertyMapping', $this->tableName);
-        } catch (\Exception $exception) {
+        } catch (InvalidConfigurationTypeException $exception) {
             $this->logger->error($exception->getCode() . ': ' . $exception->getMessage());
 
             return;
