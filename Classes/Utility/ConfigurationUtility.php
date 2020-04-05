@@ -84,6 +84,6 @@ class ConfigurationUtility implements SingletonInterface
             self::makeInstance();
         }
 
-        return (empty(self::$settings)) ? false : true;
+        return !empty(self::$settings);
     }
 }
