@@ -1,4 +1,4 @@
-mod.wizards.newContentElement.wizardItems.plugins {
+mod.wizards.newContentElement.wizardItems.forms {
     elements {
         auth0 {
             iconIdentifier = auth0
