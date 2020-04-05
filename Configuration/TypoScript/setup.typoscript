@@ -28,11 +28,13 @@ plugin.tx_auth0 {
         }
 
         frontend {
+            # The callback settings are deprecated and will be removed in next major version of this extension
             callback {
                 targetPageType = {$plugin.tx_auth0.settings.frontend.callback.targetPageType}
                 targetPageUid = {$plugin.tx_auth0.settings.frontend.callback.targetPageUid}
             }
 
+            # The logout settings are deprecated and will be removed in next major version of this extension
             logout {
                 targetPageType = {$plugin.tx_auth0.settings.frontend.logout.targetPageType}
                 targetPageUid = {$plugin.tx_auth0.settings.frontend.logout.targetPageUid}

@@ -18,6 +18,7 @@ plugin.tx_auth0 {
             }
         }
 
+        # These frontend constants are deprecated and will be removed in next major version of this extension
         frontend {
             callback {
                 targetPageType = 1547536919
