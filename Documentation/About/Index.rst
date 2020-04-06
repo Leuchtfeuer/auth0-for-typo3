@@ -8,6 +8,8 @@ About
 
 This extension allows you to log on to a TYPO3 front- or backend with `Auth0 <https://auth0.com/>`__.
 
+.. _about-compatibility:
+
 Compatibility
 =============
 
@@ -22,7 +24,6 @@ You need access to an Auth0 instance. We are currently supporting following TYPO
         "3.0.x", "🙅‍♀️", "🙋‍♂️", "🙅‍♀️"
         "2.x", "🙅‍♀️", "🙋‍♂️", "🙅‍♀️"
         "1.x", "🙅‍♀️", "🙅‍♀️", "🙋‍♂️"
-
 
 About Auth0
 ===========

@@ -31,11 +31,11 @@ Auth0 for TYPO3
 
 This extension allows you to log on to a TYPO3 front- or backend with `Auth0 <https://auth0.com/>`__. Auth0 is the solution you
 need for web, mobile, IoT, and internal applications. Loved by developers and trusted by enterprises.
-`Find out <https://auth0.com/why-auth0>`__ why you should use Auth0.
+`Find out <https://auth0.com/why-auth0>`__ why you should use Auth0. You need access to an `Auth0 <https://auth0.com/>`__
+instance for using this extension.
 
-We support `TYPO3 8 LTS <https://get.typo3.org/version/8>`__ and `TYPO3 9 LTS <https://get.typo3.org/versions/9>`__.
-Please use the version 1.x of this extension for TYPO3 8 LTS and version 2.x for TYPO3 9 LTS.
-You also need access to an `Auth0 <https://auth0.com/>`__ instance.
+To figure out which extension version is supported by your TYPO3 instance, take a quick look at our
+:ref:`version matrix <about-compatibility>`.
 
 
 
@@ -59,7 +59,7 @@ You also need access to an `Auth0 <https://auth0.com/>`__ instance.
 
 **For Contributors**
 
-   You are welcome to help improve this guide. Just click on "Edit me on GitHub" on the top right to submit your change request.
+   You are welcome to help improve this guide. Just click on "Edit on GitHub" on the top right to submit your change request.
 
 
 

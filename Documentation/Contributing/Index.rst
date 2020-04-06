@@ -26,4 +26,4 @@ easily connect to your Auth0 tenant. You will not lose any existing user data or
 Documentation
 =============
 
-You are welcome to help improve this guide. Just click on "Edit me on GitHub" on the top right to submit your change request.
+You are welcome to help improve this guide. Just click on "Edit on GitHub" on the top right to submit your change request.
