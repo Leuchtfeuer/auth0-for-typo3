@@ -84,6 +84,11 @@ class RoutingUtility implements LoggerAwareInterface
             $uri = $uriBuilder->buildFrontendUri();
             $this->logger->notice(sprintf('Set URI to: %s', $uri));
 
+            // Base of site configuration might be "/" so we have to prepend the domain
+            if (strpos($uri, '/') === 0) {
+                $uri = GeneralUtility::getIndpEnv('TYPO3_SITE_URL') . ltrim($uri, '/');
+            }
+
             return $uri;
         }
 
