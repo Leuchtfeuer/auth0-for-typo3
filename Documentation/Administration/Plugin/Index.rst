@@ -6,7 +6,7 @@
 Plugin
 ======
 
-This extensions comes with a log in / log off plugin for frontend users. It is located underneath the plugin tab when creating a
+This extensions comes with a log in / log off plugin for frontend users. It is located underneath the forms tab when creating a
 new content element.
 
 .. image:: ../../Images/new-plugin.png

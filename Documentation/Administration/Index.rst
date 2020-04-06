@@ -66,7 +66,7 @@ Please take a look at the :ref:`command <command>` section.
 
     Callback/Index
     ConsoleCommand/Index
-    DataType/Index
+    DataType/Application
     ExtensionConfiguration/Index
     Plugin/Index
     TypoScript/Index

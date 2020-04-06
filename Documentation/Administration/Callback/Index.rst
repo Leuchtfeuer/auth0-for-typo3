@@ -12,7 +12,7 @@ URL path of the callback is `/auth0/callback`. So, when your domain is `https://
 URL `https://www.ecample.com/auth0/callback` as allowed callback URL (and allowed logout URL if you are using the single sign out
 feature).
 
-.. figure:: ../../Images/auth0-callback-url
+.. figure:: ../../Images/auth0-callback-url.png
    :alt: Callback URL in the Auth0 dashboard
    :class: with-shadow
 

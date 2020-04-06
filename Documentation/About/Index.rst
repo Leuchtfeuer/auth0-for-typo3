@@ -14,13 +14,14 @@ Compatibility
 You need access to an Auth0 instance. We are currently supporting following TYPO3 versions:
 
 .. csv-table:: Version Matrix
-   :header: "Extension Version", "TYPO3 10.3 Support", "TYPO3 9 Support", "TYPO3 8 Support"
+   :header: "Extension Version", "TYPO3 v10 Support", "TYPO3 v9 Support", "TYPO3 v8 Support"
    :align: center
 
-        "3.1.x", "x", "x", "-"
-        "3.0.x", "-", "x", "-"
-        "2.x", "-", "x", "-"
-        "1.x", "-", "-", "x"
+        "3.2.x", "🙋‍♂️", "🙋‍♂️", "🙅‍♀️"
+        "3.1.x", "🙋‍♂️", "🙋‍♂️", "🙅‍♀️"
+        "3.0.x", "🙅‍♀️", "🙋‍♂️", "🙅‍♀️"
+        "2.x", "🙅‍♀️", "🙋‍♂️", "🙅‍♀️"
+        "1.x", "🙅‍♀️", "🙅‍♀️", "🙋‍♂️"
 
 
 About Auth0
