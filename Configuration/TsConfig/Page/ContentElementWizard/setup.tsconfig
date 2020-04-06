@@ -1,4 +1,5 @@
 mod.wizards.newContentElement.wizardItems.forms {
+    show := addToList(auth0)
     elements {
         auth0 {
             iconIdentifier = auth0
