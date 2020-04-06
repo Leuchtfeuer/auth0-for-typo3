@@ -58,6 +58,27 @@ only TYPO3 backend users (for now).
 
 Please take a look at the :ref:`command <command>` section.
 
+Logging
+=======
+
+All critical errors will be logged into a dedicated logfile which is located in the TYPO3 log directory (e.g. `var/logs`) and
+contains the phrase auth0 in its name. If you want to increase the loglevel, you must overwrite the log configuration, for
+example like this:
+
+.. codeblock:: php
+
+   $GLOBALS['TYPO3_CONF_VARS']['LOG']['Bitmotion']['Auth0'] = [
+       'writerConfiguration' => [
+           \TYPO3\CMS\Core\Log\LogLevel::DEBUG => [
+               \TYPO3\CMS\Core\Log\Writer\FileWriter::class => [
+                   'logFileInfix' => 'auth0',
+               ],
+           ],
+       ],
+   ];
+
+For further configuration options and more examples take a look at the official TYPO3
+`documentation <https://docs.typo3.org/m/typo3/reference-coreapi/master/en-us/ApiOverview/Logging/Configuration/Index.html>`__.
 
 
 .. toctree::
