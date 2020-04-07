@@ -70,7 +70,6 @@ class Auth0 extends \Auth0\SDK\Auth0
 
     /**
      * @throws CoreException
-     * @throws InvalidApplicationException
      */
     public function __construct(?int $application = null, ?string $redirectUri = null, ?string $scope = null, array $additionalOptions = [])
     {
@@ -100,9 +99,6 @@ class Auth0 extends \Auth0\SDK\Auth0
         return GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . CallbackMiddleware::PATH;
     }
 
-    /**
-     * @throws InvalidApplicationException
-     */
     protected function enrichConfigByApplication(int $applicationId, array &$config): void
     {
         try {
