@@ -1,10 +1,12 @@
 .. include:: ../../Includes.txt
 
-.. _typoscript:
+.. _admin-typoscript:
 
 ==========
 TypoScript
 ==========
+
+.. _admin-typoscript-templating:
 
 Templating
 ==========
@@ -20,6 +22,7 @@ constants which you can simply override:
        layoutRootPath = EXT:your_key/Resources/Private/Layouts/
    }
 
+.. _admin-typoscript-templating-backendLogin:
 
 Backend Login
 -------------
@@ -36,6 +39,8 @@ You have also the option to use your own template files for the backend login. J
 
 Please make also sure that you configure the :ref:`role mapping <admin-typoscript-roleMapping>` from Auth0 roles to TYPO3 user groups. Maybe you also want to set the admin
 flag for backend users, depending on an Auth0 :ref:`role mapping <admin-typoscript-propertyMapping>`.
+
+.. _admin-typoscript-loginBehaviour:
 
 Login Behaviour
 ===============
@@ -62,6 +67,8 @@ constants:
            deleted = 1
        }
    }
+
+.. _admin-typoscript-frontendSettings:
 
 Frontend Settings
 =================
@@ -171,6 +178,8 @@ within the metadata property (e.g. `user_metadata.address.primary.zip`).  These 
            first_name = user_metadata.description
        }
    }
+
+.. _admin-typoscript-propertyMapping-parsingFunctions:
 
 Parsing Functions
 -----------------

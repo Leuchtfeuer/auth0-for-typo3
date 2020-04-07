@@ -72,24 +72,20 @@ class Auth0 extends \Auth0\SDK\Auth0
      * @throws CoreException
      * @throws InvalidApplicationException
      */
-    public function __construct(int $applicationId, ?string $redirectUri = null, ?string $scope = null, array $additionalOptions = [])
+    public function __construct(?int $application = null, ?string $redirectUri = null, ?string $scope = null, array $additionalOptions = [])
     {
-        $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationId, true);
-
         $config = [
-            'audience' => $application->getAudience(true),
-            'client_id' => $application->getClientId(),
-            'client_secret' => $application->getClientSecret(),
-            'domain' => $application->getDomain(),
-            'id_token_alg' => $application->getSignatureAlgorithm(),
             'persist_access_token' => true,
             'persist_id_token' => true,
             'persist_refresh_token' => true,
             'redirect_uri' => $redirectUri ?? $this->getCallbackUri(),
             'scope' => $scope,
-            'secret_base64_encoded' => $application->isSecretBase64Encoded(),
-            'store' => (new SessionFactory())->getSessionStoreForApplication($applicationId),
+            'store' => (new SessionFactory())->getSessionStoreForApplication((int)$application),
         ];
+
+        if ((int)$application > 0) {
+            $this->enrichConfigByApplication($application, $config);
+        }
 
         parent::__construct(array_merge($config, $additionalOptions));
     }
@@ -102,5 +98,26 @@ class Auth0 extends \Auth0\SDK\Auth0
     protected function getCallbackUri(): string
     {
         return GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . CallbackMiddleware::PATH;
+    }
+
+    /**
+     * @throws InvalidApplicationException
+     */
+    protected function enrichConfigByApplication(int $applicationId, array &$config): void
+    {
+        try {
+            $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationId, true);
+        } catch (InvalidApplicationException $exception) {
+            // TODO: Log this
+
+            return;
+        }
+
+        $config['audience'] = $application->getAudience(true);
+        $config['client_id'] = $application->getClientId();
+        $config['client_secret'] = $application->getClientSecret();
+        $config['domain'] = $application->getDomain();
+        $config['id_token_alg'] = $application->getSignatureAlgorithm();
+        $config['secret_base64_encoded'] = $application->isSecretBase64Encoded();
     }
 }

@@ -1,17 +1,19 @@
 .. include:: ../../Includes.txt
 
-.. _plugin:
+.. _editor-plugin:
 
 ======
 Plugin
 ======
 
-This extensions comes with a log in / log off plugin for frontend users. It is located underneath the forms tab when creating a
+This extensions comes with a login / logoff plugin for frontend users. It is located underneath the forms tab when creating a
 new content element.
 
 .. image:: ../../Images/new-plugin.png
    :alt: Create a New Plugin
    :class: with-shadow
+
+.. _editor-plugin-configuration:
 
 Configuration
 =============
@@ -27,6 +29,8 @@ setting :typoscript:`plugin.tx_auth0.settings.frontend.login.additionalAuthorize
    :class: with-shadow
 
    The general configuration can be done in the "General" tab of the plugin configuration.
+
+.. _editor-plugin-redirects:
 
 Redirects
 =========

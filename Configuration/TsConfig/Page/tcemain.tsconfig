@@ -1,0 +1,8 @@
+TCEMAIN.linkHandler.tx_auth0 {
+    handler = Bitmotion\Auth0\LinkHandler\Auth0LinkHandler
+    label = LLL:EXT:auth0/Resources/Private/Language/locallang.xlf:link_handler.label
+    configuration {
+        table = tx_auth0_domain_model_link
+    }
+    scanAfter = page
+}

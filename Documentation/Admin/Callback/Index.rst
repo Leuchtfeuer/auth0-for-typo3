@@ -1,6 +1,6 @@
 .. include:: ../../Includes.txt
 
-.. _callback:
+.. _admin-callback:
 
 ========
 Callback
@@ -18,13 +18,16 @@ feature).
 
    You only need to define one URL as your callback in the application settings of your Auth0 application.
 
+.. _admin-callback-rsaKeyPair:
+
 RSA Key Pair
 ============
 
 By default, the generated token which includes all the relevant data is signed with TYPO3´s encryption key. To increase the
 security of your application, it is recommended and possible to use your own RSA key pair for signing the token. The path to your
-private and public key file can be configured within the :ref:`extension configuration <admin-configuration-privateKeyFile>`. To
-create a new key pair, you must execute the following commands on the command line:
+private and public key file can be configured within the
+:ref:`extension configuration <admin-extensionConfiguration-properties-privateKeyFile>`. To create a new key pair, you must
+execute the following commands on the command line:
 
 .. code-block:: bash
 

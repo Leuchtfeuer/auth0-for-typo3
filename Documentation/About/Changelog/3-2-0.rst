@@ -20,8 +20,11 @@ Added
 * Separate sessions for frontend and backend log ins are now be used
 * Dedicated class :php:`\Bitmotion\Auth0\ErrorCode` containing all valid Auth0 error codes
 * A default value for the redirect URI within oauth2 requests will now be used when there is no valid callback URI
-* A new PSR-15 Middleware will take care of all Auth0 :ref:`callbacks <callback>`
+* A new PSR-15 Middleware will take care of all Auth0 :ref:`callbacks <admin-callback>`
 * JSON Web Tokens are used for transmitting information between TYPO3 and Auth0
+* The configuration key, where to retrieve Auth0 :ref:`roles <admin-typoscript-roleMapping>` from, is now configurable
+* New data record (:ref:`Link <editor-dataTypes-link>`) for creating login links to other applications using the same Auth0 tenant.
+* Dedicated :ref:`link handler <editor-linkHandler>` for creating login links to other applications using the same Auth0 tenant.
 
 Changed
 =======
@@ -29,7 +32,9 @@ Changed
 * A dedicated factory class is now responsible for creating user sessions
 * User related data is now retrieved from the frontend user aspect (where possible)
 * Logging levels of :php:`\Bitmotion\Auth0\Service\AuthenticationService`
+* Warnings and errors will be logged into dedicated log file. :ref:`Learn <admin-logging>` how to configure logging.
 * Constants of class :php:`\Bitmotion\Auth0\Api\Auth0` were moved into dedicated class :php:`\Bitmotion\Auth0\ErrorCode`
+* :ref:`Plugin <editor-plugin>` can now be found in the forms tab (was plugins)
 
 Deprecated
 ==========
@@ -42,7 +47,7 @@ Deprecated
 
 * All constants containing error codes of class :php:`\Bitmotion\Auth0\Api\Auth0`
 * Following TypoScript settings and constants are now deprecated. You should consider to use the newly introduced generic
-  :ref:`callbacks <callback>`
+  :ref:`callbacks <admin-callback>`
 
    * :typoscript:`plugin.tx_auth0.settings.frontend.logout.targetPageUid`
    * :typoscript:`plugin.tx_auth0.settings.frontend.logout.targetPageType`
@@ -50,13 +55,27 @@ Deprecated
    * :typoscript:`plugin.tx_auth0.settings.frontend.callback.targetPageType`
 
 * The TypoScript page type 1547536919 is now deprecated. You should consider to use the newly introduced generic
-  :ref:`callbacks <callback>`
+  :ref:`callbacks <admin-callback>`
 
 All Changes
 ===========
 
 This is a list of all changes in this release::
 
+   2020-04-06 [BUGFIX] Prepend full domain when base of site configuration is just a slash (Commit b728bea by Florian Wessels)
+   2020-04-06 [TASK] Write errors into dedicated logfile (Commit 80a3164 by Florian Wessels)
+   2020-04-06 [DOC] Minor wording changes (Commit 9847449 by Florian Wessels)
+   2020-04-06 [DOC] Add hint for TYPO3 as identity provider (Commit 42753a2 by Florian Wessels)
+   2020-04-06 [BUGFIX] Add plugin to view (Commit 3072027 by Florian Wessels)
+   2020-04-06 [DOC] Exchange images and fix some minor bugs (Commit f5bfebf by Florian Wessels)
+   2020-04-05 [DOC][FOLLOW-UP] Add new features to documentation (Commit b0f1ea1 by Florian Wessels)
+   2020-04-05 [DOC] Add new features to documentation (Commit a5e0636 by Florian Wessels)
+   2020-04-05 [TASK] Do not catch global exceptions (Commit b82e64a by Florian Wessels)
+   2020-04-05 [TASK] Add deprecation notices (Commit a290c9c by Florian Wessels)
+   2020-04-05 [FEATURE] Allow to configure key of path to Auth0 roles (Commit 91c534f by Florian Wessels)
+   2020-04-05 [TASK] Improve condition (Commit 1a6e57b by Florian Wessels)
+   2020-04-05 [TASK] Move CE wizard from plugins to forms tab (Commit 7487b5b by Florian Wessels)
+   2020-04-04 [FEATURE] Introduce generic callback for Auth0 requests (Commit b5042de by Florian Wessels)
    2020-04-04 [TASK] Dependent libraries updated (Commit 985ec4b by Florian Wessels)
    2020-04-02 [TASK] Refactor authUser method (Commit 43c4ad2 by Florian Wessels)
    2020-04-02 [TASK] Take care of all possible oauth2 errors (Commit f8a1f1f by Florian Wessels)

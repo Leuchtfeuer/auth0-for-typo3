@@ -1,6 +1,6 @@
 .. include:: ../../Includes.txt
 
-.. _configuration:
+.. _admin-extensionConfiguration:
 
 =======================
 Extension Configuration
@@ -13,6 +13,8 @@ All configuration is made in the "Extension Configuration" section of the "Setti
    :class: with-shadow
 
    The extension configuration can be found in the admin tools.
+
+.. _admin-extensionConfiguration-properties:
 
 Properties
 ==========
@@ -39,7 +41,7 @@ Properties
 
 .. ### BEGIN~OF~TABLE ###
 
-.. _admin-configuration-securedDirs:
+.. _admin-extensionConfiguration-properties-securedDirs:
 
 enableBackendLogin
 ------------------
@@ -52,10 +54,9 @@ enableBackendLogin
    Default
          :code:`false`
    Description
-         Enable Auth0 log in for TYPO3 backend.
+         Enable Auth0 login for TYPO3 backend.
 
-
-.. _admin-configuration-backendConnection:
+.. _admin-extensionConfiguration-properties-backendConnection:
 
 backendConnection
 -----------------
@@ -70,8 +71,7 @@ backendConnection
    Description
          Application identifier for backend login.
 
-
-.. _admin-configuration-reactivateDisabledBackendUsers:
+.. _admin-extensionConfiguration-properties-reactivateDisabledBackendUsers:
 
 reactivateDisabledBackendUsers
 ------------------------------
@@ -86,8 +86,7 @@ reactivateDisabledBackendUsers
    Description
          Allow log in for disabled backend users.
 
-
-.. _admin-configuration-reactivateDeletedBackendUsers:
+.. _admin-extensionConfiguration-properties-reactivateDeletedBackendUsers:
 
 reactivateDeletedBackendUsers
 -----------------------------
@@ -102,8 +101,7 @@ reactivateDeletedBackendUsers
    Description
          Allow log in for deleted backend users.
 
-
-.. _admin-configuration-softLogout:
+.. _admin-extensionConfiguration-properties-softLogout:
 
 softLogout
 ------------------
@@ -118,8 +116,7 @@ softLogout
    Description
          Log off from TYPO3 only (not from Auth0).
 
-
-.. _admin-configuration-additionalAuthorizeParameters:
+.. _admin-extensionConfiguration-properties-additionalAuthorizeParameters:
 
 additionalAuthorizeParameters
 -----------------------------
@@ -134,8 +131,7 @@ additionalAuthorizeParameters
    Description
          Additional query parameters for backend authentication (e.g. `access_type=offline&connection=google-oauth2`).
 
-
-.. _admin-configuration-enableFrontendLogin:
+.. _admin-extensionConfiguration-properties-enableFrontendLogin:
 
 enableFrontendLogin
 -------------------
@@ -150,8 +146,7 @@ enableFrontendLogin
    Description
          Enable Auth0 log in for TYPO3 frontend.
 
-
-.. _admin-configuration-userStoragePage:
+.. _admin-extensionConfiguration-properties-userStoragePage:
 
 userStoragePage
 ---------------
@@ -166,8 +161,7 @@ userStoragePage
    Description
          Storage page for frontend user.
 
-
-.. _admin-configuration-reactivateDisabledFrontendUsers:
+.. _admin-extensionConfiguration-properties-reactivateDisabledFrontendUsers:
 
 reactivateDisabledFrontendUsers
 -------------------------------
@@ -182,8 +176,7 @@ reactivateDisabledFrontendUsers
    Description
          Allow log in for disabled frontend users.
 
-
-.. _admin-configuration-reactivateDeletedFrontendUsers:
+.. _admin-extensionConfiguration-properties-reactivateDeletedFrontendUsers:
 
 reactivateDeletedFrontendUsers
 ------------------------------
@@ -198,8 +191,7 @@ reactivateDeletedFrontendUsers
    Description
          Allow log in for deleted frontend users.
 
-
-.. _admin-configuration-genericCallback:
+.. _admin-extensionConfiguration-properties-genericCallback:
 
 genericCallback
 ---------------
@@ -215,8 +207,7 @@ genericCallback
          A generic callback URI for all requests (frontend and backend) will be used. The callback URI will be
          https://www.example.com/auth0/callback.
 
-
-.. _admin-configuration-privateKeyFile:
+.. _admin-extensionConfiguration-properties-privateKeyFile:
 
 privateKeyFile
 --------------
@@ -232,8 +223,7 @@ privateKeyFile
          The absolute path to your private key file on your server. If set, this key will be used for signing the generated
          tokens. Otherwise, TYPO3's encryption key will be used. Only RSA keys are supported for now.
 
-
-.. _admin-configuration-publicKeyFile:
+.. _admin-extensionConfiguration-properties-publicKeyFile:
 
 publicKeyFile
 -------------

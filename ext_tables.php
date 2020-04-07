@@ -4,9 +4,10 @@ defined('TYPO3_MODE') || die('Access denied.');
 call_user_func(
     function ($extensionKey) {
         // Add content element wizzard to PageTSConfig
-        \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig(
-            '<INCLUDE_TYPOSCRIPT: source="FILE:EXT:auth0/Configuration/TsConfig/Page/ContentElementWizard/setup.tsconfig">'
-        );
+        \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig('
+            <INCLUDE_TYPOSCRIPT: source="FILE:EXT:auth0/Configuration/TsConfig/Page/ContentElementWizard/setup.tsconfig">
+            <INCLUDE_TYPOSCRIPT: source="FILE:EXT:auth0/Configuration/TsConfig/Page/tcemain.tsconfig">
+        ');
 
         // Register icons
         $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconRegistry::class);

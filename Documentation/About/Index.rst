@@ -6,7 +6,8 @@
 About
 =====
 
-This extension allows you to log on to a TYPO3 front- or backend with `Auth0 <https://auth0.com/>`__.
+This extension allows you to log in to a TYPO3 front- or backend with `Auth0 <https://auth0.com/>`__. It also allows you to create
+login links to any existing Auth0 application, no matter if your TYPO3 instance is connected to an Auth0 tenant or not.
 
 .. _about-compatibility:
 
@@ -24,6 +25,8 @@ You need access to an Auth0 instance. We are currently supporting following TYPO
         "3.0.x", "🙅‍♀️", "🙋‍♂️", "🙅‍♀️"
         "2.x", "🙅‍♀️", "🙋‍♂️", "🙅‍♀️"
         "1.x", "🙅‍♀️", "🙅‍♀️", "🙋‍♂️"
+
+.. _about-aboutAuth0:
 
 About Auth0
 ===========
@@ -48,4 +51,5 @@ Auth0 helps you to:
     :maxdepth: 3
     :hidden:
 
+    Contributing/Index
     Changelog/Index

@@ -1,10 +1,10 @@
 .. include:: ../../Includes.txt
 
-.. _command:
+.. _admin-command:
 
-================
-Console Commands
-================
+===============
+Console Command
+===============
 
 There is one symfony command available which takes care of your backend users. A user that is removed from Auth0 or whose access
 has expired will be disabled or removed from the TYPO3 database.

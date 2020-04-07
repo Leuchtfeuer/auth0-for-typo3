@@ -1,6 +1,6 @@
 .. include:: ../Includes.txt
 
-.. _developing:
+.. _developer:
 
 ==============
 For Developers

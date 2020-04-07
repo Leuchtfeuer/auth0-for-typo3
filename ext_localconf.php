@@ -85,5 +85,9 @@ call_user_func(
                 ],
             ],
         ];
+
+        // Typolink Builder
+        $GLOBALS['TYPO3_CONF_VARS']['FE']['typolinkBuilder']['auth0'] = \Bitmotion\Auth0\Typolink\Auth0LinkBuilder::class;
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['linkHandler']['auth0'] = \Bitmotion\Auth0\LinkHandling\Auth0LinkHandler::class;
     }, 'auth0'
 );

@@ -17,6 +17,10 @@
 			<trans-unit id="plugin.login.logout" xml:space="preserve">
 				<source>Logout</source>
 			</trans-unit>
+
+			<trans-unit id="link_handler.label" xml:space="preserve">
+				<source>Auth0</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
