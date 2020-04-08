@@ -102,12 +102,6 @@ plugin.tx_auth0 {
     }
 }
 
-config.recordLinks.tx_auth0 {
-    typolink {
-        additionalParams.data = field:uid
-    }
-}
-
 # This page type is marked as deprecated and will be removed in next major version of this extension
 auth0_callback = PAGE
 auth0_callback {

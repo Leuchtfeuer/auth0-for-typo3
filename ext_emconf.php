@@ -8,12 +8,9 @@ $EM_CONF['auth0'] = [
     'constraints' => [
         'depends' => [
             'typo3' => '9.5.0-10.4.99',
-            'recordlist' => '9.5.0-10.4.99',
         ],
         'conflicts' => [],
-        'suggests' => [
-            'rte_ckeditor' => '9.5.0-10.4.99'
-        ],
+        'suggests' => [],
     ],
     'state' => 'stable',
     'uploadfolder' => false,

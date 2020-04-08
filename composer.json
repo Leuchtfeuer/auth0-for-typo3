@@ -32,7 +32,6 @@
     "typo3/cms-extensionmanager": "^9.5 || ^10.3",
     "typo3/cms-fluid": "^9.5 || ^10.3",
     "typo3/cms-frontend": "^9.5 || ^10.3",
-    "typo3/cms-recordlist": "^9.5 || ^10.3",
     "auth0/auth0-php": "^7.1",
     "symfony/serializer": "^4.2 || ^5.0",
     "symfony/property-access": "^4.2 || ^5.0",
@@ -45,8 +44,7 @@
     "typo3/testing-framework": "^4.0 || ^5.0"
   },
   "suggest": {
-    "typo3/cms-scheduler": "TYPO3 Scheduler",
-    "typo3/cms-rte-ckeditor": "RTE CK Editor"
+    "typo3/cms-scheduler": "TYPO3 Scheduler"
   },
   "replace": {
     "bitmotion/auth0": "self.version",

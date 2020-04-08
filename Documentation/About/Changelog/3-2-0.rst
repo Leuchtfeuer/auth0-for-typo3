@@ -23,8 +23,6 @@ Added
 * A new PSR-15 Middleware will take care of all Auth0 :ref:`callbacks <admin-callback>`
 * JSON Web Tokens are used for transmitting information between TYPO3 and Auth0
 * The configuration key, where to retrieve Auth0 :ref:`roles <admin-typoscript-roleMapping>` from, is now configurable
-* New data record (:ref:`Link <editor-dataTypes-link>`) for creating login links to other applications using the same Auth0 tenant.
-* Dedicated :ref:`link handler <editor-linkHandler>` for creating login links to other applications using the same Auth0 tenant.
 
 Changed
 =======

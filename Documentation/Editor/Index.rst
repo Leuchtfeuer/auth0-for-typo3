@@ -13,5 +13,4 @@ TODO: Add
     :hidden:
 
     DataType/Index
-    LinkHandler/Index
     Plugin/Index

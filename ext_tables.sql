@@ -27,15 +27,3 @@ CREATE TABLE tx_auth0_domain_model_application (
   secret_base64_encoded smallint(1) DEFAULT 0 NOT NULL,
   signature_algorithm varchar(255) DEFAULT '' NOT NULL,
 );
-
-#
-# Table structure for table 'tx_auth0_domain_model_link'
-#
-CREATE TABLE tx_auth0_domain_model_link (
-  title varchar(255) DEFAULT '' NOT NULL,
-  client_id varchar(255) DEFAULT '' NOT NULL,
-  domain varchar(255) DEFAULT '' NOT NULL,
-  application int(11) DEFAULT 0 NOT NULL,
-  redirect_uri text,
-  additional_authorize_parameters text,
-);

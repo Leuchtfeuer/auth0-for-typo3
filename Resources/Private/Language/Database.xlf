@@ -54,32 +54,6 @@
 				<source>JWT Signature Algorithm</source>
 			</trans-unit>
 
-
-			<trans-unit id="tx_auth0_domain_model_link">
-				<source>Auth0 Login Link</source>
-			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_link.title">
-				<source>Name</source>
-			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_link.application">
-				<source>Application</source>
-			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_link.application.choose">
-				<source>No target application selected</source>
-			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_link.domain">
-				<source>Auth0 Tenant Domain</source>
-			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_link.client_id">
-				<source>Client ID</source>
-			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_link.redirect_uri">
-				<source>Redirect URL</source>
-			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_link.additional_authorize_parameters">
-				<source><![CDATA[Additional query parameters for authentication (e.g. "access_type=offline&connection=google-oauth2")]]></source>
-			</trans-unit>
-
 			<trans-unit id="tabs.basic">
 				<source>Basic</source>
 			</trans-unit>
