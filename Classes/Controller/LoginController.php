@@ -111,7 +111,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
         }
 
         if (!$this->extensionConfiguration->isGenericCallback()) {
-            // Force redirect due to Auth0 sign up or log in errors
+            // Force redirect due to Auth0 sign up or login errors
             $validErrorCodes = (new \ReflectionClass(ErrorCode::class))->getConstants();
             if (!empty(GeneralUtility::_GET('referrer')) && in_array($this->error, $validErrorCodes)) {
                 $this->logger->notice('Handle referrer redirect because of Auth0 errors.');

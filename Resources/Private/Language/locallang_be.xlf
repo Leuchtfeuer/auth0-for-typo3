@@ -5,7 +5,7 @@
 		<header/>
 		<body>
 			<trans-unit id="plugin.loginForm.title" xml:space="preserve">
-				<source>Log in form</source>
+				<source>Login form</source>
 			</trans-unit>
 			<trans-unit id="plugin.loginForm.description" xml:space="preserve">
 				<source>Login form for Auth0 and TYPO3</source>

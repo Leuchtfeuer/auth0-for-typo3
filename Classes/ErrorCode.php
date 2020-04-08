@@ -29,7 +29,7 @@ class ErrorCode
     const ERROR_USER_EXISTS = 'user_exists';
     const ERROR_USERNAME_EXISTS = 'username_exists';
 
-    // Log in errors
+    // Login errors
     const ERROR_ACCESS_DENIED = 'access_denied';
     const ERROR_INVALID_USER_PASSWORD = 'invalid_user_password';
     const ERROR_MFA_INVALID_CODE = 'mfa_invalid_code';
@@ -40,6 +40,6 @@ class ErrorCode
     const ERROR_PASSWORD_STRENGTH_LOG_IN = 'PasswordStrengthError';
     const ERROR_TOO_MANY_ATTEMPTS = 'too_many_attempts';
 
-    // Errors occures in log in and sign up
+    // Errors occurs during log in and sign up
     const ERROR_UNAUTHORIZED = 'unauthorized';
 }

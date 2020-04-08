@@ -5,7 +5,7 @@
 		<header/>
 		<body>
 			<trans-unit id="backend.enable_backend_login" xml:space="preserve">
-				<source>Backend Log In: Enable Auth0 log in for TYPO3 backend</source>
+				<source>Backend Log In: Enable Auth0 login for TYPO3 backend</source>
 			</trans-unit>
 			<trans-unit id="backend.backend_connection" xml:space="preserve">
 				<source>Application: Application identifier for backend login</source>

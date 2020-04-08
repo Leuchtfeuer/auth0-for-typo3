@@ -44,7 +44,7 @@ class Auth0 extends \Auth0\SDK\Auth0
     /** @deprecated Use ErrorCodes class instead */
     const ERROR_USERNAME_EXISTS = ErrorCode::ERROR_USERNAME_EXISTS;
 
-    // Log in errors
+    // Login errors
     /** @deprecated Use ErrorCodes class instead. */
     const ERROR_ACCESS_DENIED = ErrorCode::ERROR_ACCESS_DENIED;
     /** @deprecated Use ErrorCodes class instead. */
@@ -64,7 +64,7 @@ class Auth0 extends \Auth0\SDK\Auth0
     /** @deprecated Use ErrorCodes class instead. */
     const ERROR_TOO_MANY_ATTEMPTS = ErrorCode::ERROR_TOO_MANY_ATTEMPTS;
 
-    // Errors occures in log in and sign up
+    // Errors occurs during log in and sign up
     /** @deprecated Use ErrorCodes class instead. */
     const ERROR_UNAUTHORIZED = ErrorCode::ERROR_UNAUTHORIZED;
 
