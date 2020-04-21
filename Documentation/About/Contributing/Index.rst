@@ -7,7 +7,7 @@ Contributing
 ============
 
 You can contribute by making a **pull request** to the
-`master branch <https://github.com/bitmotion/auth0-for-typo3/tree/master>`__ of the extension repository on GitHub. Or just send
+`master branch <https://github.com/Leuchtfeuer/auth0-for-typo3/tree/master>`__ of the extension repository on GitHub. Or just send
 us some **beers** 🍻...
 
 .. _about-contributing-forms:

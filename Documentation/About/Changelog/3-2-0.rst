@@ -12,7 +12,7 @@ Download
 ========
 
 Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
-`GitHub <https://github.com/bitmotion/auth0-for-typo3/releases/tag/v3.2.0>`__.
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v3.2.0>`__.
 
 Added
 =====

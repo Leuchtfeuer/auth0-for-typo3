@@ -51,7 +51,7 @@ To figure out which extension version is supported by your TYPO3 instance, take 
    It is maintained as part of this third party extension.
 
    If you find an error or something is missing, please:
-   `Report a Problem <https://github.com/bitmotion/auth0-for-typo3/issues/new/choose>`__
+   `Report a Problem <https://github.com/Leuchtfeuer/auth0-for-typo3/issues/new/choose>`__
 
 **Extension Manual**
 
