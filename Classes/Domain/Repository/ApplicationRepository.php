@@ -26,6 +26,8 @@ class ApplicationRepository implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
+    const TABLE_NAME = 'tx_auth0_domain_model_application';
+
     /**
      * @throws InvalidApplicationException
      *
@@ -38,7 +40,7 @@ class ApplicationRepository implements LoggerAwareInterface
                                  ->get(PersistenceManager::class)
                                  ->getObjectByIdentifier($uid, Application::class);
         }
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_auth0_domain_model_application');
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::TABLE_NAME);
         $queryBuilder
                 ->select('*')
                 ->from('tx_auth0_domain_model_application')
