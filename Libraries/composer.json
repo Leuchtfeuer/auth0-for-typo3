@@ -9,7 +9,6 @@
     "auth0/auth0-php": "^7.0",
     "symfony/serializer": "^4.2",
     "symfony/property-access": "^4.2",
-    "symfony/property-info": "^4.2",
-    "symfony/http-foundation": "^4.2"
+    "symfony/property-info": "^4.2"
   }
 }

@@ -10,7 +10,7 @@
   ],
   "type": "typo3-cms-extension",
   "license": "GPL-2.0-or-later",
-  "homepage": "https://www.bitmotion.de",
+  "homepage": "https://www.Leuchtfeuer.com",
   "authors": [
     {
       "name": "Florian Wessels",
@@ -20,28 +20,28 @@
     }
   ],
   "support": {
-    "issues": "https://github.com/bitmotion/auth0-for-typo3/issues",
-    "source": "https://github.com/bitmotion/auth0-for-typo3",
+    "issues": "https://github.com/Leuchtfeuer/auth0-for-typo3/issues",
+    "source": "https://github.com/Leuchtfeuer/auth0-for-typo3",
     "email": "dev@Leuchtfeuer.com",
     "docs": "https://docs.typo3.org/p/bitmotion/auth0/master/en-us/"
   },
   "require": {
-    "typo3/cms-core": "^9.5 || ^10.3",
-    "typo3/cms-backend": "^9.5 || ^10.3",
-    "typo3/cms-extbase": "^9.5 || ^10.3",
-    "typo3/cms-extensionmanager": "^9.5 || ^10.3",
-    "typo3/cms-fluid": "^9.5 || ^10.3",
-    "typo3/cms-frontend": "^9.5 || ^10.3",
+    "typo3/cms-core": "^9.5 || ^10.4",
+    "typo3/cms-backend": "^9.5 || ^10.4",
+    "typo3/cms-extbase": "^9.5 || ^10.4",
+    "typo3/cms-extensionmanager": "^9.5 || ^10.4",
+    "typo3/cms-fluid": "^9.5 || ^10.4",
+    "typo3/cms-frontend": "^9.5 || ^10.4",
     "auth0/auth0-php": "^7.1",
     "symfony/serializer": "^4.2 || ^5.0",
     "symfony/property-access": "^4.2 || ^5.0",
     "symfony/property-info": "^4.2 || ^5.0",
-    "symfony/http-foundation": "^4.2 || ^5.0",
+    "symfony/http-foundation": "^4.2.9 || ^5.0",
     "ext-pdo": "*",
     "ext-json": "*"
   },
   "require-dev": {
-    "typo3/testing-framework": "^4.0 || ^5.0"
+    "typo3/testing-framework": "^4.14.3 || ^6.2.3"
   },
   "suggest": {
     "typo3/cms-scheduler": "TYPO3 Scheduler"
