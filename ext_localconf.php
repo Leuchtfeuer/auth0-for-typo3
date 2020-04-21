@@ -80,7 +80,7 @@ call_user_func(
                 ],
                 \TYPO3\CMS\Core\Log\LogLevel::ERROR => [
                     \TYPO3\CMS\Core\Log\Writer\FileWriter::class => [
-                        'logFileInfix' => 'auth0',
+                        'logFileInfix' => $extensionKey,
                     ],
                 ],
             ],
