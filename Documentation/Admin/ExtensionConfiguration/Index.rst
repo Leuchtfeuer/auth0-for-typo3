@@ -205,7 +205,7 @@ genericCallback
          :code:`true`
    Description
          A generic callback URI for all requests (frontend and backend) will be used. The callback URI will be
-         https://www.example.com/auth0/callback.
+         `https://www.example.com/auth0/callback`.
 
 .. _admin-extensionConfiguration-properties-privateKeyFile:
 
