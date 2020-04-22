@@ -61,17 +61,17 @@ Access Rights
 
 You need to allow editors to modify the record type (*Tables (modify)*). Editors can create or update plugins when they are
 allowed to modify the page content type *Insert Plugin* and the page content plugin *Auth0: Login form*. Also they may have
-- at least reading (*Tables (listing)*) - access to the tables *Application* and *Auth0 Login Link*
+- at least reading (*Tables (listing)*) - access to the *Application* table.
 
-If your editors should be able to create, update or delete :ref:`application <>` or :ref:`link <>` records, they must be permitted
-to modify the corresponding tables *Application* and *Auth0 Login Link*. Only the `hidden` property of both records is marked
-as excluded field.
+If your editors should be able to create, update or delete :ref:`application <editor-dataTypes-application>` records, they must be
+permitted to modify the corresponding tables *Application* . Only the `hidden` property of both records is marked as excluded
+field.
 
-.. figure:: ../../Images/access-rights.png
+.. figure:: ../Images/access-rights.png
    :alt: Access rights
    :class: with-shadow
 
-   In this example the editor group is allowed to see (list) the application and link record.
+   In this example the editor group is allowed to see (list) the application record.
 
 .. _admin-schedulerTask:
 
