@@ -17,12 +17,12 @@ The full documentation can be found [here](https://docs.typo3.org/p/bitmotion/au
 You need access to an [Auth0](https://auth0.com/) instance.  
 We are currently supporting following TYPO3 versions:<br><br>
 
-| Extension Version | TYPO3 10.3 Support | TYPO3 9 Support | TYPO3 8 Support |
+| Extension Version | TYPO3 v10 Support | TYPO3 v9 Support | TYPO3 v8 Support |
 | :-: | :-: | :-: | :-: |
-| 3.1.x             | x                  | x               | -               |
-| 3.0.x             | -                  | x               | -               |
-| 2.x               | -                  | x               | -               |
-| 1.x               | -                  | -               | x               |
+| 3.2.x             | x                 | x                | -                |
+| 3.0.x, 3.1.x      | -                 | x                | -                |
+| 2.x               | -                 | x                | -                |
+| 1.x               | -                 | -                | x                |
 
 ## About Auth0 ##
 Auth0 helps you to:
