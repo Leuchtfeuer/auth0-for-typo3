@@ -12,7 +12,7 @@ Auth0 for TYPO3
 This extension allows you to log into a TYPO3 backend or frontend via Auth0.  
 The full documentation can be found [here](https://docs.typo3.org/p/bitmotion/auth0/master/en-us/).
 
-## Requirements ##
+## Requirements
 
 You need access to an [Auth0](https://auth0.com/) instance.  
 We are currently supporting following TYPO3 versions:<br><br>
@@ -24,7 +24,7 @@ We are currently supporting following TYPO3 versions:<br><br>
 | 2.x               | -                 | x                | -                |
 | 1.x               | -                 | -                | x                |
 
-## About Auth0 ##
+## About Auth0
 Auth0 helps you to:
 
 * Add authentication with [multiple authentication sources](https://auth0.com/docs/identityproviders),
@@ -41,11 +41,16 @@ to call your APIs and flow the user identity securely.
 * Pull data from other sources and add it to the user profile, through
 [JavaScript rules](https://auth0.com/docs/rules/current).
 
-## Contributing ##
+## Contributing
 You can contribute by making a **pull request** to the master branch of
 this repository. Or just send us some **beers**...
 
-### Forms ###
+### Forms
 There is a way to update users metadata using the TYPO3 form framework.
 A registration and "password forgotten" form is also available. If
 you are interested in that, do not hesitate to contact us.
+
+### TYPO3 as Identity Provider
+It is possible to use your existing TYPO3 instance as identity provider for Auth0. This is a comfortable way to integrate Auth0
+into an existing environment where all user data and passwords are already stored in your TYPO3 instance. Other applications can
+easily connect to your Auth0 tenant. You will not lose any existing user data or passwords.
