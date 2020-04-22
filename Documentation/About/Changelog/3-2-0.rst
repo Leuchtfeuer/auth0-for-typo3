@@ -1,11 +1,11 @@
 ﻿.. include:: ../../Includes.txt
 
 ==========================
-Version 3.2.0 - TBA
+Version 3.2.0 - 2020/04/22
 ==========================
 
-This is a future release. It is expected for the second quarter of 2020 and will make the communication between Auth0 and TYPO3
-easier and even more secure. This will be the last release introducing deprecations that will be dropped with version 4 of this
+This is a feature release. It contains a lot of bug fixes and improvements and makes the communication between Auth0 and TYPO3
+easier and even more secure. This is the last release introducing deprecations that will be dropped with version 4 of this
 extension.
 
 Download
@@ -60,6 +60,26 @@ All Changes
 
 This is a list of all changes in this release::
 
+   2020-04-22 [DOC] Update version matrix (Commit d3ee159 by Florian Wessels)
+   2020-04-22 [TASK] Apply cs (Commit 3f494d9 by Florian Wessels)
+   2020-04-22 [DOC] Update documentation (Commit 7136366 by Florian Wessels)
+   2020-04-22 Revert "[TASK] Remove obsolete middleware" (Commit e8e042e by Florian Wessels)
+   2020-04-21 [TASK] Adapt links to repository (Commit 2367596 by Florian Wessels)
+   2020-04-21 [TASK] Update libraries (Commit ea470fb by Florian Wessels)
+   2020-04-21 [TASK] Remove github section for now (Commit 0081a3d by Florian Wessels)
+   2020-04-21 [TASK] Adapt dependencies for TYPO3 v10 LTS (Commit 98b6aa2 by Florian Wessels)
+   2020-04-21 [TASK] Add funding file (Commit 13fd06b by Florian Wessels)
+   2020-04-21 [TASK] Adapt links to GitHub repository (Commit 2db6867 by Florian Wessels)
+   2020-04-21 [TASK] Use extension key as variable (Commit 4290007 by Florian Wessels)
+   2020-04-21 [BUGFIX] Fix links in documentation (Commit 535d92d by Florian Wessels)
+   2020-04-21 [TASK] Remove obsolete middleware (Commit 5ae4f1f by Florian Wessels)
+   2020-04-21 [TASK] Use table name as constant (Commit 4ace718 by Florian Wessels)
+   2020-04-21 [TASK] Move CE wizard TSconfig (Commit 5b1e378 by Florian Wessels)
+   2020-04-08 [CLEAN-UP] Remove obsolete images (Commit 496a6cb by Florian Wessels)
+   2020-04-08 [TASK] Minor wording changes (Commit dd3175a by Florian Wessels)
+   2020-04-08 [REVERT][FEATURE] Allow to create login links to other Auth0 applications (Commit ad44bc1 by Florian Wessels)
+   2020-04-07 [TASK] Remove obsolete @throw annotations (Commit d635a6c by Florian Wessels)
+   2020-04-07 [FEATURE] Allow to create login links to other Auth0 applications (Commit addbf86 by Florian Wessels)
    2020-04-06 [BUGFIX] Prepend full domain when base of site configuration is just a slash (Commit b728bea by Florian Wessels)
    2020-04-06 [TASK] Write errors into dedicated logfile (Commit 80a3164 by Florian Wessels)
    2020-04-06 [DOC] Minor wording changes (Commit 9847449 by Florian Wessels)
