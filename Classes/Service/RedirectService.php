@@ -23,6 +23,7 @@ use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Felogin\Controller\FrontendLoginController;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * @see FrontendLoginController
@@ -227,7 +228,15 @@ class RedirectService implements LoggerAwareInterface
      */
     protected function pi_getPageLink($id, $target = '', $urlParameters = [])
     {
-        return $GLOBALS['TSFE']->cObj->getTypoLink_URL($id, $urlParameters, $target);
+        $contentObjectRenderer = $GLOBALS['TSFE']->cObj;
+
+        // When generic callbacks are used, $GLOBALS['TSFE'] is not fully set up.
+        if (!$contentObjectRenderer instanceof ContentObjectRenderer) {
+            $GLOBALS['TSFE']->fetch_the_id();
+            $contentObjectRenderer = GeneralUtility::makeInstance(ContentObjectRenderer::class);
+        }
+
+        return $contentObjectRenderer->getTypoLink_URL($id, $urlParameters, $target);
     }
 
     /**
