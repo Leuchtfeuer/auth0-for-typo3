@@ -1,0 +1,24 @@
+﻿.. include:: ../../Includes.txt
+
+==========================
+Version 3.2.1 - 2020/04/27
+==========================
+
+This release is a bug fix release which fixes issues regarding user redirects and registration of PSR-15 middleware.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v3.2.1>`__.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+   2020-04-23 [BUGFIX] Get rid of dependency to EXT:redirects (Commit d39839d by Florian Wessels)
+   2020-04-23 [BUGFIX] Instantiate ContentObjectRenderer when callbacks are used (Commit 82a03e9 by Florian Wessels)
+   2020-04-23 [BUGFIX] Instantiate logger, if object is empty (Commit 7cbf55e by Florian Wessels)
+   2020-04-23 [TASK] Set version to 3.2.1-dev (Commit ad6c199 by Florian Wessels)
+   2020-04-22 [DOC] Add hint for TYPO3 as IDP to README (Commit d763d96 by Florian Wessels)
