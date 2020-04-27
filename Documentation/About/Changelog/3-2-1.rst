@@ -17,6 +17,7 @@ All Changes
 
 This is a list of all changes in this release::
 
+   2020-04-27 [DOC] Add changelog (Commit 2832f96 by Florian Wessels)
    2020-04-23 [BUGFIX] Get rid of dependency to EXT:redirects (Commit d39839d by Florian Wessels)
    2020-04-23 [BUGFIX] Instantiate ContentObjectRenderer when callbacks are used (Commit 82a03e9 by Florian Wessels)
    2020-04-23 [BUGFIX] Instantiate logger, if object is empty (Commit 7cbf55e by Florian Wessels)
