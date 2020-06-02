@@ -10,7 +10,10 @@ Auth0 for TYPO3
 [![License](https://poser.pugx.org/leuchtfeuer/auth0/license)](https://packagist.org/packages/leuchtfeuer/auth0)
 
 This extension allows you to log into a TYPO3 backend or frontend via Auth0.  
-The full documentation can be found [here](https://docs.typo3.org/p/leuchtfeuer/auth0/master/en-us/).
+The full documentation for the latest releases can be found [here](https://docs.typo3.org/p/leuchtfeuer/auth0/master/en-us/).
+
+*If you are searching for the documentation for version 3.2.1 and below, you can take a look at the former 
+[bitmotion/auth0 documentation](https://docs.typo3.org/p/bitmotion/auth0/master/en-us/).*
 
 ## Requirements
 
