@@ -2,15 +2,15 @@ Auth0 for TYPO3
 ===============
 [![Auth0TYPO3](https://www.Leuchtfeuer.com/fileadmin/github/auth0-for-typo3/TYPO3-Auth0.png "Auth0 for TYPO3")](https://www.Leuchtfeuer.com/)
 
-[![Latest Stable Version](https://poser.pugx.org/bitmotion/auth0/v/stable)](https://packagist.org/packages/bitmotion/auth0)
+[![Latest Stable Version](https://poser.pugx.org/leuchtfeuer/auth0/v/stable)](https://packagist.org/packages/leuchtfeuer/auth0)
 [![Build Status](https://travis-ci.com/Leuchtfeuer/auth0-for-typo3.svg?branch=master)](https://travis-ci.com/Leuchtfeuer/auth0-for-typo3)
-[![Total Downloads](https://poser.pugx.org/bitmotion/auth0/downloads)](https://packagist.org/packages/bitmotion/auth0)
-[![Latest Unstable Version](https://poser.pugx.org/bitmotion/auth0/v/unstable)](https://packagist.org/packages/bitmotion/auth0)
+[![Total Downloads](https://poser.pugx.org/leuchtfeuer/auth0/downloads)](https://packagist.org/leuchtfeuer/auth0)
+[![Latest Unstable Version](https://poser.pugx.org/leuchtfeuer/auth0/v/unstable)](https://packagist.org/leuchtfeuer/auth0)
 [![Code Climate](https://codeclimate.com/github/Leuchtfeuer/auth0-for-typo3/badges/gpa.svg)](https://codeclimate.com/github/Leuchtfeuer/auth0-for-typo3)
-[![License](https://poser.pugx.org/bitmotion/auth0/license)](https://packagist.org/packages/bitmotion/auth0)
+[![License](https://poser.pugx.org/leuchtfeuer/auth0/license)](https://packagist.org/packages/leuchtfeuer/auth0)
 
 This extension allows you to log into a TYPO3 backend or frontend via Auth0.  
-The full documentation can be found [here](https://docs.typo3.org/p/bitmotion/auth0/master/en-us/).
+The full documentation can be found [here](https://docs.typo3.org/p/leuchtfeuer/auth0/master/en-us/).
 
 ## Requirements
 
