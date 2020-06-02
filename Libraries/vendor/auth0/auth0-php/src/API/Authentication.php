@@ -254,15 +254,21 @@ class Authentication
     /**
      * Start passwordless login process for email
      *
-     * @param string $email      Email address to use.
-     * @param string $type       Use null or "link" to send a link, use "code" to send a verification code.
-     * @param array  $authParams Link parameters (like scope, redirect_uri, protocol, response_type) to modify.
+     * @param string      $email         Email address to use.
+     * @param string      $type          Use null or "link" to send a link, use "code" to send a verification code.
+     * @param array       $authParams    Link parameters (like scope, redirect_uri, protocol, response_type) to modify.
+     * @param null|string $forwarded_for (optional) source IP address. requires Trust Token Endpoint IP Header
      *
      * @return array
      *
      * @link https://auth0.com/docs/api/authentication#get-code-or-link
      */
-    public function email_passwordless_start(string $email, string $type, array $authParams = []) : array
+    public function email_passwordless_start(
+        string $email,
+        string $type,
+        array $authParams = [],
+        ?string $forwarded_for = null
+    ) : array
     {
         $data = [
             'client_id' => $this->client_id,
@@ -271,26 +277,36 @@ class Authentication
             'email' => $email,
         ];
 
+        if (! empty($this->client_secret)) {
+            $data['client_secret'] = $this->client_secret;
+        }
+
         if (! empty($authParams)) {
             $data['authParams'] = $authParams;
         }
 
-        return $this->apiClient->method('post')
-        ->addPath('passwordless', 'start')
-        ->withBody(json_encode($data))
-        ->call();
+        $request = $this->apiClient->method('post')
+            ->addPath('passwordless', 'start')
+            ->withBody(json_encode($data));
+
+        if (! empty($forwarded_for)) {
+            $request->withHeader( new ForwardedFor( $forwarded_for ) );
+        }
+
+        return $request->call();
     }
 
     /**
      * Start passwordless login process for SMS.
      *
-     * @param string $phone_number Phone number to use.
+     * @param string      $phone_number  Phone number to use.
+     * @param null|string $forwarded_for (optional) source IP address. requires Trust Token Endpoint IP Header
      *
      * @return array
      *
      * @link https://auth0.com/docs/api/authentication#get-code-or-link
      */
-    public function sms_passwordless_start(string $phone_number) : array
+    public function sms_passwordless_start(string $phone_number, ?string $forwarded_for = null) : array
     {
         $data = [
             'client_id' => $this->client_id,
@@ -298,10 +314,19 @@ class Authentication
             'phone_number' => $phone_number,
         ];
 
-        return $this->apiClient->method('post')
-        ->addPath('passwordless', 'start')
-        ->withBody(json_encode($data))
-        ->call();
+        if (! empty($this->client_secret)) {
+            $data['client_secret'] = $this->client_secret;
+        }
+
+        $request = $this->apiClient->method('post')
+            ->addPath('passwordless', 'start')
+            ->withBody(json_encode($data));
+
+        if (! empty($forwarded_for)) {
+            $request->withHeader( new ForwardedFor( $forwarded_for ) );
+        }
+
+        return $request->call();
     }
 
     /**

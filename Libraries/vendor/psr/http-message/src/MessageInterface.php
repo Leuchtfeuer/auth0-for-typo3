@@ -86,12 +86,12 @@ interface MessageInterface
      * If the header does not appear in the message, this method MUST return an
      * empty array.
      *
-     * @param string $name Case-insensitive header field name.
+     * @param string $headerName Case-insensitive header field name.
      * @return string[] An array of string values as provided for the given
      *    header. If the header does not appear in the message, this method MUST
      *    return an empty array.
      */
-    public function getHeader($name);
+    public function getHeader($headerName);
 
     /**
      * Retrieves a comma-separated string of the values for a single header.

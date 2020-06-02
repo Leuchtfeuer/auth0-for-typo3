@@ -522,12 +522,15 @@ abstract class AbstractNormalizer implements NormalizerInterface, DenormalizerIn
     protected function denormalizeParameter(\ReflectionClass $class, \ReflectionParameter $parameter, $parameterName, $parameterData, array $context, $format = null)
     {
         try {
-            if (null !== $parameter->getClass()) {
+            if (($parameterType = $parameter->getType()) && !$parameterType->isBuiltin()) {
+                $parameterClass = $parameterType->getName();
+                new \ReflectionClass($parameterClass); // throws a \ReflectionException if the class doesn't exist
+
                 if (!$this->serializer instanceof DenormalizerInterface) {
-                    throw new LogicException(sprintf('Cannot create an instance of "%s" from serialized data because the serializer inject in "%s" is not a denormalizer.', $parameter->getClass(), self::class));
+                    throw new LogicException(sprintf('Cannot create an instance of "%s" from serialized data because the serializer inject in "%s" is not a denormalizer.', $parameterClass, static::class));
                 }
-                $parameterClass = $parameter->getClass()->getName();
-                $parameterData = $this->serializer->denormalize($parameterData, $parameterClass, $format, $this->createChildContext($context, $parameterName, $format));
+
+                return $this->serializer->denormalize($parameterData, $parameterClass, $format, $this->createChildContext($context, $parameterName, $format));
             }
         } catch (\ReflectionException $e) {
             throw new RuntimeException(sprintf('Could not determine the class of the parameter "%s".', $parameterName), 0, $e);
@@ -535,7 +538,8 @@ abstract class AbstractNormalizer implements NormalizerInterface, DenormalizerIn
             if (!$parameter->getType()->allowsNull()) {
                 throw $e;
             }
-            $parameterData = null;
+
+            return null;
         }
 
         return $parameterData;

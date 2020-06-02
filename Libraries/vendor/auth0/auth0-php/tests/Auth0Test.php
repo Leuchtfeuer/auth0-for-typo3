@@ -85,6 +85,34 @@ class Auth0Test extends TestCase
     }
 
     /**
+     * Test that the exchanges fails when there is not a stored nonce value.
+     *
+     * @throws ApiException
+     * @throws CoreException
+     */
+    public function testThatExchangeFailsWithNoStoredNonce()
+    {
+        $id_token      = self::getIdToken();
+        $response_body = '{"access_token":"1.2.3","id_token":"'.$id_token.'","refresh_token":"4.5.6"}';
+
+        $mock = new MockHandler( [ new Response( 200, self::$headers, $response_body ) ] );
+
+        $add_config               = [
+            'skip_userinfo' => true,
+            'id_token_alg' => 'HS256',
+            'guzzle_options' => [
+                'handler' => HandlerStack::create($mock)
+            ]
+        ];
+        $auth0                    = new Auth0( self::$baseConfig + $add_config );
+        $_GET['code']             = uniqid();
+        $_GET['state']            = '__test_state__';
+        $_SESSION['auth0__state'] = '__test_state__';
+
+        $this->expectExceptionMessage('Nonce value not found in application store');
+        $auth0->exchange();
+    }
+    /**
      * Test that the exchanges succeeds when there is both and access token and an ID token present.
      *
      * @throws ApiException
@@ -190,25 +218,6 @@ class Auth0Test extends TestCase
     }
 
     /**
-     * Test that renewTokens fails if there is no access_token stored.
-     *
-     * @throws ApiException Should not be thrown in this test.
-     */
-    public function testThatRenewTokensFailsIfThereIsNoAccessToken()
-    {
-        $auth0 = new Auth0( self::$baseConfig );
-
-        try {
-            $caught_exception = false;
-            $auth0->renewTokens();
-        } catch (CoreException $e) {
-            $caught_exception = $this->errorHasString( $e, "Can't renew the access token if there isn't one valid" );
-        }
-
-        $this->assertTrue( $caught_exception );
-    }
-
-    /**
      * Test that renewTokens fails if there is no refresh_token stored.
      *
      * @throws ApiException Should not be thrown in this test.
@@ -252,15 +261,13 @@ class Auth0Test extends TestCase
      * @throws ApiException Should not be thrown in this test.
      * @throws CoreException Should not be thrown in this test.
      */
-    public function testThatRenewTokensFailsIfNoAccessOrIdTokenReturned()
+    public function testThatRenewTokensFailsIfNoAccessTokenReturned()
     {
         $mock = new MockHandler( [
             // Code exchange response.
             new Response( 200, self::$headers, '{"access_token":"1.2.3","refresh_token":"2.3.4"}' ),
-            // Refresh token response without ID token.
-            new Response( 200, self::$headers, '{"access_token":"1.2.3"}' ),
             // Refresh token response without access token.
-            new Response( 200, self::$headers, '{"id_token":"1.2.3"}' ),
+            new Response( 200, self::$headers, '{}' ),
         ] );
 
         $add_config = [
@@ -276,28 +283,8 @@ class Auth0Test extends TestCase
 
         $this->assertTrue( $auth0->exchange() );
 
-        try {
-            $caught_exception = false;
-            $auth0->renewTokens();
-        } catch (ApiException $e) {
-            $caught_exception = $this->errorHasString(
-                $e,
-                'Token did not refresh correctly. Access or ID token not provided' );
-        }
-
-        $this->assertTrue( $caught_exception );
-
-        // Run the same method again to get next queued response without an access token.
-        try {
-            $caught_exception = false;
-            $auth0->renewTokens();
-        } catch (ApiException $e) {
-            $caught_exception = $this->errorHasString(
-                $e,
-                'Token did not refresh correctly. Access or ID token not provided' );
-        }
-
-        $this->assertTrue( $caught_exception );
+        $this->expectExceptionMessage('Token did not refresh correctly. Access token not returned.');
+        $auth0->renewTokens();
     }
 
     /**
@@ -313,7 +300,7 @@ class Auth0Test extends TestCase
 
         $mock = new MockHandler( [
             // Code exchange response.
-            new Response( 200, self::$headers, '{"access_token":"1.2.3","refresh_token":"2.3.4"}' ),
+            new Response( 200, self::$headers, '{"access_token":"1.2.3","refresh_token":"2.3.4","id_token":"'.$id_token.'"}' ),
             // Refresh token response.
             new Response( 200, self::$headers, '{"access_token":"__test_access_token__","id_token":"'.$id_token.'"}' ),
         ] );
@@ -334,6 +321,10 @@ class Auth0Test extends TestCase
         $_SESSION['auth0__state'] = '__test_state__';
 
         $this->assertTrue( $auth0->exchange() );
+
+        $this->assertArrayNotHasKey('auth0__nonce', $_SESSION);
+        $this->assertArrayNotHasKey('auth0__state', $_SESSION);
+
         $auth0->renewTokens(['scope' => 'openid']);
 
         $this->assertEquals( '__test_access_token__', $auth0->getAccessToken() );
@@ -552,27 +543,6 @@ class Auth0Test extends TestCase
 
         $this->assertEquals($id_token, $auth0->getIdToken());
         $this->assertEquals($id_token, $_SESSION['auth0__id_token']);
-    }
-
-    /**
-     * @throws CoreException
-     */
-    public function testThatEmptyApplicationNonceFailsIdTokenValidation()
-    {
-        $custom_config = self::$baseConfig + ['id_token_alg' => 'HS256'];
-        $auth0         = new Auth0( $custom_config );
-        $id_token      = self::getIdToken();
-
-        $this->assertArrayNotHasKey('auth0__nonce', $_SESSION);
-
-        $e_message = 'No exception caught';
-        try {
-            $auth0->setIdToken( $id_token );
-        } catch (InvalidTokenException $e) {
-            $e_message = $e->getMessage();
-        }
-
-        $this->assertStringStartsWith('Nonce value not found in application store', $e_message);
     }
 
     /**
