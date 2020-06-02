@@ -23,7 +23,7 @@ If your TYPO3 instance is running in composer mode, you can simply require the e
 
 .. code-block:: bash
 
-   composer req bitmotion/auth0
+   composer req leuchtfeuer/auth0
 
 .. _admin-installation-extensionManager:
 

@@ -1,0 +1,31 @@
+﻿.. include:: ../../Includes.txt
+
+==========================
+Version 3.2.2 - 2020/06/02
+==========================
+
+This release is regular maintenance release.
+
+Changed
+=======
+* The composer package name was renamed from `bitmotion/auth0` to `leuchtfeuer/auth0`.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v3.2.2>`__.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+   2020-06-02 [DOC] Add hint for former documentation (Commit 9e14af2 by Florian Wessels)
+   2020-06-02 [DOC] Update badge links (Commit 1c2f2ed by Florian Wessels)
+   2020-06-02 [TASK] Update TYPO3 dependencies (Commit eac4201 by Florian Wessels)
+   2020-06-02 [TASK] Update dependencies (Commit 47f3822 by Florian Wessels)
+   2020-06-02 [TASK] Rename composer package name (Commit 7609f3b by Florian Wessels)
+   2020-05-05 [TASK] Update funding file (Commit f93bfa6 by Florian Wessels)
+   2020-04-28 [TASK] Use proper TYPO3 version (Commit 0542486 by Florian Wessels)
+   2020-04-27 [TASK] Set version to 3.2.2-dev (Commit 9cb0d8a by Florian Wessels)
