@@ -6,15 +6,15 @@ Version 3.2.2 - 2020/06/02
 
 This release is regular maintenance release.
 
-Changed
-=======
-* The composer package name was renamed from `bitmotion/auth0` to `leuchtfeuer/auth0`.
-
 Download
 ========
 
 Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
 `GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v3.2.2>`__.
+
+Changed
+=======
+* The composer package name was renamed from `bitmotion/auth0` to `leuchtfeuer/auth0`.
 
 All Changes
 ===========
