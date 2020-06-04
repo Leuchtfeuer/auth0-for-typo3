@@ -1,0 +1,50 @@
+﻿.. include:: ../../Includes.txt
+
+===================
+Version 3.3.0 - TBA
+===================
+
+This is a feature release. It is estimated for the 3rd quarter of 2020.
+TODO: Link to PSR-14 Event documentation and add documentation for obsolete hook.
+TODO: Add this file to table of contents
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v3.3.0>`__.
+
+Added
+=====
+
+* PSR-14 Event :php:`Bitmotion\Auth0\Event\RedirectPreProcessingEvent` which will replace the now deprecated
+  :php:`$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['auth0']['redirect_pre_processing']` hook
+* `Settings.yaml` file for listening to PSR-14 events in TYPO3 v10
+* Event listener for adding parameters to :php:`$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters']`
+
+Changed
+=======
+
+* TBD
+
+Deprecated
+==========
+
+* Hook :php:`$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['auth0']['redirect_pre_processing']` is
+  now deprecated and will be removed with next major version. You should use the newly introduced PSR-14 Event where possible
+* Using signal `afterExtensionInstall` of class :php:`TYPO3\CMS\Extensionmanager\Utility\InstallUtility`
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+   2020-06-04 [TASK] Add event for TYPO3 v10 (Commit 2b8d70c by Florian Wessels)
+   2020-06-04 [TASK] Apply CS (Commit c65f6fc by Florian Wessels)
+   2020-06-04 [TASK] Update funding file (Commit 6ffa5db by Florian Wessels)
+   2020-06-04 [TASK] Introduce event listener for TYPO3 v10 (Commit 5c01b2c by Florian Wessels)
+   2020-06-04 [BUGFIX] Show plugin preview even if BE login is disabled (Commit bd6344d by Florian Wessels)
+   2020-06-04 [TASK] Set version to 3.2.3-dev (Commit 6a9c21b by Florian Wessels)
+   2020-06-04 [TASK] Import parent class (Commit 3f29acc by Florian Wessels)
+   2020-06-04 [TASK] Minify SVG (Commit 2b71912 by Florian Wessels)
+   2020-06-03 [DOC] Update version (Commit dca6f27 by Florian Wessels)

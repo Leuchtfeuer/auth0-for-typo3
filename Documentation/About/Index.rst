@@ -20,8 +20,7 @@ You need access to an Auth0 instance. We are currently supporting following TYPO
    :header: "Extension Version", "TYPO3 v10 Support", "TYPO3 v9 Support", "TYPO3 v8 Support"
    :align: center
 
-        "3.2.x", "🙋‍♂️", "🙋‍♂️", "🙅‍♀️"
-        "3.0.x, 3.1.x", "🙅‍♀️", "🙋‍♂️", "🙅‍♀️"
+        "3.x", "🙋‍♂️", "🙋‍♂️", "🙅‍♀️"
         "2.x", "🙅‍♀️", "🙋‍♂️", "🙅‍♀️"
         "1.x", "🙅‍♀️", "🙅‍♀️", "🙋‍♂️"
 
