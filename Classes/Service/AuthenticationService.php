@@ -29,6 +29,7 @@ use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Bitmotion\Auth0\Utility\TokenUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
 use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;
+use TYPO3\CMS\Core\Authentication\AuthenticationService as BasicAuthenticationService;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
@@ -36,7 +37,7 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Service\EnvironmentService;
 
-class AuthenticationService extends \TYPO3\CMS\Core\Authentication\AuthenticationService
+class AuthenticationService extends BasicAuthenticationService
 {
     /**
      * @deprecated Use Auth0Provider::LOGIN_PROVIDER instead
