@@ -13,6 +13,7 @@ namespace Bitmotion\Auth0\Service;
  *
  ***/
 
+use Bitmotion\Auth0\Event\RedirectPreProcessingEvent;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Database\Connection;
@@ -22,6 +23,7 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Felogin\Controller\FrontendLoginController;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
@@ -55,10 +57,19 @@ class RedirectService implements LoggerAwareInterface
             if (!empty($redirectUris)) {
                 $redirectUri = $this->addAdditionalParamsToRedirectUri($this->getUri($redirectUris), $additionalParameters);
 
+                // TODO: Remove this when dropping TYPO3 v9 support
                 foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['auth0']['redirect_pre_processing'] ?? [] as $_funcRef) {
+                    trigger_error('Using the redirect_pre_processing hook is deprecated. You should use the RedirectPreProcessingEvent instead.', E_USER_DEPRECATED);
                     if ($_funcRef) {
                         GeneralUtility::callUserFunction($_funcRef, $redirectUri, $this);
                     }
+                }
+
+                if (version_compare(TYPO3_version, '10.4.0', '>=')) {
+                    $redirectUri = $this
+                        ->getEventDispatcher()
+                        ->dispatch(new RedirectPreProcessingEvent($redirectUri, $this))
+                        ->getRedirectUri();
                 }
 
                 $this->logger->notice(sprintf('Redirect to: %s', $redirectUri));
@@ -336,5 +347,14 @@ class RedirectService implements LoggerAwareInterface
         }
 
         return $result;
+    }
+
+    /**
+     * @return \TYPO3\CMS\Core\EventDispatcher\EventDispatcher
+     * @throws \TYPO3\CMS\Extbase\Object\Exception
+     */
+    public function getEventDispatcher()
+    {
+        return GeneralUtility::makeInstance(ObjectManager::class)->get('Psr\EventDispatcher\EventDispatcherInterface');
     }
 }
