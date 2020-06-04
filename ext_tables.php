@@ -18,15 +18,17 @@ call_user_func(
             ]
         );
 
-        // Connect to signal slots
-        $signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
-        $signalSlotDispatcher->connect(
-            \TYPO3\CMS\Extensionmanager\Utility\InstallUtility::class,
-            'afterExtensionInstall',
-            \Bitmotion\Auth0\Slots\ConfigurationSlot::class,
-            'addCacheHashExcludedParameters'
-        );
-
+        if (version_compare(TYPO3_version, '10.0.0', '<')) {
+            // Connect to signal slots
+            // TODO: Remove this when dropping TYPO3 v9 support
+            $signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
+            $signalSlotDispatcher->connect(
+                \TYPO3\CMS\Extensionmanager\Utility\InstallUtility::class,
+                'afterExtensionInstall',
+                \Bitmotion\Auth0\Slots\ConfigurationSlot::class,
+                'addCacheHashExcludedParameters'
+            );
+        }
         // Load extension configuration
         $configuration = new \Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration();
 

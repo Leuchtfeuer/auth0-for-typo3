@@ -1,6 +1,6 @@
 <?php
 declare(strict_types = 1);
-namespace Bitmotion\Auth0\Slots;
+namespace Bitmotion\Auth0\EventListener;
 
 /***
  *
@@ -9,19 +9,15 @@ namespace Bitmotion\Auth0\Slots;
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  *
- *  (c) 2018 Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
+ *  (c) 2020 Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  *
  ***/
 
-use Bitmotion\Auth0\EventListener\AfterPackageActivation;
 use TYPO3\CMS\Core\Configuration\ConfigurationManager;
+use TYPO3\CMS\Core\Package\Event\AfterPackageActivationEvent;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-/**
- * @deprecated Will be replaced by event listener
- * @see AfterPackageActivation
- */
-class ConfigurationSlot
+class AfterPackageActivation
 {
     protected $excludedParameters = [
         'code',
@@ -30,15 +26,17 @@ class ConfigurationSlot
         'error',
     ];
 
-    public function addCacheHashExcludedParameters(): void
+    public function __invoke(AfterPackageActivationEvent $event)
     {
-        $path = ['FE', 'cacheHash', 'excludedParameters'];
-        $configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
-        $excludeParameters = $configurationManager->getConfigurationValueByPath($path);
+        if ($event->getPackageKey() === 'auth0') {
+            $path = ['FE', 'cacheHash', 'excludedParameters'];
+            $configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
+            $excludeParameters = $configurationManager->getConfigurationValueByPath($path);
 
-        $this->setValues($excludeParameters);
+            $this->setValues($excludeParameters);
 
-        $configurationManager->setLocalConfigurationValueByPath($path, $excludeParameters);
+            $configurationManager->setLocalConfigurationValueByPath($path, $excludeParameters);
+        }
     }
 
     protected function setValues(array &$excludeParameters): void
