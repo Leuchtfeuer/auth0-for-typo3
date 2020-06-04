@@ -29,6 +29,7 @@ call_user_func(
                 'addCacheHashExcludedParameters'
             );
         }
+
         // Load extension configuration
         $configuration = new \Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration();
 

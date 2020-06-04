@@ -12,6 +12,7 @@ namespace Bitmotion\Auth0\Hooks;
  *  (c) 2018 Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  *
  ***/
+
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -59,7 +60,7 @@ class PageLayoutViewHook
 
     /**
      * @todo Adapt this when dropping TYPO3 9 support.
-     * @return TYPO3\CMS\Core\Localization\LanguageService|TYPO3\CMS\Lang\LanguageService
+     * @return \TYPO3\CMS\Core\Localization\LanguageService|\TYPO3\CMS\Lang\LanguageService
      */
     protected function getLanguageService()
     {
