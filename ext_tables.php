@@ -30,10 +30,14 @@ call_user_func(
         // Load extension configuration
         $configuration = new \Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration();
 
-        if ($configuration->isEnableBackendLogin()) {
-            // Register backend hooks
+        if ($configuration->isEnableFrontendLogin()) {
+            // Register hook for showing plugin preview
             $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['list_type_Info']['auth0_loginform'][$extensionKey]
                 = \Bitmotion\Auth0\Hooks\PageLayoutViewHook::class . '->getSummary';
+        }
+
+        if ($configuration->isEnableBackendLogin()) {
+            // Register single log out hooks
             // TODO: Support following hooks for frontend request as well and move to ext_localconf.php file
             $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['logoff_pre_processing'][$extensionKey]
                 = \Bitmotion\Auth0\Hooks\SingleSignOutHook::class . '->isResponsible';
