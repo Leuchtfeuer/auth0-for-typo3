@@ -109,7 +109,7 @@ class TokenUtility implements LoggerAwareInterface
             return false;
         }
 
-        if (!$token->verify($this->getSigner(), $this->getKey('public'))) {
+        if (!$token->verify($this->getSigner(), $this->getKey(self::KEY_TYPE_PUBLIC))) {
             $this->logger->warning('Token verification failed.');
             return false;
         }
@@ -182,7 +182,7 @@ class TokenUtility implements LoggerAwareInterface
         return new Hmac\Sha256();
     }
 
-    protected function getKey(string $type = 'private'): Key
+    protected function getKey(string $type = self::KEY_TYPE_PRIVATE): Key
     {
         if ($this->configuration->useKeyFiles()) {
             if ($type === self::KEY_TYPE_PRIVATE) {
