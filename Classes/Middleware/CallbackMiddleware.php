@@ -1,17 +1,17 @@
 <?php
-declare(strict_types = 1);
-namespace Bitmotion\Auth0\Middleware;
 
-/***
- *
+declare(strict_types=1);
+
+/*
  * This file is part of the "Auth0" extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  *
- *  (c) 2020 Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
- *
- ***/
+ * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
+ */
+
+namespace Bitmotion\Auth0\Middleware;
 
 use Bitmotion\Auth0\ErrorCode;
 use Bitmotion\Auth0\Exception\TokenException;
@@ -46,7 +46,6 @@ class CallbackMiddleware implements MiddlewareInterface
             // Middleware is not responsible for given request
             return $handler->handle($request);
         }
-
         $tokenUtility = GeneralUtility::makeInstance(TokenUtility::class);
 
         if (!$tokenUtility->verifyToken((string)GeneralUtility::_GET(self::TOKEN_PARAMETER))) {

@@ -1,17 +1,17 @@
 <?php
-declare(strict_types = 1);
-namespace Bitmotion\Auth0\Utility\Database;
 
-/***
- *
+declare(strict_types=1);
+
+/*
  * This file is part of the "Auth0" extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  *
- *  (c) 2018 Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
- *
- ***/
+ * (c) Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
+ */
+
+namespace Bitmotion\Auth0\Utility\Database;
 
 use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
 use Bitmotion\Auth0\Domain\Repository\UserRepository;

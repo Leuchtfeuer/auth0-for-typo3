@@ -1,17 +1,17 @@
 <?php
-declare(strict_types = 1);
-namespace Bitmotion\Auth0\EventListener;
 
-/***
- *
+declare(strict_types=1);
+
+/*
  * This file is part of the "Auth0" extension for TYPO3 CMS.
  *
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  *
- *  (c) 2020 Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
- *
- ***/
+ * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
+ */
+
+namespace Bitmotion\Auth0\EventListener;
 
 use TYPO3\CMS\Core\Configuration\ConfigurationManager;
 use TYPO3\CMS\Core\Package\Event\AfterPackageActivationEvent;
