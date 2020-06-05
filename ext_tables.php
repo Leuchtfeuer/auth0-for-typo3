@@ -74,7 +74,7 @@ call_user_func(
             [
                 'access' => 'admin',
                 'icon' => 'EXT:auth0/Resources/Public/Icons/Module.svg',
-                'labels' => 'EXT:auth0/Resources/Private/Language/locallang_mod.xlf'
+                'labels' => 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf'
             ]
         );
     }, 'auth0'

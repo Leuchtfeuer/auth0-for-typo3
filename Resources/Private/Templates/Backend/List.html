@@ -3,21 +3,26 @@
 <f:layout name="Backend" />
 
 <f:section name="content">
-	<h2>Roles</h2>
-	<f:be.infobox state="-1" title="Titel">
-		<p>Text</p>
+	<h1><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.title" /></h1>
+
+	<f:be.infobox state="-1" title="{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.infobox.title')}">
+		<p>{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.infobox.content') -> f:format.html()}</p>
+		<a href="#" class="btn btn-primary">
+			<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.infobox.button" />
+		</a>
 	</f:be.infobox>
 
 	<f:if condition="{extensionConfiguration.enableFrontendLogin}">
-		Default Group: TODO
-		<hr />
+		<h3><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.frontend.title" /></h3>
+		<f:comment>Default Group: TODO</f:comment>
 		<f:render partial="Backend/UserGroupTable" arguments="{groupMapping: frontendUserGroupMapping, table: 'fe_groups'}"/>
+		<hr />
 	</f:if>
 
 	<f:if condition="{extensionConfiguration.enableFrontendLogin}">
-		Admin Group: TODO
-		<hr />
+		<h3><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.backend.title" /></h3>
+		<f:comment>Admin Group: TODO</f:comment>
 		<f:render partial="Backend/UserGroupTable" arguments="{groupMapping: backendUserGroupMapping, table: 'be_groups'}"/>
+		<hr />
 	</f:if>
-
 </f:section>

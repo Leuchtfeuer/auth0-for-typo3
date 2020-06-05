@@ -4,14 +4,45 @@
 		  product-name="auth0">
 		<header/>
 		<body>
-			<trans-unit id="mlang_tabs_tab" xml:space="preserve">
+			<trans-unit id="mlang_tabs_tab">
 				<source>Auth0</source>
 			</trans-unit>
-			<trans-unit id="mlang_labels_tabdescr" xml:space="preserve">
+			<trans-unit id="mlang_labels_tabdescr">
 				<source>A mapping for Auth0 roles to TYPO3 frontend user groups.</source>
 			</trans-unit>
-			<trans-unit id="mlang_labels_tablabel" xml:space="preserve">
+			<trans-unit id="mlang_labels_tablabel">
 				<source>Auth0 role data mapping.</source>
+			</trans-unit>
+
+			<trans-unit id="roles.title">
+				<source>Auth0 Role Mapping</source>
+			</trans-unit>
+			<trans-unit id="roles.infobox.title">
+				<source>Attention</source>
+			</trans-unit>
+			<trans-unit id="roles.infobox.content">
+				<source><![CDATA[The shown configuration may be overwritten by your TypoScript configuration. Please make sure to adapt your TypoScript configuration in <code>plugin.tx_auth0.settings.roles</code>. You can import the mapping from your TypoScript settings. But be aware, that some configuration shown below might be lost after the import.<br/><strong>Do not forget to clear your TypoScript settings afterwards.</strong>]]></source>
+			</trans-unit>
+			<trans-unit id="roles.infobox.button">
+				<source>Import configuration from TypoScript</source>
+			</trans-unit>
+			<trans-unit id="roles.frontend.title">
+				<source>Frontend User Groups</source>
+			</trans-unit>
+			<trans-unit id="roles.backend.title">
+				<source>Backend User Groups</source>
+			</trans-unit>
+			<trans-unit id="roles.table.head.identifier">
+				<source>Identifier</source>
+			</trans-unit>
+			<trans-unit id="roles.table.head.title">
+				<source>Title</source>
+			</trans-unit>
+			<trans-unit id="roles.table.head.role">
+				<source>Auth0 Role</source>
+			</trans-unit>
+			<trans-unit id="roles.table.head.subgroups">
+				<source>Subgroups</source>
 			</trans-unit>
 		</body>
 	</file>
