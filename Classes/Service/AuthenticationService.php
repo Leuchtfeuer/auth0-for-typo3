@@ -117,10 +117,12 @@ class AuthenticationService extends BasicAuthenticationService
     public function initAuth($mode, $loginData, $authInfo, $pObj): void
     {
         if ($this->isResponsible() === false) {
+            $this->logger->debug('Auth0 authentication is not responsible for this request.');
             return;
         }
 
         if ($this->initApplication() === false) {
+            $this->logger->debug('Initialization of Auth0 application failed.');
             return;
         }
 
@@ -165,11 +167,11 @@ class AuthenticationService extends BasicAuthenticationService
     protected function initApplication(): bool
     {
         if ($this->environmentService->isEnvironmentInFrontendMode()) {
-            $this->logger->notice('Handle frontend login.');
+            $this->logger->info('Handle frontend login.');
             $this->application = $this->retrieveApplicationFromUrlQuery();
             $this->tableName = 'fe_users';
         } elseif ($this->environmentService->isEnvironmentInBackendMode()) {
-            $this->logger->notice('Handle backend login.');
+            $this->logger->info('Handle backend login.');
             $this->application = (new EmAuth0Configuration())->getBackendConnection();
             $this->tableName = 'be_users';
         } else {
@@ -279,8 +281,12 @@ class AuthenticationService extends BasicAuthenticationService
                 case 'getUserBE':
                     $this->insertOrUpdateUser();
                     break;
+                case 'authUserFe':
+                case 'authUserBe':
+                    $this->logger->debug('Skip auth mode.');
+                    break;
                 default:
-                    $this->logger->notice('Login data is empty. Could not login user.');
+                    $this->logger->notice('Undefined mode. Skip.');
             }
         }
     }
