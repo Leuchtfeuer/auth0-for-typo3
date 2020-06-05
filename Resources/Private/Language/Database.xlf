@@ -124,6 +124,14 @@
 			<trans-unit id="backend.page.view.additionalAuthorizeParameters">
 				<source>Authorize Parameters</source>
 			</trans-unit>
+
+
+			<trans-unit id="tabs.auth0" xml:space="preserve">
+				<source>Auth0</source>
+			</trans-unit>
+			<trans-unit id="fe_groups.auth0_user_group" xml:space="preserve">
+				<source>Auth0 Role Identifier</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

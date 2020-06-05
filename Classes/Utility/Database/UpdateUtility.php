@@ -8,12 +8,13 @@ declare(strict_types=1);
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  *
- * (c) Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
+ * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
 namespace Bitmotion\Auth0\Utility\Database;
 
 use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
+use Bitmotion\Auth0\Domain\Repository\UserGroupRepository;
 use Bitmotion\Auth0\Domain\Repository\UserRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
@@ -55,13 +56,10 @@ class UpdateUtility implements LoggerAwareInterface
 
     public function updateGroups(): void
     {
-        try {
-            $groupMapping = ConfigurationUtility::getSetting('roles', $this->tableName);
-        } catch (InvalidConfigurationTypeException $exception) {
-            $this->logger->error($exception->getCode() . ': ' . $exception->getMessage());
-
-            return;
-        }
+        $groupMapping = array_merge(
+            $this->getGroupMappingFromDatabase(),
+            $this->getGroupMappingFromTypoScript()
+        );
 
         if (empty($groupMapping)) {
             $this->logger->error(sprintf('Cannot update user groups: No role mapping for %s found', $this->tableName));
@@ -101,6 +99,28 @@ class UpdateUtility implements LoggerAwareInterface
         }
 
         $this->performUserUpdate($mappingConfiguration, $reactivateUser);
+    }
+
+    protected function getGroupMappingFromDatabase(): array
+    {
+        $groupMapping = [];
+
+        foreach ((new UserGroupRepository())->findAllWithAuth0Role() as $userGroup) {
+            $groupMapping[$userGroup['auth0_user_group']] = $userGroup['uid'];
+        }
+
+        return $groupMapping;
+    }
+
+    protected function getGroupMappingFromTypoScript(): array
+    {
+        try {
+            return ConfigurationUtility::getSetting('roles', $this->tableName);
+        } catch (InvalidConfigurationTypeException $exception) {
+            $this->logger->error($exception->getCode() . ': ' . $exception->getMessage());
+        }
+
+        return [];
     }
 
     protected function mapRoles(array $groupMapping, array &$groupsToAssign, bool &$isBeAdmin, bool &$shouldUpdate): void

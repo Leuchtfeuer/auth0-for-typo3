@@ -55,5 +55,27 @@ call_user_func(
                 'label' => 'LLL:EXT:auth0/Resources/Private/Language/locallang.xlf:backendLogin.switch.label'
             ];
         }
+
+        // Register Backend Module
+        $controllerName =\Bitmotion\Auth0\Controller\BackendController::class;
+        $extensionName = $extensionKey;
+        if (version_compare(TYPO3_version, '10.0.0', '<')) {
+            $controllerName = 'Backend';
+            $extensionName = 'Bitmotion.' . ucfirst($extensionKey);
+        }
+        \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+            $extensionName,
+            'tools',
+            'Auth0',
+            'bottom',
+            [
+                $controllerName => 'list',
+            ],
+            [
+                'access' => 'admin',
+                'icon' => 'EXT:auth0/Resources/Public/Icons/Module.svg',
+                'labels' => 'EXT:auth0/Resources/Private/Language/locallang_mod.xlf'
+            ]
+        );
     }, 'auth0'
 );

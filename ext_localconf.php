@@ -77,9 +77,9 @@ call_user_func(
         $GLOBALS['TYPO3_CONF_VARS']['LOG']['Bitmotion']['Auth0'] = [
             'writerConfiguration' => [
                 \TYPO3\CMS\Core\Log\LogLevel::DEBUG => [
-                    \TYPO3\CMS\Core\Log\Writer\NullWriter::class => [],
-                ],
-                \TYPO3\CMS\Core\Log\LogLevel::ERROR => [
+//                    \TYPO3\CMS\Core\Log\Writer\NullWriter::class => [],
+//                ],
+//                \TYPO3\CMS\Core\Log\LogLevel::ERROR => [
                     \TYPO3\CMS\Core\Log\Writer\FileWriter::class => [
                         'logFileInfix' => $extensionKey,
                     ],

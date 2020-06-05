@@ -326,13 +326,14 @@ class AuthenticationService extends BasicAuthenticationService
             $userUtility->insertUser($this->tableName, $this->auth0User);
         }
 
-        // Update existing user on every login when we are in BE context
+        $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User);
+        $updateUtility->updateGroups();
+
+        // Update existing user on every login when we are in BE context (since TypoScript is loaded).
         if ($this->environmentService->isEnvironmentInBackendMode()) {
-            $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User);
             $updateUtility->updateUser();
-            $updateUtility->updateGroups();
         } else {
-            // Update last used application
+            // Update last used application (no TypoScript loaded in Frontend Requests)
             $userUtility->setLastUsedApplication($this->auth0User->getUserId(), $this->application);
         }
     }
