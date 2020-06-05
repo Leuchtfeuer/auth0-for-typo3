@@ -11,7 +11,9 @@
 
 namespace Bitmotion\Auth0\Controller;
 
-use Bitmotion\Auth0\Domain\Repository\UserGroupRepository;
+use Bitmotion\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
+use Bitmotion\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
+use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use TYPO3\CMS\Backend\View\BackendTemplateView;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
@@ -22,7 +24,9 @@ class BackendController extends ActionController
     public function listAction()
     {
         $this->view->assignMultiple([
-            'groupMapping' => (new UserGroupRepository())->findAll(),
+            'frontendUserGroupMapping' => (new FrontendUserGroupRepository())->findAll(),
+            'backendUserGroupMapping' => (new BackendUserGroupRepository())->findAll(),
+            'extensionConfiguration' => new EmAuth0Configuration(),
         ]);
     }
 }

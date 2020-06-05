@@ -14,7 +14,9 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Utility\Database;
 
 use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
-use Bitmotion\Auth0\Domain\Repository\UserGroupRepository;
+use Bitmotion\Auth0\Domain\Repository\UserGroup\AbstractUserGroupRepository;
+use Bitmotion\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
+use Bitmotion\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
 use Bitmotion\Auth0\Domain\Repository\UserRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
@@ -104,12 +106,28 @@ class UpdateUtility implements LoggerAwareInterface
     protected function getGroupMappingFromDatabase(): array
     {
         $groupMapping = [];
+        $userGroupRepository = $this->getRepository();
 
-        foreach ((new UserGroupRepository())->findAllWithAuth0Role() as $userGroup) {
-            $groupMapping[$userGroup['auth0_user_group']] = $userGroup['uid'];
+        if ($userGroupRepository instanceof AbstractUserGroupRepository) {
+            foreach ($userGroupRepository->findAll() as $userGroup) {
+                $groupMapping[$userGroup[AbstractUserGroupRepository::USER_GROUP_FIELD]] = $userGroup['uid'];
+            }
         }
 
         return $groupMapping;
+    }
+
+    protected function getRepository(): ?AbstractUserGroupRepository
+    {
+        switch ($this->tableName) {
+            case FrontendUserGroupRepository::TABLE_NAME:
+                return new FrontendUserGroupRepository();
+
+            case BackendUserGroupRepository::TABLE_NAME:
+                return new BackendUserGroupRepository();
+        }
+
+        return null;
     }
 
     protected function getGroupMappingFromTypoScript(): array

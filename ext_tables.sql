@@ -22,6 +22,13 @@ CREATE TABLE be_users (
 );
 
 #
+# Table structure for table 'be_groups'
+#
+CREATE TABLE be_groups (
+  auth0_user_group varchar(255) DEFAULT '' NOT NULL,
+);
+
+#
 # Table structure for table 'tx_auth0_domain_model_application'
 #
 CREATE TABLE tx_auth0_domain_model_application (

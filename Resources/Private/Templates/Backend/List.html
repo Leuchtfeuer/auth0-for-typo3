@@ -7,50 +7,17 @@
 	<f:be.infobox state="-1" title="Titel">
 		<p>Text</p>
 	</f:be.infobox>
-	<div class="panel panel-default">
-		<table class="table table-striped table-hover">
-			<thead>
-			<tr>
-				<th class="col-icon nowrap"></th>
-				<th class="text-nowrap">Identifier</th>
-				<th class="text-nowrap">Title</th>
-				<th class="text-nowrap">Auth0 Role</th>
-				<th class="text-nowrap">Subgroups</th>
-				<th class="col-control nowrap"></th>
-			</tr>
-			</thead>
-			<tbody>
-			<f:for each="{groupMapping}" as="group">
-				<tr>
-					<td class="col-icon nowrap">
-						<core:iconForRecord table="fe_groups" row="{group}" />
-					</td>
-					<td class="text-center">{group.uid}</td>
-					<td data-order="{group.title}" class="nowrap">
-						<be:link.editRecord uid="{group.uid}" table="fe_groups">
-							{group.title}
-						</be:link.editRecord>
-					</td>
-					<td data-order="{group.title}" class="col-title col-responsive nowrap">
-						{group.auth0_user_group}
-					</td>
-					<td class="text-nowrap text-center">
-						<f:if condition="{group.subgroup}">
-							<f:then>{group.subgroup}</f:then>
-							<f:else>-</f:else>
-						</f:if>
-					</td>
-					<td class="col-control nowrap">
-						<div class="btn-group" role="group">
-							<be:link.editRecord uid="{group.uid}" table="fe_groups" class="btn btn-default">
-								<core:icon identifier="actions-open" size="small"/>
-							</be:link.editRecord>
-						</div>
-					</td>
-				</tr>
-			</f:for>
-			</tbody>
-		</table>
-	</div>
+
+	<f:if condition="{extensionConfiguration.enableFrontendLogin}">
+		Default Group: TODO
+		<hr />
+		<f:render partial="Backend/UserGroupTable" arguments="{groupMapping: frontendUserGroupMapping, table: 'fe_groups'}"/>
+	</f:if>
+
+	<f:if condition="{extensionConfiguration.enableFrontendLogin}">
+		Admin Group: TODO
+		<hr />
+		<f:render partial="Backend/UserGroupTable" arguments="{groupMapping: backendUserGroupMapping, table: 'be_groups'}"/>
+	</f:if>
 
 </f:section>
