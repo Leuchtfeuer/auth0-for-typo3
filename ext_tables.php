@@ -69,7 +69,7 @@ call_user_func(
             'Auth0',
             'bottom',
             [
-                $controllerName => 'list',
+                $controllerName => 'list,acquireTypoScript',
             ],
             [
                 'access' => 'admin',

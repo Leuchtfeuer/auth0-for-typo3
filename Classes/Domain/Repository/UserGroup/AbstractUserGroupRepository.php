@@ -42,6 +42,18 @@ abstract class AbstractUserGroupRepository
             ->fetchAll();
     }
 
+    public function findByIdentifier(int $id): array
+    {
+        $qb = $this->getQueryBuilder();
+
+        return $qb
+            ->select('*')
+            ->from($this->tableName)
+            ->where($qb->expr()->eq('uid', $qb->createNamedParameter($id, \PDO::PARAM_INT)))
+            ->execute()
+            ->fetch();
+    }
+
     public function findAllWithAuth0Role(): array
     {
         return $this->getQueryBuilder()
@@ -50,5 +62,29 @@ abstract class AbstractUserGroupRepository
             ->where(sprintf('%s <> ""', self::USER_GROUP_FIELD))
             ->execute()
             ->fetchAll();
+    }
+
+    public function translate(array $mapping): void
+    {
+        if (!empty($mapping)) {
+            foreach ($mapping as $auth0Role => $userGroupId) {
+                $userGroup = $this->findByIdentifier((int)$userGroupId);
+                $userGroup[self::USER_GROUP_FIELD] = $auth0Role;
+                $this->update($userGroup);
+            }
+        }
+    }
+
+    public function update(array $userGroup): void
+    {
+        $qb = $this->getQueryBuilder();
+
+        foreach ($userGroup as $key => $value) {
+            $qb->set($key, $value);
+        }
+
+        $qb->update($this->tableName)
+            ->where($qb->expr()->eq('uid', $qb->createNamedParameter($userGroup['uid'], \PDO::PARAM_INT)))
+            ->execute();
     }
 }
