@@ -4,43 +4,43 @@
 		  product-name="auth0">
 		<header/>
 		<body>
-			<trans-unit id="backend.enable_backend_login" xml:space="preserve">
+			<trans-unit id="backend.enable_backend_login">
 				<source>Backend Log In: Enable Auth0 login for TYPO3 backend</source>
 			</trans-unit>
-			<trans-unit id="backend.backend_connection" xml:space="preserve">
+			<trans-unit id="backend.backend_connection">
 				<source>Application: Application identifier for backend login</source>
 			</trans-unit>
-			<trans-unit id="backend.reactivate_disabled_backend_users" xml:space="preserve">
+			<trans-unit id="backend.reactivate_disabled_backend_users">
 				<source>Reactivate Disabled Users: Allow log in for disabled backend users</source>
 			</trans-unit>
-			<trans-unit id="backend.reactivate_deleted_backend_users" xml:space="preserve">
+			<trans-unit id="backend.reactivate_deleted_backend_users">
 				<source>Reactivate Deleted Users: Allow log in for deleted backend users</source>
 			</trans-unit>
-			<trans-unit id="backend.soft_logout" xml:space="preserve">
+			<trans-unit id="backend.soft_logout">
 				<source>Soft Log Out: Logout from TYPO3 only (not from Auth0)</source>
 			</trans-unit>
-			<trans-unit id="backend.additional_authorize_parameters" xml:space="preserve">
+			<trans-unit id="backend.additional_authorize_parameters">
 				<source><![CDATA[Additional Query Parameters: Additional query parameters for backend authentication (e.g. "access_type=offline&connection=google-oauth2")]]></source>
 			</trans-unit>
-			<trans-unit id="frontend.enable_frontend_login" xml:space="preserve">
+			<trans-unit id="frontend.enable_frontend_login">
 				<source>Frontend Log In: Enable Auth0 log in for TYPO3 frontend</source>
 			</trans-unit>
-			<trans-unit id="frontend.user_storage_page" xml:space="preserve">
+			<trans-unit id="frontend.user_storage_page">
 				<source>Storage Page: Storage page for frontend user</source>
 			</trans-unit>
-			<trans-unit id="frontend.reactivate_disabled_frontend_users" xml:space="preserve">
+			<trans-unit id="frontend.reactivate_disabled_frontend_users">
 				<source>Reactivate Disabled Users: Allow log in for disabled frontend users</source>
 			</trans-unit>
-			<trans-unit id="frontend.reactivate_deleted_frontend_users" xml:space="preserve">
+			<trans-unit id="frontend.reactivate_deleted_frontend_users">
 				<source>Reactivate Deleted Users: Allow log in for deleted frontend users</source>
 			</trans-unit>
-			<trans-unit id="token.generic_callback" xml:space="preserve">
+			<trans-unit id="token.generic_callback">
 				<source>Generic Callback: A generic callback URI for all requests (frontend and backend) will be used. The callback URI will be https://www.example.com/auth0/callback. Please note, that this configuration will become default in future releases.</source>
 			</trans-unit>
-			<trans-unit id="token.private_key_file" xml:space="preserve">
+			<trans-unit id="token.private_key_file">
 				<source>Private Key File: The absolute path to your private key file on your server. If set, this key will be used for signing the generated tokens. Otherwise, TYPO3's encryption key will be used. Only RSA keys are supported for now.</source>
 			</trans-unit>
-			<trans-unit id="token.public_key_file" xml:space="preserve">
+			<trans-unit id="token.public_key_file">
 				<source>Public Key File: The absolute path to your public key file on your server.</source>
 			</trans-unit>
 		</body>

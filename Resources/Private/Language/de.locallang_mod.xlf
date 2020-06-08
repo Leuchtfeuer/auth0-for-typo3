@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
 	<file source-language="en" datatype="plaintext" original="messages" date="2020-04-14T20:57:31Z"
-		  product-name="auth0">
+		  target-language="de" product-name="auth0">
 		<header/>
 		<body>
 			<trans-unit id="mlang_tabs_tab">
-				<source>Auth0</source>
+				<target>Auth0</target>
 			</trans-unit>
 			<trans-unit id="mlang_labels_tabdescr">
-				<source>A mapping for Auth0 roles to TYPO3 frontend user groups.</source>
+				<target>Ein mapping von Auth0 Rollen zu TYPO3 Benutzergruppen.</target>
 			</trans-unit>
 			<trans-unit id="mlang_labels_tablabel">
-				<source>Auth0 role data mapping.</source>
+				<target>Auth0 Rollen Mapping.</target>
 			</trans-unit>
 
 			<trans-unit id="roles.title">
-				<source>Auth0 Role Mapping</source>
+				<target>Auth0 Rollen Mapping</target>
 			</trans-unit>
 			<trans-unit id="roles.infobox.title">
-				<source>Attention</source>
+				<target>Achtung</target>
 			</trans-unit>
 			<trans-unit id="roles.infobox.content">
-				<source><![CDATA[The shown configuration may be overwritten by your TypoScript configuration. Please make sure to adapt your TypoScript configuration in <code>plugin.tx_auth0.settings.roles</code>. You can import the mapping from your TypoScript settings. But be aware, that some configuration shown below might get lost after the import.<br/><strong>Do not forget to clear your TypoScript settings afterwards.</strong>]]></source>
+				<target><![CDATA[Die gezeigte Konfiguration kann von deinen TypoScript Einstellungen überschrieben werden. Du kannst deine TypoScript Konfiguration importieren, aber bitte sei dir bewusst, dass die unten stehende Konfiguration in Teilen verloren gehen kann bzw. überschrieben wird.<br/><strong>Nach dem Import solltest du deine TypoScript Konfiguration löschen.</strong>]]></target>
 			</trans-unit>
 			<trans-unit id="roles.infobox.button">
-				<source>Import configuration from TypoScript</source>
+				<target>Einstellungen vom TypoScript importieren</target>
 			</trans-unit>
 			<trans-unit id="roles.frontend.title">
-				<source>Frontend User Groups</source>
+				<target>Webseiten Benutzergruppe</target>
 			</trans-unit>
 			<trans-unit id="roles.backend.title">
-				<source>Backend User Groups</source>
+				<target>Backend Benutzergruppe</target>
 			</trans-unit>
 			<trans-unit id="roles.table.head.identifier">
-				<source>Identifier</source>
+				<target>ID</target>
 			</trans-unit>
 			<trans-unit id="roles.table.head.title">
-				<source>Title</source>
+				<target>Titel</target>
 			</trans-unit>
 			<trans-unit id="roles.table.head.role">
-				<source>Auth0 Role</source>
+				<target>Auth0 Rolle</target>
 			</trans-unit>
 			<trans-unit id="roles.table.head.subgroups">
-				<source>Subgroups</source>
+				<target>Untergruppen</target>
 			</trans-unit>
 		</body>
 	</file>

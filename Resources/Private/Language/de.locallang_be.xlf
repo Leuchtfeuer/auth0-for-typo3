@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
 	<file source-language="en" datatype="plaintext" original="messages" date="2017-09-12T18:29:16Z"
-		  product-name="auth0">
+		  target-language="de" product-name="auth0">
 		<header/>
 		<body>
 			<trans-unit id="plugin.loginForm.title">
-				<source>Login form</source>
+				<target>An- / Abmeldeformular</target>
 			</trans-unit>
 			<trans-unit id="plugin.loginForm.description">
-				<source>Login form for Auth0 and TYPO3</source>
+				<target>An- und Abmeldeformular für Auth0 und TYPO3</target>
 			</trans-unit>
 
 			<trans-unit id="tx_auth0_backend_layout_wizard_label">
-				<source>Auth0</source>
+				<target>Auth0</target>
 			</trans-unit>
 
 			<trans-unit id="form.login.typo3">
-				<source>Log in to TYPO3</source>
+				<target>Am TYPO3 anmelden</target>
 			</trans-unit>
 			<trans-unit id="form.login.copyright">
-				<source>More about Auth0</source>
+				<target>Mehr über Auth0</target>
 			</trans-unit>
 			<trans-unit id="form.logout.auth0">
-				<source>Log out from Auth0</source>
+				<target>Vom Auth0 abmelden</target>
 			</trans-unit>
 			<trans-unit id="form.login.auth0">
-				<source>Log in to Auth0</source>
+				<target>In Auth0 einloggen</target>
 			</trans-unit>
 			<trans-unit id="form.logged-in-as">
-				<source>Hello</source>
+				<target>Hallo</target>
 			</trans-unit>
 			<trans-unit id="form.not-logged-in">
-				<source><![CDATA[You are currently <strong>not</strong> logged in to Auth0.]]></source>
+				<target><![CDATA[Du bist derzeit <strong>nicht</strong> in Auth0 angemeldet.]]></target>
 			</trans-unit>
 			<trans-unit id="form.error.no_application.title">
-				<source>No Application</source>
+				<target>Keine Applikation ausgewählt</target>
 			</trans-unit>
 			<trans-unit id="form.error.no_application.description">
-				<source>Please choose an application, which should be used for log in to TYPO3.</source>
+				<target>Bitte wähle einen Applikations-Datensatz aus, mit dem du dich am TYPO3 anmelden möchtest.</target>
 			</trans-unit>
 			<trans-unit id="form.error.no_typoscript.title">
-				<source>No TypoScript</source>
+				<target>Kein TypoScript gefunden</target>
 			</trans-unit>
 			<trans-unit id="form.error.no_typoscript.description">
-				<source>No settings for TYPO3 backend found. TypoScript included?</source>
+				<target>Keine Konfiguration für das TYPO3 Backend gefunden. Hast du das TypoScript eingebunden?</target>
 			</trans-unit>
 			<trans-unit id="form.logged-in.success.title">
-				<source>Well done!</source>
+				<target>Hervorragend!</target>
 			</trans-unit>
 			<trans-unit id="form.logged-in.success.description">
-				<source>You have successfully logged in.</source>
+				<target>Du hast dich erfolgreich angemeldet.</target>
 			</trans-unit>
 		</body>
 	</file>

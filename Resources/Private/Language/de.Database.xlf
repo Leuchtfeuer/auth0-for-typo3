@@ -1,136 +1,136 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <xliff version="1.0">
 	<file source-language="en" datatype="plaintext" original="messages" date="2017-09-12T18:29:16Z"
-		  product-name="auth0">
+		  target-language="de" product-name="auth0">
 		<header/>
 		<body>
 			<trans-unit id="tx_auth0_domain_model_frontenduser.auth0_user_id">
-				<source>Auth0 User ID</source>
+				<target>Auth0 Nutzer ID</target>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_frontenduser.auth0_metadata">
-				<source>Auth0 Metadata</source>
+				<target>Auth0 Metadaten</target>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_frontenduser.auth0_last_application">
-				<source>Last used Auth0 application</source>
+				<target>Zuletzt genutzte Auth0 Applikation</target>
 			</trans-unit>
 			<trans-unit id="tx_auth0.tx_extbase_type">
-				<source>Extbase Typ</source>
+				<target>Extbase Typ</target>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_frontenduser">
-				<source>Auth0 Website User</source>
+				<target>Auth0 Webseiten-Nutzer</target>
 			</trans-unit>
 
 
 			<trans-unit id="tx_auth0_domain_model_frontendusergroup.auth0_user_group">
-				<source>Auth0 User Group</source>
+				<target>Auth0 Benutzergruppe</target>
 			</trans-unit>
 
 
 			<trans-unit id="tx_auth0_domain_model_application">
-				<source>Application</source>
+				<target>Applikation</target>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_application.title">
-				<source>Name</source>
+				<target>Name</target>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_application.id">
-				<source>Client ID</source>
+				<target>Client ID</target>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_application.secret">
-				<source>Client Secret</source>
+				<target>Client Secret</target>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_application.domain">
-				<source>Domain</source>
+				<target>Domain</target>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_application.audience">
-				<source>Audience</source>
+				<target>Audience</target>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_application.single_log_out">
-				<source>Single Log Out</source>
+				<target>Single Log Out</target>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_application.secret_base64_encoded">
-				<source>Client Secret Base64 Encoded</source>
+				<target>Client Secret Base64 Encoded</target>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_application.signature_algorithm">
-				<source>JWT Signature Algorithm</source>
+				<target>JWT Signatur Algorithmus</target>
 			</trans-unit>
 
 			<trans-unit id="tabs.basic">
-				<source>Basic</source>
+				<target>Basis</target>
 			</trans-unit>
 			<trans-unit id="tabs.features">
-				<source>Features</source>
+				<target>Features</target>
 			</trans-unit>
 
 			<trans-unit id="fe_users.tx_extbase_type.Tx_Auth0_FrontendUser">
-				<source>Auth0 Website User</source>
+				<target>Auth0 Webseiten-Nutzer</target>
 			</trans-unit>
 			<trans-unit id="fe_groups.tx_extbase_type.Tx_Auth0_FrontendUserGroup">
-				<source>Auth0 User Group</source>
+				<target>Auth0 Benutzergruppe</target>
 			</trans-unit>
 
 			<trans-unit id="tt_content.pi_flexform.sheet_general">
-				<source>General</source>
+				<target>Generell</target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.softLogout">
-				<source>Logout from TYPO3 only (not from Auth0)</source>
+				<target>Nur vom TYPO3 abmelde (nicht von Auth0)</target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.rawAdditionalAuthorizeParameters">
-				<source><![CDATA[Additional query parameters for authentication (e.g. "access_type=offline&connection=google-oauth2")]]></source>
+				<target><![CDATA[Additional query parameters for authentication (e.g. "access_type=offline&connection=google-oauth2")]]></target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.sheet_redirect">
-				<source>Redirects</source>
+				<target>Weiterleitungen</target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.redirectMode">
-				<source>Redirect Mode</source>
+				<target>Modus</target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.redirectMode.I.0">
-				<source>Defined by Usergroup Record</source>
+				<target>Wie in der Benutzergruppe definiert</target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.redirectMode.I.1">
-				<source>Defined by User Record</source>
+				<target>Wie im Benutzer definiert</target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.redirectMode.I.2">
-				<source>After Login (TS or Flexform)</source>
+				<target>Nach der Anmeldung (TS oder Flexform)</target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.redirectMode.I.3">
-				<source>After Logout (TS or Flexform)</source>
+				<target>Nach der Abmeldung (TS oder Flexform)</target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.redirectMode.I.4">
-				<source>After Login Error (TS or Flexform)</source>
+				<target>Nach fehlerhafter Anmeldung (TS oder Flexform)</target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.redirectMode.I.5">
-				<source>Defined by GET/POST Parameters</source>
+				<target>Definiert durch GET/POST Parameter</target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.redirectMode.I.6">
-				<source>Defined by Referrer</source>
+				<target>Definiert durch den Referrer</target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.redirectFirstMethod">
-				<source>Use First Supported Mode from Selection</source>
+				<target>Ersten ausgewählten Modus, der zutrifft, verwenden</target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.redirectPageLogin">
-				<source>After Successful Login Redirect to Page</source>
+				<target>Nach erfolgreicher Anmeldung: Weiterleitung auf Seite</target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.redirectPageLoginError">
-				<source>After Failed Login Redirect to Page</source>
+				<target>Nach fehlgeschlagener Anmeldung: Weiterleitung auf Seite</target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.redirectPageLogout">
-				<source>After Logout Redirect to Page</source>
+				<target>Nach Abmeldung: Weiterleitung auf Seite</target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.redirectDisable">
-				<source>Disable Redirect</source>
+				<target>Weiterleitung deaktivieren</target>
 			</trans-unit>
 
 
 			<trans-unit id="backend.page.view.additionalAuthorizeParameters">
-				<source>Authorize Parameters</source>
+				<target>Zusätzliche authorisierungs Parameter</target>
 			</trans-unit>
 
 
 			<trans-unit id="tabs.auth0">
-				<source>Auth0</source>
+				<target>Auth0</target>
 			</trans-unit>
 			<trans-unit id="fe_groups.auth0_user_group">
-				<source>Auth0 Role Identifier</source>
+				<target>Auth0 Rolle</target>
 			</trans-unit>
 		</body>
 	</file>

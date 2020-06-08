@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2018-07-10T08:04:31Z"
+		  target-language="de" product-name="auth0">
+		<header/>
+		<body>
+			<trans-unit id="backend.enable_backend_login">
+				<target>Backend Anmeldung: Aktiviere den Auth0 Login für dein TYPO3 Backend</target>
+			</trans-unit>
+			<trans-unit id="backend.backend_connection">
+				<target>Applikation: ID der Applikation, die für den Backend Login genutzt werden soll</target>
+			</trans-unit>
+			<trans-unit id="backend.reactivate_disabled_backend_users">
+				<target>Deaktivierte Benutzter reaktivieren: Erlaube es deaktivierten Backend-Benutzern, sich anzumelden</target>
+			</trans-unit>
+			<trans-unit id="backend.reactivate_deleted_backend_users">
+				<target>Gelöschte Benutzter reaktivieren: Erlaube es gelöschten Backend-Benutzern, sich anzumelden</target>
+			</trans-unit>
+			<trans-unit id="backend.soft_logout">
+				<target>Soft Log Out: Nur vom TYPO3 Backend abmelden (nicht vom Auth0)</target>
+			</trans-unit>
+			<trans-unit id="backend.additional_authorize_parameters">
+				<target><![CDATA[Zusätzliche Query Parameter: Zusätzliche query Parameter für die Backend-Authentifizierung (z.B.: "access_type=offline&connection=google-oauth2")]]></target>
+			</trans-unit>
+			<trans-unit id="frontend.enable_frontend_login">
+				<target>Webseiten Login: Aktiviere Auth0 zur Anmeldung auf deiner Webseite</target>
+			</trans-unit>
+			<trans-unit id="frontend.user_storage_page">
+				<target>Systemordner: Ordner, in dem die Webseitenbenutzer abgelegt werden sollen</target>
+			</trans-unit>
+			<trans-unit id="frontend.reactivate_disabled_frontend_users">
+				<target>Deaktivierte Benutzter reaktivieren: Erlaube es deaktivierten Benutzern, sich anzumelden</target>
+			</trans-unit>
+			<trans-unit id="frontend.reactivate_deleted_frontend_users">
+				<target>Gelöschte Benutzter reaktivieren: Erlaube es gelöschten Benutzern, sich anzumelden</target>
+			</trans-unit>
+			<trans-unit id="token.generic_callback">
+				<target>Generisches Callback: Eine generische callback URI wird für alle Anfragen (frontend und backend) genutzt. Der Callback wird wie folgt aussehen: https://www.example.com/auth0/callback. Bitte beachte, dass diese Einstellung in zukünfitgen Releases standardmäßig aktiviert sein wird.</target>
+			</trans-unit>
+			<trans-unit id="token.private_key_file">
+				<target>Pfad zum privaten Schlüssel: Der absolute Dateipfad zum privaten Schlüssel auf deinem Server. Wenn du hier einen Pfad angibst, wird der Schlüssel genutzt, um die generierten Token zu signieren; anderenfalls wird der vom TYPO3 bereitgestellte encryption key genutzt. Derzeit werden lediglich RSA Schlüssel akzeptiert.</target>
+			</trans-unit>
+			<trans-unit id="token.public_key_file">
+				<target>Pfad zum öffentlichen Schlüssel: Der absolute Dateipfad zum öffentlichen Schlüssel auf deinem Server.</target>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
