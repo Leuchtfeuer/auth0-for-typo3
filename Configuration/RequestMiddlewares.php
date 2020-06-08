@@ -1,11 +1,6 @@
 <?php
 declare(strict_types = 1);
 
-$callbackBefore = 'typo3/cms-frontend/base-redirect-resolver';
-
-if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('redirects')) {
-    $callbackBefore = 'typo3/cms-redirects/redirecthandler';
-}
 return [
     'frontend' => [
         'bitmotion/auth0' => [
@@ -23,7 +18,7 @@ return [
                 'typo3/cms-frontend/authentication',
             ],
             'before' => [
-                $callbackBefore,
+                'typo3/cms-frontend/base-redirect-resolver',
             ],
         ]
     ],
