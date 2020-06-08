@@ -129,10 +129,10 @@ class UpdateUtility implements LoggerAwareInterface
     protected function getRepository(): ?AbstractUserGroupRepository
     {
         switch ($this->tableName) {
-            case FrontendUserGroupRepository::TABLE_NAME:
+            case 'fe_users':
                 return new FrontendUserGroupRepository();
 
-            case BackendUserGroupRepository::TABLE_NAME:
+            case 'be_users':
                 return new BackendUserGroupRepository();
         }
 
