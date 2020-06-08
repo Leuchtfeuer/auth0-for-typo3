@@ -29,8 +29,29 @@
 			<trans-unit id="roles.frontend.title">
 				<source>Frontend User Groups</source>
 			</trans-unit>
+			<trans-unit id="roles.frontend.text">
+				<source>This user group is assigned to a user if none of his Auth0 roles is assigned to a frontend user group.</source>
+			</trans-unit>
+			<trans-unit id="roles.frontend.label">
+				<source>Default User Group</source>
+			</trans-unit>
+			<trans-unit id="roles.frontend.default">
+				<source>No default group</source>
+			</trans-unit>
+			<trans-unit id="roles.frontend.button">
+				<source>Submit</source>
+			</trans-unit>
 			<trans-unit id="roles.backend.title">
 				<source>Backend User Groups</source>
+			</trans-unit>
+			<trans-unit id="roles.backend.text">
+				<source>This Auth0 role enables the admin flag of the backend user.</source>
+			</trans-unit>
+			<trans-unit id="roles.backend.label">
+				<source>Admin Role</source>
+			</trans-unit>
+			<trans-unit id="roles.backend.button">
+				<source>Submit</source>
 			</trans-unit>
 			<trans-unit id="roles.table.head.identifier">
 				<source>Identifier</source>
@@ -43,6 +64,40 @@
 			</trans-unit>
 			<trans-unit id="roles.table.head.subgroups">
 				<source>Subgroups</source>
+			</trans-unit>
+
+			<trans-unit id="list.title">
+				<source>Auth0</source>
+			</trans-unit>
+			<trans-unit id="list.card.mapping.title">
+				<source>Roles To Groups</source>
+			</trans-unit>
+			<trans-unit id="list.card.mapping.subtitle">
+				<source>User Groups</source>
+			</trans-unit>
+			<trans-unit id="list.card.mapping.text">
+				<source>Configure the mapping of Auth0 roles to TYPO3 user groups.</source>
+			</trans-unit>
+			<trans-unit id="list.card.metadata.title">
+				<source>Property Mapping</source>
+			</trans-unit>
+			<trans-unit id="list.card.metadata.subtitle">
+				<source>Users</source>
+			</trans-unit>
+			<trans-unit id="list.card.metadata.text">
+				<source>Configure the mapping of Auth0 data (and metadata) to TYPO3 user properties.</source>
+			</trans-unit>
+			<trans-unit id="list.card.button">
+				<source>Configure</source>
+			</trans-unit>
+			<trans-unit id="menu.label.roles">
+				<source>Role Mapping</source>
+			</trans-unit>
+			<trans-unit id="menu.label.properties">
+				<source>Property Mapping</source>
+			</trans-unit>
+			<trans-unit id="menu.button.overview">
+				<source>Back to overview</source>
 			</trans-unit>
 		</body>
 	</file>

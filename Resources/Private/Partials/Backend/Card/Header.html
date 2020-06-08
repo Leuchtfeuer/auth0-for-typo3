@@ -1,0 +1,16 @@
+<div class="card-header">
+	<f:if condition="{icon}">
+		<div class="card-icon">
+			<img src="{f:uri.resource(path: icon)}" width="64" height="64" class="card-header-icon-image"/>
+		</div>
+	</f:if>
+	<div class="card-header-body">
+		<f:if condition="{title}">
+			<h2 class="card-title">{title}</h2>
+		</f:if>
+		<f:if condition="{subtitle}">
+			<span class="card-subtitle">{subtitle}</span>
+		</f:if>
+	</div>
+</div>
+</html>

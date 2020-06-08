@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Bitmotion\Auth0\Utility\Database;
 
+use Bitmotion\Auth0\Configuration\Auth0Configuration;
 use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
 use Bitmotion\Auth0\Domain\Repository\UserGroup\AbstractUserGroupRepository;
 use Bitmotion\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
@@ -50,10 +51,16 @@ class UpdateUtility implements LoggerAwareInterface
      */
     protected $parseFuncUtility;
 
+    /**
+     * @var array
+     */
+    protected $yamlConfiguration = [];
+
     public function __construct(string $tableName, User $user)
     {
         $this->tableName = $tableName;
         $this->user = $user;
+        $this->yamlConfiguration = (new Auth0Configuration())->load();
     }
 
     public function updateGroups(): void
@@ -62,6 +69,8 @@ class UpdateUtility implements LoggerAwareInterface
             $this->getGroupMappingFromDatabase(),
             $this->getGroupMappingFromTypoScript()
         );
+
+        $this->addDefaultGroup($groupMapping);
 
         if (empty($groupMapping)) {
             $this->logger->error(sprintf('Cannot update user groups: No role mapping for %s found', $this->tableName));
@@ -141,6 +150,19 @@ class UpdateUtility implements LoggerAwareInterface
         return [];
     }
 
+    protected function addDefaultGroup(array &$groupMapping): void
+    {
+        if ($this->tableName === 'fe_users') {
+            $defaultGroup = $this->yamlConfiguration['roles']['default']['frontend'];
+        } else {
+            $defaultGroup = $this->yamlConfiguration['roles']['default']['backend'];
+        }
+
+        if ($defaultGroup !== 0) {
+            $groupMapping['__default'] = $defaultGroup;
+        }
+    }
+
     protected function mapRoles(array $groupMapping, array &$groupsToAssign, bool &$isBeAdmin, bool &$shouldUpdate): void
     {
         try {
@@ -152,7 +174,8 @@ class UpdateUtility implements LoggerAwareInterface
 
         foreach ($this->user->getAppMetadata()[$rolesKey] ?? [] as $role) {
             if (isset($groupMapping[$role])) {
-                if ($this->tableName === 'be_users' && $groupMapping[$role] === 'admin') {
+                // TODO: Remove first and condition ($groupMapping[$role] === 'admin') with next major release)
+                if ($this->tableName === 'be_users' && ($groupMapping[$role] === 'admin' || (!empty($this->yamlConfiguration['roles']['beAdmin']) && $role === $this->yamlConfiguration['roles']['beAdmin']))) {
                     $isBeAdmin = true;
                 } else {
                     $this->logger->notice(sprintf('Assign group "%s" to user.', $groupMapping[$role]));
@@ -162,6 +185,12 @@ class UpdateUtility implements LoggerAwareInterface
             } else {
                 $this->logger->warning(sprintf('No mapping for Auth0 role "%s" found.', $role));
             }
+        }
+
+        // Assign default group to user if no group matches
+        if ($shouldUpdate === false && isset($groupMapping['__default'])) {
+            $groupsToAssign[] = $groupMapping['__default'];
+            $shouldUpdate = true;
         }
     }
 
