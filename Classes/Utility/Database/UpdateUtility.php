@@ -175,12 +175,15 @@ class UpdateUtility implements LoggerAwareInterface
         foreach ($this->user->getAppMetadata()[$rolesKey] ?? [] as $role) {
             if (isset($groupMapping[$role])) {
                 // TODO: Remove first and condition ($groupMapping[$role] === 'admin') with next major release)
-                if ($this->tableName === 'be_users' && ($groupMapping[$role] === 'admin' || (!empty($this->yamlConfiguration['roles']['beAdmin']) && $role === $this->yamlConfiguration['roles']['beAdmin']))) {
+                if ($this->tableName === 'be_users' && $groupMapping[$role] === 'admin') {
                     $isBeAdmin = true;
                 } else {
                     $this->logger->notice(sprintf('Assign group "%s" to user.', $groupMapping[$role]));
                     $groupsToAssign[] = $groupMapping[$role];
                 }
+                $shouldUpdate = true;
+            } elseif (!empty($this->yamlConfiguration['roles']['beAdmin']) && $role === $this->yamlConfiguration['roles']['beAdmin']) {
+                $isBeAdmin = true;
                 $shouldUpdate = true;
             } else {
                 $this->logger->warning(sprintf('No mapping for Auth0 role "%s" found.', $role));
