@@ -110,6 +110,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      */
     public function insertBeUser(string $tableName, User $user): void
     {
+        $columnsTCA = $GLOBALS['TCA']['be_users']['columns'] ?? [];
         $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
         $userRepository->insertUser([
             'pid' => 0,
@@ -119,8 +120,8 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             'email' => $user->getEmail(),
             'crdate' => time(),
             'auth0_user_id' => $user->getUserId(),
-            'options' => 3,
-            'file_permissions' => 'readFolder,writeFolder,addFolder,renameFolder,moveFolder,deleteFolder,readFile,writeFile,addFile,renameFile,replaceFile,moveFile,copyFile,deleteFile',
+            'options' => $columnsTCA['options']['config']['default'] ?? 3,
+            'file_permissions' => $columnsTCA['file_permissions']['config']['default'] ?? 'readFolder,writeFolder,addFolder,renameFolder,moveFolder,deleteFolder,readFile,writeFile,addFile,renameFile,replaceFile,moveFile,copyFile,deleteFile',
         ]);
     }
 
