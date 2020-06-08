@@ -167,7 +167,7 @@ class UpdateUtility implements LoggerAwareInterface
     {
         try {
             // TODO: Support dot syntax for roles; e.g. roles.application
-            $rolesKey = ConfigurationUtility::getSetting('roles', 'key') ?? 'roles';
+            $rolesKey = ConfigurationUtility::getSetting('roles', 'key') ?? $this->yamlConfiguration['roles']['key'] ?? 'roles';
         } catch (InvalidConfigurationTypeException $exception) {
             $rolesKey = 'roles';
         }

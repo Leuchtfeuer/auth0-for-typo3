@@ -53,6 +53,15 @@
 			<trans-unit id="roles.backend.button">
 				<target>Bestätigen</target>
 			</trans-unit>
+			<trans-unit id="roles.key.text">
+				<target>Der Schlüssel (unterhalb der Auth0 Applikations Metadaten), der die Rollen beinhaltet.</target>
+			</trans-unit>
+			<trans-unit id="roles.key.label">
+				<target>Auth0 Schlüssel</target>
+			</trans-unit>
+			<trans-unit id="roles.key.button">
+				<target>Bestätigen</target>
+			</trans-unit>
 			<trans-unit id="roles.table.head.identifier">
 				<target>ID</target>
 			</trans-unit>

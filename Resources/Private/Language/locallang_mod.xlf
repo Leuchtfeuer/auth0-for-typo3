@@ -53,6 +53,15 @@
 			<trans-unit id="roles.backend.button">
 				<source>Submit</source>
 			</trans-unit>
+			<trans-unit id="roles.key.text">
+				<source>The key (below the Auth0 application metadata) that contains the roles.</source>
+			</trans-unit>
+			<trans-unit id="roles.key.label">
+				<source>Auth0 Key</source>
+			</trans-unit>
+			<trans-unit id="roles.key.button">
+				<source>Submit</source>
+			</trans-unit>
 			<trans-unit id="roles.table.head.identifier">
 				<source>Identifier</source>
 			</trans-unit>

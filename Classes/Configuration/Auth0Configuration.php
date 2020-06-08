@@ -99,6 +99,7 @@ class Auth0Configuration
                     'frontend' => 0,
                     'backend' => 0,
                 ],
+                'key' => 'roles',
                 'beAdmin' => '',
             ],
         ];

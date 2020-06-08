@@ -64,6 +64,10 @@ class BackendController extends ActionController
         $auth0Configuration = new Auth0Configuration();
         $configuration = $auth0Configuration->load();
 
+        if ($this->request->hasArgument('key')) {
+            $configuration['roles']['key'] = $this->request->getArgument('key');
+        }
+
         if ($this->request->hasArgument('defaultFrontendUserGroup')) {
             $configuration['roles']['default']['frontend'] = (int)$this->request->getArgument('defaultFrontendUserGroup');
         }
@@ -86,6 +90,11 @@ class BackendController extends ActionController
         $settings = ConfigurationUtility::getSetting('roles');
         (new FrontendUserGroupRepository())->translate($settings['fe_users']);
         (new BackendUserGroupRepository())->translate($settings['be_users']);
+
+        $auth0Configuration = new Auth0Configuration();
+        $configuration = $auth0Configuration->load();
+        $configuration['roles']['key'] = $settings['key'];
+        $auth0Configuration->write($configuration);
 
         $this->redirect('roles');
     }
