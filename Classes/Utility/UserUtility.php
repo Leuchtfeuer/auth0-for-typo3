@@ -119,6 +119,8 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             'email' => $user->getEmail(),
             'crdate' => time(),
             'auth0_user_id' => $user->getUserId(),
+            'options' => 3,
+            'file_permissions' => 'readFolder,writeFolder,addFolder,renameFolder,moveFolder,deleteFolder,readFile,writeFile,addFile,renameFile,replaceFile,moveFile,copyFile,deleteFile',
         ]);
     }
 
