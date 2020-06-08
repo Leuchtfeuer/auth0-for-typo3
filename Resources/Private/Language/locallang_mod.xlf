@@ -30,7 +30,7 @@
 				<source>Frontend User Groups</source>
 			</trans-unit>
 			<trans-unit id="roles.frontend.text">
-				<source>This user group is assigned to a user if none of his Auth0 roles is assigned to a frontend user group.</source>
+				<source>This user group is assigned to an user if none of his Auth0 roles is assigned to a frontend user group.</source>
 			</trans-unit>
 			<trans-unit id="roles.frontend.label">
 				<source>Default User Group</source>
@@ -45,7 +45,7 @@
 				<source>Backend User Groups</source>
 			</trans-unit>
 			<trans-unit id="roles.backend.text">
-				<source>This Auth0 role enables the admin flag of the backend user.</source>
+				<source>The default user group is assigned to an user if none of his Auth0 roles is assigend to a backend user group. The configured admin role enables will set the admin flag of the backend user.</source>
 			</trans-unit>
 			<trans-unit id="roles.backend.label">
 				<source>Admin Role</source>
