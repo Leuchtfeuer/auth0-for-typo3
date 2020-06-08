@@ -191,7 +191,7 @@ class UpdateUtility implements LoggerAwareInterface
         }
 
         // Assign default group to user if no group matches
-        if ($shouldUpdate === false && isset($groupMapping['__default'])) {
+        if ($shouldUpdate === false && isset($groupMapping['__default']) && !$isBeAdmin) {
             $groupsToAssign[] = $groupMapping['__default'];
             $shouldUpdate = true;
         }
