@@ -29,8 +29,29 @@
 			<trans-unit id="roles.frontend.title">
 				<target>Webseiten Benutzergruppe</target>
 			</trans-unit>
+			<trans-unit id="roles.frontend.text">
+				<target>Diese Benutzergruppe wird einem Nutzer zugewiesen, wenn keine der hinterleten Mapping Konfigurationen zutrifft oder der Nutzer keine Auth0 Rolle hinterlegt hat.</target>
+			</trans-unit>
+			<trans-unit id="roles.frontend.label">
+				<target>Standard Nutzergruppe</target>
+			</trans-unit>
+			<trans-unit id="roles.frontend.default">
+				<target>Keine</target>
+			</trans-unit>
+			<trans-unit id="roles.frontend.button">
+				<target>Bestätigen</target>
+			</trans-unit>
 			<trans-unit id="roles.backend.title">
 				<target>Backend Benutzergruppe</target>
+			</trans-unit>
+			<trans-unit id="roles.backend.text">
+				<target>Die standard Nutzergruppe wird einem Nutzer zugewiesen, wenn keine der hinterleten Mapping Konfigurationen zutrifft oder der Nutzer keine Auth0 Rolle hinterlegt hat. Sollte der Nutzer über die hinterlegte Role verfügen, wird er zum Backend Administrator.</target>
+			</trans-unit>
+			<trans-unit id="roles.backend.label">
+				<target>Admin Rolle</target>
+			</trans-unit>
+			<trans-unit id="roles.backend.button">
+				<target>Bestätigen</target>
 			</trans-unit>
 			<trans-unit id="roles.table.head.identifier">
 				<target>ID</target>
@@ -43,6 +64,40 @@
 			</trans-unit>
 			<trans-unit id="roles.table.head.subgroups">
 				<target>Untergruppen</target>
+			</trans-unit>
+
+			<trans-unit id="list.title">
+				<target>Auth0</target>
+			</trans-unit>
+			<trans-unit id="list.card.mapping.title">
+				<target>Rollen zu Benutzergruppen</target>
+			</trans-unit>
+			<trans-unit id="list.card.mapping.subtitle">
+				<target>Benutzergruppen</target>
+			</trans-unit>
+			<trans-unit id="list.card.mapping.text">
+				<target>Konfiguriere, welche Auth0 Rollen welchen TYPO3 Benutzergruppen (Frontend und Backend) entsprechen.</target>
+			</trans-unit>
+			<trans-unit id="list.card.metadata.title">
+				<target>Benutzereigenschaften</target>
+			</trans-unit>
+			<trans-unit id="list.card.metadata.subtitle">
+				<target>Benutzer</target>
+			</trans-unit>
+			<trans-unit id="list.card.metadata.text">
+				<target>Konfiguriere, welche Auth0 Daten (und Metadata) welchen Eigenschaften eines TYPO3 Benutzers entsprechen.</target>
+			</trans-unit>
+			<trans-unit id="list.card.button">
+				<target>Konfigurieren</target>
+			</trans-unit>
+			<trans-unit id="menu.label.roles">
+				<target>Benutzergruppen Mapping</target>
+			</trans-unit>
+			<trans-unit id="menu.label.properties">
+				<target>Benutzereigenschaften Mapping</target>
+			</trans-unit>
+			<trans-unit id="menu.button.overview">
+				<target>Zurück zur Übersicht</target>
 			</trans-unit>
 		</body>
 	</file>
