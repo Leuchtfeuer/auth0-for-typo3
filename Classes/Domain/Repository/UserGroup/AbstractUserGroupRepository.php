@@ -11,6 +11,7 @@
 
 namespace Bitmotion\Auth0\Domain\Repository\UserGroup;
 
+use Bitmotion\Auth0\Configuration\Auth0Configuration;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -68,6 +69,10 @@ abstract class AbstractUserGroupRepository
     {
         if (!empty($mapping)) {
             foreach ($mapping as $auth0Role => $userGroupId) {
+                if ($userGroupId === 'admin') {
+                    $this->addBeAdminToConfiguration($auth0Role);
+                    continue;
+                }
                 $userGroup = $this->findByIdentifier((int)$userGroupId);
                 $userGroup[self::USER_GROUP_FIELD] = $auth0Role;
                 $this->update($userGroup);
@@ -86,5 +91,13 @@ abstract class AbstractUserGroupRepository
         $qb->update($this->tableName)
             ->where($qb->expr()->eq('uid', $qb->createNamedParameter($userGroup['uid'], \PDO::PARAM_INT)))
             ->execute();
+    }
+
+    protected function addBeAdminToConfiguration(string $role): void
+    {
+        $auth0Configuration = new Auth0Configuration();
+        $configuration = $auth0Configuration->load();
+        $configuration['roles']['beAdmin'] = $role;
+        $auth0Configuration->write($configuration);
     }
 }
