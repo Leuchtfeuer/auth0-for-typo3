@@ -69,7 +69,7 @@ call_user_func(
             'Auth0',
             'bottom',
             [
-                $controllerName => 'list,roles,properties,acquireMappingTypoScript,updateRoles',
+                $controllerName => 'list,roles,properties,acquireMappingTypoScript,updateRoles,applicationList,deleteApplication',
             ],
             [
                 'access' => 'admin',

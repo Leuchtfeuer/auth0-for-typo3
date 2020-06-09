@@ -12,14 +12,19 @@
 namespace Bitmotion\Auth0\Controller;
 
 use Bitmotion\Auth0\Configuration\Auth0Configuration;
+use Bitmotion\Auth0\Domain\Model\Application;
+use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
 use Bitmotion\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
+use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
+use TYPO3\CMS\Backend\Template\Components\ButtonBar;
+use TYPO3\CMS\Backend\Template\Components\Buttons\LinkButton;
 use TYPO3\CMS\Backend\View\BackendTemplateView;
 use TYPO3\CMS\Core\Imaging\Icon;
-use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Localization\LanguageService;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
@@ -33,11 +38,11 @@ class BackendController extends ActionController
 
     protected $defaultViewObjectName = BackendTemplateView::class;
 
-    protected $iconFactory;
+    protected $applicationRepository;
 
-    public function __construct(IconFactory $iconFactory)
+    public function __construct(ApplicationRepository $applicationRepository)
     {
-        $this->iconFactory = $iconFactory;
+        $this->applicationRepository = $applicationRepository;
 
         if (version_compare(TYPO3_version, '10.0.0', '<')) {
             parent::__construct();
@@ -99,11 +104,31 @@ class BackendController extends ActionController
         $this->redirect('roles');
     }
 
+    public function applicationListAction()
+    {
+        $this->view->assignMultiple([
+            'applications' => $this->applicationRepository->findAll(),
+            'pid' => (new EmAuth0Configuration())->getUserStoragePage(),
+            'returnUrl' => $this->getModuleUrl(false),
+        ]);
+    }
+
+    /**
+     * @param Application $application
+     */
+    public function deleteApplicationAction(Application $application)
+    {
+        $this->applicationRepository->remove($application);
+
+        $this->redirect('applicationList');
+    }
+
     public function initializeView(ViewInterface $view): void
     {
         parent::initializeView($view);
 
         if ($this->request->getControllerActionName() !== 'list' && $view instanceof BackendTemplateView) {
+            $view->getModuleTemplate()->getPageRenderer()->loadRequireJsModule('TYPO3/CMS/Backend/Modal');
             $this->createMenu();
             $this->createButtonBar();
         }
@@ -115,6 +140,10 @@ class BackendController extends ActionController
         $menu->setIdentifier('auth0');
 
         $actions = [
+            [
+                'action' => 'applicationList',
+                'label' => 'menu.label.applications',
+            ],
             [
                 'action' => 'roles',
                 'label' => 'menu.label.roles',
@@ -146,11 +175,48 @@ class BackendController extends ActionController
     protected function createButtonBar(): void
     {
         $buttonBar = $this->view->getModuleTemplate()->getDocHeaderComponent()->getButtonBar();
+
+        if ($this->request->getControllerActionName() === 'applicationList') {
+            $parameters = GeneralUtility::explodeUrl2Array(sprintf(
+                'edit[tx_auth0_domain_model_application][%d]=new&returnUrl=%s',
+                (new EmAuth0Configuration())->getUserStoragePage(),
+                $this->getModuleUrl()
+            ));
+
+            $newButton = $this->getLinkButton($buttonBar, $parameters, 'menu.button.new');
+            $buttonBar->addButton($newButton);
+        }
+
         $listButton = $buttonBar->makeLinkButton()
             ->setTitle($this->getLabel('menu.button.overview'))
             ->setHref($this->getUriBuilder()->reset()->uriFor('list', [], 'Backend'))
-            ->setIcon($this->iconFactory->getIcon('actions-view-go-back', Icon::SIZE_SMALL));
+            ->setIcon($this->view->getModuleTemplate()->getIconFactory()->getIcon('actions-view-go-back', Icon::SIZE_SMALL));
         $buttonBar->addButton($listButton);
+    }
+
+    protected function getModuleUrl(bool $encoded = true, string $referenceType = BackendUriBuilder::ABSOLUTE_PATH): string
+    {
+        $backendUriBuilder = $this->objectManager->get(BackendUriBuilder::class);
+
+        $parameters = [
+            'tx_auth0_tools_auth0auth0' => [
+                'action' => $this->request->getControllerActionName()
+            ]
+        ];
+
+        $uri = $backendUriBuilder->buildUriFromRoute('tools_Auth0Auth0', $parameters, $referenceType);
+
+        return $encoded ? rawurlencode($uri) : $uri;
+    }
+
+    protected function getLinkButton(ButtonBar $buttonBar, array $parameters, string $label, string $icon = 'actions-document-new'): LinkButton
+    {
+        $backendUriBuilder = $this->objectManager->get(BackendUriBuilder::class);
+
+        return $buttonBar->makeLinkButton()
+            ->setHref($backendUriBuilder->buildUriFromRoute('record_edit', $parameters))
+            ->setTitle($this->getLabel($label))
+            ->setIcon($this->view->getModuleTemplate()->getIconFactory()->getIcon($icon, Icon::SIZE_SMALL));
     }
 
     protected function getUriBuilder(): UriBuilder

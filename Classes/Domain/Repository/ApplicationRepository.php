@@ -60,4 +60,23 @@ class ApplicationRepository implements LoggerAwareInterface
 
         throw new InvalidApplicationException(sprintf('No Application found for given id %s', $uid), 1526046354);
     }
+
+    public function findAll(): array
+    {
+        return GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable(self::TABLE_NAME)
+            ->select('*')
+            ->from(self::TABLE_NAME)
+            ->execute()
+            ->fetchAll();
+    }
+
+    public function remove(Application $application): void
+    {
+        $qb = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::TABLE_NAME);
+
+        $qb->delete(self::TABLE_NAME)->where(
+            $qb->expr()->eq('uid', $qb->createNamedParameter($application->getUid(), \PDO::PARAM_INT))
+        )->execute();
+    }
 }

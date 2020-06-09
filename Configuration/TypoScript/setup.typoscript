@@ -50,6 +50,8 @@ plugin.tx_auth0 {
         }
 
         # maps auth0 roles to TYPO3 fe_groups or be_groups
+        # the roles configuration via TypoScript is deprecated. Please use the dedicated backend
+        # module for configuring the roles. You can easily import your TypoScript settings there.
         roles {
             key = {$plugin.tx_auth0.settings.roles.key}
 

@@ -4,8 +4,22 @@
 
 <f:section name="content">
 	<h1><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.title" /></h1>
-
 	<div class="card-container">
+		<div class="card card-size-fixed-small">
+			<f:render partial="Backend/Card/Header"
+					  arguments="{title: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.application.title\')}', subtitle: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.application.subtitle\')}', icon: 'Icons/Extension.svg'}" />
+			<div class="card-content">
+				<p class="card-text">
+					<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.application.text"/>
+				</p>
+			</div>
+			<div class="card-footer">
+				<f:link.action action="applicationList" class="btn btn-default">
+					<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.button"/>
+				</f:link.action>
+			</div>
+		</div>
+
 		<div class="card card-size-fixed-small">
 			<f:render partial="Backend/Card/Header"
 					  arguments="{title: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.mapping.title\')}', subtitle: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.mapping.subtitle\')}', icon: 'Icons/Extension.svg'}" />

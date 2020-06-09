@@ -96,8 +96,21 @@
 			<trans-unit id="list.card.metadata.text">
 				<source>Configure the mapping of Auth0 data (and metadata) to TYPO3 user properties.</source>
 			</trans-unit>
+			<trans-unit id="list.card.application.title">
+				<source>Auth0 Application List</source>
+			</trans-unit>
+			<trans-unit id="list.card.application.subtitle">
+				<source>Database</source>
+			</trans-unit>
+			<trans-unit id="list.card.application.text">
+				<source>Show, add and configure Auth0 applications used by your TYPO3 instance.</source>
+			</trans-unit>
 			<trans-unit id="list.card.button">
 				<source>Configure</source>
+			</trans-unit>
+
+			<trans-unit id="menu.label.applications">
+				<source>Application List</source>
 			</trans-unit>
 			<trans-unit id="menu.label.roles">
 				<source>Role Mapping</source>
@@ -107,6 +120,9 @@
 			</trans-unit>
 			<trans-unit id="menu.button.overview">
 				<source>Back to overview</source>
+			</trans-unit>
+			<trans-unit id="menu.button.new">
+				<source>Create new Application</source>
 			</trans-unit>
 		</body>
 	</file>

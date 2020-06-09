@@ -96,8 +96,21 @@
 			<trans-unit id="list.card.metadata.text">
 				<target>Konfiguriere, welche Auth0 Daten (und Metadata) welchen Eigenschaften eines TYPO3 Benutzers entsprechen.</target>
 			</trans-unit>
+			<trans-unit id="list.card.application.title">
+				<target>Listenansicht von Applikationen</target>
+			</trans-unit>
+			<trans-unit id="list.card.application.subtitle">
+				<target>Datenbank</target>
+			</trans-unit>
+			<trans-unit id="list.card.application.text">
+				<target>Anzeigen, hinzufügen und bearbeiten von Auth0 Applikationen, die von deinem TYPO3 System genutzt werden.</target>
+			</trans-unit>
 			<trans-unit id="list.card.button">
 				<target>Konfigurieren</target>
+			</trans-unit>
+
+			<trans-unit id="menu.label.applications">
+				<target>Applikationsliste</target>
 			</trans-unit>
 			<trans-unit id="menu.label.roles">
 				<target>Benutzergruppen Mapping</target>
@@ -107,6 +120,9 @@
 			</trans-unit>
 			<trans-unit id="menu.button.overview">
 				<target>Zurück zur Übersicht</target>
+			</trans-unit>
+			<trans-unit id="menu.button.new">
+				<target>Neue Applikation erstellen</target>
 			</trans-unit>
 		</body>
 	</file>
