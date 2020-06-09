@@ -9,7 +9,7 @@ Callback
 With version 3.2.0 of this extension, it is possible to use only one generic callback URL for Auth0 requests. Technically a
 PSR-15 Middleware is used to take care of the Auth0 response and - for example - redirect a user after a successful log in. The
 URL path of the callback is `/auth0/callback`. So, when your domain is `https://www.example.com`, you only need to configure the
-URL `https://www.ecample.com/auth0/callback` as allowed callback URL (and allowed logout URL if you are using the single sign out
+URL `https://www.example.com/auth0/callback` as allowed callback URL (and allowed logout URL if you are using the single sign out
 feature).
 
 .. figure:: ../../Images/auth0-callback-url.png
