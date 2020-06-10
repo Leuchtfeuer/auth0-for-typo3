@@ -1,0 +1,39 @@
+.. include:: ../../Includes.txt
+
+============================
+TypoScript to Backend Module
+============================
+
+If you are updating this extension from a version lower than 3.3.0, you have to follow these steps to get rid of deprecated
+TypoScript settings.
+
+.. rst-class:: bignums
+
+1. Make your TypoScript available for the backend module
+
+   The TypoScript settings of both :typoscript:`plugin.tx_auth0.settings.roles` and
+   :typoscript:`plugin.tx_auth0.settings.propertyMapping` has to be available for the backend module. You can archive this by
+   adding following lines of TypoScript to the bottom of your TypoScript template:
+
+   :typoscript:`module.tx_auth0.settings.roles < plugin.tx_auth0.settings.roles`
+   :typoscript:`module.tx_auth0.settings.propertyMapping < plugin.tx_auth0.settings.propertyMapping`
+
+2. Migrate the role mapping
+
+   Navigate into the Auth0 backend module and click on the "configure" button in the "Roles to Groups" card. There should be an
+   infobox on the top of the content. Click on the "Import configuration from TypoScript" button. After the page was refreshed,
+   the module will output the configuration migrated from you TypoScript.
+
+3. Migrate the property mapping
+
+   Select the "Property Mapping" option of the select box on top of the page and proceed as described in 2.
+
+4. Unset your TypoScript
+
+   Open your TypoScript template and unset the former configuration:
+
+   :typoscript:`plugin.tx_auth0.settings.roles >`
+   :typoscript:`plugin.tx_auth0.settings.propertyMapping >`
+
+   Do not forget to let the :typoscript:`module.tx_auth0` configuration extend the :typoscript:`plugin.tx_auth0` configuration.
+   Afterwards the info boxes in the backend module should be disappeared.
