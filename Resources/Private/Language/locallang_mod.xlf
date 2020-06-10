@@ -15,52 +15,49 @@
 			</trans-unit>
 
 			<trans-unit id="roles.title">
-				<source>Auth0 Role Mapping</source>
+				<source>Role Mapping</source>
 			</trans-unit>
 			<trans-unit id="roles.infobox.title">
-				<source>Attention</source>
+				<source>Import Your TypoScript Configuration</source>
 			</trans-unit>
 			<trans-unit id="roles.infobox.content">
-				<source><![CDATA[The shown configuration may be overwritten by your TypoScript configuration. Please make sure to adapt your TypoScript configuration in <code>plugin.tx_auth0.settings.roles</code>. You can import the mapping from your TypoScript settings. But be aware, that some configuration shown below might get lost after the import.<br/><strong>Do not forget to clear your TypoScript settings afterwards.</strong>]]></source>
+				<source><![CDATA[The shown configuration may be overwritten by your TypoScript configuration. Please make sure to adapt your TypoScript configuration in <code>plugin.tx_auth0.settings.%s</code>. You can import the mapping from your TypoScript settings. But be aware, that some configuration shown below might get lost after the import.<br/><strong>Do not forget to clear your TypoScript settings afterwards.</strong>]]></source>
 			</trans-unit>
 			<trans-unit id="roles.infobox.button">
 				<source>Import configuration from TypoScript</source>
 			</trans-unit>
-			<trans-unit id="roles.frontend.title">
-				<source>Frontend User Groups</source>
-			</trans-unit>
 			<trans-unit id="roles.frontend.text">
-				<source>This user group is assigned to an user if none of his Auth0 roles is assigned to a frontend user group.</source>
+				<source>This website usergroup is assigned to an user if none of his Auth0 roles is assigned to a website usergroup.</source>
 			</trans-unit>
 			<trans-unit id="roles.frontend.label">
-				<source>Default User Group</source>
+				<source>Default Website Usergroup</source>
 			</trans-unit>
 			<trans-unit id="roles.frontend.default">
 				<source>No default group</source>
 			</trans-unit>
-			<trans-unit id="roles.frontend.button">
-				<source>Submit</source>
-			</trans-unit>
-			<trans-unit id="roles.backend.title">
-				<source>Backend User Groups</source>
-			</trans-unit>
 			<trans-unit id="roles.backend.text">
-				<source>The default user group is assigned to an user if none of his Auth0 roles is assigend to a backend user group. The configured admin role enables will set the admin flag of the backend user.</source>
+				<source>This backend user group is assigned to an user if none of his Auth0 roles is assigned to a backend user group.</source>
 			</trans-unit>
 			<trans-unit id="roles.backend.label">
-				<source>Admin Role</source>
+				<source>Default Backend Usergroup</source>
 			</trans-unit>
-			<trans-unit id="roles.backend.button">
-				<source>Submit</source>
+			<trans-unit id="roles.backend.default">
+				<source>No default group</source>
+			</trans-unit>
+			<trans-unit id="roles.admin.text">
+				<source>If a user has this Auth0 role, he becomes a TYPO3 backend administrator.</source>
+			</trans-unit>
+			<trans-unit id="roles.admin.label">
+				<source>Backend-Admin Role</source>
 			</trans-unit>
 			<trans-unit id="roles.key.text">
-				<source>The key (below the Auth0 application metadata) that contains the roles.</source>
+				<source>The key (below the Auth0 application metadata) that contains the roles. The recommended default is "roles".</source>
 			</trans-unit>
 			<trans-unit id="roles.key.label">
 				<source>Auth0 Key</source>
 			</trans-unit>
-			<trans-unit id="roles.key.button">
-				<source>Submit</source>
+			<trans-unit id="roles.button">
+				<source>Save configuration</source>
 			</trans-unit>
 			<trans-unit id="roles.table.head.identifier">
 				<source>Identifier</source>
@@ -73,6 +70,13 @@
 			</trans-unit>
 			<trans-unit id="roles.table.head.subgroups">
 				<source>Subgroups</source>
+			</trans-unit>
+
+			<trans-unit id="application.title">
+				<source>Applications</source>
+			</trans-unit>
+			<trans-unit id="application.text">
+				<source>Newly created applications are stored here:</source>
 			</trans-unit>
 
 			<trans-unit id="list.title">
@@ -108,6 +112,110 @@
 			<trans-unit id="list.card.button">
 				<source>Configure</source>
 			</trans-unit>
+			<trans-unit id="list.card.documentation.title">
+				<source>Want to Read More?</source>
+			</trans-unit>
+			<trans-unit id="list.card.documentation.subtitle">
+				<source>Documentation</source>
+			</trans-unit>
+			<trans-unit id="list.card.documentation.text">
+				<source>A detailed documentation of this extension can be found on the TYPO3 documentation server.</source>
+			</trans-unit>
+			<trans-unit id="list.card.documentation.button">
+				<source>Read more</source>
+			</trans-unit>
+			<trans-unit id="list.card.issue.title">
+				<source>Found an Issue?</source>
+			</trans-unit>
+			<trans-unit id="list.card.issue.subtitle">
+				<source>Source Code</source>
+			</trans-unit>
+			<trans-unit id="list.card.issue.text">
+				<source>If you have found a bug or are missing a feature, you can take a look at our repository.</source>
+			</trans-unit>
+			<trans-unit id="list.card.issue.button">
+				<source>Find out more</source>
+			</trans-unit>
+
+			<trans-unit id="properties.title">
+				<source>Property Mapping</source>
+			</trans-unit>
+			<trans-unit id="properties.title.root">
+				<source>Root Data</source>
+			</trans-unit>
+			<trans-unit id="properties.title.user">
+				<source>User Metadata</source>
+			</trans-unit>
+			<trans-unit id="properties.title.app">
+				<source>Application Metadata</source>
+			</trans-unit>
+			<trans-unit id="properties.title.edit">
+				<source>Edit Property</source>
+			</trans-unit>
+			<trans-unit id="properties.title.add">
+				<source>Add Property</source>
+			</trans-unit>
+			<trans-unit id="properties.new">
+				<source>Create new</source>
+			</trans-unit>
+			<trans-unit id="properties.no-configuration">
+				<source>No configuration found.</source>
+			</trans-unit>
+			<trans-unit id="properties.table.auth0">
+				<source>Auth0 Property</source>
+			</trans-unit>
+			<trans-unit id="properties.table.typo3">
+				<source>TYPO3 Property</source>
+			</trans-unit>
+			<trans-unit id="properties.table.processing">
+				<source>Value Processing</source>
+			</trans-unit>
+			<trans-unit id="properties.button.save">
+				<source>Save</source>
+			</trans-unit>
+
+			<trans-unit id="message.application.deleted.title">
+				<source>Application Removed!</source>
+			</trans-unit>
+			<trans-unit id="message.application.deleted.text">
+				<source>The application has been removed successfully.</source>
+			</trans-unit>
+			<trans-unit id="message.property.created.title">
+				<source>Configuration Created!</source>
+			</trans-unit>
+			<trans-unit id="message.property.created.text">
+				<source>The configuration has been created successfully.</source>
+			</trans-unit>
+			<trans-unit id="message.property.deleted.title">
+				<source>Configuration Removed!</source>
+			</trans-unit>
+			<trans-unit id="message.property.deleted.text">
+				<source>The configuration has been removed successfully.</source>
+			</trans-unit>
+			<trans-unit id="message.property.updated.title">
+				<source>Configuration Updated!</source>
+			</trans-unit>
+			<trans-unit id="message.property.updated.text">
+				<source>The configuration has been updated successfully.</source>
+			</trans-unit>
+			<trans-unit id="message.property.imported.title">
+				<source>TypoScript Imported!</source>
+			</trans-unit>
+			<trans-unit id="message.property.imported.text">
+				<source>The TypoScript has been imported successfully. You can now remove your TypoScript settings.</source>
+			</trans-unit>
+			<trans-unit id="message.role.updated.title">
+				<source>Configuration Updated!</source>
+			</trans-unit>
+			<trans-unit id="message.role.updated.text">
+				<source>The configuration has been updated successfully.</source>
+			</trans-unit>
+			<trans-unit id="message.role.imported.title">
+				<source>TypoScript Imported!</source>
+			</trans-unit>
+			<trans-unit id="message.role.imported.text">
+				<source>The TypoScript has been imported successfully. You can now remove your TypoScript settings.</source>
+			</trans-unit>
 
 			<trans-unit id="menu.label.applications">
 				<source>Application List</source>
@@ -121,8 +229,8 @@
 			<trans-unit id="menu.button.overview">
 				<source>Back to overview</source>
 			</trans-unit>
-			<trans-unit id="menu.button.new">
-				<source>Create new Application</source>
+			<trans-unit id="menu.button.cancel">
+				<source>Back to list view</source>
 			</trans-unit>
 		</body>
 	</file>

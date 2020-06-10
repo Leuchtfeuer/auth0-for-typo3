@@ -5,7 +5,8 @@
 		<f:then>
 			<f:if condition="{auth0Error}">
 				<div class="alert alert-danger">
-					<strong>{auth0Error}</strong> {auth0ErrorDescription}
+					<strong>{auth0Error}</strong>
+					{auth0ErrorDescription}
 				</div>
 			</f:if>
 
@@ -31,7 +32,7 @@
 				</f:then>
 				<f:else>
 					<p class="info text-center">
-						<f:format.html><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.not-logged-in" /></f:format.html>
+						{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.not-logged-in') -> f:format.html()}
 					</p>
 					<div class="form-group">
 						<a class="btn btn-block btn-auth0 btn-login" href="/typo3/?loginProvider={loginProviderIdentifier}&auth0[action]=login">

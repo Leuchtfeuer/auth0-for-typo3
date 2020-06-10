@@ -1,0 +1,77 @@
+<f:if condition="{configuration}">
+	<f:then>
+		<div class="panel panel-default">
+			<table class="table table-striped table-hover">
+				<thead>
+				<tr>
+					<th class="text-nowrap">
+						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.auth0"/>
+					</th>
+					<th class="text-nowrap">
+						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.typo3"/>
+					</th>
+					<th class="text-nowrap">
+						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.processing"/>
+					</th>
+					<th class="col-control nowrap"></th>
+				</tr>
+				</thead>
+
+				<tbody>
+				<f:for each="{configuration}" as="property">
+					<tr>
+						<td>{property.auth0Property}</td>
+						<td>{property.databaseField}</td>
+						<td><f:if condition="{property.processing} !== 'null'">{property.processing}</f:if></td>
+						<td class="col-control nowrap">
+							<div class="btn-group" role="group">
+								<f:if condition="{property.readOnly}">
+									<f:then>
+										<span class="btn btn-default disabled">
+											<core:icon identifier="actions-open"/>
+										</span>
+										<span class="btn btn-default disabled">
+											<core:icon identifier="actions-delete" />
+										</span>
+									</f:then>
+									<f:else>
+										<f:link.action action="edit" arguments="{table: table, type: type, property: property}" class="btn btn-default">
+											<core:icon identifier="actions-open" size="small"/>
+										</f:link.action>
+										<a class="btn btn-default t3js-modal-trigger"
+										   href="{f:uri.action(action: 'delete', controller: 'Property', arguments: '{table: table, type: type, property: property}')}"
+										   data-severity="warning"
+										   title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_mod_web_list.xlf:delete')}"
+										   data-title="{f:translate(key: 'LLL:EXT:backend/Resources/Private/Language/locallang_alt_doc.xlf:label.confirm.delete_record.title')}"
+										   data-content="{f:translate(key: 'LLL:EXT:backend/Resources/Private/Language/locallang_alt_doc.xlf:deleteWarning')}"
+										   data-button-close-text="{f:translate(key: 'LLL:EXT:backend/Resources/Private/Language/locallang_alt_doc.xlf:buttons.confirm.delete_record.no')}">
+											<core:icon identifier="actions-delete" />
+										</a>
+									</f:else>
+								</f:if>
+							</div>
+						</td>
+					</tr>
+				</f:for>
+				</tbody>
+			</table>
+		</div>
+	</f:then>
+	<f:else>
+		<div class="row">
+			<div class="col-sm-12">
+				<p><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.no-configuration"/></p>
+			</div>
+		</div>
+	</f:else>
+</f:if>
+
+<div class="row">
+	<div class="col-sm-12">
+		<f:link.action action="new" arguments="{table: table, type: type}" class="btn btn-default">
+			<core:icon identifier="actions-document-new" />
+			<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.new"/>
+		</f:link.action>
+	</div>
+</div>
+

@@ -11,20 +11,12 @@
 
 namespace Bitmotion\Auth0\Controller;
 
-use Bitmotion\Auth0\Configuration\Auth0Configuration;
-use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
-use Bitmotion\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
-use Bitmotion\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
-use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
-use TYPO3\CMS\Backend\Template\Components\Buttons\LinkButton;
 use TYPO3\CMS\Backend\View\BackendTemplateView;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Localization\LanguageService;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
@@ -49,85 +41,16 @@ class BackendController extends ActionController
         }
     }
 
-    public function listAction()
+    public function listAction(): void
     {
         // Just an empty view
-    }
-
-    public function rolesAction()
-    {
-        $this->view->assignMultiple([
-            'frontendUserGroupMapping' => (new FrontendUserGroupRepository())->findAll(),
-            'backendUserGroupMapping' => (new BackendUserGroupRepository())->findAll(),
-            'extensionConfiguration' => new EmAuth0Configuration(),
-            'yamlConfiguration' => (new Auth0Configuration())->load(),
-        ]);
-    }
-
-    public function updateRolesAction()
-    {
-        $auth0Configuration = new Auth0Configuration();
-        $configuration = $auth0Configuration->load();
-
-        if ($this->request->hasArgument('key')) {
-            $configuration['roles']['key'] = $this->request->getArgument('key');
-        }
-
-        if ($this->request->hasArgument('defaultFrontendUserGroup')) {
-            $configuration['roles']['default']['frontend'] = (int)$this->request->getArgument('defaultFrontendUserGroup');
-        }
-
-        if ($this->request->hasArgument('adminRole')) {
-            $configuration['roles']['beAdmin'] = $this->request->getArgument('adminRole');
-            $configuration['roles']['default']['backend'] = (int)$this->request->getArgument('defaultBackendUserGroup');
-        }
-
-        $auth0Configuration->write($configuration);
-        $this->redirect('roles');
-    }
-
-    public function propertiesAction()
-    {
-    }
-
-    public function acquireMappingTypoScriptAction()
-    {
-        $settings = ConfigurationUtility::getSetting('roles');
-        (new FrontendUserGroupRepository())->translate($settings['fe_users']);
-        (new BackendUserGroupRepository())->translate($settings['be_users']);
-
-        $auth0Configuration = new Auth0Configuration();
-        $configuration = $auth0Configuration->load();
-        $configuration['roles']['key'] = $settings['key'];
-        $auth0Configuration->write($configuration);
-
-        $this->redirect('roles');
-    }
-
-    public function applicationListAction()
-    {
-        $this->view->assignMultiple([
-            'applications' => $this->applicationRepository->findAll(),
-            'pid' => (new EmAuth0Configuration())->getUserStoragePage(),
-            'returnUrl' => $this->getModuleUrl(false),
-        ]);
-    }
-
-    /**
-     * @param Application $application
-     */
-    public function deleteApplicationAction(Application $application)
-    {
-        $this->applicationRepository->remove($application);
-
-        $this->redirect('applicationList');
     }
 
     public function initializeView(ViewInterface $view): void
     {
         parent::initializeView($view);
 
-        if ($this->request->getControllerActionName() !== 'list' && $view instanceof BackendTemplateView) {
+        if ($this->request->getControllerName() !== 'Backend' && $view instanceof BackendTemplateView) {
             $view->getModuleTemplate()->getPageRenderer()->loadRequireJsModule('TYPO3/CMS/Backend/Modal');
             $this->createMenu();
             $this->createButtonBar();
@@ -141,29 +64,32 @@ class BackendController extends ActionController
 
         $actions = [
             [
-                'action' => 'applicationList',
+                'action' => 'list',
+                'controller' => 'Application',
                 'label' => 'menu.label.applications',
             ],
             [
-                'action' => 'roles',
+                'action' => 'list',
+                'controller' => 'Role',
                 'label' => 'menu.label.roles',
             ],
             [
-                'action' => 'properties',
+                'action' => 'list',
+                'controller' => 'Property',
                 'label' => 'menu.label.properties',
             ],
         ];
 
         foreach ($actions as $action) {
-            $isActive = $this->request->getControllerActionName() === $action['action'];
+            $isActive = $this->request->getControllerName() === $action['controller'];
             $menu->addMenuItem(
                 $menu->makeMenuItem()
-                    ->setTitle($this->getLabel($action['label']))
+                    ->setTitle($this->getTranslation($action['label']))
                     ->setHref(
                         $this->getUriBuilder()->reset()->uriFor(
                             $action['action'],
                             [],
-                            $this->request->getControllerName()
+                            $action['controller']
                         )
                     )->setActive($isActive)
             );
@@ -176,22 +102,23 @@ class BackendController extends ActionController
     {
         $buttonBar = $this->view->getModuleTemplate()->getDocHeaderComponent()->getButtonBar();
 
-        if ($this->request->getControllerActionName() === 'applicationList') {
-            $parameters = GeneralUtility::explodeUrl2Array(sprintf(
-                'edit[tx_auth0_domain_model_application][%d]=new&returnUrl=%s',
-                (new EmAuth0Configuration())->getUserStoragePage(),
-                $this->getModuleUrl()
-            ));
-
-            $newButton = $this->getLinkButton($buttonBar, $parameters, 'menu.button.new');
-            $buttonBar->addButton($newButton);
-        }
-
         $listButton = $buttonBar->makeLinkButton()
-            ->setTitle($this->getLabel('menu.button.overview'))
+            ->setTitle($this->getTranslation('menu.button.overview'))
             ->setHref($this->getUriBuilder()->reset()->uriFor('list', [], 'Backend'))
-            ->setIcon($this->view->getModuleTemplate()->getIconFactory()->getIcon('actions-view-go-back', Icon::SIZE_SMALL));
-        $buttonBar->addButton($listButton);
+            ->setIcon($this->view->getModuleTemplate()->getIconFactory()->getIcon('actions-viewmode-tiles', Icon::SIZE_SMALL));
+        $buttonBar->addButton($listButton, ButtonBar::BUTTON_POSITION_LEFT);
+    }
+
+    protected function addButton(string $label, string $actionName, string $controllerName, string $icon): void
+    {
+        $buttonBar = $this->view->getModuleTemplate()->getDocHeaderComponent()->getButtonBar();
+
+        $linkButton = $buttonBar->makeLinkButton()
+            ->setTitle($this->getTranslation($label))
+            ->setHref($this->getUriBuilder()->reset()->uriFor($actionName, [], $controllerName))
+            ->setIcon($this->view->getModuleTemplate()->getIconFactory()->getIcon($icon, Icon::SIZE_SMALL));
+
+        $buttonBar->addButton($linkButton, ButtonBar::BUTTON_POSITION_RIGHT);
     }
 
     protected function getModuleUrl(bool $encoded = true, string $referenceType = BackendUriBuilder::ABSOLUTE_PATH): string
@@ -209,16 +136,6 @@ class BackendController extends ActionController
         return $encoded ? rawurlencode($uri) : $uri;
     }
 
-    protected function getLinkButton(ButtonBar $buttonBar, array $parameters, string $label, string $icon = 'actions-document-new'): LinkButton
-    {
-        $backendUriBuilder = $this->objectManager->get(BackendUriBuilder::class);
-
-        return $buttonBar->makeLinkButton()
-            ->setHref($backendUriBuilder->buildUriFromRoute('record_edit', $parameters))
-            ->setTitle($this->getLabel($label))
-            ->setIcon($this->view->getModuleTemplate()->getIconFactory()->getIcon($icon, Icon::SIZE_SMALL));
-    }
-
     protected function getUriBuilder(): UriBuilder
     {
         $uriBuilder = $this->objectManager->get(UriBuilder::class);
@@ -227,7 +144,7 @@ class BackendController extends ActionController
         return $uriBuilder;
     }
 
-    protected function getLabel($key): string
+    protected function getTranslation($key): string
     {
         return $this->getLanguageService()->sL('LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:' . $key);
     }

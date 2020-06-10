@@ -18,49 +18,44 @@
 				<target>Auth0 Rollen Mapping</target>
 			</trans-unit>
 			<trans-unit id="roles.infobox.title">
-				<target>Achtung</target>
+				<target>TypoScript Einstellungen Importieren</target>
 			</trans-unit>
 			<trans-unit id="roles.infobox.content">
-				<target><![CDATA[Die gezeigte Konfiguration kann von deinen TypoScript Einstellungen überschrieben werden. Du kannst deine TypoScript Konfiguration importieren, aber bitte sei dir bewusst, dass die unten stehende Konfiguration in Teilen verloren gehen kann bzw. überschrieben wird.<br/><strong>Nach dem Import solltest du deine TypoScript Konfiguration löschen.</strong>]]></target>
+				<target><![CDATA[Die gezeigte Konfiguration kann von deinen TypoScript Einstellungen überschrieben werden. Du kannst deine TypoScript Konfiguration importieren, aber bitte sei dir bewusst, dass die unten stehende Konfiguration in Teilen verloren gehen kann bzw. von <code>plugin.tx_auth0.settings.%s</code> überschrieben wird.<br/><strong>Nach dem Import solltest du deine TypoScript Konfiguration löschen.</strong>]]></target>
 			</trans-unit>
 			<trans-unit id="roles.infobox.button">
 				<target>Einstellungen vom TypoScript importieren</target>
 			</trans-unit>
-			<trans-unit id="roles.frontend.title">
-				<target>Webseiten Benutzergruppe</target>
-			</trans-unit>
+
 			<trans-unit id="roles.frontend.text">
-				<target>Diese Benutzergruppe wird einem Nutzer zugewiesen, wenn keine der hinterleten Mapping Konfigurationen zutrifft oder der Nutzer keine Auth0 Rolle hinterlegt hat.</target>
+				<target>Diese Webseiten Benutzergruppe wird einem Nutzer zugewiesen, wenn keine der hinterleten Mapping Konfigurationen zutrifft oder der Nutzer keine Auth0 Rolle hinterlegt hat.</target>
 			</trans-unit>
 			<trans-unit id="roles.frontend.label">
-				<target>Standard Nutzergruppe</target>
+				<target>Standard Webseiten-Nutzergruppe</target>
 			</trans-unit>
 			<trans-unit id="roles.frontend.default">
-				<target>Keine</target>
-			</trans-unit>
-			<trans-unit id="roles.frontend.button">
-				<target>Bestätigen</target>
-			</trans-unit>
-			<trans-unit id="roles.backend.title">
-				<target>Backend Benutzergruppe</target>
+				<target>Keine Standardgruppe</target>
 			</trans-unit>
 			<trans-unit id="roles.backend.text">
-				<target>Die standard Nutzergruppe wird einem Nutzer zugewiesen, wenn keine der hinterleten Mapping Konfigurationen zutrifft oder der Nutzer keine Auth0 Rolle hinterlegt hat. Sollte der Nutzer über die hinterlegte Role verfügen, wird er zum Backend Administrator.</target>
+				<target>Diese Backend Benutzergruppe wird einem Nutzer zugewiesen, wenn keine der hinterleten Mapping Konfigurationen zutrifft oder der Nutzer keine Auth0 Rolle hinterlegt hat.</target>
 			</trans-unit>
 			<trans-unit id="roles.backend.label">
-				<target>Admin Rolle</target>
+				<target>Keine Standardgruppe</target>
 			</trans-unit>
-			<trans-unit id="roles.backend.button">
-				<target>Bestätigen</target>
+			<trans-unit id="roles.admin.text">
+				<target>Wenn ein Auth0 Benutzer über diese Rolle verfügt, wird er zum TYPO3 Backend Administrator.</target>
+			</trans-unit>
+			<trans-unit id="roles.admin.label">
+				<target>Rolle des Backend Administrators</target>
 			</trans-unit>
 			<trans-unit id="roles.key.text">
-				<target>Der Schlüssel (unterhalb der Auth0 Applikations Metadaten), der die Rollen beinhaltet.</target>
+				<target>Der Schlüssel (unterhalb der Auth0 Applikations-Metadaten), der die Rollen beinhaltet.</target>
 			</trans-unit>
 			<trans-unit id="roles.key.label">
 				<target>Auth0 Schlüssel</target>
 			</trans-unit>
-			<trans-unit id="roles.key.button">
-				<target>Bestätigen</target>
+			<trans-unit id="roles.button">
+				<target>Konfiguration speichern</target>
 			</trans-unit>
 			<trans-unit id="roles.table.head.identifier">
 				<target>ID</target>
@@ -73,6 +68,13 @@
 			</trans-unit>
 			<trans-unit id="roles.table.head.subgroups">
 				<target>Untergruppen</target>
+			</trans-unit>
+
+			<trans-unit id="application.title">
+				<target>Applikationen</target>
+			</trans-unit>
+			<trans-unit id="application.text">
+				<target>Neu erstellte Applikationen werden hier gespeichert:</target>
 			</trans-unit>
 
 			<trans-unit id="list.title">
@@ -108,21 +110,125 @@
 			<trans-unit id="list.card.button">
 				<target>Konfigurieren</target>
 			</trans-unit>
+			<trans-unit id="list.card.documentation.title">
+				<target>Hast du noch Frage?</target>
+			</trans-unit>
+			<trans-unit id="list.card.documentation.subtitle">
+				<target>Dokumentation</target>
+			</trans-unit>
+			<trans-unit id="list.card.documentation.text">
+				<target>Eine ausführliche Dokumentation dieser Extension findest du auf dem TYPO3 Dokumentations-Server.</target>
+			</trans-unit>
+			<trans-unit id="list.card.documentation.button">
+				<target>Zur Dokumentation</target>
+			</trans-unit>
+			<trans-unit id="list.card.issue.title">
+				<target>Fehler gefunden?</target>
+			</trans-unit>
+			<trans-unit id="list.card.issue.subtitle">
+				<target>Quellcode</target>
+			</trans-unit>
+			<trans-unit id="list.card.issue.text">
+				<target>Du hast einen Fehler gefunden oder vermisst ein Feature? Wirf doch mal einen Blick ins Repository.</target>
+			</trans-unit>
+			<trans-unit id="list.card.issue.button">
+				<target>Zum Repository</target>
+			</trans-unit>
+
+			<trans-unit id="properties.title">
+				<target>Eigenschaften Mapping</target>
+			</trans-unit>
+			<trans-unit id="properties.title.root">
+				<target>Hauptdaten</target>
+			</trans-unit>
+			<trans-unit id="properties.title.user">
+				<target>Benutzer Metadaten</target>
+			</trans-unit>
+			<trans-unit id="properties.title.app">
+				<target>Applikations Metadaten</target>
+			</trans-unit>
+			<trans-unit id="properties.title.edit">
+				<target>Eigenschaft bearbeiten</target>
+			</trans-unit>
+			<trans-unit id="properties.title.add">
+				<target>Eigenschaft hinzufügen</target>
+			</trans-unit>
+			<trans-unit id="properties.new">
+				<target>Neu erstellen</target>
+			</trans-unit>
+			<trans-unit id="properties.no-configuration">
+				<target>Keine Konfiguration gefunden.</target>
+			</trans-unit>
+			<trans-unit id="properties.table.auth0">
+				<target>Auth0 Eigenschaft</target>
+			</trans-unit>
+			<trans-unit id="properties.table.typo3">
+				<target>TYPO3 Eigenschaft</target>
+			</trans-unit>
+			<trans-unit id="properties.table.processing">
+				<target>Prozessierung</target>
+			</trans-unit>
+			<trans-unit id="properties.button.save">
+				<target>Speichern</target>
+			</trans-unit>
+
+			<trans-unit id="message.application.deleted.title">
+				<target>Applikation gelöscht!</target>
+			</trans-unit>
+			<trans-unit id="message.application.deleted.text">
+				<target>Die Auth0 Applikation wurde entfernt.</target>
+			</trans-unit>
+			<trans-unit id="message.property.created.title">
+				<target>Konfiguration erstellt!</target>
+			</trans-unit>
+			<trans-unit id="message.property.created.text">
+				<target>Die Konfiguration wurde erfolgreich erstellt.</target>
+			</trans-unit>
+			<trans-unit id="message.property.deleted.title">
+				<target>Konfiguration gelöscht!</target>
+			</trans-unit>
+			<trans-unit id="message.property.deleted.text">
+				<target>Die Konfiguration wurde erfolgreich gelöscht.</target>
+			</trans-unit>
+			<trans-unit id="message.property.updated.title">
+				<target>Konfiguration aktualisiert!</target>
+			</trans-unit>
+			<trans-unit id="message.property.updated.text">
+				<target>Die Konfiguration wurde erfolgreich aktualisiert.</target>
+			</trans-unit>
+			<trans-unit id="message.property.imported.title">
+				<target>TypoScript Einstellungen importiert!</target>
+			</trans-unit>
+			<trans-unit id="message.property.imported.text">
+				<target>Die TypoScript Einstellungen wurden geladen und übertragen. Du kannst das TypoScript jetzt entfernen.</target>
+			</trans-unit>
+			<trans-unit id="message.role.updated.title">
+				<target>Konfiguration aktualisiert!</target>
+			</trans-unit>
+			<trans-unit id="message.role.updated.text">
+				<target>Die Konfiguration wurde erfolgreich aktualisiert.</target>
+			</trans-unit>
+			<trans-unit id="message.role.imported.title">
+				<target>TypoScript Einstellungen importiert!</target>
+			</trans-unit>
+			<trans-unit id="message.role.imported.text">
+				<target>Die TypoScript Einstellungen wurden geladen und übertragen. Du kannst das TypoScript jetzt entfernen.</target>
+			</trans-unit>
 
 			<trans-unit id="menu.label.applications">
-				<target>Applikationsliste</target>
+				<target>Applikationen</target>
 			</trans-unit>
 			<trans-unit id="menu.label.roles">
-				<target>Benutzergruppen Mapping</target>
+				<target>Benutzergruppen</target>
 			</trans-unit>
 			<trans-unit id="menu.label.properties">
-				<target>Benutzereigenschaften Mapping</target>
+				<target>Benutzereigenschaften</target>
 			</trans-unit>
 			<trans-unit id="menu.button.overview">
 				<target>Zurück zur Übersicht</target>
 			</trans-unit>
-			<trans-unit id="menu.button.new">
-				<target>Neue Applikation erstellen</target>
+			<trans-unit id="menu.button.cancel">
+				<target>Zurück zur Listenansicht</target>
 			</trans-unit>
 		</body>
 	</file>

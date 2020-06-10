@@ -41,7 +41,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         return (empty($user)) ? $this->findUserWithoutRestrictions($tableName, $auth0UserId) : $user;
     }
 
-    protected function findUserWithoutRestrictions(string $tableName, string $auth0UserId)
+    protected function findUserWithoutRestrictions(string $tableName, string $auth0UserId): array
     {
         $this->logger->notice('Try to find user without restrictions.');
         $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);

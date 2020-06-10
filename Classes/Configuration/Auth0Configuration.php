@@ -11,6 +11,7 @@
 
 namespace Bitmotion\Auth0\Configuration;
 
+use Bitmotion\Auth0\Factory\ConfigurationFactory;
 use Symfony\Component\Yaml\Yaml;
 use TYPO3\CMS\Core\Configuration\Loader\YamlFileLoader;
 use TYPO3\CMS\Core\Core\Environment;
@@ -24,8 +25,6 @@ class Auth0Configuration
     const CONFIG_FOLDER_NAME = 'auth0';
 
     const CONFIG_TYPE_ROOT = 'root';
-
-    const CONFIG_TYPE_METADATA = 'metadata';
 
     protected $configPath;
 
@@ -86,22 +85,50 @@ class Auth0Configuration
     {
         $configuration = [
             'properties' => [
-                'user' => [
-                    self::CONFIG_TYPE_ROOT => [],
-                    self::CONFIG_TYPE_METADATA => [],
+                'fe_users' => [
+                    self::CONFIG_TYPE_ROOT => [
+                        [
+                            'auth0Property' => 'created_at',
+                            'databaseField' => 'crdate',
+                            'readOnly' => true,
+                            'processing' => 'strtotime',
+                        ], [
+                            'auth0Property' => 'updated_at',
+                            'databaseField' => 'tstamp',
+                            'readOnly' => true,
+                            'processing' => 'strtotime',
+                        ],
+                    ],
+                    'user_metadata' => [],
+                    'app_metadata' => []
                 ],
-                'app' => [
-                    self::CONFIG_TYPE_METADATA => [],
+                'be_users' => [
+                    self::CONFIG_TYPE_ROOT => [
+                        [
+                            'auth0Property' => 'created_at',
+                            'databaseField' => 'crdate',
+                            'readOnly' => true,
+                            'processing' => 'strtotime',
+                        ], [
+                            'auth0Property' => 'updated_at',
+                            'databaseField' => 'tstamp',
+                            'readOnly' => true,
+                            'processing' => 'strtotime',
+                        ], [
+                            'auth0Property' => 'email_verified',
+                            'databaseField' => 'disable',
+                            'readOnly' => true,
+                            'processing' => 'negate-bool',
+                        ], [
+                            'auth0Property' => 'nickname',
+                            'databaseField' => 'username',
+                        ],
+                    ],
+                    'user_metadata' => [],
+                    'app_metadata' => []
                 ]
             ],
-            'roles' => [
-                'default' => [
-                    'frontend' => 0,
-                    'backend' => 0,
-                ],
-                'key' => 'roles',
-                'beAdmin' => '',
-            ],
+            'roles' => (new ConfigurationFactory())->buildRoles('roles', 0, '', 0),
         ];
 
         $this->write($configuration);

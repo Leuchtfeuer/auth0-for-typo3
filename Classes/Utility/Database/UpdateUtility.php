@@ -94,13 +94,16 @@ class UpdateUtility implements LoggerAwareInterface
 
     public function updateUser(bool $reactivateUser = false): void
     {
+        $mappingConfiguration = $this->translateConfiguration((new Auth0Configuration())->load()['properties'][$this->tableName]);
+
         try {
             // Get mapping configuration
-            $mappingConfiguration = ConfigurationUtility::getSetting('propertyMapping', $this->tableName);
+            $mappingConfiguration = array_merge(
+                $mappingConfiguration,
+                ConfigurationUtility::getSetting('propertyMapping', $this->tableName)
+            );
         } catch (InvalidConfigurationTypeException $exception) {
             $this->logger->error($exception->getCode() . ': ' . $exception->getMessage());
-
-            return;
         }
 
         if (empty($mappingConfiguration)) {
@@ -110,6 +113,38 @@ class UpdateUtility implements LoggerAwareInterface
         }
 
         $this->performUserUpdate($mappingConfiguration, $reactivateUser);
+    }
+
+    /**
+     * @deprecated Will be removed with next major release.
+     */
+    protected function translateConfiguration(array $configuration): array
+    {
+        $translations = [];
+        $root = $configuration[Auth0Configuration::CONFIG_TYPE_ROOT] ?? [];
+
+        foreach ($configuration['user_metadata'] ?? [] as $userMetadata) {
+            $userMetadata['auth0Property'] = 'user_metadata.' . $userMetadata['auth0Property'];
+            $root[] = $userMetadata;
+        }
+
+        foreach ($configuration['app_metadata'] ?? [] as $appMetadata) {
+            $appMetadata['auth0Property'] = 'app_metadata.' . $appMetadata['auth0Property'];
+            $root[] = $appMetadata;
+        }
+
+        foreach ($root as $item) {
+            $translations[$item['databaseField']] = $item['auth0Property'];
+
+            if (isset($item['processing']) && !empty($item['processing'])) {
+                $translations[$item['databaseField']] = [
+                    self::TYPO_SCRIPT_NODE_VALUE => $item['auth0Property'],
+                    'parseFunc' => str_replace('-', '|', $item['processing'])
+                ];
+            }
+        }
+
+        return $translations;
     }
 
     protected function getGroupMappingFromDatabase(): array

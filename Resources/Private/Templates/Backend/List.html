@@ -7,14 +7,14 @@
 	<div class="card-container">
 		<div class="card card-size-fixed-small">
 			<f:render partial="Backend/Card/Header"
-					  arguments="{title: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.application.title\')}', subtitle: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.application.subtitle\')}', icon: 'Icons/Extension.svg'}" />
+					  arguments="{title: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.application.title\')}', subtitle: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.application.subtitle\')}', icon: 'auth0'}" />
 			<div class="card-content">
 				<p class="card-text">
 					<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.application.text"/>
 				</p>
 			</div>
 			<div class="card-footer">
-				<f:link.action action="applicationList" class="btn btn-default">
+				<f:link.action action="list" controller="Application" class="btn btn-default">
 					<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.button"/>
 				</f:link.action>
 			</div>
@@ -22,14 +22,14 @@
 
 		<div class="card card-size-fixed-small">
 			<f:render partial="Backend/Card/Header"
-					  arguments="{title: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.mapping.title\')}', subtitle: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.mapping.subtitle\')}', icon: 'Icons/Extension.svg'}" />
+					  arguments="{title: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.mapping.title\')}', subtitle: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.mapping.subtitle\')}', icon: 'status-user-group-frontend'}" />
 			<div class="card-content">
 				<p class="card-text">
 					<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.mapping.text"/>
 				</p>
 			</div>
 			<div class="card-footer">
-				<f:link.action action="roles" class="btn btn-default">
+				<f:link.action action="list" controller="Role" class="btn btn-default">
 					<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.button"/>
 				</f:link.action>
 			</div>
@@ -37,17 +37,60 @@
 
 		<div class="card card-size-fixed-small">
 			<f:render partial="Backend/Card/Header"
-					  arguments="{title: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.metadata.title\')}', subtitle: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.metadata.subtitle\')}', icon: 'Icons/Extension.svg'}" />
+					  arguments="{title: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.metadata.title\')}', subtitle: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.metadata.subtitle\')}', icon: 'status-user-frontend'}" />
 			<div class="card-content">
 				<p class="card-text">
 					<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.metadata.text"/>
 				</p>
 			</div>
 			<div class="card-footer">
-				<f:link.action action="properties" class="btn btn-default">
+				<f:link.action action="list" controller="Property" class="btn btn-default">
 					<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.button"/>
 				</f:link.action>
 			</div>
+		</div>
+
+		<div class="card card-size-fixed-small">
+			<f:render partial="Backend/Card/Header"
+					  arguments="{title: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.documentation.title\')}', subtitle: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.documentation.subtitle\')}', icon: 'mimetypes-x-tx_rtehtmlarea_acronym'}" />
+			<div class="card-content">
+				<p class="card-text">
+					<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.documentation.text"/>
+				</p>
+			</div>
+			<div class="card-footer">
+				<a href="https://docs.typo3.org/p/leuchtfeuer/auth0/master/en-us/" target="_blank" class="btn btn-default">
+					<core:icon identifier="apps-pagetree-page-shortcut-external" />
+					<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.documentation.button"/>
+				</a>
+			</div>
+		</div>
+
+		<div class="card card-size-fixed-small">
+			<f:render partial="Backend/Card/Header"
+					  arguments="{title: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.issue.title\')}', subtitle: '{f:translate(key: \'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.issue.subtitle\')}', icon: 'apps-pagetree-drag-place-denied'}" />
+			<div class="card-content">
+				<p class="card-text">
+					<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.issue.text"/>
+				</p>
+			</div>
+			<div class="card-footer">
+				<a href="https://github.com/Leuchtfeuer/auth0-for-typo3/issues" target="_blank" class="btn btn-default">
+					<core:icon identifier="apps-pagetree-page-shortcut-external" />
+					<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:list.card.issue.button"/>
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<hr class="panel panel-default">
+
+	<div class="row">
+		<div class="col-sm-12 text-right">
+			<a href="https://auth0.com" target="_blank">
+				<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.login.copyright"/>
+			</a>
+			<core:icon identifier="auth0" />
 		</div>
 	</div>
 </f:section>

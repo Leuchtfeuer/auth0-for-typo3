@@ -1,0 +1,50 @@
+{namespace be=TYPO3\CMS\Backend\ViewHelpers}
+{namespace core=TYPO3\CMS\Core\ViewHelpers}
+<f:layout name="Backend" />
+
+<f:section name="content">
+	<h1><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.title" /></h1>
+
+	<f:if condition="{settings.propertyMapping.fe_users} || {settings.propertyMapping.be_users}">
+		<f:be.infobox state="-1" title="{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.infobox.title')}">
+			<p>{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.infobox.content', arguments: '{0: "propertyMapping"}') -> f:format.html()}</p>
+			<f:link.action action="acquireMappingTypoScript" class="btn btn-primary">
+				<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.infobox.button" />
+			</f:link.action>
+		</f:be.infobox>
+	</f:if>
+
+	<f:if condition="{extensionConfiguration.enableFrontendLogin}">
+		<h2>
+			<core:icon identifier="status-user-frontend" size="large"/>
+			<f:translate key="LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_users" />
+		</h2>
+
+		<h3><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.title.root"/></h3>
+		<f:render partial="Backend/PropertyTable" arguments="{configuration: yamlConfiguration.properties.fe_users.root, table: 'fe_users', type: 'root'}"/>
+
+		<h3><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.title.user"/></h3>
+		<f:render partial="Backend/PropertyTable" arguments="{configuration: yamlConfiguration.properties.fe_users.user_metadata, table: 'fe_users', type: 'user_metadata'}"/>
+
+		<h3><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.title.app"/></h3>
+		<f:render partial="Backend/PropertyTable" arguments="{configuration: yamlConfiguration.properties.fe_users.app_metadata, table: 'fe_users', type: 'app_metadata'}"/>
+
+		<hr>
+	</f:if>
+
+	<f:if condition="{extensionConfiguration.enableBackendLogin}">
+		<h2>
+			<core:icon identifier="status-user-backend" size="large"/>
+			<f:translate key="LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:be_users" />
+		</h2>
+
+		<h3><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.title.root"/></h3>
+		<f:render partial="Backend/PropertyTable" arguments="{configuration: yamlConfiguration.properties.be_users.root, table: 'be_users', type: 'root'}"/>
+
+		<h3><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.title.user"/></h3>
+		<f:render partial="Backend/PropertyTable" arguments="{configuration: yamlConfiguration.properties.be_users.user_metadata, table: 'be_users', type: 'user_metadata'}"/>
+
+		<h3><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.title.app"/></h3>
+		<f:render partial="Backend/PropertyTable" arguments="{configuration: yamlConfiguration.properties.be_users.app_metadata, table: 'be_users', type: 'app_metadata'}"/>
+	</f:if>
+</f:section>

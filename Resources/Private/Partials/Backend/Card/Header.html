@@ -1,7 +1,9 @@
 <div class="card-header">
 	<f:if condition="{icon}">
 		<div class="card-icon">
-			<img src="{f:uri.resource(path: icon)}" width="64" height="64" class="card-header-icon-image"/>
+			<span class="card-header-icon-image">
+				<core:icon identifier="{icon}" size="large" />
+			</span>
 		</div>
 	</f:if>
 	<div class="card-header-body">

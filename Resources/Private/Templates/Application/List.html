@@ -3,7 +3,12 @@
 <f:layout name="Backend" />
 
 <f:section name="content">
-	<h1><f:translate key="LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_application" /></h1>
+	<h1><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:application.title" /></h1>
+
+	<p class="lead">
+		<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:application.text" />
+		<core:iconForRecord row="{directory}" table="pages" /> {directory.title} ({directory.uid})
+	</p>
 
 	<div class="panel panel-default">
 		<table class="table table-striped table-hover">
@@ -36,7 +41,7 @@
 								<core:icon identifier="actions-open" size="small"/>
 							</be:link.editRecord>
 							<a class="btn btn-default t3js-modal-trigger"
-							   href="{f:uri.action(action: 'deleteApplication', controller: 'Backend', arguments: '{application: application.uid}')}"
+							   href="{f:uri.action(action: 'delete', controller: 'Application', arguments: '{application: application.uid}')}"
 							   data-severity="warning"
 							   title="{f:translate(key: 'LLL:EXT:core/Resources/Private/Language/locallang_mod_web_list.xlf:delete')}"
 							   data-title="{f:translate(key: 'LLL:EXT:backend/Resources/Private/Language/locallang_alt_doc.xlf:label.confirm.delete_record.title')}"
@@ -52,12 +57,8 @@
 		</table>
 	</div>
 
-	<div class="row">
-		<div class="col-sm-12">
-			<be:link.newRecord table="tx_auth0_domain_model_application" class="btn btn-default" pid="{pid}" returnUrl="{returnUrl}">
-				<core:icon identifier="actions-document-new" size="small"/>
-				<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:menu.button.new"/>
-			</be:link.newRecord>
-		</div>
-	</div>
+	<be:link.newRecord table="tx_auth0_domain_model_application" class="btn btn-default" pid="{pid}" returnUrl="{returnUrl}">
+		<core:icon identifier="actions-document-new" size="small"/>
+		<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:menu.button.new"/>
+	</be:link.newRecord>
 </f:section>

@@ -1,0 +1,95 @@
+{namespace be=TYPO3\CMS\Backend\ViewHelpers}
+{namespace core=TYPO3\CMS\Core\ViewHelpers}
+<f:layout name="Backend" />
+
+<f:section name="content">
+	<h1><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.title" /></h1>
+
+	<f:if condition="{settings.roles.fe_users} || {settings.roles.be_users}">
+		<f:be.infobox state="-1" title="{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.infobox.title')}">
+			<p>{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.infobox.content', arguments: '{0: "roles"}') -> f:format.html()}</p>
+			<f:link.action action="acquireMappingTypoScript" class="btn btn-primary">
+				<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.infobox.button" />
+			</f:link.action>
+		</f:be.infobox>
+	</f:if>
+
+	<div class="row">
+		<div class="col-sm-12">
+			<f:form action="update" class="form row">
+				<div class="form-group col-sm-12 col-md-6 col-lg-4">
+					<label for="rolesKey">
+						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.key.label"/>
+					</label>
+					<f:form.textfield id="rolesKey" class="form-control" name="key" value="{yamlConfiguration.roles.key}"/>
+					<small class="form-text text-muted">
+						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.key.text"/>
+					</small>
+				</div>
+
+				<div class="form-group col-sm-12 col-md-6 col-lg-4">
+					<label for="defaultFrontendUserGroup">
+						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.frontend.label"/>
+					</label>
+					<f:form.select id="defaultFrontendUserGroup" class="form-control" name="defaultFrontendUserGroup"
+								   options="{frontendUserGroupMapping}" optionValueField="uid" optionLabelField="title"
+								   prependOptionValue="0" value="{yamlConfiguration.roles.default.frontend}"
+								   prependOptionLabel="{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.frontend.default')}"/>
+					<small class="form-text text-muted">
+						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.frontend.text"/>
+					</small>
+				</div>
+
+				<div class="form-group col-sm-12 col-md-6 col-lg-4">
+					<label for="defaultBackendUserGroup">
+						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.backend.label"/>
+					</label>
+					<f:form.select id="defaultBackendUserGroup" class="form-control" name="defaultBackendUserGroup"
+								   options="{backendUserGroupMapping}" optionValueField="uid" optionLabelField="title"
+								   prependOptionValue="0" value="{yamlConfiguration.roles.default.backend}"
+								   prependOptionLabel="{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.backend.default')}"/>
+					<small class="form-text text-muted">
+						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.backend.text"/>
+					</small>
+				</div>
+				<div class="form-group col-sm-12 col-md-6 col-lg-4">
+					<label for="adminRole">
+						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.admin.label"/>
+					</label>
+					<f:form.textfield id="adminRole" class="form-control" name="adminRole" value="{yamlConfiguration.roles.beAdmin}"/>
+					<small class="form-text text-muted">
+						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.admin.text"/>
+					</small>
+				</div>
+
+				<div class="form-group col-sm-12">
+					<f:form.button class="btn btn-default">
+						<core:icon identifier="actions-document-save" />
+						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.button"/>
+					</f:form.button>
+				</div>
+			</f:form>
+		</div>
+	</div>
+
+	<hr class="panel panel-default">
+
+	<f:if condition="{extensionConfiguration.enableFrontendLogin}">
+		<h2>
+			<core:icon identifier="status-user-group-frontend" size="large"/>
+			<f:translate key="LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_groups" />
+		</h2>
+
+		<f:render partial="Backend/UserGroupTable" arguments="{groupMapping: frontendUserGroupMapping, table: 'fe_groups'}"/>
+		<hr />
+	</f:if>
+
+	<f:if condition="{extensionConfiguration.enableBackendLogin}">
+		<h2>
+			<core:icon identifier="status-user-group-backend" size="large"/>
+			<f:translate key="LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:be_groups" />
+		</h2>
+
+		<f:render partial="Backend/UserGroupTable" arguments="{groupMapping: backendUserGroupMapping, table: 'be_groups'}"/>
+	</f:if>
+</f:section>

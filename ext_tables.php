@@ -57,10 +57,20 @@ call_user_func(
         }
 
         // Register Backend Module
-        $controllerName =\Bitmotion\Auth0\Controller\BackendController::class;
+        $controllerActions = [
+            \Bitmotion\Auth0\Controller\BackendController::class => 'list',
+            \Bitmotion\Auth0\Controller\ApplicationController::class => 'list,delete',
+            \Bitmotion\Auth0\Controller\RoleController::class => 'list,update,acquireMappingTypoScript',
+            \Bitmotion\Auth0\Controller\PropertyController::class => 'list,new,create,edit,update,delete,acquireMappingTypoScript',
+        ];
         $extensionName = $extensionKey;
         if (version_compare(TYPO3_version, '10.0.0', '<')) {
-            $controllerName = 'Backend';
+            $controllerActions = [
+                'Backend' => 'list',
+                'Application' => 'list,delete',
+                'Role' => 'list,update,acquireMappingTypoScript',
+                'Property' => 'list,new,create,edit,update,delete,acquireMappingTypoScript',
+            ];
             $extensionName = 'Bitmotion.' . ucfirst($extensionKey);
         }
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
@@ -68,9 +78,7 @@ call_user_func(
             'tools',
             'Auth0',
             'bottom',
-            [
-                $controllerName => 'list,roles,properties,acquireMappingTypoScript,updateRoles,applicationList,deleteApplication',
-            ],
+            $controllerActions,
             [
                 'access' => 'admin',
                 'icon' => 'EXT:auth0/Resources/Public/Icons/Module.svg',
