@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Bitmotion\Auth0;
 
-class Scope
+final class Scope
 {
     const APP_META_CREATE = 'create:users_app_metadata';
     const APP_META_DELETE = 'delete:users_app_metadata';

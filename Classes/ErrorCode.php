@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Bitmotion\Auth0;
 
-class ErrorCode
+final class ErrorCode
 {
     /**
      * Error codes provided by Auth0
