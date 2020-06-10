@@ -32,6 +32,8 @@ settings.
 
    View of the backend module.
 
+.. rst-class:: bignums
+
 3. Migrate the property mapping
 
    Select the "Property Mapping" option of the select box on top of the page and proceed as described in 2.
