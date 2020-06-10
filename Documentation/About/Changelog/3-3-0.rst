@@ -4,9 +4,14 @@
 Version 3.3.0 - TBA
 ===================
 
-This is a feature release. It is estimated for the 3rd quarter of 2020.
+This is a feature release. It is estimated for the mid of June.
+
 TODO: Link to PSR-14 Event documentation and add documentation for obsolete hook.
 TODO: Add this file to table of contents
+TODO: Migration guide
+TODO: Documentation BE Module
+TODO: Link to BE Module documentation
+TODO: Deprecation notices on typoscript roles and propertyMapping documentation
 
 Download
 ========
@@ -21,6 +26,7 @@ Added
   :php:`$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['auth0']['redirect_pre_processing']` hook
 * `Settings.yaml` file for listening to PSR-14 events in TYPO3 v10
 * Event listener for adding parameters to :php:`$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters']`
+* Dedicated backend module for handling data mapping and applications
 
 Changed
 =======
@@ -33,12 +39,41 @@ Deprecated
 * Hook :php:`$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['auth0']['redirect_pre_processing']` is
   now deprecated and will be removed with next major version. You should use the newly introduced PSR-14 Event where possible
 * Using signal `afterExtensionInstall` of class :php:`TYPO3\CMS\Extensionmanager\Utility\InstallUtility`
+* Following TypoScript settings are now deprecated: :typoscript:`plugin.tx_auth0.settings.roles` and
+  :typoscript:`plugin.tx_auth0.settings.propertyMapping`. You should use the newly introduced backend module instead.
 
 All Changes
 ===========
 
 This is a list of all changes in this release::
 
+   2020-06-10 [TASK] Use existing property (Commit 443acf4 by Florian Wessels)
+   2020-06-10 [BUGFIX] Disable logging (Commit ea23555 by Florian Wessels)
+   2020-06-10 [TASK] Mark classes as final (Commit 509c427 by Florian Wessels)
+   2020-06-10 [FEATURE] Introduce module for property mapping (Commit 2df082a by Florian Wessels)
+   2020-06-09 [BUGFIX][DOC] Spelling (Commit 716d9cc by Florian Wessels)
+   2020-06-09 [TASK] Add application list to backend module (Commit 8207b5f by Florian Wessels)
+   2020-06-08 [TASK] Load roles key from TypoScript configuration (Commit de408ff by Florian Wessels)
+   2020-06-08 [TASK] Try to load defaults from TCA (Commit 381c9e3 by Florian Wessels)
+   2020-06-08 [TASK] Assign default backend role only if user is not an admin (Commit da6b017 by Florian Wessels)
+   2020-06-08 [BUGFIX] Assign default properties to new backend users (Commit d8e6c58 by Florian Wessels)
+   2020-06-08 [TASK] Assign admin flag even if no TypoScript exists (Commit 882a0ee by Florian Wessels)
+   2020-06-08 [TASK] Add german translations for new features (Commit 5ea89d2 by Florian Wessels)
+   2020-06-08 [TASK] Restructrue roles view (Commit 8f4ac09 by Florian Wessels)
+   2020-06-08 [TASK] Update labels (Commit 380aaf0 by Florian Wessels)
+   2020-06-08 [TASK] Allow to import admin flag (Commit b8b2311 by Florian Wessels)
+   2020-06-08 [BUGFIX] Use proper values (Commit 93d05cd by Florian Wessels)
+   2020-06-08 [TASK] Allow to set default groups and admin roles (Commit fd14f5c by Florian Wessels)
+   2020-06-08 [BUGFIX] Get rid of EXT:redirects middleware override (Commit 2ca8345 by Florian Wessels)
+   2020-06-08 [FEATURE] Add german translations (Commit 1972097 by Florian Wessels)
+   2020-06-06 [TASK] Allow to import TS settings (Commit 72bef43 by Florian Wessels)
+   2020-06-05 [TASK] Add labels for module (Commit 6dbd90f by Florian Wessels)
+   2020-06-05 [FEATURE] Add GUI for be_groups mapping (Commit f40dd64 by Florian Wessels)
+   2020-06-05 [FEATURE] Introduce dedicated backend module for handling group mapping (Commit ddaf0b4 by Florian Wessels)
+   2020-06-05 [TASK] Improve logging for debug purposes (Commit 6e686bc by Florian Wessels)
+   2020-06-05 [TASK] Adapt php CS to TYPO3 defaults (Commit 238b3b1 by Florian Wessels)
+   2020-06-05 [TASK] Use constants (Commit 6bf10fd by Florian Wessels)
+   2020-06-04 [TASK] Raise version to 3.3.0-dev (Commit 57a861d by Florian Wessels)
    2020-06-04 [TASK] Add event for TYPO3 v10 (Commit 2b8d70c by Florian Wessels)
    2020-06-04 [TASK] Apply CS (Commit c65f6fc by Florian Wessels)
    2020-06-04 [TASK] Update funding file (Commit 6ffa5db by Florian Wessels)
