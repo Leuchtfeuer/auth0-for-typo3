@@ -94,7 +94,7 @@ class UpdateUtility implements LoggerAwareInterface
 
     public function updateUser(bool $reactivateUser = false): void
     {
-        $mappingConfiguration = $this->translateConfiguration((new Auth0Configuration())->load()['properties'][$this->tableName]);
+        $mappingConfiguration = $this->translateConfiguration($this->yamlConfiguration['properties'][$this->tableName]);
 
         try {
             // Get mapping configuration
