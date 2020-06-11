@@ -127,7 +127,8 @@ class BackendController extends ActionController
 
         $parameters = [
             'tx_auth0_tools_auth0auth0' => [
-                'action' => $this->request->getControllerActionName()
+                'action' => $this->request->getControllerActionName(),
+                'controller' => $this->request->getControllerName(),
             ]
         ];
 
