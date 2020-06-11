@@ -78,6 +78,9 @@
 			<trans-unit id="application.text">
 				<source>Newly created applications are stored here:</source>
 			</trans-unit>
+			<trans-unit id="application.new">
+				<source>Create new Application</source>
+			</trans-unit>
 
 			<trans-unit id="list.title">
 				<source>Auth0</source>

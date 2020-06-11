@@ -76,6 +76,9 @@
 			<trans-unit id="application.text">
 				<target>Neu erstellte Applikationen werden hier gespeichert:</target>
 			</trans-unit>
+			<trans-unit id="application.new">
+				<source>Neue Applikation erstellen</source>
+			</trans-unit>
 
 			<trans-unit id="list.title">
 				<target>Auth0</target>
