@@ -73,9 +73,13 @@ constants:
 Frontend Settings
 =================
 
-Please note that this setting is considered deprecated: You can configure generic logon and logoff URLs for your system so that
-the number of callbacks to be configured in Auth0 remains manageable. You can specify individual page IDs and page types for
-login and logout. The configuration can be done with the following TypoScript constants:
+.. note::
+   Please note that this settings are considered deprecated and will be removed with version 4.0.0. Please use the newly
+   introduced :ref:`generic callback <admin-callback>` instead.
+
+You can configure generic logon and logoff URLs for your system so that the number of callbacks to be configured in Auth0 remains
+manageable. You can specify individual page IDs and page types for login and logout. The configuration can be done with the
+following TypoScript constants:
 
 .. code-block:: typoscript
 
@@ -106,6 +110,10 @@ or open the registration tab (instead of the login tab). This can be implemented
 
 Role Mapping
 ============
+
+.. note::
+   Please note that this settings are considered deprecated and will be removed with version 4.0.0. Please migrate the the newly
+   introduced :ref:`YAML configuration <admin-yaml>` by following the :ref:`migration guide <admin-migrations-backendModule>`.
 
 Configure `fe_groups` and `be_groups` mappings to match Auth0 roles. Use the Auth0 role identifier as key and the TYPO3 frontend
 or backend user group ID as value. These settings must be made in your TypoScript setup (not constants). The Auth0 roles are
@@ -139,6 +147,10 @@ an Auth0 role.
 
 Property Mapping
 ================
+
+.. note::
+   Please note that this settings are considered deprecated and will be removed with version 4.0.0. Please migrate the the newly
+   introduced :ref:`YAML configuration <admin-yaml>` by following the :ref:`migration guide <admin-migrations-backendModule>`.
 
 Auth0 properties can be mapped to existing properties of TYPO3 backend or frontend users. You can configure this mapping via
 TypoScript. In this case, the key is the name of the TYPO3 database column and the value is the field key of the Auth0 user.
