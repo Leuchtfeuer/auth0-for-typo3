@@ -19,10 +19,10 @@ plugin.tx_auth0 {
     persistence.storagePid = {$plugin.tx_auth0.persistence.storagePid}
 
     settings {
+        # The backend settings are deprecated. Please use module.tx_auth0.view instead
         backend {
             view {
                 layoutPath = {$plugin.tx_auth0.settings.backend.view.layoutPath}
-                templateFile = {$plugin.tx_auth0.settings.backend.view.templateFile}
                 stylesheet = {$plugin.tx_auth0.settings.backend.view.stylesheet}
             }
         }
@@ -50,8 +50,9 @@ plugin.tx_auth0 {
         }
 
         # maps auth0 roles to TYPO3 fe_groups or be_groups
-        # the roles configuration via TypoScript is deprecated. Please use the dedicated backend
+        # The roles configuration via TypoScript is deprecated. Please use the dedicated backend
         # module for configuring the roles. You can easily import your TypoScript settings there.
+        # See: https://docs.typo3.org/p/leuchtfeuer/auth0/master/en-us/Admin/Module/Index.html
         roles {
             key = {$plugin.tx_auth0.settings.roles.key}
 
@@ -72,6 +73,9 @@ plugin.tx_auth0 {
             }
         }
 
+        # The property Mapping configuration via TypoScript is deprecated. Please use the dedicated backend
+        # module for configuring the roles. You can easily import your TypoScript settings there.
+        # See: https://docs.typo3.org/p/leuchtfeuer/auth0/master/en-us/Admin/Module/Index.html
         propertyMapping {
             be_users {
                 username = nickname
@@ -105,6 +109,7 @@ plugin.tx_auth0 {
 }
 
 # This page type is marked as deprecated and will be removed in next major version of this extension
+# Please use the generic callback instead: https://docs.typo3.org/p/leuchtfeuer/auth0/master/en-us/Admin/Callback/Index.html
 auth0_callback = PAGE
 auth0_callback {
     typeNum = 1547536919
@@ -119,4 +124,21 @@ auth0_callback {
     10 =< tt_content.list.20.auth0_loginform
 }
 
-module.tx_auth0 < plugin.tx_auth0
+module.tx_auth0 {
+    view {
+        layoutRootPaths {
+            0 = EXT:auth0/Resources/Private/Layouts/
+            1 = {$module.tx_auth0.view.layoutRootPath}
+            2 = {$plugin.tx_auth0.settings.backend.view.layoutPath}
+        }
+
+        templateRootPaths {
+            0 = EXT:auth0/Resources/Private/Templates/
+            1 = {$module.tx_auth0.view.templateRootPath}
+        }
+    }
+
+    persistence.storagePid = {$module.tx_auth0.persistence.storagePid}
+
+    settings.stylesheet = {$module.tx_auth0.settings.stylesheet}
+}

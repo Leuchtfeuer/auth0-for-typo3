@@ -31,42 +31,18 @@ You have also the option to use your own template files for the backend login. J
 
 .. code-block:: typoscript
 
-   plugin.tx_auth0.settings.backend.view {
-       layoutPath = EXT:your_key/Resources/Private/Layouts/
-       templateFile = EXT:your_key/Resources/Private/Templates/Backend.html
-       stylesheet = EXT:your_key/Resources/Public/Styles/Backend.css
-   }
-
-Please make also sure that you configure the :ref:`role mapping <admin-typoscript-roleMapping>` from Auth0 roles to TYPO3 user groups. Maybe you also want to set the admin
-flag for backend users, depending on an Auth0 :ref:`role mapping <admin-typoscript-propertyMapping>`.
-
-.. _admin-typoscript-loginBehaviour:
-
-Login Behaviour
-===============
-
-Configure whether disabled or deleted frontend or backend users should be able to login by adapting the following TypoScript
-constants:
-
-.. code-block:: typoscript
-
-   plugin.tx_auth0.settings.reactivateUsers {
-       be_users {
-           # if active, sets the disable flag to 0 when user tries to login again
-           disabled = 0
-
-           # if active, sets the deleted flag to 0 when user tries to login again
-           deleted = 0
+   module.tx_auth0 {
+       view {
+           layoutPath = EXT:your_key/Resources/Private/Layouts/
+           templatePath = EXT:your_key/Resources/Private/Templates/
        }
 
-       fe_users {
-           # if active, sets the disable flag to 0 when user tries to login again
-           disabled = 1
-
-           # if active, sets the deleted flag to 0 when user tries to login again
-           deleted = 1
-       }
+       settings.stylesheet = EXT:your_key/Resources/Public/Styles/Backend.css
    }
+
+Please make also sure that you configure the :ref:`role mapping <admin-typoscript-roleMapping>` from Auth0 roles to TYPO3 user
+groups. Maybe you also want to set the admin flag for backend users, depending on an Auth0
+:ref:`role mapping <admin-typoscript-propertyMapping>`.
 
 .. _admin-typoscript-frontendSettings:
 
@@ -209,3 +185,4 @@ Function    Description
 `bool`      Get the boolean value.
 `strtotime` Parse about any English textual datetime description into a Unix timestamp.
 `negate`    Negate the value (only for booleans).
+=========== ===========================================================================

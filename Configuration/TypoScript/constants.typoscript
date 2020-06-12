@@ -9,6 +9,7 @@ plugin.tx_auth0 {
         storagePid =
     }
 
+    # These frontend constants are deprecated and will be removed in next major version of this extension
     settings {
         backend {
             view {
@@ -18,7 +19,6 @@ plugin.tx_auth0 {
             }
         }
 
-        # These frontend constants are deprecated and will be removed in next major version of this extension
         frontend {
             callback {
                 targetPageType = 1547536919
@@ -35,3 +35,10 @@ plugin.tx_auth0 {
     }
 }
 
+module.tx_auth0 {
+    view {
+        templateRootPath = EXT:auth0/Resources/Private/Templates/
+        layoutRootPath = EXT:auth0/Resources/Private/Layouts/
+    }
+    persistence.storagePid = 1
+}

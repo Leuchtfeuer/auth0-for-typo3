@@ -14,13 +14,16 @@ namespace Bitmotion\Auth0\Controller;
 use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
 class ApplicationController extends BackendController
 {
     public function listAction(): void
     {
-        $pid = (new EmAuth0Configuration())->getUserStoragePage();
+        $pid = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK, 'auth0')['persistence']['storagePid']
+            ?? (new EmAuth0Configuration())->getUserStoragePage();
+
         $this->view->assignMultiple([
             'applications' => $this->applicationRepository->findAll(),
             'pid' => $pid,

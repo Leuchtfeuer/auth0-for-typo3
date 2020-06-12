@@ -20,7 +20,6 @@ use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\Middleware\CallbackMiddleware;
 use Bitmotion\Auth0\Utility\ApiUtility;
-use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use Bitmotion\Auth0\Utility\TokenUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -28,7 +27,10 @@ use TYPO3\CMS\Backend\Controller\LoginController;
 use TYPO3\CMS\Backend\LoginProvider\LoginProviderInterface;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
+use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 
 class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
@@ -60,6 +62,17 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
      * @var ?string
      */
     protected $action;
+
+    /**
+     * @var array
+     */
+    protected $frameworkConfiguration;
+
+    public function __construct()
+    {
+        $configurationManager = GeneralUtility::makeInstance(ObjectManager::class)->get(ConfigurationManager::class);
+        $this->frameworkConfiguration = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK, 'auth0');
+    }
 
     /**
      * @throws InvalidConfigurationTypeException
@@ -170,15 +183,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
 
     protected function isTypoScriptLoaded(): bool
     {
-        try {
-            ConfigurationUtility::getSetting('propertyMapping');
-        } catch (\Exception $exception) {
-            $this->logger->notice($exception->getMessage());
-
-            return false;
-        }
-
-        return true;
+        return isset($this->frameworkConfiguration['settings']['stylesheet']);
     }
 
     /**
@@ -186,12 +191,11 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
      */
     protected function prepareView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
     {
-        $backendViewSettings = ConfigurationUtility::getSetting('backend', 'view');
-        $standaloneView->setLayoutRootPaths([$backendViewSettings['layoutPath']]);
-        $standaloneView->setTemplatePathAndFilename(
-            GeneralUtility::getFileAbsFileName($backendViewSettings['templateFile'])
-        );
-        $pageRenderer->addCssFile($backendViewSettings['stylesheet']);
+        $standaloneView->setTemplate('Backend');
+        $standaloneView->setLayoutRootPaths($this->frameworkConfiguration['view']['layoutRootPaths']);
+        $standaloneView->setTemplateRootPaths($this->frameworkConfiguration['view']['templateRootPaths']);
+
+        $pageRenderer->addCssFile($this->frameworkConfiguration['settings']['stylesheet']);
     }
 
     protected function getDefaultView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void

@@ -24,9 +24,9 @@ settings.
 
    2. Migrate the role mapping
 
-      Navigate into the Auth0 backend module and click on the "configure" button in the "Roles to Groups" card. There should be an
-      info box on top of the content. Click on the "Import configuration from TypoScript" button. After the page refreshed, the
-      module will output the configuration migrated from you TypoScript.
+      Navigate into the Auth0 :ref:`backend module <admin-module>` and click on the "configure" button in the "Roles to Groups"
+      card. There should be an info box on top of the content. Click on the "Import configuration from TypoScript" button. After
+      the page refreshed, the module will output the configuration migrated from you TypoScript.
 
       .. figure:: ../../Images/migrate-backend-module.png
          :alt: The backend module.
@@ -47,5 +47,4 @@ settings.
          plugin.tx_auth0.settings.roles >
          plugin.tx_auth0.settings.propertyMapping >
 
-      Do not forget to let the :typoscript:`module.tx_auth0` configuration extend the :typoscript:`plugin.tx_auth0` configuration.
-      Afterwards the info boxes in the backend module should be disappeared.
+      Do not forget to remove the configuration you made in 1. Afterwards the info boxes in the backend module will disappear.
