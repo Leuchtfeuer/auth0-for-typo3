@@ -153,7 +153,7 @@ class UpdateUtility implements LoggerAwareInterface
     protected function getGroupMappingFromDatabase(): array
     {
         $groupMapping = [];
-        $userGroupRepository = $this->getRepository();
+        $userGroupRepository = $this->getUserGroupRepository();
 
         if ($userGroupRepository instanceof AbstractUserGroupRepository) {
             foreach ($userGroupRepository->findAll() as $userGroup) {
@@ -164,7 +164,7 @@ class UpdateUtility implements LoggerAwareInterface
         return $groupMapping;
     }
 
-    protected function getRepository(): ?AbstractUserGroupRepository
+    protected function getUserGroupRepository(): ?AbstractUserGroupRepository
     {
         switch ($this->tableName) {
             case 'fe_users':
