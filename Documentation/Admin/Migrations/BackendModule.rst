@@ -17,7 +17,7 @@ settings.
       :typoscript:`plugin.tx_auth0.settings.propertyMapping` has to be available for the backend module. You can archive this by
       adding following lines of TypoScript at the bottom of your TypoScript template:
 
-      .. codeblock:: typoscript
+      .. code-block:: typoscript
 
          module.tx_auth0.settings.roles < plugin.tx_auth0.settings.roles
          module.tx_auth0.settings.propertyMapping < plugin.tx_auth0.settings.propertyMapping
@@ -42,7 +42,7 @@ settings.
 
       Open your TypoScript template and unset the former configuration:
 
-      .. codeblock:: typoscript
+      .. code-block:: typoscript
 
          plugin.tx_auth0.settings.roles >
          plugin.tx_auth0.settings.propertyMapping >

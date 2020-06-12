@@ -93,7 +93,7 @@ All critical errors will be logged into a dedicated logfile which is located in 
 contains the phrase auth0 in its name. If you want to increase the loglevel, you must overwrite the log configuration, for
 example like this:
 
-.. codeblock:: php
+.. code-block:: php
 
    $GLOBALS['TYPO3_CONF_VARS']['LOG']['Bitmotion']['Auth0'] = [
        'writerConfiguration' => [
