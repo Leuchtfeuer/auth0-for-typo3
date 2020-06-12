@@ -123,12 +123,12 @@ class UpdateUtility implements LoggerAwareInterface
         $translations = [];
         $root = $configuration[Auth0Configuration::CONFIG_TYPE_ROOT] ?? [];
 
-        foreach ($configuration['user_metadata'] ?? [] as $userMetadata) {
+        foreach ($configuration[Auth0Configuration::CONFIG_TYPE_USER] ?? [] as $userMetadata) {
             $userMetadata['auth0Property'] = 'user_metadata.' . $userMetadata['auth0Property'];
             $root[] = $userMetadata;
         }
 
-        foreach ($configuration['app_metadata'] ?? [] as $appMetadata) {
+        foreach ($configuration[Auth0Configuration::CONFIG_TYPE_APP] ?? [] as $appMetadata) {
             $appMetadata['auth0Property'] = 'app_metadata.' . $appMetadata['auth0Property'];
             $root[] = $appMetadata;
         }

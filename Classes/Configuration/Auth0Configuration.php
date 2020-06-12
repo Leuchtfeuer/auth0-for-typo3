@@ -26,6 +26,10 @@ class Auth0Configuration
 
     const CONFIG_TYPE_ROOT = 'root';
 
+    const CONFIG_TYPE_USER = 'user_metadata';
+
+    const CONFIG_TYPE_APP = 'app_metadata';
+
     protected $configPath;
 
     protected $filePath;
@@ -99,8 +103,8 @@ class Auth0Configuration
                             'processing' => 'strtotime',
                         ],
                     ],
-                    'user_metadata' => [],
-                    'app_metadata' => []
+                    self::CONFIG_TYPE_USER => [],
+                    self::CONFIG_TYPE_APP => [],
                 ],
                 'be_users' => [
                     self::CONFIG_TYPE_ROOT => [
@@ -124,8 +128,8 @@ class Auth0Configuration
                             'databaseField' => 'username',
                         ],
                     ],
-                    'user_metadata' => [],
-                    'app_metadata' => []
+                    self::CONFIG_TYPE_USER => [],
+                    self::CONFIG_TYPE_APP => [],
                 ]
             ],
             'roles' => (new ConfigurationFactory())->buildRoles('roles', 0, '', 0),
