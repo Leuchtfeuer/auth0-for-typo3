@@ -34,6 +34,9 @@ class UpdateUtility implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
+    /**
+     * @deprecated Will be removed with next major release.
+     */
     const TYPO_SCRIPT_NODE_VALUE = '_typoScriptNodeValue';
 
     /**
@@ -174,6 +177,9 @@ class UpdateUtility implements LoggerAwareInterface
         return null;
     }
 
+    /**
+     * @deprecated Will be removed with next major version.
+     */
     protected function getGroupMappingFromTypoScript(): array
     {
         try {
