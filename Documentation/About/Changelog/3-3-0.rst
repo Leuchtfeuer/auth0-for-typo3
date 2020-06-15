@@ -5,7 +5,7 @@ Version 3.3.0 - 2020/06/15
 ==========================
 
 This is a feature release. It contains a lot of bug fixes and necessary changes since website users without an usergroup will no
-no longer be logged in. Unlike previously announced, the change of the configuration of TypoScript to a separate backend module
+longer be logged in. Unlike previously announced, the change of the configuration of TypoScript to a separate backend module
 introduces further deprecations. Anyhow, these deprecations affect the TypoScript configuration only.
 
 .. attention::
