@@ -43,7 +43,7 @@ class RoleController extends BackendController
         string $key = 'roles',
         int $defaultFrontendUserGroup = 0,
         string $adminRole = '',
-        int $defaultBackendUserGroup= 0
+        int $defaultBackendUserGroup = 0
     ): void {
         $auth0Configuration = new Auth0Configuration();
         $configuration = $auth0Configuration->load();
