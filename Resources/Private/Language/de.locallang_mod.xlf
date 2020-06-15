@@ -77,7 +77,13 @@
 				<target>Neu erstellte Applikationen werden hier gespeichert:</target>
 			</trans-unit>
 			<trans-unit id="application.new">
-				<source>Neue Applikation erstellen</source>
+				<target>Neue Applikation erstellen</target>
+			</trans-unit>
+			<trans-unit id="application.infobox.title">
+				<target>Keine Applikation gefunden</target>
+			</trans-unit>
+			<trans-unit id="application.infobox.content">
+				<target>Starte jetzt und erstelle deine erste Auth0 Applikation.</target>
 			</trans-unit>
 
 			<trans-unit id="list.title">

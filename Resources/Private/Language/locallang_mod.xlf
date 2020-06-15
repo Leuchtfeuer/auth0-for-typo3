@@ -81,6 +81,12 @@
 			<trans-unit id="application.new">
 				<source>Create new Application</source>
 			</trans-unit>
+			<trans-unit id="application.infobox.title">
+				<source>No Application Found</source>
+			</trans-unit>
+			<trans-unit id="application.infobox.content">
+				<source>Start now and create your first Auth0 application.</source>
+			</trans-unit>
 
 			<trans-unit id="list.title">
 				<source>Auth0</source>
