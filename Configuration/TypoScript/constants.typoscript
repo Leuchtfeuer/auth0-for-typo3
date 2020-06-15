@@ -15,7 +15,6 @@ plugin.tx_auth0 {
             view {
                 layoutPath = EXT:auth0/Resources/Private/Layouts/
                 templateFile = EXT:auth0/Resources/Private/Templates/Backend.html
-                stylesheet = EXT:auth0/Resources/Public/Styles/backend.css
             }
         }
 
@@ -41,4 +40,5 @@ module.tx_auth0 {
         layoutRootPath = EXT:auth0/Resources/Private/Layouts/
     }
     persistence.storagePid = 1
+    settings.stylesheet = EXT:auth0/Resources/Public/Styles/backend.css
 }
