@@ -27,40 +27,44 @@
 					</small>
 				</div>
 
-				<div class="form-group col-sm-12 col-md-6 col-lg-4">
-					<label for="defaultFrontendUserGroup">
-						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.frontend.label"/>
-					</label>
-					<f:form.select id="defaultFrontendUserGroup" class="form-control" name="defaultFrontendUserGroup"
-								   options="{frontendUserGroupMapping}" optionValueField="uid" optionLabelField="title"
-								   prependOptionValue="0" value="{yamlConfiguration.roles.default.frontend}"
-								   prependOptionLabel="{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.frontend.default')}"/>
-					<small class="form-text text-muted">
-						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.frontend.text"/>
-					</small>
-				</div>
+				<f:if condition="{extensionConfiguration.enableFrontendLogin}">
+					<div class="form-group col-sm-12 col-md-6 col-lg-4">
+						<label for="defaultFrontendUserGroup">
+							<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.frontend.label"/>
+						</label>
+						<f:form.select id="defaultFrontendUserGroup" class="form-control" name="defaultFrontendUserGroup"
+									   options="{frontendUserGroupMapping}" optionValueField="uid" optionLabelField="title"
+									   prependOptionValue="0" value="{yamlConfiguration.roles.default.frontend}"
+									   prependOptionLabel="{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.frontend.default')}"/>
+						<small class="form-text text-muted">
+							<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.frontend.text"/>
+						</small>
+					</div>
+				</f:if>
 
-				<div class="form-group col-sm-12 col-md-6 col-lg-4">
-					<label for="defaultBackendUserGroup">
-						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.backend.label"/>
-					</label>
-					<f:form.select id="defaultBackendUserGroup" class="form-control" name="defaultBackendUserGroup"
-								   options="{backendUserGroupMapping}" optionValueField="uid" optionLabelField="title"
-								   prependOptionValue="0" value="{yamlConfiguration.roles.default.backend}"
-								   prependOptionLabel="{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.backend.default')}"/>
-					<small class="form-text text-muted">
-						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.backend.text"/>
-					</small>
-				</div>
-				<div class="form-group col-sm-12 col-md-6 col-lg-4">
-					<label for="adminRole">
-						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.admin.label"/>
-					</label>
-					<f:form.textfield id="adminRole" class="form-control" name="adminRole" value="{yamlConfiguration.roles.beAdmin}"/>
-					<small class="form-text text-muted">
-						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.admin.text"/>
-					</small>
-				</div>
+				<f:if condition="{extensionConfiguration.enableBackendLogin}">
+					<div class="form-group col-sm-12 col-md-6 col-lg-4">
+						<label for="defaultBackendUserGroup">
+							<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.backend.label"/>
+						</label>
+						<f:form.select id="defaultBackendUserGroup" class="form-control" name="defaultBackendUserGroup"
+									   options="{backendUserGroupMapping}" optionValueField="uid" optionLabelField="title"
+									   prependOptionValue="0" value="{yamlConfiguration.roles.default.backend}"
+									   prependOptionLabel="{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.backend.default')}"/>
+						<small class="form-text text-muted">
+							<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.backend.text"/>
+						</small>
+					</div>
+					<div class="form-group col-sm-12 col-md-6 col-lg-4">
+						<label for="adminRole">
+							<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.admin.label"/>
+						</label>
+						<f:form.textfield id="adminRole" class="form-control" name="adminRole" value="{yamlConfiguration.roles.beAdmin}"/>
+						<small class="form-text text-muted">
+							<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.admin.text"/>
+						</small>
+					</div>
+				</f:if>
 
 				<div class="form-group col-sm-12">
 					<f:form.button class="btn btn-default">
