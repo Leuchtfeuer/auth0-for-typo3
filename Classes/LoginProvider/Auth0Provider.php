@@ -29,7 +29,6 @@ use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 
@@ -74,9 +73,6 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         $this->frameworkConfiguration = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK, 'auth0');
     }
 
-    /**
-     * @throws InvalidConfigurationTypeException
-     */
     public function render(StandaloneView $standaloneView, PageRenderer $pageRenderer, LoginController $loginController): void
     {
         $this->logger->notice('Auth0 login is used.');
@@ -186,9 +182,6 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         return isset($this->frameworkConfiguration['settings']['stylesheet']);
     }
 
-    /**
-     * @throws InvalidConfigurationTypeException
-     */
     protected function prepareView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
     {
         $standaloneView->setTemplate('Backend');
