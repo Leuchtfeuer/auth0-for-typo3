@@ -28,7 +28,7 @@ settings.
       card. There should be an info box on top of the content. Click on the "Import configuration from TypoScript" button. After
       the page refreshed, the module will output the configuration migrated from you TypoScript.
 
-      .. figure:: ../../Images/migrate-backend-module.png
+      .. figure:: ../Images/migrate-backend-module.png
          :alt: The backend module.
          :class: with-shadow
 
