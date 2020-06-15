@@ -19,6 +19,9 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 
+/**
+ * @deprecated This class will be removed with next major release as configuration is available in yaml config file.
+ */
 class ConfigurationUtility implements SingletonInterface
 {
     protected static $settings = [];
