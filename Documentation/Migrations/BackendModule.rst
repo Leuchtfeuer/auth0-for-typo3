@@ -1,6 +1,6 @@
 .. include:: ../../Includes.txt
 
-.. _admin-migrations-backendModule:
+.. _migrations-backendModule:
 
 ============================
 TypoScript to Backend Module

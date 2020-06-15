@@ -89,7 +89,7 @@ Role Mapping
 
 .. note::
    Please note that this settings are considered deprecated and will be removed with version 4.0.0. Please migrate the the newly
-   introduced :ref:`YAML configuration <admin-yaml>` by following the :ref:`migration guide <admin-migrations-backendModule>`.
+   introduced :ref:`YAML configuration <admin-yaml>` by following the :ref:`migration guide <migrations-backendModule>`.
 
 Configure `fe_groups` and `be_groups` mappings to match Auth0 roles. Use the Auth0 role identifier as key and the TYPO3 frontend
 or backend user group ID as value. These settings must be made in your TypoScript setup (not constants). The Auth0 roles are
@@ -126,7 +126,7 @@ Property Mapping
 
 .. note::
    Please note that this settings are considered deprecated and will be removed with version 4.0.0. Please migrate the the newly
-   introduced :ref:`YAML configuration <admin-yaml>` by following the :ref:`migration guide <admin-migrations-backendModule>`.
+   introduced :ref:`YAML configuration <admin-yaml>` by following the :ref:`migration guide <migrations-backendModule>`.
 
 Auth0 properties can be mapped to existing properties of TYPO3 backend or frontend users. You can configure this mapping via
 TypoScript. In this case, the key is the name of the TYPO3 database column and the value is the field key of the Auth0 user.

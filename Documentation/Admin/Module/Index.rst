@@ -5,6 +5,7 @@
 ==============
 Backend Module
 ==============
+
 The backend module was introduced with version 3.3 of this extension. You can configure the mapping from Auth0 data to TYPO3
 properties. Also you can configure your Application data records. The module is located in the admin tools section and is
 available for backend admins / system maintainer only.
@@ -19,6 +20,7 @@ available for backend admins / system maintainer only.
 
 Application List
 ================
+
 The application overview displays all Auth0 applications stored in your TYPO3 instance. It is possible to edit existing
 applications or add new applications. Newly created applications are stored in the shown system folder. You can change the folder
 by changing the TypoScript constant :typoscript:`module.tx_auth0.persistence.storagePid`. If this constant has no value, the
@@ -34,6 +36,7 @@ folder containing the users will be used (see: :ref:`admin-extensionConfiguratio
 
 Roles To Groups
 ===============
+
 Configure `fe_groups` and `be_groups` mappings to match Auth0 roles. Simply edit an existing TYPO3 frontend or backend usergroup
 and add the name of the matching Auth0 role to the data record. By default, the Auth0 roles are stored in the `app_metadata`
 property of the Auth0 user.

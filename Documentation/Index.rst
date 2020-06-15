@@ -55,7 +55,7 @@ To figure out which extension version is supported by your TYPO3 instance, take 
 
 **Extension Manual**
 
-   This documentation is for the TYPO3 extension auth0.
+   This documentation is for the TYPO3 extension Auth0.
 
 **For Contributors**
 

@@ -1,10 +1,17 @@
 ﻿.. include:: ../../Includes.txt
 
 ==========================
-Version 3.3.0 - 2020/06/17
+Version 3.3.0 - 2020/06/15
 ==========================
 
-This is a future release. It is estimated for the June 17.
+This is a feature release. It contains a lot of bug fixes and necessary changes since website users without an usergroup will no
+no longer be logged in. Unlike previously announced, the change of the configuration of TypoScript to a separate backend module
+introduces further deprecations. Anyhow, these deprecations affect the TypoScript configuration only.
+
+.. attention::
+
+   You need to transform your TypoScript configuration for role and property mapping. Please see the
+   :ref:`migration guide <migrations-backendModule>` for further information.
 
 Download
 ========
@@ -46,6 +53,10 @@ All Changes
 
 This is a list of all changes in this release::
 
+   2020-06-15 [TASK] Remove obsolete @throw annotations (Commit a51aa0c by Florian Wessels)
+   2020-06-15 [DOC] Add documentation for backend module (Commit 7a0be3b by Florian Wessels)
+   2020-06-15 [TASK] Show configuration only if necessarry (Commit 95f2b2a by Florian Wessels)
+   2020-06-15 [TASK] Apply CS (Commit becb81a by Florian Wessels)
    2020-06-15 [WIP][DOC] Add documentation for new features (Commit 86a835f by Florian Wessels)
    2020-06-15 [TASK] Show hint if there are no applications (Commit abe9c58 by Florian Wessels)
    2020-06-15 [BUGFIX] Use proper method name (Commit d8d4234 by Florian Wessels)
