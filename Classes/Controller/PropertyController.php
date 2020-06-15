@@ -14,7 +14,6 @@ namespace Bitmotion\Auth0\Controller;
 use Bitmotion\Auth0\Configuration\Auth0Configuration;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Factory\ConfigurationFactory;
-use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use Bitmotion\Auth0\Utility\TcaUtility;
 use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
@@ -144,7 +143,7 @@ class PropertyController extends BackendController
      */
     public function acquireMappingTypoScriptAction(): void
     {
-        $settings = ConfigurationUtility::getSetting('propertyMapping');
+        $settings = $this->settings['propertyMapping'];
         $auth0Configuration = new Auth0Configuration();
         $configuration = $auth0Configuration->load();
         unset($configuration['properties']);

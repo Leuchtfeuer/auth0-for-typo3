@@ -16,7 +16,6 @@ use Bitmotion\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
 use Bitmotion\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Factory\ConfigurationFactory;
-use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
@@ -67,7 +66,7 @@ class RoleController extends BackendController
      */
     public function acquireMappingTypoScriptAction(): void
     {
-        $settings = ConfigurationUtility::getSetting('roles');
+        $settings = $this->settings['roles'];
         (new FrontendUserGroupRepository())->translate($settings['fe_users']);
         (new BackendUserGroupRepository())->translate($settings['be_users']);
 
