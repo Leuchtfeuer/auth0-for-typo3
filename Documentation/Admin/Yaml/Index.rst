@@ -6,6 +6,10 @@
 YAML Configuration
 ==================
 
+Since version 3.3.0 of this extension, the property mapping configuration is stored in a dedicated YAML configuration file in the
+configuration folder of your TYPO3 installation. The file is updated when the configuration is saved in the backend module.
+However, you can edit its contents directly if necessary.
+
 Default Configuration
 =====================
 

@@ -1,17 +1,10 @@
 ﻿.. include:: ../../Includes.txt
 
-===================
-Version 3.3.0 - TBA
-===================
+==========================
+Version 3.3.0 - 2020/06/17
+==========================
 
-This is a feature release. It is estimated for the mid of June.
-
-TODO: Link to PSR-14 Event documentation and add documentation for obsolete hook.
-TODO: Add this file to table of contents
-TODO: Migration guide
-TODO: Documentation BE Module
-TODO: Link to BE Module documentation
-TODO: Deprecation notices on typoscript roles and propertyMapping documentation
+This is a future release. It is estimated for the June 17.
 
 Download
 ========
@@ -22,16 +15,19 @@ Download this version from the `TYPO3 extension repository <https://extensions.t
 Added
 =====
 
-* PSR-14 Event :php:`Bitmotion\Auth0\Event\RedirectPreProcessingEvent` which will replace the now deprecated
-  :php:`$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['auth0']['redirect_pre_processing']` hook
+* PSR-14 :ref:`event <developer-events>` :php:`Bitmotion\Auth0\Event\RedirectPreProcessingEvent` which will replace the now
+  deprecated :php:`$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['auth0']['redirect_pre_processing']`
+  hook
 * `Settings.yaml` file for listening to PSR-14 events in TYPO3 v10
 * Event listener for adding parameters to :php:`$GLOBALS['TYPO3_CONF_VARS']['FE']['cacheHash']['excludedParameters']`
-* Dedicated backend module for handling data mapping and applications
+* Dedicated :ref:`backend module <admin-backendModule>` for handling data mapping and applications
+* TypoScript constant for application storage page: :typoscript:`module.tx_auth0.persistence.storagePid`
 
 Changed
 =======
 
-* TBD
+* Backend TypoScript is now separated from the frontend TypoScript settings. The :typoscript:`module.auth0` does not need to
+  extend :typoscript:`plugin.tx_auth0`
 
 Deprecated
 ==========
@@ -39,14 +35,36 @@ Deprecated
 * Hook :php:`$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['auth0']['redirect_pre_processing']` is
   now deprecated and will be removed with next major version. You should use the newly introduced PSR-14 Event where possible
 * Using signal `afterExtensionInstall` of class :php:`TYPO3\CMS\Extensionmanager\Utility\InstallUtility`
-* Following TypoScript settings are now deprecated: :typoscript:`plugin.tx_auth0.settings.roles` and
-  :typoscript:`plugin.tx_auth0.settings.propertyMapping`. You should use the newly introduced backend module instead.
+* Following TypoScript settings are now deprecated: :typoscript:`plugin.tx_auth0.settings.roles`,
+  :typoscript:`plugin.tx_auth0.settings.propertyMapping` and :typoscript:`plugin.tx_auth0.settings.backend`. You should use the
+  newly introduced backend module instead
+* Class :php:`ConfigurationUtility` is deprecated since TypoScript will only be used in controllers
+* Several TypoScript related methods, constants and properties of class :php:`UpdateUtility`
 
 All Changes
 ===========
 
 This is a list of all changes in this release::
 
+   2020-06-15 [WIP][DOC] Add documentation for new features (Commit 86a835f by Florian Wessels)
+   2020-06-15 [TASK] Show hint if there are no applications (Commit abe9c58 by Florian Wessels)
+   2020-06-15 [BUGFIX] Use proper method name (Commit d8d4234 by Florian Wessels)
+   2020-06-15 [BUGFIX] Use proper constant for stylesheet (Commit a239d64 by Florian Wessels)
+   2020-06-15 [TASK] Mark ConfigurationUtility as deprecated (Commit 810dee5 by Florian Wessels)
+   2020-06-15 [TASK] Access settings directly (Commit b04d08a by Florian Wessels)
+   2020-06-12 [DOC] Kickstart documentation of backend module (Commit b33b7ac by Florian Wessels)
+   2020-06-12 [TASK] Restructure backend TypoScript (Commit a59302d by Florian Wessels)
+   2020-06-12 [DOC] Add deprecation hints (Commit a0fb447 by Florian Wessels)
+   2020-06-12 [DOC][BUGFIX] Use proper code block syntax (Commit 5efa8a6 by Florian Wessels)
+   2020-06-12 [TASK] Rename method (Commit c567f84 by Florian Wessels)
+   2020-06-12 [TASK] Mark obsolete TS parsing methods as deprecated (Commit aaed22a by Florian Wessels)
+   2020-06-12 [TASK] Use constants for metadata (Commit 655d4b1 by Florian Wessels)
+   2020-06-11 [BUGFIX] Reintroduce language label for new application button (Commit 45539ab by Florian Wessels)
+   2020-06-11 [BUGFIX] Add controller name to return URL (Commit fb3c167 by Florian Wessels)
+   2020-06-10 [DOC] Update migration guide (Commit 92f7f7d by Florian Wessels)
+   2020-06-10 [DOC] Update layout (Commit cc9d0f2 by Florian Wessels)
+   2020-06-10 [DOC] Add image for migration (Commit f32b518 by Florian Wessels)
+   2020-06-10 [DOC] Add migration guide (Commit 6488b23 by Florian Wessels)
    2020-06-10 [TASK] Use existing property (Commit 443acf4 by Florian Wessels)
    2020-06-10 [BUGFIX] Disable logging (Commit ea23555 by Florian Wessels)
    2020-06-10 [TASK] Mark classes as final (Commit 509c427 by Florian Wessels)

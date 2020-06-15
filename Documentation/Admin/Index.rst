@@ -116,4 +116,6 @@ For further configuration options and more examples take a look at the official 
     Callback/Index
     ConsoleCommand/Index
     ExtensionConfiguration/Index
+    Module/Index
     TypoScript/Index
+    Yaml/Index
