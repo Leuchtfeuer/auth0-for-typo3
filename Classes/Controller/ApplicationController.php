@@ -37,7 +37,7 @@ class ApplicationController extends BackendController
      *
      * @throws StopActionException
      */
-    public function deleteApplicationAction(Application $application): void
+    public function deleteAction(Application $application): void
     {
         $this->applicationRepository->remove($application);
         $this->addFlashMessage($this->getTranslation('message.application.deleted.text'), $this->getTranslation('message.application.deleted.title'));
