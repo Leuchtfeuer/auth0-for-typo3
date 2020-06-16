@@ -47,12 +47,14 @@ abstract class AbstractUserGroupRepository
     {
         $qb = $this->getQueryBuilder();
 
-        return $qb
+        $userGroup = $qb
             ->select('*')
             ->from($this->tableName)
             ->where($qb->expr()->eq('uid', $qb->createNamedParameter($id, \PDO::PARAM_INT)))
             ->execute()
             ->fetch();
+
+        return is_array($userGroup) ? $userGroup : [];
     }
 
     public function findAllWithAuth0Role(): array
