@@ -78,6 +78,9 @@
 			<trans-unit id="application.text">
 				<source>Newly created applications are stored here:</source>
 			</trans-unit>
+			<trans-unit id="application.no_directory">
+				<source><![CDATA[No storage location for new applications could be found. Please adjust the TypoScript constant <code>module.tx_auth0.persistence.storagePid</code> or configure a valid location for website users in the extension configuration.]]></source>
+			</trans-unit>
 			<trans-unit id="application.new">
 				<source>Create new Application</source>
 			</trans-unit>

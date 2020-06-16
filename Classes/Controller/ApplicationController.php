@@ -21,9 +21,7 @@ class ApplicationController extends BackendController
 {
     public function listAction(): void
     {
-        $pid = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK, 'auth0')['persistence']['storagePid']
-            ?? (new EmAuth0Configuration())->getUserStoragePage();
-
+        $pid = $this->getStoragePage();
         $this->view->assignMultiple([
             'applications' => $this->applicationRepository->findAll(),
             'pid' => $pid,
@@ -42,5 +40,24 @@ class ApplicationController extends BackendController
         $this->applicationRepository->remove($application);
         $this->addFlashMessage($this->getTranslation('message.application.deleted.text'), $this->getTranslation('message.application.deleted.title'));
         $this->redirect('list');
+    }
+
+    protected function getStoragePage(): int
+    {
+        $configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK, 'auth0');
+        $storagePage = (int)($configuration['persistence']['storagePid'] ?? 0);
+
+        if ($this->pageExists($storagePage)) {
+            return $storagePage;
+        }
+
+        $storagePage = (new EmAuth0Configuration())->getUserStoragePage();
+
+        return $this->pageExists($storagePage) ? $storagePage : 0;
+    }
+
+    protected function pageExists(int $storagePage): bool
+    {
+        return $storagePage > 0 && BackendUtility::getRecord('pages', $storagePage) !== null;
     }
 }

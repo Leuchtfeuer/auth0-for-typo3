@@ -82,6 +82,9 @@
 			<trans-unit id="application.infobox.title">
 				<target>Keine Applikation gefunden</target>
 			</trans-unit>
+			<trans-unit id="application.no_directory">
+				<source><![CDATA[Es konnte kein Speicherort für neue Applikationen gefunden werden. Bitte pass die TypoScript Konstante  <code>module.tx_auth0.persistence.storagePid</code> an oder konfiguriere einen gültigen Speicherort für Webseitenbenutzer in der Extension Konfiguration.]]></source>
+			</trans-unit>
 			<trans-unit id="application.infobox.content">
 				<target>Starte jetzt und erstelle deine erste Auth0 Applikation.</target>
 			</trans-unit>
