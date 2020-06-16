@@ -75,9 +75,12 @@ abstract class AbstractUserGroupRepository
                     $this->addBeAdminToConfiguration($auth0Role);
                     continue;
                 }
+
                 $userGroup = $this->findByIdentifier((int)$userGroupId);
-                $userGroup[self::USER_GROUP_FIELD] = $auth0Role;
-                $this->update($userGroup);
+                if (!empty($userGroup)) {
+                    $userGroup[self::USER_GROUP_FIELD] = $auth0Role;
+                    $this->update($userGroup);
+                }
             }
         }
     }
