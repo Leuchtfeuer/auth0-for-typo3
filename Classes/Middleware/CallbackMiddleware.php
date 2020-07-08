@@ -40,6 +40,8 @@ class CallbackMiddleware implements MiddlewareInterface
 
     const TOKEN_PARAMETER = 'token';
 
+    const BACKEND_URI = '%s/typo3/?loginProvider=%d&code=%s&state=%s';
+
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         // Remove trailing slash from url (can be set when forcing a trailing slash via .htaccess)
@@ -75,13 +77,14 @@ class CallbackMiddleware implements MiddlewareInterface
         $queryParams = $request->getQueryParams();
 
         $redirectUri = sprintf(
-            '%s/typo3/?loginProvider=%d&code=%s&state=%s',
+            self::BACKEND_URI,
             $tokenUtility->getIssuer(),
             Auth0Provider::LOGIN_PROVIDER,
             $queryParams['code'],
             $queryParams['state']
         );
 
+        // Add error parameters to backend uri if exists
         if (!empty(GeneralUtility::_GET('error')) && !empty(GeneralUtility::_GET('error_description'))) {
             $redirectUri .= sprintf(
                 '&error=%s&error_description=%',
@@ -128,7 +131,6 @@ class CallbackMiddleware implements MiddlewareInterface
 
     /**
      * @throws UnknownErrorCodeException
-     * @throws \ReflectionException
      */
     protected function enrichReferrerByErrorCode(string $errorCode, Token $token): RedirectResponse
     {
@@ -143,7 +145,7 @@ class CallbackMiddleware implements MiddlewareInterface
 
             $query = $referrer->getQuery() . (!empty($referrer->getQuery()) ? '&' : '') . $errorQuery;
 
-            return new RedirectResponse($referrer->withQuery($query), 302);
+            return new RedirectResponse($referrer->withQuery($query));
         }
 
         throw new UnknownErrorCodeException(sprintf('Error %s is unknown.', $errorCode), 1586000737);
