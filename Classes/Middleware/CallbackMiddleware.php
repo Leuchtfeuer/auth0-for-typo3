@@ -42,10 +42,14 @@ class CallbackMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if ($request->getUri()->getPath() !== self::PATH) {
+        // Remove trailing slash from url (can be set when forcing a trailing slash via .htaccess)
+        $actualPath = rtrim($request->getUri()->getPath(), '/');
+
+        if ($actualPath !== self::PATH) {
             // Middleware is not responsible for given request
             return $handler->handle($request);
         }
+
         $tokenUtility = GeneralUtility::makeInstance(TokenUtility::class);
 
         if (!$tokenUtility->verifyToken((string)GeneralUtility::_GET(self::TOKEN_PARAMETER))) {
