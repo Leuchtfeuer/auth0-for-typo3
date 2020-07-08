@@ -156,8 +156,7 @@ class CallbackMiddleware implements MiddlewareInterface
         try {
             // TODO: Get rid of TSFE when dropping TYPO3 v9 support
             // This is necessary as group data is not fetched to this time
-            $frontendUserAuthentication = $request->getAttribute('frontend.user') ?? $GLOBALS['TSFE']->fe_user;
-            $frontendUserAuthentication->fetchGroupData();
+            ($request->getAttribute('frontend.user') ?? $GLOBALS['TSFE']->fe_user)->fetchGroupData();
             $context = GeneralUtility::makeInstance(Context::class);
 
             return (bool)$context->getPropertyFromAspect('frontend.user', 'isLoggedIn');
