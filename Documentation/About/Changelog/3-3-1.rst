@@ -1,0 +1,31 @@
+﻿.. include:: ../../Includes.txt
+
+==========================
+Version 3.3.1 - 2020/07/29
+==========================
+
+This release is a bug fix release which fixes minor issues regarding the newly introduces backend module and the backend login
+page.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v3.3.1>`__.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+   2020-07-29 [TASK] Do not allow installation on insecure systems (Commit da0cd8c by Florian Wessels)
+   2020-07-29 [BUGFIX] Crop backend login image (Commit 5ddfbe3 by Florian Wessels)
+   2020-07-08 [TASK] Simplify fetching of group data (Commit d73b1b8 by Florian Wessels)
+   2020-07-08 [TASK] Use constant for backend URI (Commit 0fbaffe by Florian Wessels)
+   2020-07-08 [BUGFIX] Ignore trailing slash in callback URI (Commit 68024e1 by Florian Wessels)
+   2020-06-16 [TASK] Set version to 3.3.1-dev (Commit 3d0df9d by Florian Wessels)
+   2020-06-16 [TASK] Add check for non empty user group (Commit ec6a585 by Florian Wessels)
+   2020-06-16 [BUGFIX] Force method to return array (Commit 6db1e87 by Florian Wessels)
+   2020-06-16 [TASK] Add check for valid storage page (Commit 40bdacb by Florian Wessels)
+   2020-06-15 [DOC][BUGFIX] Adapt path to image (Commit 2fd3fe9 by Florian Wessels)
+   2020-06-15 [DOC][BUGFIX] Use proper include path (Commit b11d52d by Florian Wessels)
