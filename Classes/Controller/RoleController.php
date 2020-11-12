@@ -64,6 +64,7 @@ class RoleController extends BackendController
     /**
      * @throws InvalidConfigurationTypeException
      * @throws StopActionException
+     * @deprecated This method will be removed in version 4.
      */
     public function acquireMappingTypoScriptAction(): void
     {

@@ -43,6 +43,9 @@ abstract class AbstractUserGroupRepository
             ->fetchAll();
     }
 
+    /**
+     * @deprecated This method will be removed in version 4.
+     */
     public function findByIdentifier(int $id): array
     {
         $qb = $this->getQueryBuilder();
@@ -57,6 +60,9 @@ abstract class AbstractUserGroupRepository
         return is_array($userGroup) ? $userGroup : [];
     }
 
+    /**
+     * @deprecated This method will be removed in version 4.
+     */
     public function findAllWithAuth0Role(): array
     {
         return $this->getQueryBuilder()
@@ -67,6 +73,9 @@ abstract class AbstractUserGroupRepository
             ->fetchAll();
     }
 
+    /**
+     * @deprecated This method will be removed in version 4.
+     */
     public function translate(array $mapping): void
     {
         if (!empty($mapping)) {
@@ -85,6 +94,9 @@ abstract class AbstractUserGroupRepository
         }
     }
 
+    /**
+     * @deprecated This method will be removed in version 4.
+     */
     public function update(array $userGroup): void
     {
         $qb = $this->getQueryBuilder();
