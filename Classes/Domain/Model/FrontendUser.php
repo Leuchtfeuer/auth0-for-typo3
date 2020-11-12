@@ -13,6 +13,10 @@ declare(strict_types=1);
 
 namespace Bitmotion\Auth0\Domain\Model;
 
+/**
+ * @deprecated This object is deprecated and will be removed in version 4. If you need this object, you can simply copy this class
+ *             into your extension.
+ */
 class FrontendUser extends \TYPO3\CMS\Extbase\Domain\Model\FrontendUser
 {
     /**
