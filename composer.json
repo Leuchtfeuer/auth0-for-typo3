@@ -23,7 +23,7 @@
     "issues": "https://github.com/Leuchtfeuer/auth0-for-typo3/issues",
     "source": "https://github.com/Leuchtfeuer/auth0-for-typo3",
     "email": "dev@Leuchtfeuer.com",
-    "docs": "https://docs.typo3.org/p/bitmotion/auth0/master/en-us/"
+    "docs": "https://docs.typo3.org/p/leuchtfeuer/auth0/master/en-us/"
   },
   "require": {
     "typo3/cms-core": "^9.5.20 || ^10.4.6",
