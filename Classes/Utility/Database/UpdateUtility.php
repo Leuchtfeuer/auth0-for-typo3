@@ -63,7 +63,7 @@ class UpdateUtility implements LoggerAwareInterface
     {
         $this->tableName = $tableName;
         $this->user = $user;
-        $this->yamlConfiguration = (new Auth0Configuration())->load();
+        $this->yamlConfiguration = GeneralUtility::makeInstance(Auth0Configuration::class)->load();
     }
 
     public function updateGroups(): void

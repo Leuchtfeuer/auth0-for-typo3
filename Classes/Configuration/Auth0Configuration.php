@@ -15,10 +15,11 @@ use Bitmotion\Auth0\Factory\ConfigurationFactory;
 use Symfony\Component\Yaml\Yaml;
 use TYPO3\CMS\Core\Configuration\Loader\YamlFileLoader;
 use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class Auth0Configuration
+class Auth0Configuration implements SingletonInterface
 {
     const CONFIG_FILE_NAME = 'config.yaml';
 

@@ -16,6 +16,7 @@ use Bitmotion\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
 use Bitmotion\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Factory\ConfigurationFactory;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
@@ -27,7 +28,7 @@ class RoleController extends BackendController
             'frontendUserGroupMapping' => (new FrontendUserGroupRepository())->findAll(),
             'backendUserGroupMapping' => (new BackendUserGroupRepository())->findAll(),
             'extensionConfiguration' => new EmAuth0Configuration(),
-            'yamlConfiguration' => (new Auth0Configuration())->load(),
+            'yamlConfiguration' => GeneralUtility::makeInstance(Auth0Configuration::class)->load(),
         ]);
     }
 
@@ -45,7 +46,7 @@ class RoleController extends BackendController
         string $adminRole = '',
         int $defaultBackendUserGroup = 0
     ): void {
-        $auth0Configuration = new Auth0Configuration();
+        $auth0Configuration = GeneralUtility::makeInstance(Auth0Configuration::class);
         $configuration = $auth0Configuration->load();
 
         $configuration['roles'] = (new ConfigurationFactory())->buildRoles(
@@ -70,7 +71,7 @@ class RoleController extends BackendController
         (new FrontendUserGroupRepository())->translate($settings['fe_users']);
         (new BackendUserGroupRepository())->translate($settings['be_users']);
 
-        $auth0Configuration = new Auth0Configuration();
+        $auth0Configuration = GeneralUtility::makeInstance(Auth0Configuration::class);
         $configuration = $auth0Configuration->load();
         $configuration['roles']['key'] = $settings['key'];
         $auth0Configuration->write($configuration);

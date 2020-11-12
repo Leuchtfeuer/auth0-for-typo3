@@ -12,6 +12,7 @@
 namespace Bitmotion\Auth0\Utility;
 
 use Bitmotion\Auth0\Configuration\Auth0Configuration;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TcaUtility
 {
@@ -69,7 +70,7 @@ class TcaUtility
 
     protected function getColumnsFromConfiguration(string $tableName): array
     {
-        $configuration = (new Auth0Configuration())->load();
+        $configuration = GeneralUtility::makeInstance(Auth0Configuration::class)->load();
         $propertyGroups = $configuration['properties'][$tableName];
         $properties = [];
 

@@ -15,6 +15,7 @@ use Bitmotion\Auth0\Configuration\Auth0Configuration;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Factory\ConfigurationFactory;
 use Bitmotion\Auth0\Utility\TcaUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
@@ -28,7 +29,7 @@ class PropertyController extends BackendController
             'frontendUserColumns' => $tcaUtility->getColumnsFromTable('fe_users'),
             'backendUserColumns' => $tcaUtility->getColumnsFromTable('be_users'),
             'extensionConfiguration' => new EmAuth0Configuration(),
-            'yamlConfiguration' => (new Auth0Configuration())->load(),
+            'yamlConfiguration' => GeneralUtility::makeInstance(Auth0Configuration::class)->load(),
         ]);
     }
 
@@ -61,7 +62,7 @@ class PropertyController extends BackendController
 
         ksort($property);
         $propertyConfiguration = (new ConfigurationFactory())->buildProperty(...array_values($property));
-        $auth0Configuration = new Auth0Configuration();
+        $auth0Configuration = GeneralUtility::makeInstance(Auth0Configuration::class);
         $configuration = $auth0Configuration->load();
         $configuration['properties'][$table][$type][] = $propertyConfiguration;
         $auth0Configuration->write($configuration);
@@ -80,7 +81,7 @@ class PropertyController extends BackendController
     public function deleteAction(array $property, string $table, string $type): void
     {
         if ((bool)$property['readOnly'] === false) {
-            $auth0Configuration = new Auth0Configuration();
+            $auth0Configuration = GeneralUtility::makeInstance(Auth0Configuration::class);
             $configuration = $auth0Configuration->load();
 
             foreach ($configuration['properties'][$table][$type] as $key => $configurationProperty) {
@@ -122,7 +123,7 @@ class PropertyController extends BackendController
      */
     public function updateAction(array $property, string $table, string $type): void
     {
-        $auth0Configuration = new Auth0Configuration();
+        $auth0Configuration = GeneralUtility::makeInstance(Auth0Configuration::class);
         $configuration = $auth0Configuration->load();
 
         foreach ($configuration['properties'][$table][$type] ?? [] as $key => $item) {
@@ -140,11 +141,12 @@ class PropertyController extends BackendController
     /**
      * @throws InvalidConfigurationTypeException
      * @throws StopActionException
+     * @deprecated This method will be removed in version 4.
      */
     public function acquireMappingTypoScriptAction(): void
     {
         $settings = $this->settings['propertyMapping'];
-        $auth0Configuration = new Auth0Configuration();
+        $auth0Configuration = GeneralUtility::makeInstance(Auth0Configuration::class);
         $configuration = $auth0Configuration->load();
         unset($configuration['properties']);
         $configurationFactory = new ConfigurationFactory();

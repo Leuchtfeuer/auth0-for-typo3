@@ -98,9 +98,12 @@ abstract class AbstractUserGroupRepository
             ->execute();
     }
 
+    /**
+     * @deprecated This method will be removed in version 4.
+     */
     protected function addBeAdminToConfiguration(string $role): void
     {
-        $auth0Configuration = new Auth0Configuration();
+        $auth0Configuration = GeneralUtility::makeInstance(Auth0Configuration::class);
         $configuration = $auth0Configuration->load();
         $configuration['roles']['beAdmin'] = $role;
         $auth0Configuration->write($configuration);
