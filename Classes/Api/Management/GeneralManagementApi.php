@@ -72,20 +72,19 @@ class GeneralManagementApi implements LoggerAwareInterface
      */
     protected function mapResponse(Response $response, string $objectName = '', bool $returnRaw = false)
     {
-        $jsonResponse = $this->getJsonFromResponse($response);
+        $json = $this->getJsonFromResponse($response);
         $objectName = ($objectName !== '') ? $objectName : $this->getObjectName($response, $returnRaw);
 
         if ($returnRaw === true && !$objectName !== Error::class) {
-            return $jsonResponse;
+            return $json;
         }
 
-        if (substr($jsonResponse, 0, 1) === '[') {
+        if (substr($json, 0, 1) === '[') {
             $this->normalizer[] = new ArrayDenormalizer();
             $objectName .= '[]';
         }
 
-        $serializer = $this->getSerializer();
-        $object = $serializer->deserialize($jsonResponse, $objectName, $this->serializeFormat);
+        $object =  $this->getSerializer()->deserialize($json, $objectName, $this->serializeFormat);
 
         if ($object instanceof Error) {
             $this->getResponseObject($object);
