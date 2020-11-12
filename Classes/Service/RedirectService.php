@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Service;
 
 use Bitmotion\Auth0\Event\RedirectPreProcessingEvent;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Database\Connection;
@@ -23,7 +24,6 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Felogin\Controller\FrontendLoginController;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
@@ -349,12 +349,8 @@ class RedirectService implements LoggerAwareInterface
         return $result;
     }
 
-    /**
-     * @return \TYPO3\CMS\Core\EventDispatcher\EventDispatcher
-     * @throws \TYPO3\CMS\Extbase\Object\Exception
-     */
-    public function getEventDispatcher()
+    protected function getEventDispatcher(): EventDispatcherInterface
     {
-        return GeneralUtility::makeInstance(ObjectManager::class)->get('Psr\EventDispatcher\EventDispatcherInterface');
+        return GeneralUtility::getContainer()->get(EventDispatcherInterface::class);
     }
 }
