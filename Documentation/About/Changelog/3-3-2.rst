@@ -1,0 +1,52 @@
+﻿.. include:: ../../Includes.txt
+
+==========================
+Version 3.3.2 - 2020/11/16
+==========================
+
+This release is a bug fix release. It also introduces some new deprecations regarding the frontend user object and improves
+logging.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v3.3.2>`__.
+
+Added
+=====
+
+* A new exception class :php:`UnexpectedResponseException` has been added. It will be throws when the Auth0 API response contains
+  no valid JSON.
+
+Changed
+=======
+
+* The :php:`Auth0Configuration` class is now handled as a singleton.
+* Provided third party libraries (`auth0/auth0-php`, `guzzlehttp/*`, `symfony/*`)were updated (applies only to non composer setups)
+
+Deprecated
+==========
+
+* All methods and classes regarding the TypoScript migrations are now deprecated and will be removed with the next major release
+* Domain model :php:`\Bitmotion\Auth0\Domain\Model\FrontendUser` will be removed in future releases. This applies also to all
+  extbase persistence configurations and the files containing this configuration.
+
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+   2020-11-12 [TASK] Mark FrontendUserObject and extbase type as deprecated (Commit 17959bf by Florian Wessels)
+   2020-11-12 [TASK] Move Extbase classes into dedicated file (Commit f553783 by Florian Wessels)
+   2020-11-12 [TASK] Rename variable (Commit 5bb8458 by Florian Wessels)
+   2020-11-12 [TASK] Use Environment class if exists (Commit 6050609 by Florian Wessels)
+   2020-11-12 [TASK] Get event dispatcher from service container (Commit bac0353 by Florian Wessels)
+   2020-11-12 [TASK] Mark migration methods as deprecated (Commit 664696c by Florian Wessels)
+   2020-11-12 [TASK] Use YAML configuration parser as singleton (Commit 56f04d4 by Florian Wessels)
+   2020-11-12 [BUGFIX] Use proper path to documentation (Commit b1b3bde by Florian Wessels)
+   2020-11-12 [TASK] Update composer dependencies (Commit 4304492 by Florian Wessels)
+   2020-09-18 [TASK] Use unique class names within svg files (Commit 6bf3f7c by Florian Wessels)
+   2020-07-29 [TASK] Set version to 3.3.2-dev (Commit 63f87d0 by Florian Wessels)
+
