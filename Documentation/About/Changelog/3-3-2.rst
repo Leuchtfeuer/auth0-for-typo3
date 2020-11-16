@@ -32,7 +32,6 @@ Deprecated
 * Domain model :php:`\Bitmotion\Auth0\Domain\Model\FrontendUser` will be removed in future releases. This applies also to all
   extbase persistence configurations and the files containing this configuration.
 
-
 All Changes
 ===========
 
