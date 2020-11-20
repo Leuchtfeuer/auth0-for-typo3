@@ -16,6 +16,7 @@ namespace Bitmotion\Auth0\Service;
 use Auth0\SDK\Exception\ApiException;
 use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Api\Auth0;
+use Bitmotion\Auth0\Api\Management\UserApi;
 use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\ErrorCode;
@@ -297,7 +298,7 @@ class AuthenticationService extends BasicAuthenticationService
     protected function getAuth0User()
     {
         try {
-            $userApi =  GeneralUtility::makeInstance(ApiUtility::class, $this->application)->getUserApi(Scope::USER_READ);
+            $userApi =  GeneralUtility::makeInstance(ApiUtility::class, $this->application)->getApi(UserApi::class, Scope::USER_READ);
             $this->auth0User = $userApi->get($this->userInfo['sub']);
         } catch (ApiException $apiException) {
             $this->logger->error('No Auth0 user found.');

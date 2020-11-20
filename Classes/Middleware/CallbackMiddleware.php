@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Bitmotion\Auth0\Middleware;
 
+use Bitmotion\Auth0\Api\Management\UserApi;
 use Bitmotion\Auth0\ErrorCode;
 use Bitmotion\Auth0\Exception\TokenException;
 use Bitmotion\Auth0\Exception\UnknownErrorCodeException;
@@ -168,7 +169,7 @@ class CallbackMiddleware implements MiddlewareInterface
     protected function updateTypo3User(int $application, array $userInfo): void
     {
         // Get user
-        $userApi = GeneralUtility::makeInstance(ApiUtility::class, $application)->getUserApi(Scope::USER_READ);
+        $userApi = GeneralUtility::makeInstance(ApiUtility::class, $application)->getApi(UserApi::class, Scope::USER_READ);
         $user = $userApi->get($userInfo['sub']);
 
         // Update user

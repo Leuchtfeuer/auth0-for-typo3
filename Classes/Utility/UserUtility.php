@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Utility;
 
 use Bitmotion\Auth0\Api\Auth0;
+use Bitmotion\Auth0\Api\Management\UserApi;
 use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
 use Bitmotion\Auth0\Domain\Repository\UserRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
@@ -187,8 +188,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             $this->logger->notice('Try to update user.');
 
             $tokenInfo = $auth0->getUser();
-            $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $application);
-            $userApi = $apiUtility->getUserApi(Scope::USER_READ);
+            $userApi = GeneralUtility::makeInstance(ApiUtility::class, $application)->getApi(UserApi::class, Scope::USER_READ);
             $user = $userApi->get($tokenInfo['sub']);
 
             // Update existing user on every login

@@ -111,109 +111,219 @@ class ApiUtility implements LoggerAwareInterface
         return $targetScopes;
     }
 
+    public function getApi(string $className, string ...$scopes): Management\GeneralManagementApi
+    {
+        return $this->getManagement(...$scopes)->getApi($className);
+    }
+
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getUserApi(string ...$scopes): UserApi
     {
-        return $this->getManagement(...$scopes)->getUserApi();
+        trigger_error('getUserApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(UserApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getTicketApi(string ...$scopes): TicketApi
     {
-        return $this->getManagement(...$scopes)->getTicketApi();
+        trigger_error('getTicketApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(TicketApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getConnectionApi(string ...$scopes): ConnectionApi
     {
-        return $this->getManagement(...$scopes)->getConnectionApi();
+        trigger_error('getConnectionApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(ConnectionApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getClientGrantApi(string ...$scopes): ClientGrantApi
     {
-        return $this->getManagement(...$scopes)->getClientGrantApi();
+        trigger_error('getClientGrantApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(ClientGrantApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getClientApi(string ...$scopes): ClientApi
     {
-        return $this->getManagement(...$scopes)->getClientApi();
+        trigger_error('getClientApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(ClientApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getUserBlockApi(string ...$scopes): UserBlockApi
     {
-        return $this->getManagement(...$scopes)->getUserBlockApi();
+        trigger_error('getUserBlockApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(UserBlockApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getUserByEmailApi(string ...$scopes): UserByEmailApi
     {
-        return $this->getManagement(...$scopes)->getUserByEmailApi();
+        trigger_error('getUserByEmailApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(UserByEmailApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getStatApi(string ...$scopes): StatApi
     {
-        return $this->getManagement(...$scopes)->getStatApi();
+        trigger_error('getStatApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(StatApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getTenantApi(string ...$scopes): TenantApi
     {
-        return $this->getManagement(...$scopes)->getTenantApi();
+        trigger_error('getTenantApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(TenantApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getLogApi(string ...$scopes): LogApi
     {
-        return $this->getManagement(...$scopes)->getLogApi();
+        trigger_error('getLogApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(LogApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getResourceServerApi(string ...$scopes): ResourceServerApi
     {
-        return $this->getManagement(...$scopes)->getResourceServerApi();
+        trigger_error('getResourceServerApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(ResourceServerApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getBlacklistApi(string ...$scopes): BlacklistApi
     {
-        return $this->getManagement(...$scopes)->getBlacklistApi();
+        trigger_error('getBlacklistApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(BlacklistApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getCustomDomainApi(string ...$scopes): CustomDomainApi
     {
-        return $this->getManagement(...$scopes)->getCustomDomainApi();
+        trigger_error('getCustomDomainApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(CustomDomainApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getDeviceCredentialApi(string ...$scopes): DeviceCredentialApi
     {
-        return $this->getManagement(...$scopes)->getDeviceCredentialApi();
+        trigger_error('getDeviceCredentialApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(DeviceCredentialApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getEmailApi(string ...$scopes): EmailApi
     {
-        return $this->getManagement(...$scopes)->getEmailApi();
+        trigger_error('getEmailApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(EmailApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getEmailTemplateApi(string ...$scopes): EmailTemplateApi
     {
-        return $this->getManagement(...$scopes)->getEmailTemplateApi();
+        trigger_error('getEmailTemplateApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(EmailTemplateApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getGrantApi(string ...$scopes): GrantApi
     {
-        return $this->getManagement(...$scopes)->getGrantApi();
+        trigger_error('getGrantApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(GrantApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getGuardianApi(string ...$scopes): GuardianApi
     {
-        return $this->getManagement(...$scopes)->getGuardianApi();
+        trigger_error('getGuardianApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(GuardianApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getJobApi(string ...$scopes): JobApi
     {
-        return $this->getManagement(...$scopes)->getJobApi();
+        trigger_error('getJobApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(JobApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getRuleConfigApi(string ...$scopes): RuleConfigApi
     {
-        return $this->getManagement(...$scopes)->getRuleConfigApi();
+        trigger_error('getRuleConfigApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(RuleConfigApi::class, ...$scopes);
     }
 
+    /**
+     * @deprecated Getting APIs by dedicated getter is deprecated and will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getRuleApi(string ...$scopes): RuleApi
     {
-        return $this->getManagement(...$scopes)->getRuleApi();
+        trigger_error('getRuleApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(RuleApi::class, ...$scopes);
     }
 
     protected function getManagement(... $scopes): Management

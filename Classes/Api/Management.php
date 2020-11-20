@@ -23,6 +23,7 @@ use Bitmotion\Auth0\Api\Management\CustomDomainApi;
 use Bitmotion\Auth0\Api\Management\DeviceCredentialApi;
 use Bitmotion\Auth0\Api\Management\EmailApi;
 use Bitmotion\Auth0\Api\Management\EmailTemplateApi;
+use Bitmotion\Auth0\Api\Management\GeneralManagementApi;
 use Bitmotion\Auth0\Api\Management\GrantApi;
 use Bitmotion\Auth0\Api\Management\GuardianApi;
 use Bitmotion\Auth0\Api\Management\JobApi;
@@ -164,108 +165,221 @@ class Management implements LoggerAwareInterface
         return $clientCredentials ?: [];
     }
 
+    public function getApi(string $className): GeneralManagementApi
+    {
+        $segments = explode('\\', $className);
+        $class = lcfirst(array_pop($segments));
+
+        return $this->$class ?? ($this->$class = GeneralUtility::makeInstance($className, $this->client));
+    }
+
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getClientGrantApi(): ClientGrantApi
     {
-        return $this->clientGrantApi ?? GeneralUtility::makeInstance(ClientGrantApi::class, $this->client);
+        trigger_error('getClientGrantApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(ClientGrantApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getClientApi(): ClientApi
     {
-        return $this->clientApi ?? GeneralUtility::makeInstance(ClientApi::class, $this->client);
+        trigger_error('getClientApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(ClientApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getConnectionApi(): ConnectionApi
     {
-        return $this->connectionApi ?? GeneralUtility::makeInstance(ConnectionApi::class, $this->client);
+        trigger_error('getConnectionApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(ConnectionApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getCustomDomainApi(): CustomDomainApi
     {
-        return $this->customDomainApi ?? GeneralUtility::makeInstance(CustomDomainApi::class, $this->client);
+        trigger_error('getCustomDomainApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(CustomDomainApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getDeviceCredentialApi(): DeviceCredentialApi
     {
-        return $this->deviceCredentialApi ?? GeneralUtility::makeInstance(DeviceCredentialApi::class, $this->client);
+        trigger_error('getDeviceCredentialApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(DeviceCredentialApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getGrantApi(): GrantApi
     {
-        return $this->grantApi ?? GeneralUtility::makeInstance(GrantApi::class, $this->client);
+        trigger_error('getGrantApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(GrantApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getLogApi(): LogApi
     {
-        return $this->logApi ?? GeneralUtility::makeInstance(LogApi::class, $this->client);
+        trigger_error('getLogApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(LogApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getResourceServerApi(): ResourceServerApi
     {
-        return $this->resourceServerApi ?? GeneralUtility::makeInstance(ResourceServerApi::class, $this->client);
+        trigger_error('getResourceServerApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(ResourceServerApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getRuleApi(): RuleApi
     {
-        return $this->ruleApi ?? GeneralUtility::makeInstance(RuleApi::class, $this->client);
+        trigger_error('getRuleApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(RuleApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getRuleConfigApi(): RuleConfigApi
     {
-        return $this->ruleConfigApi ?? GeneralUtility::makeInstance(RuleConfigApi::class, $this->client);
+        trigger_error('getRuleConfigApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(RuleConfigApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getUserBlockApi(): UserBlockApi
     {
-        return $this->userBlockApi ?? GeneralUtility::makeInstance(UserBlockApi::class, $this->client);
+        trigger_error('getUserBlockApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(UserBlockApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getUserApi(): UserApi
     {
-        return $this->userApi ?? GeneralUtility::makeInstance(UserApi::class, $this->client);
+        trigger_error('getUserApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(UserApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getUserByEmailApi(): UserByEmailApi
     {
-        return $this->userByEmailApi ?? GeneralUtility::makeInstance(UserByEmailApi::class, $this->client);
+        trigger_error('getUserByEmailApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(UserByEmailApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getBlacklistApi(): BlacklistApi
     {
-        return $this->blacklistApi ?? GeneralUtility::makeInstance(BlacklistApi::class, $this->client);
+        trigger_error('getBlacklistApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(BlacklistApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getEmailTemplateApi(): EmailTemplateApi
     {
-        return $this->emailTemplateApi ?? GeneralUtility::makeInstance(EmailTemplateApi::class, $this->client);
+        trigger_error('getEmailTemplateApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(EmailTemplateApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getEmailApi(): EmailApi
     {
-        return $this->emailApi ?? GeneralUtility::makeInstance(EmailApi::class, $this->client);
+        trigger_error('getEmailApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(EmailApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getGuardianApi(): GuardianApi
     {
-        return $this->guardianApi ?? GeneralUtility::makeInstance(GuardianApi::class, $this->client);
+        trigger_error('getGuardianApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(GuardianApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getJobApi(): JobApi
     {
-        return $this->jobApi ?? GeneralUtility::makeInstance(JobApi::class, $this->client);
+        trigger_error('getJobApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(JobApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getStatApi(): StatApi
     {
-        return $this->statApi ?? GeneralUtility::makeInstance(StatApi::class, $this->client);
+        trigger_error('getStatApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(ClientGrantApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getTenantApi(): TenantApi
     {
-        return $this->tenantApi ?? GeneralUtility::makeInstance(TenantApi::class, $this->client);
+        trigger_error('getTenantApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(TenantApi::class);
     }
 
+    /**
+     * @deprecated Will be removed in version 4. Please use $this->getApi() instead.
+     */
     public function getTicketApi(): TicketApi
     {
-        return $this->ticketApi ?? GeneralUtility::makeInstance(TicketApi::class, $this->client);
+        trigger_error('getTicketApi() is deprecated. Please use $this->getApi() instead.', E_USER_DEPRECATED);
+
+        return $this->getApi(TicketApi::class);
     }
 }
