@@ -39,7 +39,9 @@ use Bitmotion\Auth0\Api\Management\UserBlockApi;
 use Bitmotion\Auth0\Api\Management\UserByEmailApi;
 use Bitmotion\Auth0\Domain\Model\Auth0\Api\Client;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
+use Bitmotion\Auth0\Exception\IllegalClassNameException;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
+use Bitmotion\Auth0\Exception\UnknownPropertyException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Package\Exception;
@@ -125,6 +127,21 @@ class Management implements LoggerAwareInterface
         $this->setClient(array_merge($this->guzzleOptions, $guzzleOptions));
     }
 
+    public function getApi(string $className): GeneralManagementApi
+    {
+        if (strpos($className, 'Bitmotion\\Auth0\\Api\\Management') !== 0) {
+            throw new IllegalClassNameException(sprintf('It is not allowed to instantiate class %s.', $className), 1605878552);
+        }
+
+        $apiClass = $this->extractApiClass($className);
+
+        if (!property_exists($this, $apiClass)) {
+            throw new UnknownPropertyException(sprintf('Class %s has no property %s', self::class, $apiClass), 1605878741);
+        }
+
+        return $this->$apiClass ?? ($this->$apiClass = GeneralUtility::makeInstance($className, $this->client));
+    }
+
     /**
      * @throws ApiException
      * @throws Exception
@@ -165,12 +182,11 @@ class Management implements LoggerAwareInterface
         return $clientCredentials ?: [];
     }
 
-    public function getApi(string $className): GeneralManagementApi
+    protected function extractApiClass(string $className): string
     {
         $segments = explode('\\', $className);
-        $class = lcfirst(array_pop($segments));
 
-        return $this->$class ?? ($this->$class = GeneralUtility::makeInstance($className, $this->client));
+        return lcfirst(array_pop($segments));
     }
 
     /**
