@@ -314,7 +314,7 @@ class UpdateUtility implements LoggerAwareInterface
             if (!is_array($auth0FieldName)) {
                 // Update without parsing function
                 $value = $this->parseFuncUtility->updateWithoutParseFunc($auth0FieldName, $user);
-            } elseif (is_array($auth0FieldName) && isset($auth0FieldName[self::TYPO_SCRIPT_NODE_VALUE])) {
+            } elseif (isset($auth0FieldName[self::TYPO_SCRIPT_NODE_VALUE])) {
                 // Update with parsing function
                 $value = $this->parseFuncUtility->updateWithParseFunc($typo3FieldName, $auth0FieldName, $user);
             }
