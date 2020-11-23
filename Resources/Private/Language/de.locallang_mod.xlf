@@ -183,6 +183,12 @@
 			<trans-unit id="properties.button.save">
 				<target>Speichern</target>
 			</trans-unit>
+			<trans-unit id="properties.infobox.api.title">
+				<target>Verfügbarkeit von Auth0-Benutzerdaten</target>
+			</trans-unit>
+			<trans-unit id="properties.infobox.api.content">
+				<target>Bitte beachte, dass möglicherweise nicht alle Benutzerdaten (insbesondere die user und app Metadaten) verfügbar sind, wenn die Anwendung die Verwendung der API deaktiviert hat.</target>
+			</trans-unit>
 
 			<trans-unit id="message.application.deleted.title">
 				<target>Applikation gelöscht!</target>

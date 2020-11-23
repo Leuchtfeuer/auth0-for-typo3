@@ -185,6 +185,12 @@
 			<trans-unit id="properties.button.save">
 				<source>Save</source>
 			</trans-unit>
+			<trans-unit id="properties.infobox.api.title">
+				<source>Availability of Auth0 User Data</source>
+			</trans-unit>
+			<trans-unit id="properties.infobox.api.content">
+				<source>Please note that not all data (especially the user and app meta data)  may be available if your application has disabled the use of the API.</source>
+			</trans-unit>
 
 			<trans-unit id="message.application.deleted.title">
 				<source>Application Removed!</source>
