@@ -20,6 +20,7 @@ use Bitmotion\Auth0\Api\Management\UserApi;
 use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\ErrorCode;
+use Bitmotion\Auth0\Exception\ApiNotEnabledException;
 use Bitmotion\Auth0\Exception\TokenException;
 use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\LoginProvider\Auth0Provider;
@@ -292,14 +293,14 @@ class AuthenticationService extends BasicAuthenticationService
         }
     }
 
-    /**
-     * @throws \Exception
-     */
-    protected function getAuth0User()
+    protected function getAuth0User(): bool
     {
         try {
-            $userApi =  GeneralUtility::makeInstance(ApiUtility::class, $this->application)->getApi(UserApi::class, Scope::USER_READ);
+            $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $this->application);
+            $userApi = $apiUtility->getApi(UserApi::class, Scope::USER_READ);
             $this->auth0User = $userApi->get($this->userInfo['sub']);
+        } catch (ApiNotEnabledException $exception) {
+            // Do nothing since API is disabled
         } catch (ApiException $apiException) {
             $this->logger->error('No Auth0 user found.');
 
@@ -324,10 +325,10 @@ class AuthenticationService extends BasicAuthenticationService
         // Insert a new user into database
         if (empty($this->user)) {
             $this->logger->notice('Insert new user.');
-            $userUtility->insertUser($this->tableName, $this->auth0User);
+            $userUtility->insertUser($this->tableName, $this->auth0User ?? $this->userInfo);
         }
 
-        $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User);
+        $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User ?? $this->userInfo);
         $updateUtility->updateGroups();
 
         // Update existing user on every login when we are in BE context (since TypoScript is loaded).
@@ -335,16 +336,12 @@ class AuthenticationService extends BasicAuthenticationService
             $updateUtility->updateUser();
         } else {
             // Update last used application (no TypoScript loaded in Frontend Requests)
-            $userUtility->setLastUsedApplication($this->auth0User->getUserId(), $this->application);
+            $userUtility->setLastUsedApplication($this->userInfo['sub'], $this->application);
         }
     }
 
     /**
-     * Initializes the connection to the auth0 server
-     *
-     * @throws ApiException
-     * @throws CoreException
-     * @throws \Exception
+     * Initializes the connection to the Auth0 server
      */
     protected function initializeAuth0Connections(): bool
     {
@@ -357,7 +354,7 @@ class AuthenticationService extends BasicAuthenticationService
             }
 
             $this->login['responsible'] = true;
-            $this->logger->notice(sprintf('User found: %s', $this->auth0User->getEmail()));
+            $this->logger->notice(sprintf('Found user with Auth0 identifier "%s".', $this->userInfo['sub']));
 
             return true;
         } catch (\Exception $exception) {
@@ -379,14 +376,16 @@ class AuthenticationService extends BasicAuthenticationService
         $user = $this->fetchUserRecord($this->login['uname'], 'auth0_user_id = "' . $this->userInfo['sub'] . '"');
 
         if (!is_array($user)) {
-            if ($this->auth0User !== null) {
-                $this->auth0->deleteAllPersistentData();
-            }
+            // Delete persistent Auth0 user data
+            $this->auth0->deleteAllPersistentData();
 
             $this->writelog(255, 3, 3, 2, 'Login-attempt from ###IP###, username \'%s\' not found!!', [$this->login['uname']]);
-            $this->logger->info('Login-attempt from username \'' . $this->login['uname'] . '\' not found!', [
-                'REMOTE_ADDR' => $this->authInfo['REMOTE_ADDR'],
-            ]);
+            $this->logger->info(
+                sprintf('Login-attempt from username "%s" not found!', $this->login['uname']),
+                [
+                    'REMOTE_ADDR' => $this->authInfo['REMOTE_ADDR'],
+                ]
+            );
         }
 
         return $user;
@@ -404,8 +403,8 @@ class AuthenticationService extends BasicAuthenticationService
             return 100;
         }
 
-        // Do not login if email address is not verified
-        if (!$this->auth0User->isEmailVerified()) {
+        // Do not login if email address is not verified (only available if API is enabled)
+        if ($this->auth0User !== null && !$this->auth0User->isEmailVerified()) {
             $this->logger->warning('Email not verified. Do not login user.');
 
             // Responsible, authentication failed, do NOT check other services

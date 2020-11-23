@@ -40,4 +40,5 @@ CREATE TABLE tx_auth0_domain_model_application (
   audience varchar(255) DEFAULT '' NOT NULL,
   secret_base64_encoded smallint(1) DEFAULT 0 NOT NULL,
   signature_algorithm varchar(255) DEFAULT '' NOT NULL,
+  api SMALLINT(1) DEFAULT 1 NOT NULL,
 );

@@ -53,7 +53,7 @@ class UserRepository implements LoggerAwareInterface
     /**
      * Gets an user by given auth0 user ID.
      */
-    public function getUserByAuth0Id(string $auth0UserId): array
+    public function getUserByAuth0Id(string $auth0UserId): ?array
     {
         $this->queryBuilder
             ->select('*')
@@ -67,7 +67,7 @@ class UserRepository implements LoggerAwareInterface
         $this->logger->debug(sprintf('[%s] Executed SELECT query: %s', $this->tableName, $this->queryBuilder->getSQL()));
         $user = $this->queryBuilder->execute()->fetch();
 
-        return ($user !== false) ? $user : [];
+        return ($user !== false) ? $user : null;
     }
 
     /**

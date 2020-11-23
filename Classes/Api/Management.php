@@ -39,6 +39,7 @@ use Bitmotion\Auth0\Api\Management\UserBlockApi;
 use Bitmotion\Auth0\Api\Management\UserByEmailApi;
 use Bitmotion\Auth0\Domain\Model\Auth0\Api\Client;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
+use Bitmotion\Auth0\Exception\ApiNotEnabledException;
 use Bitmotion\Auth0\Exception\IllegalClassNameException;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Exception\UnknownPropertyException;
@@ -117,12 +118,22 @@ class Management implements LoggerAwareInterface
 
     /**
      * @throws ApiException
+     * @throws ApiNotEnabledException
      * @throws InvalidApplicationException
      * @throws Exception
      */
     public function __construct(int $applicationUid = 0, string $scope = null, array $guzzleOptions = [])
     {
-        $this->application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationUid, true);
+        $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationUid, true);
+
+        if ($application->hasApi() === false) {
+            throw new ApiNotEnabledException(
+                sprintf('Using the API is not enabled for Auth0 application "%s"', $application->getTitle()),
+                1606121212
+            );
+        }
+
+        $this->application = $application;
         $this->setAuthentication($scope);
         $this->setClient(array_merge($this->guzzleOptions, $guzzleOptions));
     }

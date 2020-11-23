@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Middleware;
 
 use Bitmotion\Auth0\Api\Management\UserApi;
+use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\ErrorCode;
 use Bitmotion\Auth0\Exception\TokenException;
 use Bitmotion\Auth0\Exception\UnknownErrorCodeException;
@@ -29,6 +30,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Http\RedirectResponse;
 use TYPO3\CMS\Core\Http\Response;
@@ -166,11 +168,15 @@ class CallbackMiddleware implements MiddlewareInterface
         }
     }
 
-    protected function updateTypo3User(int $application, array $userInfo): void
+    protected function updateTypo3User(int $application, array $user): void
     {
         // Get user
-        $userApi = GeneralUtility::makeInstance(ApiUtility::class, $application)->getApi(UserApi::class, Scope::USER_READ);
-        $user = $userApi->get($userInfo['sub']);
+        $application = BackendUtility::getRecord(ApplicationRepository::TABLE_NAME, $application, 'api, uid');
+
+        if ((bool)$application['api'] === true) {
+            $userApi = GeneralUtility::makeInstance(ApiUtility::class, $application['uid'])->getApi(UserApi::class, Scope::USER_READ);
+            $user = $userApi->get($user['sub']);
+        }
 
         // Update user
         $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, 'fe_users', $user);

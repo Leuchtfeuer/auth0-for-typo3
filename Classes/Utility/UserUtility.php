@@ -22,8 +22,6 @@ use Bitmotion\Auth0\Scope;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Crypto\Random;
@@ -39,7 +37,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
         $user = $userRepository->getUserByAuth0Id($auth0UserId);
 
-        return (empty($user)) ? $this->findUserWithoutRestrictions($tableName, $auth0UserId) : $user;
+        return $user ?? $this->findUserWithoutRestrictions($tableName, $auth0UserId);
     }
 
     protected function findUserWithoutRestrictions(string $tableName, string $auth0UserId): array
@@ -58,16 +56,16 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             $this->logger->notice(sprintf('Reactivated user with ID %s.', $user['uid']));
         }
 
-        return $user;
+        return $user ?? [];
     }
 
     /**
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     * @throws ExtensionConfigurationPathDoesNotExistException
      * @throws InvalidPasswordHashException
      */
-    public function insertUser(string $tableName, User $user): void
+    public function insertUser(string $tableName, $user): void
     {
+        $user = $user instanceof User ? $this->transformAuth0User($user) : $user;
+
         switch ($tableName) {
             case 'fe_users':
                 $this->insertFeUser($tableName, $user);
@@ -80,14 +78,20 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         }
     }
 
+    protected function transformAuth0User(User $user): array
+    {
+        return [
+            'email' => $user->getEmail(),
+            'sub' => $user->getUserId(),
+            'user_metadata' => $user->getUserMetadata(),
+        ];
+    }
     /**
      * Inserts a new frontend user
      *
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     * @throws ExtensionConfigurationPathDoesNotExistException
      * @throws InvalidPasswordHashException
      */
-    public function insertFeUser(string $tableName, User $user): void
+    public function insertFeUser(string $tableName, array $user): void
     {
         $emConfiguration = new EmAuth0Configuration();
         $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
@@ -95,12 +99,12 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             'tx_extbase_type' => 'Tx_Auth0_FrontendUser',
             'pid' => $emConfiguration->getUserStoragePage(),
             'tstamp' => time(),
-            'username' => $user->getEmail(),
+            'username' => $user['email'] ?? $user['sub'],
             'password' => $this->getPassword(),
-            'email' => $user->getEmail(),
+            'email' => $user['email'] ?? '',
             'crdate' => time(),
-            'auth0_user_id' => $user->getUserId(),
-            'auth0_metadata' => \GuzzleHttp\json_encode($user->getUserMetadata()),
+            'auth0_user_id' => $user['sub'],
+            'auth0_metadata' => \GuzzleHttp\json_encode($user['user_metadata'] ?? ''),
         ]);
     }
 
@@ -109,18 +113,18 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      *
      * @throws InvalidPasswordHashException
      */
-    public function insertBeUser(string $tableName, User $user): void
+    public function insertBeUser(string $tableName, array $user): void
     {
         $columnsTCA = $GLOBALS['TCA']['be_users']['columns'] ?? [];
         $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
         $userRepository->insertUser([
             'pid' => 0,
             'tstamp' => time(),
-            'username' => $user->getEmail(),
+            'username' => $user['email'] ?? $user['sub'],
             'password' => $this->getPassword(),
-            'email' => $user->getEmail(),
+            'email' => $user['email'] ?? '',
             'crdate' => time(),
-            'auth0_user_id' => $user->getUserId(),
+            'auth0_user_id' => $user['sub'],
             'options' => $columnsTCA['options']['config']['default'] ?? 3,
             'file_permissions' => $columnsTCA['file_permissions']['config']['default'] ?? 'readFolder,writeFolder,addFolder,renameFolder,moveFolder,deleteFolder,readFile,writeFile,addFile,renameFile,replaceFile,moveFile,copyFile,deleteFile',
         ]);

@@ -39,31 +39,41 @@ class UpdateUtility implements LoggerAwareInterface
      */
     const TYPO_SCRIPT_NODE_VALUE = '_typoScriptNodeValue';
 
-    /**
-     * @var string
-     */
     protected $tableName = '';
 
-    /**
-     * @var User
-     */
-    protected $user;
+    protected $user = [];
+
+    protected $userFromIdToken = true;
 
     /**
      * @var ParseFuncUtility
      */
     protected $parseFuncUtility;
 
-    /**
-     * @var array
-     */
     protected $yamlConfiguration = [];
 
-    public function __construct(string $tableName, User $user)
+    public function __construct(string $tableName, $user)
     {
         $this->tableName = $tableName;
+
+        if ($user instanceof User) {
+            $user = $this->transformUser($user);
+        }
+
         $this->user = $user;
         $this->yamlConfiguration = GeneralUtility::makeInstance(Auth0Configuration::class)->load();
+    }
+
+    private function transformUser(User $user): array
+    {
+        $this->userFromIdToken = false;
+
+        $normalizer = new ObjectNormalizer(null, new CamelCaseToSnakeCaseNameConverter());
+        $serializer = new Serializer([$normalizer]);
+        $user = $serializer->normalize($user, 'array');
+        $user['sub'] = $user['user_id'];
+
+        return $user;
     }
 
     public function updateGroups(): void
@@ -82,16 +92,16 @@ class UpdateUtility implements LoggerAwareInterface
         }
 
         $shouldUpdate = false;
-        $isBeAdmin = false;
+        $isBackendAdmin = false;
         $groupsToAssign = [];
 
         // Map Auth0 roles on TYPO3 user groups
-        $this->mapRoles($groupMapping, $groupsToAssign, $isBeAdmin, $shouldUpdate);
+        $this->mapRoles($groupMapping, $groupsToAssign, $isBackendAdmin, $shouldUpdate);
 
         // Update user only if necessary
         if ($shouldUpdate === true) {
             $this->logger->notice('Update user groups.');
-            $this->performGroupUpdate($groupsToAssign, $isBeAdmin);
+            $this->performGroupUpdate($groupsToAssign, $isBackendAdmin);
         }
     }
 
@@ -106,7 +116,13 @@ class UpdateUtility implements LoggerAwareInterface
                 ConfigurationUtility::getSetting('propertyMapping', $this->tableName)
             );
         } catch (InvalidConfigurationTypeException $exception) {
-            $this->logger->error($exception->getCode() . ': ' . $exception->getMessage());
+            $this->logger->notice(
+                sprintf(
+                    '%d: %s - You can safely ignore this notice when migrated to YAML configuration.',
+                    $exception->getCode(),
+                    $exception->getMessage()
+                )
+            );
         }
 
         if (empty($mappingConfiguration)) {
@@ -157,7 +173,9 @@ class UpdateUtility implements LoggerAwareInterface
 
         if ($userGroupRepository instanceof AbstractUserGroupRepository) {
             foreach ($userGroupRepository->findAll() as $userGroup) {
-                $groupMapping[$userGroup[AbstractUserGroupRepository::USER_GROUP_FIELD]] = $userGroup['uid'];
+                if (!empty($userGroup['auth0_user_group'])) {
+                    $groupMapping[$userGroup[AbstractUserGroupRepository::USER_GROUP_FIELD]] = $userGroup['uid'];
+                }
             }
         }
 
@@ -185,7 +203,13 @@ class UpdateUtility implements LoggerAwareInterface
         try {
             return ConfigurationUtility::getSetting('roles', $this->tableName);
         } catch (InvalidConfigurationTypeException $exception) {
-            $this->logger->error($exception->getCode() . ': ' . $exception->getMessage());
+            $this->logger->notice(
+                sprintf(
+                    '%d: %s - You can safely ignore this notice when migrated to YAML configuration.',
+                    $exception->getCode(),
+                    $exception->getMessage()
+                )
+            );
         }
 
         return [];
@@ -207,13 +231,21 @@ class UpdateUtility implements LoggerAwareInterface
     protected function mapRoles(array $groupMapping, array &$groupsToAssign, bool &$isBeAdmin, bool &$shouldUpdate): void
     {
         try {
+            try {
+                $rolesKey = ConfigurationUtility::getSetting('roles', 'key') ?? null;
+            } catch (InvalidConfigurationTypeException $exception) {
+                // Ignore TypoScript not included exception.
+            }
+
             // TODO: Support dot syntax for roles; e.g. roles.application
-            $rolesKey = ConfigurationUtility::getSetting('roles', 'key') ?? $this->yamlConfiguration['roles']['key'] ?? 'roles';
+            $rolesKey = $rolesKey ?? $this->yamlConfiguration['roles']['key'] ?? 'roles';
         } catch (InvalidConfigurationTypeException $exception) {
             $rolesKey = 'roles';
         }
 
-        foreach ($this->user->getAppMetadata()[$rolesKey] ?? [] as $role) {
+        $roles = (array)($this->userFromIdToken ? $this->user[$rolesKey] : $this->user['app_metadata'][$rolesKey]) ?? [];
+
+        foreach ($roles as $role) {
             if (isset($groupMapping[$role])) {
                 // TODO: Remove first and condition ($groupMapping[$role] === 'admin') with next major release)
                 if ($this->tableName === 'be_users' && $groupMapping[$role] === 'admin') {
@@ -254,13 +286,13 @@ class UpdateUtility implements LoggerAwareInterface
 
         if (!empty($updates)) {
             $userRepository = GeneralUtility::makeInstance(UserRepository::class, $this->tableName);
-            $userRepository->updateUserByAuth0Id($updates, $this->user->getUserId());
+            $userRepository->updateUserByAuth0Id($updates, $this->user['sub']);
         }
     }
 
     protected function performUserUpdate(array $mappingConfiguration, bool $reactivateUser): void
     {
-        $this->logger->debug(sprintf('%s: Prepare update for Auth0 user "%s"', $this->tableName, $this->user->getUserId()));
+        $this->logger->debug(sprintf('%s: Prepare update for Auth0 user "%s"', $this->tableName, $this->user['sub']));
 
         $updates = [];
         $userRepository = GeneralUtility::makeInstance(UserRepository::class, $this->tableName);
@@ -274,7 +306,7 @@ class UpdateUtility implements LoggerAwareInterface
         }
 
         $this->addRestrictions($userRepository);
-        $userRepository->updateUserByAuth0Id($updates, $this->user->getUserId());
+        $userRepository->updateUserByAuth0Id($updates, $this->user['sub']);
     }
 
     protected function addRestrictions(UserRepository &$userRepository): void
@@ -305,18 +337,15 @@ class UpdateUtility implements LoggerAwareInterface
     protected function mapUserData(array &$updates, array $mappingConfiguration): void
     {
         $this->parseFuncUtility = $parseFuncUtility = GeneralUtility::makeInstance(ParseFuncUtility::class);
-        $normalizer = new ObjectNormalizer(null, new CamelCaseToSnakeCaseNameConverter());
-        $serializer = new Serializer([$normalizer]);
-        $user = $serializer->normalize($this->user, 'array');
         $value = false;
 
         foreach ($mappingConfiguration as $typo3FieldName => $auth0FieldName) {
             if (!is_array($auth0FieldName)) {
                 // Update without parsing function
-                $value = $this->parseFuncUtility->updateWithoutParseFunc($auth0FieldName, $user);
+                $value = $this->parseFuncUtility->updateWithoutParseFunc($auth0FieldName, $this->user);
             } elseif (isset($auth0FieldName[self::TYPO_SCRIPT_NODE_VALUE])) {
                 // Update with parsing function
-                $value = $this->parseFuncUtility->updateWithParseFunc($typo3FieldName, $auth0FieldName, $user);
+                $value = $this->parseFuncUtility->updateWithParseFunc($typo3FieldName, $auth0FieldName, $this->user);
             }
 
             if ($value !== false) {

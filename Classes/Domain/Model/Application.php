@@ -64,6 +64,11 @@ class Application extends AbstractEntity
     protected $singleLogOut = false;
 
     /**
+     * @var bool
+     */
+    protected $api = true;
+
+    /**
      * @var string
      */
     protected $signatureAlgorithm = JwtConfiguration::ALG_RS256;
@@ -187,5 +192,15 @@ class Application extends AbstractEntity
     public function isCustomDomain(): bool
     {
         return filter_var($this->audience, FILTER_VALIDATE_URL) !== false;
+    }
+
+    public function hasApi(): bool
+    {
+        return $this->api;
+    }
+
+    public function setApi(bool $api): void
+    {
+        $this->api = $api;
     }
 }

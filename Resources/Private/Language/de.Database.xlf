@@ -39,13 +39,16 @@
 				<target>Client Secret</target>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_application.domain">
-				<target>Domain</target>
+				<target>Domain / Auth0 Tenant</target>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_application.audience">
 				<target>Audience</target>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_application.single_log_out">
 				<target>Single Log Out</target>
+			</trans-unit>
+			<trans-unit id="tx_auth0_domain_model_application.api">
+				<target>API Nutzung</target>
 			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_application.secret_base64_encoded">
 				<target>Client Secret Base64 Encoded</target>
@@ -59,6 +62,12 @@
 			</trans-unit>
 			<trans-unit id="tabs.features">
 				<target>Features</target>
+			</trans-unit>
+			<trans-unit id="palettes.api">
+				<source>Auth0 (Management) API</source>
+			</trans-unit>
+			<trans-unit id="palettes.client">
+				<source>Klient Konfiguration</source>
 			</trans-unit>
 
 			<trans-unit id="fe_users.tx_extbase_type.Tx_Auth0_FrontendUser">

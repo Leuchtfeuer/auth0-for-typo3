@@ -26,8 +26,8 @@ return [
             --div--;LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tabs.basic,
                 title,domain,
                 --palette--;;client,
-                audience,
             --div--;LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tabs.features,
+                --palette--;;api,
                 single_log_out,
             --div--;LLL:EXT:core/Resources/Private/Language/Form/locallang_tabs.xlf:access,
                 --palette--;;hidden,',
@@ -35,7 +35,12 @@ return [
     ],
     'palettes' => [
         'client' => [
+            'label' => 'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:palettes.client',
             'showitem' => 'id,secret,--linebreak--,signature_algorithm,secret_base64_encoded',
+        ],
+        'api' => [
+            'label' => 'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:palettes.api',
+            'showitem' => 'api,audience'
         ],
         'hidden' => [
             'showitem' => 'hidden',
@@ -69,6 +74,21 @@ return [
                     ],
                 ],
                 'default' => 1,
+            ],
+        ],
+        'api' => [
+            'exclude' => true,
+            'label' => 'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_application.api',
+            'onChange' => 'reload',
+            'config' => [
+                'type' => 'check',
+                'renderType' => 'checkboxToggle',
+                'items' => [
+                    [
+                        0 => '',
+                        1 => '',
+                    ],
+                ],
             ],
         ],
         'title' => [
@@ -110,6 +130,7 @@ return [
         'audience' => [
             'exclude' => false,
             'label' => 'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_application.audience',
+            'displayCond' => 'FIELD:api:REQ:true',
             'config' => [
                 'type' => 'input',
                 'size' => 30,
