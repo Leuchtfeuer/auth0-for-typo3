@@ -270,7 +270,7 @@ class UpdateUtility implements LoggerAwareInterface
 
         // Assign default group to user if no group matches
         if ($shouldUpdate === false && isset($groupMapping['__default']) && !$isBeAdmin) {
-            $groupsToAssign = array_merge($groupsToAssign, [$groupMapping['__default']]);
+            $groupsToAssign = array_merge($groupsToAssign, $groupMapping['__default']);
             $shouldUpdate = true;
         }
     }
