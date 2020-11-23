@@ -41,6 +41,8 @@ class UpdateUtility implements LoggerAwareInterface
 
     protected $tableName = '';
 
+    protected $extensionConfiguration;
+
     protected $user = [];
 
     protected $userFromIdToken = true;
@@ -55,6 +57,7 @@ class UpdateUtility implements LoggerAwareInterface
     public function __construct(string $tableName, $user)
     {
         $this->tableName = $tableName;
+        $this->extensionConfiguration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
 
         if ($user instanceof User) {
             $user = $this->transformUser($user);
@@ -71,7 +74,7 @@ class UpdateUtility implements LoggerAwareInterface
         $normalizer = new ObjectNormalizer(null, new CamelCaseToSnakeCaseNameConverter());
         $serializer = new Serializer([$normalizer]);
         $user = $serializer->normalize($user, 'array');
-        $user['sub'] = $user['user_id'];
+        $user[$this->extensionConfiguration->getUserIdentifier()] = $user['user_id'];
 
         return $user;
     }
@@ -306,21 +309,20 @@ class UpdateUtility implements LoggerAwareInterface
         }
 
         $this->addRestrictions($userRepository);
-        $userRepository->updateUserByAuth0Id($updates, $this->user['sub']);
+        $userRepository->updateUserByAuth0Id($updates, $this->user[$this->extensionConfiguration->getUserIdentifier()]);
     }
 
     protected function addRestrictions(UserRepository &$userRepository): void
     {
-        $emConfiguration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
         $reactivateDeleted = false;
         $reactivateDisabled = false;
 
         if ($this->tableName === 'fe_users') {
-            $reactivateDeleted = $emConfiguration->isReactivateDeletedFrontendUsers();
-            $reactivateDisabled = $emConfiguration->isReactivateDisabledFrontendUsers();
+            $reactivateDeleted = $this->extensionConfiguration->isReactivateDeletedFrontendUsers();
+            $reactivateDisabled = $this->extensionConfiguration->isReactivateDisabledFrontendUsers();
         } elseif ($this->tableName === 'be_users') {
-            $reactivateDeleted = $emConfiguration->isReactivateDeletedBackendUsers();
-            $reactivateDisabled = $emConfiguration->isReactivateDisabledBackendUsers();
+            $reactivateDeleted = $this->extensionConfiguration->isReactivateDeletedBackendUsers();
+            $reactivateDisabled = $this->extensionConfiguration->isReactivateDisabledBackendUsers();
         } else {
             $this->logger->notice('Undefined environment');
         }

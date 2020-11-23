@@ -43,6 +43,9 @@
 			<trans-unit id="token.public_key_file">
 				<source>Public Key File: The absolute path to your public key file on your server.</source>
 			</trans-unit>
+			<trans-unit id="token.user_identifier">
+				<source>User Identifier: The property of the ID token containing the unique user ID (default: "sub").</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

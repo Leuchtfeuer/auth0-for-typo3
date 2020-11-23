@@ -16,12 +16,14 @@ namespace Bitmotion\Auth0\Utility;
 use Bitmotion\Auth0\Api\Auth0;
 use Bitmotion\Auth0\Api\Management\UserApi;
 use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
+use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Domain\Repository\UserRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Scope;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Crypto\Random;
@@ -31,6 +33,13 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class UserUtility implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
+
+    protected $extensionConfiguration;
+
+    public function __construct()
+    {
+        $this->extensionConfiguration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
+    }
 
     public function checkIfUserExists(string $tableName, string $auth0UserId): array
     {
@@ -82,8 +91,8 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     {
         return [
             'email' => $user->getEmail(),
-            'sub' => $user->getUserId(),
             'user_metadata' => $user->getUserMetadata(),
+            $this->extensionConfiguration->getUserIdentifier() => $user->getUserId(),
         ];
     }
     /**
@@ -94,16 +103,17 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     public function insertFeUser(string $tableName, array $user): void
     {
         $emConfiguration = new EmAuth0Configuration();
+        $userIdentifier = $this->extensionConfiguration->getUserIdentifier();
         $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
         $userRepository->insertUser([
             'tx_extbase_type' => 'Tx_Auth0_FrontendUser',
             'pid' => $emConfiguration->getUserStoragePage(),
             'tstamp' => time(),
-            'username' => $user['email'] ?? $user['sub'],
+            'username' => $user['email'] ?? $user[$userIdentifier],
             'password' => $this->getPassword(),
             'email' => $user['email'] ?? '',
             'crdate' => time(),
-            'auth0_user_id' => $user['sub'],
+            'auth0_user_id' => $user[$userIdentifier],
             'auth0_metadata' => \GuzzleHttp\json_encode($user['user_metadata'] ?? ''),
         ]);
     }
@@ -116,15 +126,16 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     public function insertBeUser(string $tableName, array $user): void
     {
         $columnsTCA = $GLOBALS['TCA']['be_users']['columns'] ?? [];
+        $userIdentifier = $this->extensionConfiguration->getUserIdentifier();
         $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
         $userRepository->insertUser([
             'pid' => 0,
             'tstamp' => time(),
-            'username' => $user['email'] ?? $user['sub'],
+            'username' => $user['email'] ?? $user[$userIdentifier],
             'password' => $this->getPassword(),
             'email' => $user['email'] ?? '',
             'crdate' => time(),
-            'auth0_user_id' => $user['sub'],
+            'auth0_user_id' => $user[$userIdentifier],
             'options' => $columnsTCA['options']['config']['default'] ?? 3,
             'file_permissions' => $columnsTCA['file_permissions']['config']['default'] ?? 'readFolder,writeFolder,addFolder,renameFolder,moveFolder,deleteFolder,readFile,writeFile,addFile,renameFile,replaceFile,moveFile,copyFile,deleteFile',
         ]);
@@ -190,10 +201,14 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     {
         try {
             $this->logger->notice('Try to update user.');
+            $user = $auth0->getUser();
+            $application = BackendUtility::getRecord(ApplicationRepository::TABLE_NAME, $application, 'api, uid');
 
-            $tokenInfo = $auth0->getUser();
-            $userApi = GeneralUtility::makeInstance(ApiUtility::class, $application)->getApi(UserApi::class, Scope::USER_READ);
-            $user = $userApi->get($tokenInfo['sub']);
+            if ((bool)$application['api'] === true) {
+                $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $application['uid']);
+                $userApi = $apiUtility->getApi(UserApi::class, Scope::USER_READ);
+                $user = $userApi->get($user[$this->extensionConfiguration->getUserIdentifier()]);
+            }
 
             // Update existing user on every login
             $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, 'fe_users', $user);

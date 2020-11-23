@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Service;
 
 use Auth0\SDK\Exception\ApiException;
-use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Api\Auth0;
 use Bitmotion\Auth0\Api\Management\UserApi;
 use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
@@ -32,8 +31,6 @@ use Bitmotion\Auth0\Utility\TokenUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
 use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;
 use TYPO3\CMS\Core\Authentication\AuthenticationService as BasicAuthenticationService;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -58,9 +55,6 @@ class AuthenticationService extends BasicAuthenticationService
      */
     protected $auth0Data = [];
 
-    /**
-     * @var array
-     */
     protected $user = [];
 
     /**
@@ -69,14 +63,8 @@ class AuthenticationService extends BasicAuthenticationService
      */
     protected $tokenInfo = [];
 
-    /**
-     * @var array
-     */
     protected $userInfo = [];
 
-    /**
-     * @var string
-     */
     protected $tableName = 'fe_users';
 
     /**
@@ -94,26 +82,15 @@ class AuthenticationService extends BasicAuthenticationService
      */
     protected $auth0;
 
-    /**
-     * @var bool
-     */
     protected $loginViaSession = false;
 
-    /**
-     * @var int
-     */
     protected $application = 0;
 
+    protected $userIdentifier = '';
+
     /**
-     * @param string                     $mode      Subtype of the service which is used to call the service.
-     * @param array                      $loginData Submitted login form data
-     * @param array                      $authInfo  Information array. Holds submitted form data etc.
-     * @param AbstractUserAuthentication $pObj      Parent object
+     * @inheritDoc
      *
-     * @throws ApiException
-     * @throws CoreException
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     * @throws ExtensionConfigurationPathDoesNotExistException
      * @throws InvalidPasswordHashException
      */
     public function initAuth($mode, $loginData, $authInfo, $pObj): void
@@ -162,19 +139,18 @@ class AuthenticationService extends BasicAuthenticationService
         return $responsible;
     }
 
-    /**
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     * @throws ExtensionConfigurationPathDoesNotExistException
-     */
     protected function initApplication(): bool
     {
+        $extensionConfiguration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
+        $this->userIdentifier = $extensionConfiguration->getUserIdentifier();
+
         if ($this->environmentService->isEnvironmentInFrontendMode()) {
             $this->logger->info('Handle frontend login.');
             $this->application = $this->retrieveApplicationFromUrlQuery();
             $this->tableName = 'fe_users';
         } elseif ($this->environmentService->isEnvironmentInBackendMode()) {
             $this->logger->info('Handle backend login.');
-            $this->application = (new EmAuth0Configuration())->getBackendConnection();
+            $this->application = $extensionConfiguration->getBackendConnection();
             $this->tableName = 'be_users';
         } else {
             $this->logger->error('Environment is neither in frontend nor in backend mode.');
@@ -235,11 +211,11 @@ class AuthenticationService extends BasicAuthenticationService
         $session = (new SessionFactory())->getSessionStoreForApplication(0);
         $userInfo = $session->getUserInfo();
 
-        if (!empty($userInfo['sub'])) {
+        if (!empty($userInfo[$this->userIdentifier])) {
             $this->logger->debug('Try to login user via Auth0 session');
             try {
                 $this->userInfo = $userInfo;
-                $this->setApplicationByUser($userInfo['sub']);
+                $this->setApplicationByUser($userInfo[$this->userIdentifier]);
                 $this->getAuth0User();
                 $this->loginViaSession = true;
                 $this->login['responsible'] = false;
@@ -271,8 +247,6 @@ class AuthenticationService extends BasicAuthenticationService
     }
 
     /**
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     * @throws ExtensionConfigurationPathDoesNotExistException
      * @throws InvalidPasswordHashException
      */
     protected function handleLogin(): void
@@ -298,7 +272,7 @@ class AuthenticationService extends BasicAuthenticationService
         try {
             $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $this->application);
             $userApi = $apiUtility->getApi(UserApi::class, Scope::USER_READ);
-            $this->auth0User = $userApi->get($this->userInfo['sub']);
+            $this->auth0User = $userApi->get($this->userInfo[$this->userIdentifier]);
         } catch (ApiNotEnabledException $exception) {
             // Do nothing since API is disabled
         } catch (ApiException $apiException) {
@@ -313,14 +287,12 @@ class AuthenticationService extends BasicAuthenticationService
     /**
      * Insert or updates user data in TYPO3 database
      *
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     * @throws ExtensionConfigurationPathDoesNotExistException
      * @throws InvalidPasswordHashException
      */
     protected function insertOrUpdateUser(): void
     {
         $userUtility = GeneralUtility::makeInstance(UserUtility::class);
-        $this->user = $userUtility->checkIfUserExists($this->tableName, $this->userInfo['sub']);
+        $this->user = $userUtility->checkIfUserExists($this->tableName, $this->userInfo[$this->userIdentifier]);
 
         // Insert a new user into database
         if (empty($this->user)) {
@@ -336,7 +308,7 @@ class AuthenticationService extends BasicAuthenticationService
             $updateUtility->updateUser();
         } else {
             // Update last used application (no TypoScript loaded in Frontend Requests)
-            $userUtility->setLastUsedApplication($this->userInfo['sub'], $this->application);
+            $userUtility->setLastUsedApplication($this->userInfo[$this->userIdentifier], $this->application);
         }
     }
 
@@ -349,12 +321,12 @@ class AuthenticationService extends BasicAuthenticationService
             $this->auth0 = GeneralUtility::makeInstance(ApiUtility::class, $this->application)->getAuth0();
             $this->userInfo = $this->auth0->getUser() ?? [];
 
-            if (!isset($this->userInfo['sub']) || $this->getAuth0User() === false) {
+            if (!isset($this->userInfo[$this->userIdentifier]) || $this->getAuth0User() === false) {
                 return false;
             }
 
             $this->login['responsible'] = true;
-            $this->logger->notice(sprintf('Found user with Auth0 identifier "%s".', $this->userInfo['sub']));
+            $this->logger->notice(sprintf('Found user with Auth0 identifier "%s".', $this->userInfo[$this->userIdentifier]));
 
             return true;
         } catch (\Exception $exception) {
@@ -369,11 +341,11 @@ class AuthenticationService extends BasicAuthenticationService
      */
     public function getUser()
     {
-        if ($this->login['status'] !== 'login' || $this->login['responsible'] === false || !isset($this->userInfo['sub'])) {
+        if ($this->login['status'] !== 'login' || $this->login['responsible'] === false || !isset($this->userInfo[$this->userIdentifier])) {
             return false;
         }
 
-        $user = $this->fetchUserRecord($this->login['uname'], 'auth0_user_id = "' . $this->userInfo['sub'] . '"');
+        $user = $this->fetchUserRecord($this->login['uname'], 'auth0_user_id = "' . $this->userInfo[$this->userIdentifier] . '"');
 
         if (!is_array($user)) {
             // Delete persistent Auth0 user data
@@ -398,12 +370,13 @@ class AuthenticationService extends BasicAuthenticationService
             return 100;
         }
 
-        if (empty($user['auth0_user_id']) || $user['auth0_user_id'] !== $this->userInfo['sub']) {
+        if (empty($user['auth0_user_id']) || $user['auth0_user_id'] !== $this->userInfo[$this->userIdentifier]) {
             // Verification failed as identifier does not match. Maybe other services can handle this login.
             return 100;
         }
 
         // Do not login if email address is not verified (only available if API is enabled)
+        // TODO:: Support this even API is disabled
         if ($this->auth0User !== null && !$this->auth0User->isEmailVerified()) {
             $this->logger->warning('Email not verified. Do not login user.');
 

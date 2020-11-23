@@ -51,6 +51,8 @@ class EmAuth0Configuration implements SingletonInterface
 
     protected $publicKeyFile = '';
 
+    protected $userIdentifier = 'sub';
+
     /**
      * @throws ExtensionConfigurationExtensionNotConfiguredException
      * @throws ExtensionConfigurationPathDoesNotExistException
@@ -184,5 +186,10 @@ class EmAuth0Configuration implements SingletonInterface
     public function useKeyFiles(): bool
     {
         return !empty($this->publicKeyFile) && !empty($this->privateKeyFile);
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->userIdentifier;
     }
 }

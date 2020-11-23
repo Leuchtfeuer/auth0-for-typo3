@@ -43,6 +43,9 @@
 			<trans-unit id="token.public_key_file">
 				<target>Pfad zum öffentlichen Schlüssel: Der absolute Dateipfad zum öffentlichen Schlüssel auf deinem Server.</target>
 			</trans-unit>
+			<trans-unit id="token.user_identifier">
+				<target>User Identifier: Die Eigenschaft des ID Tokens, die die eindeutige Benutzer-ID enthält (Standard: "sub").</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
