@@ -257,12 +257,12 @@ class AuthenticationService extends BasicAuthenticationService
                 case 'getUserBE':
                     $this->insertOrUpdateUser();
                     break;
-                case 'authUserFe':
-                case 'authUserBe':
-                    $this->logger->debug('Skip auth mode.');
+                case 'authUserFE':
+                case 'authUserBE':
+                    $this->logger->debug(sprintf('Skip auth mode "%s".', $this->mode));
                     break;
                 default:
-                    $this->logger->notice('Undefined mode. Skip.');
+                    $this->logger->notice(sprintf('Undefined mode "%s". Skip.', $this->mode));
             }
         }
     }
