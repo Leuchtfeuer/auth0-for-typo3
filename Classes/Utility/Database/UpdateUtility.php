@@ -27,6 +27,7 @@ use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 
@@ -221,14 +222,19 @@ class UpdateUtility implements LoggerAwareInterface
 
     protected function addDefaultGroup(array &$groupMapping): void
     {
-        if ($this->tableName === 'fe_users') {
-            $defaultGroup = $this->yamlConfiguration['roles']['default']['frontend'];
-        } else {
-            $defaultGroup = $this->yamlConfiguration['roles']['default']['backend'];
+        $key = 'frontend';
+        $userGroupTableName = 'fe_groups';
+
+        if ($this->tableName === 'be_users') {
+            $key = 'backend';
+            $userGroupTableName = 'be_groups';
         }
 
-        if ($defaultGroup !== 0) {
-            // TODO: Add check whether default user group is not deleted and exists in database
+        $defaultGroup = (int)($this->yamlConfiguration['roles']['default'][$key] ?? 0);
+        $userGroup = BackendUtility::getRecord($userGroupTableName, $defaultGroup);
+
+        // Use default user group only when group id is not null and record exists (and is neither deleted nor hidden)
+        if ($defaultGroup !== 0 && $userGroup !== null) {
             $groupMapping['__default'] = [$defaultGroup];
         }
     }
