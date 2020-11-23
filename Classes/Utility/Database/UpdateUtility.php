@@ -177,7 +177,8 @@ class UpdateUtility implements LoggerAwareInterface
         if ($userGroupRepository instanceof AbstractUserGroupRepository) {
             foreach ($userGroupRepository->findAll() as $userGroup) {
                 if (!empty($userGroup['auth0_user_group'])) {
-                    $groupMapping[$userGroup[AbstractUserGroupRepository::USER_GROUP_FIELD]] = $userGroup['uid'];
+                    $groupMapping[$userGroup[AbstractUserGroupRepository::USER_GROUP_FIELD]] = $groupMapping[$userGroup[AbstractUserGroupRepository::USER_GROUP_FIELD]] ?? [];
+                    $groupMapping[$userGroup[AbstractUserGroupRepository::USER_GROUP_FIELD]][] = $userGroup['uid'];
                 }
             }
         }
@@ -227,7 +228,8 @@ class UpdateUtility implements LoggerAwareInterface
         }
 
         if ($defaultGroup !== 0) {
-            $groupMapping['__default'] = $defaultGroup;
+            // TODO: Add check whether default user group is not deleted and exists in database
+            $groupMapping['__default'] = [$defaultGroup];
         }
     }
 
@@ -255,7 +257,7 @@ class UpdateUtility implements LoggerAwareInterface
                     $isBeAdmin = true;
                 } else {
                     $this->logger->notice(sprintf('Assign group "%s" to user.', $groupMapping[$role]));
-                    $groupsToAssign[] = $groupMapping[$role];
+                    $groupsToAssign = array_merge($groupsToAssign, $groupMapping[$role]);
                 }
                 $shouldUpdate = true;
             } elseif (!empty($this->yamlConfiguration['roles']['beAdmin']) && $role === $this->yamlConfiguration['roles']['beAdmin']) {
@@ -268,7 +270,7 @@ class UpdateUtility implements LoggerAwareInterface
 
         // Assign default group to user if no group matches
         if ($shouldUpdate === false && isset($groupMapping['__default']) && !$isBeAdmin) {
-            $groupsToAssign[] = $groupMapping['__default'];
+            $groupsToAssign = array_merge($groupsToAssign, [$groupMapping['__default']]);
             $shouldUpdate = true;
         }
     }
@@ -276,6 +278,7 @@ class UpdateUtility implements LoggerAwareInterface
     protected function performGroupUpdate(array $groupsToAssign, bool $isBeAdmin): void
     {
         $updates = [];
+        $groupsToAssign = array_unique($groupsToAssign);
 
         // Update usergroup in database
         if (!empty($groupsToAssign)) {
