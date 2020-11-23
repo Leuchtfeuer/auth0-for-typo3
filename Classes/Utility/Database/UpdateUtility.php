@@ -289,13 +289,19 @@ class UpdateUtility implements LoggerAwareInterface
 
         if (!empty($updates)) {
             $userRepository = GeneralUtility::makeInstance(UserRepository::class, $this->tableName);
-            $userRepository->updateUserByAuth0Id($updates, $this->user['sub']);
+            $userRepository->updateUserByAuth0Id($updates, $this->user[$this->extensionConfiguration->getUserIdentifier()]);
         }
     }
 
     protected function performUserUpdate(array $mappingConfiguration, bool $reactivateUser): void
     {
-        $this->logger->debug(sprintf('%s: Prepare update for Auth0 user "%s"', $this->tableName, $this->user['sub']));
+        $this->logger->debug(
+            sprintf(
+                '%s: Prepare update for Auth0 user "%s"',
+                $this->tableName,
+                $this->user[$this->extensionConfiguration->getUserIdentifier()]
+            )
+        );
 
         $updates = [];
         $userRepository = GeneralUtility::makeInstance(UserRepository::class, $this->tableName);
