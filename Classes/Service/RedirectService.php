@@ -22,6 +22,7 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\FrontendRestrictionContainer;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
+use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Felogin\Controller\FrontendLoginController;
@@ -239,15 +240,11 @@ class RedirectService implements LoggerAwareInterface
      */
     protected function pi_getPageLink($id, $target = '', $urlParameters = [])
     {
-        $contentObjectRenderer = $GLOBALS['TSFE']->cObj;
-
-        // When generic callbacks are used, $GLOBALS['TSFE'] is not fully set up.
-        if (!$contentObjectRenderer instanceof ContentObjectRenderer) {
-            $GLOBALS['TSFE']->fetch_the_id();
-            $contentObjectRenderer = GeneralUtility::makeInstance(ContentObjectRenderer::class);
+        if ($GLOBALS['TSFE']->cObj instanceof ContentObjectRenderer) {
+            return $GLOBALS['TSFE']->cObj->getTypoLink_URL($id, $urlParameters, $target);
         }
 
-        return $contentObjectRenderer->getTypoLink_URL($id, $urlParameters, $target);
+        return (string)GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId($id)->getRouter()->generateUri($id);
     }
 
     /**
