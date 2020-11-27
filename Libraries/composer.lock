@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "auth0/auth0-php",
-            "version": "7.4.0",
+            "version": "7.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/auth0/auth0-PHP.git",
-                "reference": "ccead4f3eab36703b905eee49e9e61a282cb7694"
+                "reference": "29c74a3d6c7ff7c3c1d294d204ecabcb83e589e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/auth0/auth0-PHP/zipball/ccead4f3eab36703b905eee49e9e61a282cb7694",
-                "reference": "ccead4f3eab36703b905eee49e9e61a282cb7694",
+                "url": "https://api.github.com/repos/auth0/auth0-PHP/zipball/29c74a3d6c7ff7c3c1d294d204ecabcb83e589e1",
+                "reference": "29c74a3d6c7ff7c3c1d294d204ecabcb83e589e1",
                 "shasum": ""
             },
             "require": {
@@ -29,7 +29,7 @@
             },
             "require-dev": {
                 "cache/array-adapter": "^1.0",
-                "dealerdirect/phpcodesniffer-composer-installer": "^0.5.0",
+                "dealerdirect/phpcodesniffer-composer-installer": "^0.7",
                 "josegonzalez/dotenv": "^2.0",
                 "phpcompatibility/php-compatibility": "^8.1",
                 "phpunit/phpunit": "^7.0",
@@ -56,9 +56,9 @@
             "homepage": "https://github.com/auth0/auth0-PHP",
             "support": {
                 "issues": "https://github.com/auth0/auth0-PHP/issues",
-                "source": "https://github.com/auth0/auth0-PHP/tree/7.4.0"
+                "source": "https://github.com/auth0/auth0-PHP/tree/7.5.0"
             },
-            "time": "2020-09-28T14:41:29+00:00"
+            "time": "2020-11-16T13:00:36+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -263,16 +263,16 @@
         },
         {
             "name": "lcobucci/jwt",
-            "version": "3.3.3",
+            "version": "3.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lcobucci/jwt.git",
-                "reference": "c1123697f6a2ec29162b82f170dd4a491f524773"
+                "reference": "958a9873a63b0244a72f6e354ccc86019ee674a5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lcobucci/jwt/zipball/c1123697f6a2ec29162b82f170dd4a491f524773",
-                "reference": "c1123697f6a2ec29162b82f170dd4a491f524773",
+                "url": "https://api.github.com/repos/lcobucci/jwt/zipball/958a9873a63b0244a72f6e354ccc86019ee674a5",
+                "reference": "958a9873a63b0244a72f6e354ccc86019ee674a5",
                 "shasum": ""
             },
             "require": {
@@ -287,6 +287,9 @@
                 "phpunit/phpunit": "^5.7 || ^7.3",
                 "squizlabs/php_codesniffer": "~2.3"
             },
+            "suggest": {
+                "lcobucci/clock": "*"
+            },
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -296,7 +299,12 @@
             "autoload": {
                 "psr-4": {
                     "Lcobucci\\JWT\\": "src"
-                }
+                },
+                "files": [
+                    "compat/class-aliases.php",
+                    "compat/json-exception-polyfill.php",
+                    "compat/lcobucci-clock-polyfill.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -316,7 +324,7 @@
             ],
             "support": {
                 "issues": "https://github.com/lcobucci/jwt/issues",
-                "source": "https://github.com/lcobucci/jwt/tree/3.3.3"
+                "source": "https://github.com/lcobucci/jwt/tree/3.4.1"
             },
             "funding": [
                 {
@@ -328,7 +336,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2020-08-20T13:22:28+00:00"
+            "time": "2020-11-27T01:17:14+00:00"
         },
         {
             "name": "psr/http-message",
