@@ -35,6 +35,9 @@
 			<trans-unit id="roles.frontend.default">
 				<source>No default group</source>
 			</trans-unit>
+			<trans-unit id="roles.frontend.no_groups">
+				<source>No website usergroup found.</source>
+			</trans-unit>
 			<trans-unit id="roles.backend.text">
 				<source>This backend user group is assigned to an user if none of his Auth0 roles is assigned to a backend user group.</source>
 			</trans-unit>
@@ -43,6 +46,9 @@
 			</trans-unit>
 			<trans-unit id="roles.backend.default">
 				<source>No default group</source>
+			</trans-unit>
+			<trans-unit id="roles.backend.no_groups">
+				<source>No backend usergroup found.</source>
 			</trans-unit>
 			<trans-unit id="roles.admin.text">
 				<source>If a user has this Auth0 role, he becomes a TYPO3 backend administrator.</source>
@@ -89,6 +95,15 @@
 			</trans-unit>
 			<trans-unit id="application.infobox.content">
 				<source>Start now and create your first Auth0 application.</source>
+			</trans-unit>
+			<trans-unit id="application.ts.title">
+				<source>TypoScript included?</source>
+			</trans-unit>
+			<trans-unit id="application.ts.content">
+				<source>No TypoScript configuration found.</source>
+			</trans-unit>
+			<trans-unit id="application.ts.button">
+				<source>Go to template module</source>
 			</trans-unit>
 
 			<trans-unit id="list.title">

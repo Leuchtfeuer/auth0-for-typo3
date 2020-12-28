@@ -84,7 +84,14 @@
 			<f:translate key="LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_groups" />
 		</h2>
 
-		<f:render partial="Backend/UserGroupTable" arguments="{groupMapping: frontendUserGroupMapping, table: 'fe_groups'}"/>
+		<f:if condition="{frontendUserGroupMapping}}">
+			<f:then>
+				<f:render partial="Backend/UserGroupTable" arguments="{groupMapping: frontendUserGroupMapping, table: 'fe_groups'}"/>
+			</f:then>
+			<f:else>
+				<f:be.infobox state="-1" title="{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.frontend.no_groups')}" />
+			</f:else>
+		</f:if>
 		<hr />
 	</f:if>
 
@@ -94,6 +101,13 @@
 			<f:translate key="LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:be_groups" />
 		</h2>
 
-		<f:render partial="Backend/UserGroupTable" arguments="{groupMapping: backendUserGroupMapping, table: 'be_groups'}"/>
+		<f:if condition="{backendUserGroupMapping}">
+			<f:then>
+				<f:render partial="Backend/UserGroupTable" arguments="{groupMapping: backendUserGroupMapping, table: 'be_groups'}"/>
+			</f:then>
+			<f:else>
+				<f:be.infobox state="-1" title="{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.backend.no_groups')}" />
+			</f:else>
+		</f:if>
 	</f:if>
 </f:section>

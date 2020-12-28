@@ -36,11 +36,17 @@
 			<trans-unit id="roles.frontend.default">
 				<target>Keine Standardgruppe</target>
 			</trans-unit>
+			<trans-unit id="roles.frontend.no_groups">
+				<target>Keine Webseiten-Nutzergruppe gefunden.</target>
+			</trans-unit>
 			<trans-unit id="roles.backend.text">
 				<target>Diese Backend Benutzergruppe wird einem Nutzer zugewiesen, wenn keine der hinterleten Mapping Konfigurationen zutrifft oder der Nutzer keine Auth0 Rolle hinterlegt hat.</target>
 			</trans-unit>
 			<trans-unit id="roles.backend.label">
 				<target>Keine Standardgruppe</target>
+			</trans-unit>
+			<trans-unit id="roles.backend.no_groups">
+				<target>Keine Backend Benutzergruppe gefunden.</target>
 			</trans-unit>
 			<trans-unit id="roles.admin.text">
 				<target>Wenn ein Auth0 Benutzer über diese Rolle verfügt, wird er zum TYPO3 Backend Administrator.</target>
@@ -87,6 +93,15 @@
 			</trans-unit>
 			<trans-unit id="application.infobox.content">
 				<target>Starte jetzt und erstelle deine erste Auth0 Applikation.</target>
+			</trans-unit>
+			<trans-unit id="application.ts.title">
+				<target>TypoScript eingebunden?</target>
+			</trans-unit>
+			<trans-unit id="application.ts.content">
+				<target>Keine TypoScript Konfiguration gefunden.</target>
+			</trans-unit>
+			<trans-unit id="application.ts.button">
+				<target>Zum Template Modul</target>
 			</trans-unit>
 
 			<trans-unit id="list.title">
