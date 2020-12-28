@@ -2,10 +2,12 @@
 	<div class="typo3-login-inner">
 		<div class="typo3-login-container">
 			<div class="typo3-login-wrap">
-				<div class="panel panel-lg panel-login">
-					<div class="panel-body">
+				<div class="card card-lg card-login panel panel-lg panel-login">
+					<div class="card-body panel-body">
 						<div class="typo3-login-logo">
-							<img src="{logo}" class="typo3-login-image" alt="" />
+							<a href="{loginUrl}" id="t3js-login-url">
+								<img src="{logo}" class="typo3-login-image" alt="" />
+							</a>
 						</div>
 						<f:if condition="{formType} == 'LoginForm'">
 							<f:then>
@@ -22,6 +24,9 @@
 								</noscript>
 								<div class="hidden t3js-login-error-nocookies">
 									<f:be.infobox message="{f:translate(key: 'login.error.cookies')}" state="2" />
+								</div>
+								<div class="hidden t3js-login-error-noreferrer">
+									<f:be.infobox message="{f:translate(key: 'login.error.referrer')}" state="2" />
 								</div>
 								<div class="typo3-login-form t3js-login-formfields">
 									<form action="?loginProvider={loginProviderIdentifier}" method="post" name="loginform" id="typo3-login-form">
@@ -83,20 +88,20 @@
 						</f:if>
 					</div>
 					<f:render partial="LoginNews" arguments="{_all}" />
-					<div class="panel-footer">
+					<div class="panel-footer card-footer">
 						<div class="typo3-login-copyright-wrap">
-							<a href="https://www.auth0.com" target="_blank" class="typo3-login-copyright-link collapsed" data-toggle="collapse" aria-expanded="false" aria-controls="loginCopyright">
+							<a href="#loginCopyright" class="typo3-login-copyright-link collapsed" data-toggle="collapse" data-bs-toggle="collapse" aria-expanded="false" aria-controls="loginCopyright">
 								<span><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.login.copyright" /></span>
-								<f:image src="EXT:auth0/Resources/Public/Images/logo-blue.png" height="20c" />
+								<img src="{auth0Image}" height="20" />
 							</a>
 							<div id="loginCopyright" class="collapse">
 								<div class="typo3-login-copyright-text">
 									<p>
-										<f:format.raw>{copyright}</f:format.raw>
+										<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.login.copyright.description" />
 									</p>
 									<ul class="list-unstyled">
-										<li><a href="https://typo3.org" target="_blank" class="t3-login-link-typo3"><i class="fa fa-external-link"></i> TYPO3.org</a></li>
-										<li><a href="https://typo3.org/donate/online-donation/" target="_blank" class="t3-login-link-donate"><i class="fa fa-external-link"></i> <f:translate key="login.donate" /></a></li>
+										<li><a href="https://www.auth0.com" target="_blank" class="t3-login-link-typo3"><i class="fa fa-external-link"></i> Auth0.com</a></li>
+										<li><a href="https://Leuchtfeuer.com?utm_source=link&utm_medium=auth0" target="_blank" class="t3-login-link-donate"><i class="fa fa-external-link"></i> Leuchtfeuer.com</a></li>
 									</ul>
 								</div>
 							</div>

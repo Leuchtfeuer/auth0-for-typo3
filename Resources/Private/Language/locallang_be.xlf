@@ -21,6 +21,9 @@
 			<trans-unit id="form.login.copyright">
 				<source>More about Auth0</source>
 			</trans-unit>
+			<trans-unit id="form.login.copyright.description">
+				<source>Auth0 is the solution you need for web, mobile, IoT, and internal applications. Loved by developers and trusted by enterprises.</source>
+			</trans-unit>
 			<trans-unit id="form.logout.auth0">
 				<source>Log out from Auth0</source>
 			</trans-unit>

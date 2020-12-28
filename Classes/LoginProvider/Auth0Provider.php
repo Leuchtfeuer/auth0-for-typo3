@@ -27,6 +27,7 @@ use TYPO3\CMS\Backend\Controller\LoginController;
 use TYPO3\CMS\Backend\LoginProvider\LoginProviderInterface;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
@@ -109,6 +110,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
             'auth0ErrorDescription' => GeneralUtility::_GET('error_description'),
             'code' => GeneralUtility::_GET('code'),
             'userInfo' => $this->userInfo,
+            'auth0Image' => PathUtility::getAbsoluteWebPath(GeneralUtility::getFileAbsFileName('EXT:auth0/Resources/Public/Images/auth0-logo-horizontal-color.svg')),
         ]);
     }
 
