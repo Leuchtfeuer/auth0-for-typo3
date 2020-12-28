@@ -246,7 +246,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
         $tokenUtility->withPayload('redirectPageLogout', $this->settings['redirectPageLogout']);
         $tokenUtility->withPayload('redirectDisable', $this->settings['redirectDisable']);
 
-        $callback = sprintf(
+        return sprintf(
             '%s%s?logintype=%s&%s=%s',
             $tokenUtility->getIssuer(),
             CallbackMiddleware::PATH,
@@ -254,8 +254,6 @@ class LoginController extends ActionController implements LoggerAwareInterface
             CallbackMiddleware::TOKEN_PARAMETER,
             $tokenUtility->buildToken()
         );
-
-        return $callback;
     }
 
     protected function addLogoutRedirect(): string
