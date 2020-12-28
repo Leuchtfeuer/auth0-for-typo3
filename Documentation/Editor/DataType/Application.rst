@@ -23,12 +23,13 @@ Properties
    Property                       Database Property                                                                           Type     Tab
    ============================== =========================================================================================== ======== ==========
    Name                           :ref:`title <editor-dataTypes-application-properties-title>`                                string   Basic
-   Domain                         :ref:`domain <editor-dataTypes-application-properties-domain>`                              string   Basic
+   Domain / Auth0 Tenant          :ref:`domain <editor-dataTypes-application-properties-domain>`                              string   Basic
    Client Identifier              :ref:`id <editor-dataTypes-application-properties-id>`                                      string   Basic
    Client Secret                  :ref:`secret <editor-dataTypes-application-properties-secret>`                              string   Basic
    JWT Signature Algorithm        :ref:`signature_algorithm <editor-dataTypes-application-properties-signatureAlgorithm>`     string   Basic
    Client Secret Base64 Encoded   :ref:`secret_base64_encoded <editor-dataTypes-application-properties-secretBase64Encoded>`  boolean  Basic
-   Audience                       :ref:`audience <editor-dataTypes-application-properties-audience>`                          string   Basic
+   Use API                        :ref:`api <editor-dataTypes-application-properties-secretBase64Encoded-api>`                boolean  Features
+   Audience                       :ref:`audience <editor-dataTypes-application-properties-audience>`                          string   Features
    Single Log Out                 :ref:`single_log_out <editor-dataTypes-application-properties-singleLogOut>`                boolean  Features
    Enabled                        hidden                                                                                      boolean  Access
    ============================== =========================================================================================== ======== ==========
@@ -127,6 +128,22 @@ Secret Base64 Encoded
    Description
          Set this property to true when your client secret is base64 encoded.
 
+.. _editor-dataTypes-application-properties-api:
+
+Use Auth0 (Management) API
+--------------------------
+.. container:: table-row
+
+   Property
+         api
+   Data type
+         boolean
+   Default
+         :code:`false`
+   Description
+         Whether you want to use the Auth0 management API to retrieve more information than that ones that are included in users
+         ID token. Please note that user and application metadata may not be available when using the management API is disabled.
+
 .. _editor-dataTypes-application-properties-audience:
 
 Audience
@@ -142,7 +159,8 @@ Audience
    Description
          This property contains the path to the audience of your Auth0 application. If you are using your tenant ID, the default
          value should fit your needs. If you are using a **custom domain** you should adapt this configuration and fill in the
-         full URL of your audience (e.g. `https://tenant.region.auth0.com/api/v2/`).
+         full URL of your audience (e.g. `https://tenant.region.auth0.com/api/v2/`). Please note that this option is only visible
+         when the :ref:`Auth0 Management API <editor-dataTypes-application-properties-api>` is used.
 
 .. _editor-dataTypes-application-properties-singleLogOut:
 

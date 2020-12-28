@@ -26,6 +26,8 @@ We are currently supporting following TYPO3 versions:<br><br>
 | 2.x               | -                 | x                | -                |
 | 1.x               | -                 | -                | x                |
 
+_Beta support for TYPO3 v11.0 is available since version 3.4.0._
+
 ## About Auth0
 Auth0 helps you to:
 

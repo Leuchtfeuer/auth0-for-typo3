@@ -24,6 +24,8 @@ You need access to an Auth0 instance. We are currently supporting following TYPO
         "2.x", "🙅‍♀️", "🙋‍♂️", "🙅‍♀️"
         "1.x", "🙅‍♀️", "🙅‍♀️", "🙋‍♂️"
 
+*Beta support for TYPO3 v11.0 is available since version 3.4.0.*
+
 .. _about-aboutAuth0:
 
 About Auth0

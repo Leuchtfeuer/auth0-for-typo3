@@ -37,6 +37,7 @@ Properties
    genericCallback_                     Token                                boolean
    privateKeyFile_                      Token                                string
    publicKeyFile_                       Token                                string
+   userIdentifier_                      Token                                string
    ==================================== ==================================== ==================
 
 .. ### BEGIN~OF~TABLE ###
@@ -237,3 +238,18 @@ publicKeyFile
          unset
    Description
          The absolute path to your public key file on your server.
+
+.. _admin-extensionConfiguration-properties-userIdentifier:
+
+userIdentifier
+-------------
+.. container:: table-row
+
+   Property
+         userIdentifier
+   Data type
+         string
+   Default
+         :code:`sub`
+   Description
+         The property of the ID token containing the unique user ID.
