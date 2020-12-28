@@ -5,10 +5,10 @@
 				<thead>
 				<tr>
 					<th class="text-nowrap">
-						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.auth0"/>
+						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.typo3"/>
 					</th>
 					<th class="text-nowrap">
-						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.typo3"/>
+						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.auth0"/>
 					</th>
 					<th class="text-nowrap">
 						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.processing"/>
@@ -20,8 +20,8 @@
 				<tbody>
 				<f:for each="{configuration}" as="property">
 					<tr>
-						<td>{property.auth0Property}</td>
 						<td>{property.databaseField}</td>
+						<td>{property.auth0Property}</td>
 						<td><f:if condition="{property.processing} !== 'null'">{property.processing}</f:if></td>
 						<td class="col-control nowrap">
 							<div class="btn-group" role="group">
