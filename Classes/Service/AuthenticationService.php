@@ -74,6 +74,7 @@ class AuthenticationService extends BasicAuthenticationService
 
     /**
      * @var EnvironmentService
+     * @deprecated This property is no longer used. You can retrieve the proper context from $this->authInfo['loginType']
      */
     protected $environmentService;
 
@@ -95,12 +96,12 @@ class AuthenticationService extends BasicAuthenticationService
      */
     public function initAuth($mode, $loginData, $authInfo, $pObj): void
     {
-        if ($this->isResponsible() === false) {
+        if ($this->isResponsible($authInfo['loginType']) === false) {
             $this->logger->debug('Auth0 authentication is not responsible for this request.');
             return;
         }
 
-        if ($this->initApplication() === false) {
+        if ($this->initApplication($authInfo['loginType']) === false) {
             $this->logger->debug('Initialization of Auth0 application failed.');
             return;
         }
@@ -117,13 +118,12 @@ class AuthenticationService extends BasicAuthenticationService
         }
     }
 
-    protected function isResponsible(): bool
+    protected function isResponsible(string $loginType): bool
     {
-        $this->environmentService = GeneralUtility::makeInstance(EnvironmentService::class);
         $responsible = true;
 
         // Service is not responsible when environment is in backend mode and the given loginProvider does not match the expected one.
-        if ($this->environmentService->isEnvironmentInBackendMode() && (int)GeneralUtility::_GP('loginProvider') !== Auth0Provider::LOGIN_PROVIDER) {
+        if ($loginType ===  'BE' && (int)GeneralUtility::_GP('loginProvider') !== Auth0Provider::LOGIN_PROVIDER) {
             $this->logger->debug('Not an Auth0 backend login. Skip.');
             $responsible = false;
         }
@@ -139,24 +139,29 @@ class AuthenticationService extends BasicAuthenticationService
         return $responsible;
     }
 
-    protected function initApplication(): bool
+    protected function initApplication(string $loginType): bool
     {
         $extensionConfiguration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
         $this->userIdentifier = $extensionConfiguration->getUserIdentifier();
 
-        if ($this->environmentService->isEnvironmentInFrontendMode()) {
-            $this->logger->info('Handle frontend login.');
-            $this->application = $this->retrieveApplicationFromUrlQuery();
-            $this->tableName = 'fe_users';
-        } elseif ($this->environmentService->isEnvironmentInBackendMode()) {
-            $this->logger->info('Handle backend login.');
-            $this->application = $extensionConfiguration->getBackendConnection();
-            $this->tableName = 'be_users';
-        } else {
-            $this->logger->error('Environment is neither in frontend nor in backend mode.');
+        switch ($loginType) {
+            case 'FE':
+                $this->logger->info('Handle frontend login.');
+                $this->application = $this->retrieveApplicationFromUrlQuery();
+                $this->tableName = 'fe_users';
+                break;
+
+            case 'BE':
+                $this->logger->info('Handle backend login.');
+                $this->application = $extensionConfiguration->getBackendConnection();
+                $this->tableName = 'be_users';
+                break;
+
+            default:
+                $this->logger->error('Environment is neither in frontend nor in backend mode.');
         }
 
-        if ($this->application === 0 && $this->initSessionStore() === false) {
+        if ($this->application === 0 && $this->initSessionStore($loginType) === false) {
             $this->logger->error('No Auth0 application UID given.');
 
             return false;
@@ -205,10 +210,10 @@ class AuthenticationService extends BasicAuthenticationService
      * TODO: Maybe deprecate this as the user might not be logged in into Auth0 (Single Log Out).
      * TODO: Or check whether there is a valid Auth0 session.
      */
-    protected function initSessionStore(): bool
+    protected function initSessionStore(string $loginType): bool
     {
         // TODO: Add application UID
-        $session = (new SessionFactory())->getSessionStoreForApplication(0);
+        $session = (new SessionFactory())->getSessionStoreForApplication(0, $loginType);
         $userInfo = $session->getUserInfo();
 
         if (!empty($userInfo[$this->userIdentifier])) {
@@ -304,7 +309,7 @@ class AuthenticationService extends BasicAuthenticationService
         $updateUtility->updateGroups();
 
         // Update existing user on every login when we are in BE context (since TypoScript is loaded).
-        if ($this->environmentService->isEnvironmentInBackendMode()) {
+        if ($this->authInfo['loginType'] === 'BE') {
             $updateUtility->updateUser();
         } else {
             // Update last used application (no TypoScript loaded in Frontend Requests)
@@ -318,7 +323,7 @@ class AuthenticationService extends BasicAuthenticationService
     protected function initializeAuth0Connections(): bool
     {
         try {
-            $this->auth0 = GeneralUtility::makeInstance(ApiUtility::class, $this->application)->getAuth0();
+            $this->auth0 = GeneralUtility::makeInstance(ApiUtility::class, $this->application)->withContext($this->authInfo['loginType'])->getAuth0();
             $this->userInfo = $this->auth0->getUser() ?? [];
 
             if (!isset($this->userInfo[$this->userIdentifier]) || $this->getAuth0User() === false) {

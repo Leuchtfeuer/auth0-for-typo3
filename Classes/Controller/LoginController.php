@@ -93,7 +93,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
         if ($context->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
             // Get Auth0 user from session storage
-            $userInfo = (new SessionFactory())->getSessionStoreForApplication($this->application)->getUserInfo();
+            $userInfo = (new SessionFactory())->getSessionStoreForApplication($this->application, SessionFactory::SESSION_PREFIX_FRONTEND)->getUserInfo();
 
             // Redirect when user just logged in (and update him)
             if (!$this->extensionConfiguration->isGenericCallback() && GeneralUtility::_GET('logintype') === 'login' && !empty($userInfo)) {
@@ -140,7 +140,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
     public function loginAction(?string $rawAdditionalAuthorizeParameters = null): void
     {
         $context = GeneralUtility::makeInstance(Context::class);
-        $userInfo = (new SessionFactory())->getSessionStoreForApplication($this->application)->getUserInfo();
+        $userInfo = (new SessionFactory())->getSessionStoreForApplication($this->application, SessionFactory::SESSION_PREFIX_FRONTEND)->getUserInfo();
 
         // Log in user to auth0 when there is neither a TYPO3 frontend user nor an Auth0 user
         if (!$context->getPropertyFromAspect('frontend.user', 'isLoggedIn') || empty($userInfo)) {

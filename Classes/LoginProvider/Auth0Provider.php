@@ -118,8 +118,9 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
     {
         try {
             $this->configuration = new EmAuth0Configuration();
-            $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $this->configuration->getBackendConnection());
-            $this->auth0 = $apiUtility->getAuth0($this->getCallbackUri());
+            $this->auth0 = GeneralUtility::makeInstance(ApiUtility::class, $this->configuration->getBackendConnection())
+                ->withContext(SessionFactory::SESSION_PREFIX_BACKEND)
+                ->getAuth0($this->getCallbackUri());
         } catch (\Exception $exception) {
             $this->logger->critical($exception->getMessage());
 
@@ -151,7 +152,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
 
     protected function getUserInfo()
     {
-        $userInfo = (new SessionFactory())->getSessionStoreForApplication($this->configuration->getBackendConnection())->getUserInfo();
+        $userInfo = (new SessionFactory())->getSessionStoreForApplication($this->configuration->getBackendConnection(), SessionFactory::SESSION_PREFIX_BACKEND)->getUserInfo();
 
         if (empty($userInfo)) {
             try {

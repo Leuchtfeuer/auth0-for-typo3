@@ -108,7 +108,7 @@ class CallbackMiddleware implements MiddlewareInterface
         if ($this->isUserLoggedIn($request)) {
             $loginType = GeneralUtility::_GET('logintype');
             $application = $token->getClaim('application');
-            $userInfo = (new SessionFactory())->getSessionStoreForApplication($application)->getUserInfo();
+            $userInfo = (new SessionFactory())->getSessionStoreForApplication($application, SessionFactory::SESSION_PREFIX_FRONTEND)->getUserInfo();
 
             // Redirect when user just logged in (and update him)
             if ($loginType === 'login' && !empty($userInfo)) {

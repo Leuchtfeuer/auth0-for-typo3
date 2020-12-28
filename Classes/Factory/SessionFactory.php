@@ -22,10 +22,10 @@ class SessionFactory
 
     public const SESSION_PREFIX_FRONTEND = 'FE';
 
-    public function getSessionStoreForApplication(int $application = 0)
+    public function getSessionStoreForApplication(int $application = 0, ?string $context = self::SESSION_PREFIX_FRONTEND)
     {
         // TODO: Add Application to session store
-        $storeName = sprintf('%s%s_', SessionStore::BASE_NAME, $this->getContext());
+        $storeName = sprintf('%s%s_', SessionStore::BASE_NAME, $context);
 
         return new SessionStore($storeName);
     }

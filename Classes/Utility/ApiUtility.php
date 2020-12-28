@@ -38,6 +38,7 @@ use Bitmotion\Auth0\Api\Management\UserApi;
 use Bitmotion\Auth0\Api\Management\UserBlockApi;
 use Bitmotion\Auth0\Api\Management\UserByEmailApi;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
+use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\Scope;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -50,6 +51,8 @@ class ApiUtility implements LoggerAwareInterface
     protected $scope = 'openid profile read:current_user';
 
     protected $application = 0;
+
+    protected $context = SessionFactory::SESSION_PREFIX_FRONTEND;
 
     public function __construct(int $application = 0)
     {
@@ -65,7 +68,7 @@ class ApiUtility implements LoggerAwareInterface
         try {
             $this->setScope($scopes);
 
-            return new Auth0($this->application, $redirectUri, $this->scope);
+            return new Auth0($this->application, $redirectUri, $this->scope, [], $this->context);
         } catch (CoreException $exception) {
             throw new CoreException(
                 sprintf(
@@ -114,6 +117,14 @@ class ApiUtility implements LoggerAwareInterface
     public function getApi(string $className, string ...$scopes): Management\GeneralManagementApi
     {
         return $this->getManagement(...$scopes)->getApi($className);
+    }
+
+    public function withContext(string $context): self
+    {
+        $cloneObject = clone $this;
+        $cloneObject->context = $context;
+
+        return $cloneObject;
     }
 
     /**

@@ -19,6 +19,8 @@ use Bitmotion\Auth0\ErrorCode;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\Middleware\CallbackMiddleware;
+use TYPO3\CMS\Core\Http\ApplicationType;
+use TYPO3\CMS\Core\Http\ServerRequest;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Auth0 extends \Auth0\SDK\Auth0
@@ -71,7 +73,7 @@ class Auth0 extends \Auth0\SDK\Auth0
     /**
      * @throws CoreException
      */
-    public function __construct(?int $application = null, ?string $redirectUri = null, ?string $scope = null, array $additionalOptions = [])
+    public function __construct(?int $application = null, ?string $redirectUri = null, ?string $scope = null, array $additionalOptions = [], ?string $context = null)
     {
         $config = [
             'persist_access_token' => true,
@@ -79,7 +81,7 @@ class Auth0 extends \Auth0\SDK\Auth0
             'persist_refresh_token' => true,
             'redirect_uri' => $redirectUri ?? $this->getCallbackUri(),
             'scope' => $scope,
-            'store' => (new SessionFactory())->getSessionStoreForApplication((int)$application),
+            'store' => (new SessionFactory())->getSessionStoreForApplication((int)$application, $context ?? $this->getContext()),
         ];
 
         if ((int)$application > 0) {
@@ -115,5 +117,14 @@ class Auth0 extends \Auth0\SDK\Auth0
         $config['domain'] = $application->getDomain();
         $config['id_token_alg'] = $application->getSignatureAlgorithm();
         $config['secret_base64_encoded'] = $application->isSecretBase64Encoded();
+    }
+
+    private function getContext()
+    {
+        if (($GLOBALS['TYPO3_REQUEST'] ?? null) instanceof ServerRequest) {
+            return ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend() ? SessionFactory::SESSION_PREFIX_FRONTEND : SessionFactory::SESSION_PREFIX_BACKEND;
+        }
+
+        return SessionFactory::SESSION_PREFIX_FRONTEND;
     }
 }
