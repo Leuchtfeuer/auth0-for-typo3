@@ -1,49 +1,49 @@
 .auth0-login {
-	color: #000000;
+    color: #000000;
 }
 
 .auth0-login .alert-danger {
-	background-color: #ffd8cc;
-	color: #801f00;
+    background-color: #cb4c48;
+    color: #ffffff;
 }
 
 .auth0-login .alert-success {
-	background-color: #e5f8d1;
-	color: #3f6910;
+    background-color: #3f845c;
+    color: #ffffff;
 }
 
 .auth0-login .alert {
-	padding: 15px;
-	margin-bottom: 28px;
-	border-radius: 3px;
-	border: 0;
+    padding: 15px;
+    margin-bottom: 28px;
+    border-radius: 3px;
+    border: 0;
 }
 
 .auth0-login .panel {
-	background-color: #e3e5e7;
+    background-color: #f0f0f0;
 }
 
 .auth0-login .btn {
-	font-weight: 500;
-	text-align: center;
+    font-weight: 500;
+    text-align: center;
 }
 
 .auth0-login .btn-login {
-	margin: 20px 0;
+    margin: 20px 0;
 }
 
 .auth0-login .btn-auth0, .auth0-login .btn-auth0:visited {
-	color: #fff;
-	background-color: #5C666F;
-	border-color: #5C666F;
+    color: #fff;
+    background-color: #333333;
+    border-color: #333333;
 }
 
 .auth0-login .btn-auth0:focus, .auth0-login:active .btn-auth0:active, .auth0-login:hover .btn-auth0:hover {
-	color: #fff;
-	background-color: #5C666F;
-	border-color: #5C666F;
+    color: #fff;
+    background-color: #333333;
+    border-color: #333333;
 }
 
 .auth0-login .typo3-login-links {
-	font-size: 12px;
+    font-size: 12px;
 }
