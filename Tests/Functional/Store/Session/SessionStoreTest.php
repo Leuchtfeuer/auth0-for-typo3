@@ -1,11 +1,17 @@
 <?php
 
+/*
+ * This file is part of the "Auth0" extension for TYPO3 CMS.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
+ */
 
 namespace Leuchtfeuer\Auth0\Tests\Functional\Store\Session;
 
-
 use Bitmotion\Auth0\Store\SessionStore;
-use PHPUnit\Framework\Error\Error;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
@@ -21,7 +27,7 @@ class SessionStoreTest extends FunctionalTestCase
     protected $testExtensionsToLoad = [
         'typo3conf/ext/auth0'
     ];
-    
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -45,7 +51,7 @@ class SessionStoreTest extends FunctionalTestCase
     public function storeDataTest()
     {
         $this->subject->set('foo', 'bar');
-        $this->assertSame('bar', $this->subject->get('foo'));
+        self::assertSame('bar', $this->subject->get('foo'));
     }
 
     /**
@@ -55,7 +61,7 @@ class SessionStoreTest extends FunctionalTestCase
     {
         $user = ['name' => 'John Doe'];
         $this->subject->set('user', $user);
-        $this->assertSame($user, $this->subject->getUserInfo());
+        self::assertSame($user, $this->subject->getUserInfo());
     }
 
     /**
@@ -66,6 +72,6 @@ class SessionStoreTest extends FunctionalTestCase
         $user = ['name' => 'John Doe'];
         $this->subject->set('user', $user);
         $this->subject->deleteUserInfo();
-        $this->assertEmpty($this->subject->getUserInfo());
+        self::assertEmpty($this->subject->getUserInfo());
     }
 }
