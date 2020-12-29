@@ -31,11 +31,11 @@ jobs:
           - php-version: 7.4
             typo3-version: dev-master
             experimental: true
+    env:
+      PHP_VERSION: ${{ matrix.php-version }}
+      TYPO3_VERSION: ${{ matrix.typo3-version }}
     steps:
       - name: Output Environment Data
-        env:
-          PHP_VERSION: ${{ matrix.php-version }}
-          TYPO3_VERSION: ${{ matrix.typo3-version }}
         run: |
          echo "Running tests with TYPO3 ${TYPO3_VERSION} and PHP ${PHP_VERSION}"
 
