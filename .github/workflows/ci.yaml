@@ -9,6 +9,7 @@ on:
 
 jobs:
   phpunit:
+    name: PHP Tests
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental }}
     strategy:
@@ -35,9 +36,9 @@ jobs:
       PHP_VERSION: ${{ matrix.php-version }}
       TYPO3_VERSION: ${{ matrix.typo3-version }}
     steps:
-#      - name: Output Environment Data
-#        run: |
-#         echo "Running tests with TYPO3 ${TYPO3_VERSION} and PHP ${PHP_VERSION}"
+      - name: Output Environment Data
+        run: |
+         echo "Running tests with TYPO3 ${TYPO3_VERSION} and PHP ${PHP_VERSION}"
 
       - name: Checkout
         uses: actions/checkout@v2
