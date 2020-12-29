@@ -9,7 +9,6 @@ on:
 
 jobs:
   phpunit:
-    name: PHP Tests
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental }}
     strategy:
@@ -34,9 +33,23 @@ jobs:
           - php-version: 7.4
             typo3-version: dev-master
             experimental: true
+
     env:
       PHP_VERSION: ${{ matrix.php-version }}
       TYPO3_VERSION: ${{ matrix.typo3-version }}
+
+    name: P${{ matrix.php-version }} - T${{ matrix.typo3-version }}
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: auth0
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
       - name: Output Environment Data
         run: |
@@ -68,4 +81,9 @@ jobs:
         env:
           PHP_VERSION: ${{ matrix.php-version }}
           TYPO3_VERSION: ${{ matrix.typo3-version }}
-        run: ./Build/install.sh
+        run: |
+          ./Build/install.sh
+          export TYPO3_PATH_WEB=$PWD/.Build/web
+
+      - name: Run PHP Unit
+        run: .Build/bin/phpunit --colors --configuration Tests/Build/FunctionalTests.xml Tests/Functional --bootstrap .Build/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php --coverage-clover=coverage.integration.clover
