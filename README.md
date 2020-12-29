@@ -3,16 +3,17 @@ Auth0 for TYPO3
 [![Auth0TYPO3](https://www.Leuchtfeuer.com/fileadmin/github/auth0-for-typo3/TYPO3-Auth0.png "Auth0 for TYPO3")](https://www.Leuchtfeuer.com/)
 
 [![Latest Stable Version](https://poser.pugx.org/leuchtfeuer/auth0/v/stable)](https://packagist.org/packages/leuchtfeuer/auth0)
-[![Build Status](https://travis-ci.com/Leuchtfeuer/auth0-for-typo3.svg?branch=master)](https://travis-ci.com/Leuchtfeuer/auth0-for-typo3)
+[![Build Status](https://github.com/Leuchtfeuer/auth0-for-typo3/workflows/Continous%20Integration/badge.svg)](https://github.com/Leuchtfeuer/auth0-for-typo3)
 [![Total Downloads](https://poser.pugx.org/leuchtfeuer/auth0/downloads)](https://packagist.org/leuchtfeuer/auth0)
 [![Latest Unstable Version](https://poser.pugx.org/leuchtfeuer/auth0/v/unstable)](https://packagist.org/leuchtfeuer/auth0)
 [![Code Climate](https://codeclimate.com/github/Leuchtfeuer/auth0-for-typo3/badges/gpa.svg)](https://codeclimate.com/github/Leuchtfeuer/auth0-for-typo3)
+[![Code Coverage](https://codecov.io/gh/Leuchtfeuer/auth0-for-typo3/branch/feature/gh-actions/graph/badge.svg?token=pclJ2SpboL)](https://codecov.io/gh/Leuchtfeuer/auth0-for-typo3)
 [![License](https://poser.pugx.org/leuchtfeuer/auth0/license)](https://packagist.org/packages/leuchtfeuer/auth0)
 
 This extension allows you to log into a TYPO3 backend or frontend via Auth0.  
 The full documentation for the latest releases can be found [here](https://docs.typo3.org/p/leuchtfeuer/auth0/master/en-us/).
 
-*If you are searching for the documentation for version 3.2.1 and below, you can take a look at the former 
+*If you are searching for the documentation for version 3.2.1 and below, you can take a look at the former
 [bitmotion/auth0 documentation](https://docs.typo3.org/p/bitmotion/auth0/master/en-us/).*
 
 ## Requirements
@@ -32,18 +33,18 @@ _Beta support for TYPO3 v11.0 is available since version 3.4.0._
 Auth0 helps you to:
 
 * Add authentication with [multiple authentication sources](https://auth0.com/docs/identityproviders),
-either social like **Google, Facebook, Microsoft Account, LinkedIn,
-GitHub, Twitter, Box, Salesforce, among others**, or enterprise
-identity systems like Windows Azure AD, Google Apps, Active Directory,
-ADFS or any SAML Identity Provider.
+  either social like **Google, Facebook, Microsoft Account, LinkedIn,
+  GitHub, Twitter, Box, Salesforce, among others**, or enterprise
+  identity systems like Windows Azure AD, Google Apps, Active Directory,
+  ADFS or any SAML Identity Provider.
 * Add authentication through more traditional [username/password databases](https://auth0.com/docs/connections/database/custom-db).
 * Add support for [linking different user accounts](https://auth0.com/docs/link-accounts)
-with the same user.
+  with the same user.
 * Support for generating signed [JSON Web Tokens](https://auth0.com/docs/jwt)
-to call your APIs and flow the user identity securely.
+  to call your APIs and flow the user identity securely.
 * Analytics of how, when, and where users are logging in.
 * Pull data from other sources and add it to the user profile, through
-[JavaScript rules](https://auth0.com/docs/rules/current).
+  [JavaScript rules](https://auth0.com/docs/rules/current).
 
 ## Contributing
 You can contribute by making a **pull request** to the master branch of
