@@ -48,8 +48,13 @@ jobs:
 
     steps:
       - name: Output Environment Data
+        env:
+          PORT: ${{ job.services.mysql.ports[3306] }}
         run: |
-         echo "Running tests with TYPO3 ${TYPO3_VERSION} and PHP ${PHP_VERSION}"
+          echo "Running tests with TYPO3 ${TYPO3_VERSION} and PHP ${PHP_VERSION}"
+          while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
+            sleep 1
+          done
 
       - name: Checkout
         uses: actions/checkout@v2
