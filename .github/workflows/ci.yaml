@@ -29,6 +29,7 @@ jobs:
 
           - php-version: 7.4
             typo3-version: ^11.0
+            experimental: false
 
           - php-version: 7.4
             typo3-version: dev-master
