@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 composer config minimum-stability dev
 composer req typo3/cms-core:"${TYPO3_VERSION}" typo3/cms-backend:"${TYPO3_VERSION}" typo3/cms-extbase:"${TYPO3_VERSION}" typo3/cms-extensionmanager:"${TYPO3_VERSION}" typo3/cms-fluid:"${TYPO3_VERSION}" typo3/cms-frontend:"${TYPO3_VERSION}"
-
+composer req typo3/testing-framework
 
 # --------------------------------------------------------------------------- #
 # Write Fixture file
