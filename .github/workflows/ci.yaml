@@ -15,25 +15,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        experimental: [false]
-        php-version: [7.2, 7.3, 7.4]
-        typo3-version: [^9.5, ^10.4]
-        include:
-          - php-version: 7.4
-            typo3-version: 9.5.x-dev
-            experimental: true
-
-          - php-version: 7.4
-            typo3-version: 10.4.x-dev
-            experimental: true
+#        experimental: [false]
+#        php-version: [7.2, 7.3, 7.4]
+#        typo3-version: [^9.5, ^10.4]
+#        include:
+#          - php-version: 7.4
+#            typo3-version: 9.5.x-dev
+#            experimental: true
+#
+#          - php-version: 7.4
+#            typo3-version: 10.4.x-dev
+#            experimental: true
 
           - php-version: 7.4
             typo3-version: ^11.0
             experimental: false
 
-          - php-version: 7.4
-            typo3-version: dev-master
-            experimental: true
+#          - php-version: 7.4
+#            typo3-version: dev-master
+#            experimental: true
     env:
       PHP_VERSION: ${{ matrix.php-version }}
       TYPO3_VERSION: ${{ matrix.typo3-version }}
@@ -83,4 +83,4 @@ jobs:
           export TYPO3_PATH_WEB=$PWD/.Build/web
 
       - name: Run PHP Unit
-        run: phpunit --colors --configuration Tests/Build/FunctionalTests.xml Tests/Functional --bootstrap .Build/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php --coverage-clover=coverage.integration.clover
+        run: .Build/bin/phpunit --colors --configuration Tests/Build/FunctionalTests.xml Tests/Functional --bootstrap .Build/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php --coverage-clover=coverage.integration.clover
