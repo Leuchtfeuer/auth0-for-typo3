@@ -83,4 +83,6 @@ jobs:
           export TYPO3_PATH_WEB=$PWD/.Build/web
 
       - name: Run PHP Unit
-        run: .Build/bin/phpunit --colors --configuration Tests/Build/FunctionalTests.xml Tests/Functional --bootstrap .Build/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php --coverage-clover=coverage.integration.clover
+        run: |
+          ./Build/script.sh
+          .Build/bin/phpunit --colors --configuration Tests/Build/FunctionalTests.xml Tests/Functional --bootstrap .Build/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php --coverage-clover=coverage.integration.clover

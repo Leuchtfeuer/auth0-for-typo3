@@ -9,7 +9,7 @@ use PHPUnit\Framework\Error\Error;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
- * @covers SessionStore
+ * @covers \Bitmotion\Auth0\Store\SessionStore
  */
 class SessionStoreTest extends FunctionalTestCase
 {
