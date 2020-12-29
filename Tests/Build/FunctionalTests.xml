@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <!--
 	Functional test suites setup
 
@@ -24,6 +25,5 @@
     <env name="typo3DatabaseName" value="auth0"/>
     <env name="typo3DatabaseHost" value="127.0.0.1"/>
     <env name="typo3DatabasePort" value="3306"/>
-    <env name="typo3DatabasePassword" value=""/>
   </php>
 </phpunit>
