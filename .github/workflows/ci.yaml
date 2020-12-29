@@ -37,27 +37,29 @@ jobs:
     env:
       PHP_VERSION: ${{ matrix.php-version }}
       TYPO3_VERSION: ${{ matrix.typo3-version }}
-    services:
-      mysql:
-        image: mysql:5.7
-        env:
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-        ports:
-          - 3306
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+#    services:
+#      mysql:
+#        image: mysql:5.7
+#        env:
+#          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+#        ports:
+#          - 3306
+#        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Output Environment Data
-        env:
-          PORT: ${{ job.services.mysql.ports[3306] }}
+#        env:
+#          PORT: ${{ job.services.mysql.ports[3306] }}
         run: |
           echo "Running tests with TYPO3 ${TYPO3_VERSION} and PHP ${PHP_VERSION}"
-          while ! mysqladmin ping -h"127.0.0.1" -P"$PORT" --silent; do
-            sleep 1
-          done
 
       - name: Checkout
         uses: actions/checkout@v2
+
+      - uses: shogo82148/actions-setup-mysql@v1
+        with:
+          mysql-version: '5.7'
+          root-password: $3cret
 
       - name: Setup PHP Environment
         uses: shivammathur/setup-php@v2
@@ -65,7 +67,7 @@ jobs:
           php-version: ${{ matrix.php-version }}
           extensions: fileinfo, gd, zip, zlib, openssl, intl, PDO, json, pcre, session, xml, filter, hash, mbstring, SPL, standard, mysqli
           ini-values: max_execution_time=240,memory_limit=256M
-          tools: composer:v2, php-cs-fixer:2.17.1, phpunit
+          tools: composer:v2, php-cs-fixer:2.17.1
 
       - name: Get composer cache directory
         id: composer-cache
