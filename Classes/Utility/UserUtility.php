@@ -28,6 +28,7 @@ use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Crypto\Random;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class UserUtility implements SingletonInterface, LoggerAwareInterface
@@ -102,12 +103,11 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      */
     public function insertFeUser(string $tableName, array $user): void
     {
-        $emConfiguration = new EmAuth0Configuration();
+        $values = $this->getTcaDefaults($tableName);
         $userIdentifier = $this->extensionConfiguration->getUserIdentifier();
-        $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
-        $userRepository->insertUser([
-            'tx_extbase_type' => 'Tx_Auth0_FrontendUser',
-            'pid' => $emConfiguration->getUserStoragePage(),
+
+        ArrayUtility::mergeRecursiveWithOverrule($values, [
+            'pid' => $this->extensionConfiguration->getUserStoragePage(),
             'tstamp' => time(),
             'username' => $user['email'] ?? $user[$userIdentifier],
             'password' => $this->getPassword(),
@@ -116,6 +116,8 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             'auth0_user_id' => $user[$userIdentifier],
             'auth0_metadata' => \GuzzleHttp\json_encode($user['user_metadata'] ?? ''),
         ]);
+
+        GeneralUtility::makeInstance(UserRepository::class, $tableName)->insertUser($values);
     }
 
     /**
@@ -125,10 +127,10 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      */
     public function insertBeUser(string $tableName, array $user): void
     {
-        $columnsTCA = $GLOBALS['TCA']['be_users']['columns'] ?? [];
+        $values = $this->getTcaDefaults($tableName);
         $userIdentifier = $this->extensionConfiguration->getUserIdentifier();
-        $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
-        $userRepository->insertUser([
+
+        ArrayUtility::mergeRecursiveWithOverrule($values, [
             'pid' => 0,
             'tstamp' => time(),
             'username' => $user['email'] ?? $user[$userIdentifier],
@@ -136,9 +138,23 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             'email' => $user['email'] ?? '',
             'crdate' => time(),
             'auth0_user_id' => $user[$userIdentifier],
-            'options' => $columnsTCA['options']['config']['default'] ?? 3,
-            'file_permissions' => $columnsTCA['file_permissions']['config']['default'] ?? 'readFolder,writeFolder,addFolder,renameFolder,moveFolder,deleteFolder,readFile,writeFile,addFile,renameFile,replaceFile,moveFile,copyFile,deleteFile',
         ]);
+
+        GeneralUtility::makeInstance(UserRepository::class, $tableName)->insertUser($values);
+    }
+
+    protected function getTcaDefaults(string $tableName): array
+    {
+        $defaults = [];
+        $columns = $GLOBALS['TCA'][$tableName]['columns'] ?? [];
+
+        foreach ($columns as $fieldName => $field) {
+            if (isset($field['config']['default'])) {
+                $defaults[$fieldName] = $field['config']['default'];
+            }
+        }
+
+        return $defaults;
     }
 
     /**
