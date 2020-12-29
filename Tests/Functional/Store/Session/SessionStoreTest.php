@@ -24,7 +24,12 @@ class SessionStoreTest extends FunctionalTestCase
     
     protected function setUp(): void
     {
-        parent::setUp();
+        try {
+            parent::setUp();
+        } catch (\Exception $e) {
+            throw new \Exception(print_r($GLOBALS['TYPO3_CONF_VARS']['DB'], true));
+
+        }
         
         $this->subject = new SessionStore();
     }

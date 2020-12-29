@@ -10,7 +10,7 @@ on:
 jobs:
   phpunit:
     name: PHP ${{ matrix.php-version }} - T3 ${{ matrix.typo3-version }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: false
