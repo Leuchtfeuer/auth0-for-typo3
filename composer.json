@@ -40,9 +40,6 @@
     "ext-pdo": "*",
     "ext-json": "*"
   },
-  "require-dev": {
-    "typo3/testing-framework": "^4.14.3 || ^6.2.3"
-  },
   "suggest": {
     "typo3/cms-scheduler": "TYPO3 Scheduler"
   },
@@ -57,7 +54,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Bitmotion\\Auth0\\Tests\\": "Tests/"
+      "Leuchtfeuer\\Auth0\\Tests\\": "Tests/"
     }
   },
   "config": {
