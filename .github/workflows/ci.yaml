@@ -9,6 +9,7 @@ on:
 
 jobs:
   phpunit:
+    name: P${{ matrix.php-version }} - T${{ matrix.typo3-version }}
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental }}
     strategy:
@@ -33,13 +34,9 @@ jobs:
           - php-version: 7.4
             typo3-version: dev-master
             experimental: true
-
     env:
       PHP_VERSION: ${{ matrix.php-version }}
       TYPO3_VERSION: ${{ matrix.typo3-version }}
-
-    name: P${{ matrix.php-version }} - T${{ matrix.typo3-version }}
-
     services:
       mysql:
         image: mysql:5.7
