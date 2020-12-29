@@ -15,41 +15,31 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-#        experimental: [false]
-#        php-version: [7.2, 7.3, 7.4]
-#        typo3-version: [^9.5, ^10.4]
+        experimental: [false]
+        php-version: [7.2, 7.3, 7.4]
+        typo3-version: [^9.5, ^10.4]
         include:
-#          - php-version: 7.4
-#            typo3-version: 9.5.x-dev
-#            experimental: true
-#
-#          - php-version: 7.4
-#            typo3-version: 10.4.x-dev
-#            experimental: true
+          - php-version: 7.4
+            typo3-version: 9.5.x-dev
+            experimental: true
+
+          - php-version: 7.4
+            typo3-version: 10.4.x-dev
+            experimental: true
 
           - php-version: 7.4
             typo3-version: ^11.0
             experimental: false
 
-#          - php-version: 7.4
-#            typo3-version: dev-master
-#            experimental: true
+          - php-version: 7.4
+            typo3-version: dev-master
+            experimental: true
     env:
       PHP_VERSION: ${{ matrix.php-version }}
       TYPO3_VERSION: ${{ matrix.typo3-version }}
-#    services:
-#      mysql:
-#        image: mysql:5.7
-#        env:
-#          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-#        ports:
-#          - 3306
-#        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - name: Output Environment Data
-#        env:
-#          PORT: ${{ job.services.mysql.ports[3306] }}
         run: |
           echo "Running tests with TYPO3 ${TYPO3_VERSION} and PHP ${PHP_VERSION}"
 
