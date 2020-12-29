@@ -65,8 +65,7 @@ class SessionStoreTest extends FunctionalTestCase
     {
         $user = ['name' => 'John Doe'];
         $this->subject->set('user', $user);
-        $this->subject->delete('user');
+        $this->subject->deleteUserInfo();
         $this->assertEmpty($this->subject->getUserInfo());
-
     }
 }
