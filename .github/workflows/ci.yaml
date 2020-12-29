@@ -13,7 +13,7 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        experimental: false
+        experimental: [false]
         php-version: [7.2, 7.3, 7.4]
         typo3-version: [^9.5, ^10.4]
         include:
