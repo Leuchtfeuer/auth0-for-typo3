@@ -34,7 +34,7 @@ class SessionStoreTest extends FunctionalTestCase
      */
     public function storeInvalidUserDataTest()
     {
-        $this->expectException(Error::class);
+        $this->expectException(\TypeError::class);
         $this->subject->set('user', 'dummy');
         $this->subject->getUserInfo();
     }
@@ -65,7 +65,7 @@ class SessionStoreTest extends FunctionalTestCase
     {
         $user = ['name' => 'John Doe'];
         $this->subject->set('user', $user);
-        $this->subject->delete($user);
+        $this->subject->delete('user');
         $this->assertEmpty($this->subject->getUserInfo());
 
     }
