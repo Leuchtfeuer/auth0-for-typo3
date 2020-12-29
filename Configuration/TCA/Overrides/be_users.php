@@ -11,8 +11,19 @@ defined('TYPO3_MODE') || die();
             'config' => [
                 'type' => 'input',
                 'size' => 30,
-                'eval' => 'trim,required',
+                'readOnly' => true,
             ],
         ],
     ]
 );
+
+$auth0Showitem = <<<TCA
+    --div--;LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_backenduser,
+        auth0_user_id,
+TCA;
+
+foreach ($GLOBALS['TCA']['be_users']['types'] ?? [] as $type => $_) {
+    $showitem = trim($GLOBALS['TCA']['be_users']['types'][$type]['showitem']);
+    $showitem = sprintf('%s,%s', rtrim($showitem, ','), $auth0Showitem);
+    $GLOBALS['TCA']['be_users']['types'][$type]['showitem'] = $showitem;
+}

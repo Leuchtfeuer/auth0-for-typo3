@@ -13,11 +13,11 @@
 			<trans-unit id="tx_auth0_domain_model_frontenduser.auth0_last_application">
 				<source>Last used Auth0 application</source>
 			</trans-unit>
-			<trans-unit id="tx_auth0.tx_extbase_type">
-				<source>Extbase Typ</source>
-			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_frontenduser">
 				<source>Auth0 Website User</source>
+			</trans-unit>
+			<trans-unit id="tx_auth0_domain_model_backenduser">
+				<source>Auth0</source>
 			</trans-unit>
 
 
