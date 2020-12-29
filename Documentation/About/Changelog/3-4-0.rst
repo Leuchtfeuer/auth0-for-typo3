@@ -1,0 +1,99 @@
+﻿.. include:: ../../Includes.txt
+
+==========================
+Version 3.4.0 - 2020/12/29
+==========================
+
+This is a feature release. It contains some bug fixes, minor improvements regarding the backend module and backend login and
+introduces the possibility to log in users without using the management API. This release also provides basic support for TYPO3
+v11.0. Please note that general support for TYPO3 v11 LTS will be introduced with version 4.0 of this extension.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v3.4.0>`__.
+
+Added
+=====
+
+* The login context (`FE` or `BE`) is now always set. Therefore the method :php:`withContext(string $context)` was added to the
+  :php:`\Bitmotion\Auth0\Utility\ApiUtility` class
+* Basic support for TYPO3 v11.0. Please note that this extension is in beta state until TYPO3 v11 LTS is supported
+* One Auth0 role can now be mapped to multiple TYPO3 user groups
+* Make :ref:`key containing Auth0 user ID <admin-extensionConfiguration-properties-userIdentifier>` configurable (default value
+  is: `sub`)
+* The default template of the frontend login/logout button is now more accessible
+* It is now possible to login users by ID token only (and
+  :ref:`avoid using of management API <editor-dataTypes-application-properties-api>`)
+
+Changed
+=======
+
+* Minor improvements within the backend module
+* Applied updated Auth0 styleguide to backend login interface
+* 3rd party libraries were updated
+* TCA defaults for website and backend users will now be applied when user logs in for the first time
+
+Deprecated
+==========
+
+* Using of :php:`EnvironmentService` class in :php:`AuthenticationService`. You can retrieve the proper context from
+  :php:`$authenticationService->authInfo['loginType']`
+* Specific API initialization via :php:`\Bitmotion\Auth0\Api\Management`. You should use
+  :php:`$management->getApi(\Your\Api\Class::class);` instead
+* Specific API initialization via :php:`\Bitmotion\Auth0\Utility\ApiUtility`. You should use
+  :php:`$apiUtility->getApi(\Your\Api\Class::class, ...$scopes);` instead
+
+Removed
+=======
+
+* Extbase persistence mapping for frontend users. You have to add the necessary files on your own if you want to override
+  frontend users.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+   2020-12-29 [DOC] Update badges (Commit db61108 by Florian Wessels)
+   2020-12-29 [TASK] Remove obsolete travis file (Commit b6c4597 by Florian Wessels)
+   2020-12-29 [TASK] Move CI and integration tests to GitHub actions (Commit 9ec8544 by Florian Wessels)
+   2020-12-29 [TASK] Apply TCA defaults on first log in (Commit 3d10998 by Florian Wessels)
+   2020-12-29 [TASK] Remove frontend user overrides (Commit fef468d by Florian Wessels)
+   2020-12-28 [DOC] Exchange and update images (Commit 41c4c73 by Florian Wessels)
+   2020-12-28 [DOC] Add new features to documentation (Commit 89c5ef8 by Florian Wessels)
+   2020-12-28 [BUGFIX] Do not use html namespace as long as we support TYPO3 v9 (Commit a49f544 by Florian Wessels)
+   2020-12-28 [TASK] Avoid using EnvironmentService (Commit 7bee1b0 by Florian Wessels)
+   2020-12-28 [TASK] Unify appearance of backend module sections (Commit f674564 by Florian Wessels)
+   2020-12-28 [TASK] Apply Auth0 styleguide (Commit fc30cac by Florian Wessels)
+   2020-12-28 [FEATURE] Introduce compatibility for TYPO3 v11.0 (Commit 2b9f70e by Florian Wessels)
+   2020-12-28 [TASK] Unify ordering of form fields (Commit 9a40925 by Florian Wessels)
+   2020-12-28 [TASK] Do not store link in variable (Commit 04afc48 by Florian Wessels)
+   2020-11-27 [TASK] Update 3rd party libraries (Commit 3eb6094 by Florian Wessels)
+   2020-11-27 [TASK] Introduce script for release generation (Commit 2464788 by Florian Wessels)
+   2020-11-27 [TASK] Ignore vendor files within Libraries directory (Commit 2529809 by Florian Wessels)
+   2020-11-27 [TASK] Remove libraries from git (Commit 8e2e682 by Florian Wessels)
+   2020-11-25 [BUGFIX] Use site router when TSFE is not initialized (Commit ae0392f by Florian Wessels)
+   2020-11-23 [TASK] Add hint for disabled API in module (Commit 13f7db2 by Florian Wessels)
+   2020-11-23 [TASK] Assign groups only when exists (Commit 680bd00 by Florian Wessels)
+   2020-11-23 [BUGFIX] Do not force array for default user group (Commit 595ab94 by Florian Wessels)
+   2020-11-23 [TASK] Allow to map Auth0 role to multiple user groups (Commit bc6354a by Florian Wessels)
+   2020-11-23 [TASK] Improve condition for figuring out whether middleware is responsible (Commit 3808852 by Florian Wessels)
+   2020-11-23 [BUGFIX] Use proper key for 'auth mode' switch (Commit 868a6f7 by Florian Wessels)
+   2020-11-23 [BUGFIX] Use target instead of source (Commit 355b8e9 by Florian Wessels)
+   2020-11-23 [BUGFIX] Do not use static property 'sub' (Commit a288b72 by Florian Wessels)
+   2020-11-23 [FEATURE] Make property of ID token containing the user ID configurable (Commit 27e666c by Florian Wessels)
+   2020-11-23 [TASK] Add aria roles to frontend templates (Commit 1abca50 by Florian Wessels)
+   2020-11-23 [FEATURE] Allow to log in user by usint ID token only (Commit 3bce870 by Florian Wessels)
+   2020-11-20 [TASK] Make API constructor more bulletproof (Commit 1251406 by Florian Wessels)
+   2020-11-20 [TASK] Improve condition (Commit 634a3d2 by Florian Wessels)
+   2020-11-20 [TASK] Use generic getter for Auth0 APIs (Commit 5f9a919 by Florian Wessels)
+   2020-11-20 [TASK] Set version to 3.4.0-dev (Commit add1fa0 by Florian Wessels)
+
+Contributors
+============
+
+This release was sponsored by `MEDIUM Werbeagentur Bielefeld <https://www.medium.ag/>`__.
+
+Thank you very much for your support. The next beer is on us! 🍻

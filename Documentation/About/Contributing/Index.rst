@@ -16,7 +16,7 @@ Forms
 =====
 
 There is a way to update users metadata using the TYPO3 form framework. A registration and *password forgotten* form is also
-available. If you are interested in that, do not hesitate to `contact <https://www.bitmotion.de/en/contact/>`__ us.
+available. If you are interested in that, do not hesitate to `contact <https://www.leuchtfeuer.com/en/contact/>`__ us.
 
 .. _about-contributing-Typo3AsIdentityProvider:
 
