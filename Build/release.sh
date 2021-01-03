@@ -26,12 +26,15 @@ if [ -d "$DIR" ]; then
   composer update --with-all-dependencies --no-dev --no-progress --quiet
   echo "Done."
 
-  echo "Archive repository..."
+  echo "Create git tag"
   cd $DIR
-  zip -qr ../auth0_$1.zip *
+  git tag $NEW_RELEASE
+
+  echo "Archive repository..."
+  git archive -o "auth0_${1}.zip" $NEW_RELEASE
   echo "Done."
 
-  echo "Please add and push the git tag: git tag ${NEW_RELEASE} && gp --tags"
+  echo "Please add and push the git tag: gp --tags"
 else
   echo "This script has to be executed from the git root directory!"
   exit 1;
