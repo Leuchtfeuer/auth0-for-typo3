@@ -1,0 +1,29 @@
+﻿.. include:: ../../Includes.txt
+
+==========================
+Version 3.4.1 - 2021/01/07
+==========================
+
+This release is a bug fix release which fixes issues regarding non-composer setups. The Library directory containing the third
+party packages was missing in the latest release.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v3.4.1>`__.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+   2021-01-07 [TASK] Add license and readme file to gitattributes (Commit 166fe5b by Florian Wessels)
+   2021-01-03 [TASK] Remove logger configuration (Commit fe182c2 by Florian Wessels)
+   2021-01-03 [TASK] Set version to 3.4.1-dev (Commit b0bc0cc by Florian Wessels)
+   2021-01-03 [DOC] Change link (Commit d54699b by Florian Wessels)
+   2021-01-03 [TASK] Update release script to use git archive (Commit 6541e5a by Florian Wessels)
+   2021-01-03 [TASK] Run tests on ubuntu 18.04 (Commit 572a928 by Florian Wessels)
+   2021-01-03 [TASK] Update dependencies (Commit 5b4cf78 by Florian Wessels)
+   2021-01-03 [TASK] Remove obsolete file (Commit 93b8ef4 by Florian Wessels)
+   2020-12-29 [BUGFIX] Rename CI file (Commit f43fca4 by Florian Wessels)
