@@ -23,7 +23,7 @@ fi
 if [ -d "$DIR" ]; then
   echo "Installing composer dependencies..."
   cd $DIR/Libraries
-  composer update --with-all-dependencies --no-dev --no-progress --quiet
+  composer install --no-dev --no-progress --quiet
   echo "Done."
 
   echo "Create git tag"
@@ -31,7 +31,7 @@ if [ -d "$DIR" ]; then
   git tag $NEW_RELEASE
 
   echo "Archive repository..."
-  git archive -o "auth0_${1}.zip" $NEW_RELEASE
+  zip -r "../auth0_${1}.zip" * -x \*.git\* Build/\* Documentation/\* Tests/\* .php_cs codecov.yml
   echo "Done."
 
   echo "Please add and push the git tag: gp --tags"
