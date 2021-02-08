@@ -354,7 +354,15 @@ class AuthenticationService extends BasicAuthenticationService
 
         if (!is_array($user)) {
             // Delete persistent Auth0 user data
-            $this->auth0->deleteAllPersistentData();
+            try {
+                if ($this->auth0 instanceof Auth0 === false) {
+                    $this->auth0 = GeneralUtility::makeInstance(ApiUtility::class, $this->application)->withContext($this->authInfo['loginType'])->getAuth0();
+                }
+
+                $this->auth0->deleteAllPersistentData();
+            } catch (\Exception $exception) {
+                // ignore this...
+            }
 
             $this->writelog(255, 3, 3, 2, 'Login-attempt from ###IP###, username \'%s\' not found!!', [$this->login['uname']]);
             $this->logger->info(
