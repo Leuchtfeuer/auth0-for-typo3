@@ -394,7 +394,7 @@ class AuthenticationService extends BasicAuthenticationService
             $this->logger->warning('Could not login user via session as it has no group assigned.');
 
             if ($this->auth0 instanceof Auth0 === false) {
-                $this->auth0 = GeneralUtility::makeInstance(ApiUtility::class, $this->application)->getAuth0();
+                $this->auth0 = GeneralUtility::makeInstance(ApiUtility::class, $this->application)->withContext($this->authInfo['loginType'])->getAuth0();
             }
 
             $this->auth0->logout();
