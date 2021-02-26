@@ -47,3 +47,7 @@
 .auth0-login .typo3-login-links {
     font-size: 12px;
 }
+
+.typo3-login-logo {
+    margin-bottom: 2.5em;
+}
