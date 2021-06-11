@@ -124,6 +124,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
         $this->view->assignMultiple([
             'userInfo' => $userInfo ?? [],
+            'referrer' => GeneralUtility::_GET('referrer') ?? GeneralUtility::_GET('return_url') ?? '',
             'auth0Error' => $this->error,
             'auth0ErrorDescription' => $this->errorDescription,
         ]);
@@ -234,7 +235,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
     protected function getCallback(string $loginType = 'login'): string
     {
         $uri = $GLOBALS['TYPO3_REQUEST']->getUri();
-        $referrer = sprintf('%s://%s%s', $uri->getScheme(), $uri->getHost(), $uri->getPath());
+        $referrer = $GLOBALS['TYPO3_REQUEST']->getQueryParams()['referrer'] ?? sprintf('%s://%s%s', $uri->getScheme(), $uri->getHost(), $uri->getPath());
 
         $tokenUtility = GeneralUtility::makeInstance(TokenUtility::class);
         $tokenUtility->withPayload('application', $this->application);
