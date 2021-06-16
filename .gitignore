@@ -1,4 +1,5 @@
 /Tests/Functional/Fixtures/tx_auth0_domain_model_application.xml
 /.Build/
+/Tests/Build/.phpunit.result.cache
 /Libraries/vendor
 /composer.lock
