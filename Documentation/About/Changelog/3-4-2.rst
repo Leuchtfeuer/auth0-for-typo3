@@ -1,0 +1,40 @@
+﻿.. include:: ../../Includes.txt
+
+==========================
+Version 3.4.2 - 2021/06/16
+==========================
+
+This release is a bug fix release which fixes issues regarding redirects after login. Also, this extension is now compatible with
+TYPO3 v11.2.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v3.4.2>`__.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+   2021-06-16 [TASK] Update 3rd party libraries (Commit d429900 by Florian Wessels)
+   2021-06-16 [TASK] Add support for TYPO3 v11.2 (Commit c68792f by Florian Wessels)
+   2021-06-16 [TASK] Ignore cache file (Commit 7ca6bc3 by Florian Wessels)
+   2021-06-11 [TASK] Bypass referrer or return url to login action (Commit 79dba25 by Florian Wessels)
+   2021-06-11 [BUGFIX] Add export-ignore to README and LICENSE file (Commit 79b841c by Florian Wessels)
+   2021-02-26 [TASK] Drop support for TYPO3 v11.0 (Commit 76be460 by Florian Wessels)
+   2021-02-26 [TASK] Support TYPO3 v11.1 (Commit 2d8a06e by Florian Wessels)
+   2021-02-08 [TASK] Remove license badge from readme (Commit ca0cba1 by Florian Wessels)
+   2021-02-08 [BUGFIX] Initialize Auth0 if empty (Commit 8138bc5 by Florian Wessels)
+   2021-02-08 [TASK] Do not update composer dependencies on release (Commit 936d440 by Florian Wessels)
+   2021-02-08 [TASK] Force context for Auth0 initialization (Commit 5f80115 by Florian Wessels)
+   2021-01-07 [TASK] Set version to 3.4.2-dev (Commit 6f92da8 by Florian Wessels)
+
+Contributors
+============
+
+This release was sponsored by `MEDIUM Werbeagentur Bielefeld <https://www.medium.ag/>`__.
+
+Thank you very much for your support. The next beer is on us! 🍻
+
