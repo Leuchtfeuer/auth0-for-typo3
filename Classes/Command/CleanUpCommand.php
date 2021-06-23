@@ -89,7 +89,7 @@ class CleanUpCommand extends Command
         }
 
         if (!$this->isBackendLoginEnabled()) {
-            $output->writeln(sprintf('<error>Backend login is not enabled.</error>'));
+            $output->writeln('<error>Backend login is not enabled.</error>');
 
             return;
         }
