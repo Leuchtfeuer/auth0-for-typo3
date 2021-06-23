@@ -155,12 +155,12 @@ class AuthenticationService extends BasicAuthenticationService
         }
 
         try {
-            $token = $tokenUtility->getToken();
+            $dataSet = $tokenUtility->getToken()->claims();
         } catch (TokenException $exception) {
             return 0;
         }
 
-        return (int)$token->getClaim('application');
+        return (int)$dataSet->get('application');
     }
 
     protected function setDefaults(array $authInfo, string $mode, array $loginData, AbstractUserAuthentication $pObj): void

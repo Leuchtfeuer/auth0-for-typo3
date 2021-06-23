@@ -60,17 +60,16 @@ class CallbackMiddleware implements MiddlewareInterface
         }
 
         try {
-            $token = $tokenUtility->getToken();
+            $dataSet = $tokenUtility->getToken()->claims();
         } catch (TokenException $exception) {
             return new Response('php://temp', 400);
         }
 
-        if ($token->getClaim('environment') === TokenUtility::ENVIRONMENT_BACKEND) {
+        if ($dataSet->get('environment') === TokenUtility::ENVIRONMENT_BACKEND) {
             return $this->handleBackendCallback($request, $tokenUtility);
         }
-
         // Perform frontend callback as environment can only be 'BE' or 'FE'
-        return $this->handleFrontendCallback($request, $token);
+        return $this->handleFrontendCallback($request, $dataSet);
     }
 
     protected function handleBackendCallback(ServerRequestInterface $request, TokenUtility $tokenUtility): RedirectResponse
@@ -97,46 +96,46 @@ class CallbackMiddleware implements MiddlewareInterface
         return new RedirectResponse($redirectUri, 302);
     }
 
-    protected function handleFrontendCallback(ServerRequestInterface $request, Token $token): RedirectResponse
+    protected function handleFrontendCallback(ServerRequestInterface $request, Token\DataSet $tokenDataSet): RedirectResponse
     {
         $errorCode = (string)GeneralUtility::_GET('error');
 
         if (!empty($errorCode)) {
-            return $this->enrichReferrerByErrorCode($errorCode, $token);
+            return $this->enrichReferrerByErrorCode($errorCode, $tokenDataSet);
         }
 
         if ($this->isUserLoggedIn($request)) {
             $loginType = GeneralUtility::_GET('logintype');
-            $application = $token->getClaim('application');
+            $application = $tokenDataSet->get('application');
             $userInfo = (new SessionFactory())->getSessionStoreForApplication($application, SessionFactory::SESSION_PREFIX_FRONTEND)->getUserInfo();
 
             // Redirect when user just logged in (and update him)
             if ($loginType === 'login' && !empty($userInfo)) {
                 $this->updateTypo3User($application, $userInfo);
 
-                if ((bool)$token->getClaim('redirectDisable') === false) {
+                if ((bool)$tokenDataSet->get('redirectDisable') === false) {
                     $allowedMethods = ['groupLogin', 'userLogin', 'login', 'getpost', 'referrer'];
-                    $this->performRedirectFromPluginConfiguration($token, $allowedMethods);
+                    $this->performRedirectFromPluginConfiguration($tokenDataSet, $allowedMethods);
                 } else {
-                    return new RedirectResponse($token->getClaim('referrer'));
+                    return new RedirectResponse($tokenDataSet->get('referrer'));
                 }
             } elseif ($loginType === 'logout') {
                 // User was logged out prior to this method. That's why there is no valid TYPO3 frontend user anymore.
-                $this->performRedirectFromPluginConfiguration($token, ['logout', 'referrer']);
+                $this->performRedirectFromPluginConfiguration($tokenDataSet, ['logout', 'referrer']);
             }
         }
 
         // Redirect back to logout page if no redirect was executed before
-        return new RedirectResponse($token->getClaim('referrer'));
+        return new RedirectResponse($tokenDataSet->get('referrer'));
     }
 
     /**
      * @throws UnknownErrorCodeException
      */
-    protected function enrichReferrerByErrorCode(string $errorCode, Token $token): RedirectResponse
+    protected function enrichReferrerByErrorCode(string $errorCode, Token\DataSet $tokenDataSet): RedirectResponse
     {
         if (in_array($errorCode, (new \ReflectionClass(ErrorCode::class))->getConstants())) {
-            $referrer = new Uri($token->getClaim('referrer'));
+            $referrer = new Uri($tokenDataSet->get('referrer'));
 
             $errorQuery = sprintf(
                 'error=%s&error_description=%s',
@@ -181,15 +180,15 @@ class CallbackMiddleware implements MiddlewareInterface
         $updateUtility->updateGroups();
     }
 
-    protected function performRedirectFromPluginConfiguration(Token $token, array $allowedMethods): void
+    protected function performRedirectFromPluginConfiguration(Token\DataSet $tokenDataSet, array $allowedMethods): void
     {
         $redirectService = new RedirectService([
             'redirectDisable' => false,
-            'redirectMode' => $token->getClaim('redirectMode'),
-            'redirectFirstMethod' => $token->getClaim('redirectFirstMethod'),
-            'redirectPageLogin' => $token->getClaim('redirectPageLogin'),
-            'redirectPageLoginError' => $token->getClaim('redirectPageLoginError'),
-            'redirectPageLogout' => $token->getClaim('redirectPageLogout')
+            'redirectMode' => $tokenDataSet->get('redirectMode'),
+            'redirectFirstMethod' => $tokenDataSet->get('redirectFirstMethod'),
+            'redirectPageLogin' => $tokenDataSet->get('redirectPageLogin'),
+            'redirectPageLoginError' => $tokenDataSet->get('redirectPageLoginError'),
+            'redirectPageLogout' => $tokenDataSet->get('redirectPageLogout')
         ]);
 
         $redirectService->handleRedirect($allowedMethods);
