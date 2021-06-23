@@ -18,9 +18,6 @@ return [
         'searchFields' => 'title,id,domain,audience',
         'iconfile' => 'EXT:auth0/Resources/Public/Icons/tx_auth0_domain_model_application.png',
     ],
-    'interface' => [
-        'showRecordFieldList' => 'hidden, title, id, secret, domain, audience, single_log_out',
-    ],
     'types' => [
         '1' => ['showitem' => '
             --div--;LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tabs.basic,

@@ -155,9 +155,8 @@ class CallbackMiddleware implements MiddlewareInterface
     protected function isUserLoggedIn(ServerRequestInterface $request): bool
     {
         try {
-            // TODO: Get rid of TSFE when dropping TYPO3 v9 support
             // This is necessary as group data is not fetched to this time
-            ($request->getAttribute('frontend.user') ?? $GLOBALS['TSFE']->fe_user)->fetchGroupData();
+            $request->getAttribute('frontend.user')->fetchGroupData();
             $context = GeneralUtility::makeInstance(Context::class);
 
             return (bool)$context->getPropertyFromAspect('frontend.user', 'isLoggedIn');

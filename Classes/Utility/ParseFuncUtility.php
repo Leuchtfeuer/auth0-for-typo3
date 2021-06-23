@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Bitmotion\Auth0\Utility;
 
-use Bitmotion\Auth0\Utility\Database\UpdateUtility;
+use Bitmotion\Auth0\Configuration\Auth0Configuration;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -22,48 +22,54 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    const PARSING_FUNCTION = 'parseFunc';
+    const NO_AUTH0_VALUE = 'rx63XX7Vq5aCXn4y';
 
-    public function updateWithParseFunc(string $typo3FieldName, array $auth0FieldName, array $user)
+    public function updateWithoutParseFunc(string $configurationType, string $auth0FieldName, array $user)
     {
-        $fieldName = $auth0FieldName[UpdateUtility::TYPO_SCRIPT_NODE_VALUE];
-        $value = '';
+        switch ($configurationType) {
+            case Auth0Configuration::CONFIG_TYPE_ROOT:
+                $value = $user[$auth0FieldName] ?? null;
+                break;
 
-        if (isset($user[$fieldName]) && isset($auth0FieldName[self::PARSING_FUNCTION])) {
-            $value = $this->handleParseFunc($auth0FieldName[self::PARSING_FUNCTION], $user[$fieldName]);
-            $this->logger->debug(sprintf('Set dynamic value "%s" for "%s"', $value, $typo3FieldName));
-        } elseif (strpos($auth0FieldName[UpdateUtility::TYPO_SCRIPT_NODE_VALUE], 'user_metadata') !== false) {
-            $value = $this->getValueFromMetadata($auth0FieldName, $user);
-            $this->logger->debug(sprintf('Set dynamic value "%s" for "%s" from metadata.', $value, $typo3FieldName));
-        } elseif (isset($user[$typo3FieldName]) && isset($auth0FieldName[self::PARSING_FUNCTION]) && $auth0FieldName[self::PARSING_FUNCTION] === 'const') {
-            $value = $auth0FieldName[UpdateUtility::TYPO_SCRIPT_NODE_VALUE];
-            $this->logger->debug(sprintf('Set static value "%s" for "%s"', $value, $typo3FieldName));
-        } else {
-            $this->logger->warning(sprintf('Could not update property %s.', $typo3FieldName));
+            case Auth0Configuration::CONFIG_TYPE_USER:
+                $value = $this->getAuth0ValueRecursive($user[Auth0Configuration::CONFIG_TYPE_USER], explode('.', $auth0FieldName));
+                break;
+
+            case Auth0Configuration::CONFIG_TYPE_APP:
+                $value = $this->getAuth0ValueRecursive($user[Auth0Configuration::CONFIG_TYPE_APP], explode('.', $auth0FieldName));
+                break;
+
+            default:
+                $this->logger->warning(sprintf('Invalid configuration type "%s"', $configurationType));
         }
 
-        if ($value !== '') {
-            return $value;
-        }
-
-        return false;
+        return $value ?? self::NO_AUTH0_VALUE;
     }
 
-    public function updateWithoutParseFunc(string $auth0FieldName, array $user)
+    public function transformValue(string $processing, $value)
     {
-        if (isset($user[$auth0FieldName])) {
-            return $user[$auth0FieldName];
-        }
-        if (strpos($auth0FieldName, 'user_metadata') !== false) {
-            return $this->getAuth0ValueRecursive($user, explode('.', $auth0FieldName));
+        switch ($processing) {
+            case 'strtotime':
+                $value = strtotime($value);
+                break;
+
+            case 'bool':
+                $value = (int)(bool)$value;
+                break;
+
+            case 'negate-bool':
+                $value = (bool)$value ? 0 : 1;
+                break;
+
+            default:
+                $this->logger->notice(sprintf('"%s" is not a valid processing function', $processing));
         }
 
-        return false;
+        return $value;
     }
 
     protected function getAuth0ValueRecursive(array $user, array $properties): string
     {
-        $value = '';
         $property = array_shift($properties);
 
         if (isset($user[$property])) {
@@ -74,50 +80,6 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
             }
         }
 
-        return (string)$value;
-    }
-
-    protected function handleParseFunc(string $function, $value)
-    {
-        $parseFunctions = explode('|', $function);
-
-        foreach ($parseFunctions as $function) {
-            $value = $this->transformValue($function, $value);
-        }
-
-        return $value;
-    }
-
-    protected function transformValue(string $function, $value)
-    {
-        switch ($function) {
-            case 'strtotime':
-                $value = strtotime($value);
-                break;
-
-            case 'bool':
-                $value = (int)(bool)$value;
-                break;
-
-            case 'negate':
-                $value = (bool)$value ? 0 : 1;
-                break;
-
-            default:
-                $this->logger->notice(sprintf('"%s" is not a valid parseFunc', $function));
-        }
-
-        return $value;
-    }
-
-    protected function getValueFromMetadata(array $auth0FieldName, array $user)
-    {
-        return $this->handleParseFunc(
-            $auth0FieldName[self::PARSING_FUNCTION],
-            $this->getAuth0ValueRecursive(
-                $user,
-                explode('.', $auth0FieldName[UpdateUtility::TYPO_SCRIPT_NODE_VALUE])
-            )
-        );
+        return isset($value) ? (string)$value : self::NO_AUTH0_VALUE;
     }
 }

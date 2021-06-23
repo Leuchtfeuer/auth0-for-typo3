@@ -20,7 +20,6 @@ use Bitmotion\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
 use Bitmotion\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
 use Bitmotion\Auth0\Domain\Repository\UserRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use Bitmotion\Auth0\Utility\ParseFuncUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -29,16 +28,10 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 
 class UpdateUtility implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
-
-    /**
-     * @deprecated Will be removed with next major release.
-     */
-    const TYPO_SCRIPT_NODE_VALUE = '_typoScriptNodeValue';
 
     protected $tableName = '';
 
@@ -82,11 +75,7 @@ class UpdateUtility implements LoggerAwareInterface
 
     public function updateGroups(): void
     {
-        $groupMapping = array_merge(
-            $this->getGroupMappingFromDatabase(),
-            $this->getGroupMappingFromTypoScript()
-        );
-
+        $groupMapping = $this->getGroupMappingFromDatabase();
         $this->addDefaultGroup($groupMapping);
 
         if (empty($groupMapping)) {
@@ -111,63 +100,15 @@ class UpdateUtility implements LoggerAwareInterface
 
     public function updateUser(bool $reactivateUser = false): void
     {
-        $mappingConfiguration = $this->translateConfiguration($this->yamlConfiguration['properties'][$this->tableName]);
+        $mappingConfiguration = $this->yamlConfiguration['properties'][$this->tableName] ?? null;
 
-        try {
-            // Get mapping configuration
-            $mappingConfiguration = array_merge(
-                $mappingConfiguration,
-                ConfigurationUtility::getSetting('propertyMapping', $this->tableName)
-            );
-        } catch (InvalidConfigurationTypeException $exception) {
-            $this->logger->notice(
-                sprintf(
-                    '%d: %s - You can safely ignore this notice when migrated to YAML configuration.',
-                    $exception->getCode(),
-                    $exception->getMessage()
-                )
-            );
-        }
-
-        if (empty($mappingConfiguration)) {
+        if ($mappingConfiguration === null) {
             $this->logger->error(sprintf('Cannot update user: No mapping configuration for %s found', $this->tableName));
 
             return;
         }
 
         $this->performUserUpdate($mappingConfiguration, $reactivateUser);
-    }
-
-    /**
-     * @deprecated Will be removed with next major release.
-     */
-    protected function translateConfiguration(array $configuration): array
-    {
-        $translations = [];
-        $root = $configuration[Auth0Configuration::CONFIG_TYPE_ROOT] ?? [];
-
-        foreach ($configuration[Auth0Configuration::CONFIG_TYPE_USER] ?? [] as $userMetadata) {
-            $userMetadata['auth0Property'] = 'user_metadata.' . $userMetadata['auth0Property'];
-            $root[] = $userMetadata;
-        }
-
-        foreach ($configuration[Auth0Configuration::CONFIG_TYPE_APP] ?? [] as $appMetadata) {
-            $appMetadata['auth0Property'] = 'app_metadata.' . $appMetadata['auth0Property'];
-            $root[] = $appMetadata;
-        }
-
-        foreach ($root as $item) {
-            $translations[$item['databaseField']] = $item['auth0Property'];
-
-            if (isset($item['processing']) && !empty($item['processing'])) {
-                $translations[$item['databaseField']] = [
-                    self::TYPO_SCRIPT_NODE_VALUE => $item['auth0Property'],
-                    'parseFunc' => str_replace('-', '|', $item['processing'])
-                ];
-            }
-        }
-
-        return $translations;
     }
 
     protected function getGroupMappingFromDatabase(): array
@@ -200,26 +141,6 @@ class UpdateUtility implements LoggerAwareInterface
         return null;
     }
 
-    /**
-     * @deprecated Will be removed with next major version.
-     */
-    protected function getGroupMappingFromTypoScript(): array
-    {
-        try {
-            return ConfigurationUtility::getSetting('roles', $this->tableName);
-        } catch (InvalidConfigurationTypeException $exception) {
-            $this->logger->notice(
-                sprintf(
-                    '%d: %s - You can safely ignore this notice when migrated to YAML configuration.',
-                    $exception->getCode(),
-                    $exception->getMessage()
-                )
-            );
-        }
-
-        return [];
-    }
-
     protected function addDefaultGroup(array &$groupMapping): void
     {
         $key = 'frontend';
@@ -241,30 +162,13 @@ class UpdateUtility implements LoggerAwareInterface
 
     protected function mapRoles(array $groupMapping, array &$groupsToAssign, bool &$isBeAdmin, bool &$shouldUpdate): void
     {
-        try {
-            try {
-                $rolesKey = ConfigurationUtility::getSetting('roles', 'key') ?? null;
-            } catch (InvalidConfigurationTypeException $exception) {
-                // Ignore TypoScript not included exception.
-            }
-
-            // TODO: Support dot syntax for roles; e.g. roles.application
-            $rolesKey = $rolesKey ?? $this->yamlConfiguration['roles']['key'] ?? 'roles';
-        } catch (InvalidConfigurationTypeException $exception) {
-            $rolesKey = 'roles';
-        }
-
+        $rolesKey = $this->yamlConfiguration['roles']['key'] ?? 'roles';
         $roles = (array)($this->userFromIdToken ? $this->user[$rolesKey] : $this->user['app_metadata'][$rolesKey]) ?? [];
 
         foreach ($roles as $role) {
             if (isset($groupMapping[$role])) {
-                // TODO: Remove first and condition ($groupMapping[$role] === 'admin') with next major release)
-                if ($this->tableName === 'be_users' && $groupMapping[$role] === 'admin') {
-                    $isBeAdmin = true;
-                } else {
-                    $this->logger->notice(sprintf('Assign group "%s" to user.', $groupMapping[$role]));
-                    $groupsToAssign = array_merge($groupsToAssign, $groupMapping[$role]);
-                }
+                $this->logger->notice(sprintf('Assign group "%s" to user.', $groupMapping[$role]));
+                $groupsToAssign = array_merge($groupsToAssign, $groupMapping[$role]);
                 $shouldUpdate = true;
             } elseif (!empty($this->yamlConfiguration['roles']['beAdmin']) && $role === $this->yamlConfiguration['roles']['beAdmin']) {
                 $isBeAdmin = true;
@@ -353,20 +257,19 @@ class UpdateUtility implements LoggerAwareInterface
 
     protected function mapUserData(array &$updates, array $mappingConfiguration): void
     {
-        $this->parseFuncUtility = $parseFuncUtility = GeneralUtility::makeInstance(ParseFuncUtility::class);
-        $value = false;
+        $parseFuncUtility = GeneralUtility::makeInstance(ParseFuncUtility::class);
 
-        foreach ($mappingConfiguration as $typo3FieldName => $auth0FieldName) {
-            if (!is_array($auth0FieldName)) {
-                // Update without parsing function
-                $value = $this->parseFuncUtility->updateWithoutParseFunc($auth0FieldName, $this->user);
-            } elseif (isset($auth0FieldName[self::TYPO_SCRIPT_NODE_VALUE])) {
-                // Update with parsing function
-                $value = $this->parseFuncUtility->updateWithParseFunc($typo3FieldName, $auth0FieldName, $this->user);
-            }
+        foreach ($mappingConfiguration as $configurationType => $properties) {
+            foreach ($properties as $property) {
+                $value = $parseFuncUtility->updateWithoutParseFunc($configurationType, $property['auth0Property'], $this->user);
 
-            if ($value !== false) {
-                $updates[$typo3FieldName] = $value;
+                if (($property['processing'] ?? 'null') !== 'null') {
+                    $value = $parseFuncUtility->transformValue($property['processing'], $value);
+                }
+
+                if ($value !== ParseFuncUtility::NO_AUTH0_VALUE) {
+                    $updates[$property['databaseField']] = $value;
+                }
             }
         }
     }

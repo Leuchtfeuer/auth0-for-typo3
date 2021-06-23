@@ -34,34 +34,10 @@ use TYPO3\CMS\Core\Authentication\AuthenticationService as BasicAuthenticationSe
 use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Service\EnvironmentService;
 
 class AuthenticationService extends BasicAuthenticationService
 {
-    /**
-     * @deprecated Use Auth0Provider::LOGIN_PROVIDER instead
-     */
-    const AUTH_LOGIN_PROVIDER = '1526966635';
-
-    /**
-     * @var \stdClass
-     * @deprecated This property is no longer used.
-     */
-    protected $auth0Response;
-
-    /**
-     * @var array
-     * @deprecated This property is no longer used.
-     */
-    protected $auth0Data = [];
-
     protected $user = [];
-
-    /**
-     * @var array
-     * @deprecated This property is no longer used.
-     */
-    protected $tokenInfo = [];
 
     protected $userInfo = [];
 
@@ -71,12 +47,6 @@ class AuthenticationService extends BasicAuthenticationService
      * @var User
      */
     protected $auth0User;
-
-    /**
-     * @var EnvironmentService
-     * @deprecated This property is no longer used. You can retrieve the proper context from $this->authInfo['loginType']
-     */
-    protected $environmentService;
 
     /**
      * @var Auth0

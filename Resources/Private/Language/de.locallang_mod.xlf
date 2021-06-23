@@ -17,16 +17,6 @@
 			<trans-unit id="roles.title">
 				<target>Auth0 Rollen Mapping</target>
 			</trans-unit>
-			<trans-unit id="roles.infobox.title">
-				<target>TypoScript Einstellungen Importieren</target>
-			</trans-unit>
-			<trans-unit id="roles.infobox.content">
-				<target><![CDATA[Die gezeigte Konfiguration kann von deinen TypoScript Einstellungen überschrieben werden. Du kannst deine TypoScript Konfiguration importieren, aber bitte sei dir bewusst, dass die unten stehende Konfiguration in Teilen verloren gehen kann bzw. von <code>plugin.tx_auth0.settings.%s</code> überschrieben wird.<br/><strong>Nach dem Import solltest du deine TypoScript Konfiguration löschen.</strong>]]></target>
-			</trans-unit>
-			<trans-unit id="roles.infobox.button">
-				<target>Einstellungen vom TypoScript importieren</target>
-			</trans-unit>
-
 			<trans-unit id="roles.frontend.text">
 				<target>Diese Webseiten Benutzergruppe wird einem Nutzer zugewiesen, wenn keine der hinterleten Mapping Konfigurationen zutrifft oder der Nutzer keine Auth0 Rolle hinterlegt hat.</target>
 			</trans-unit>

@@ -32,8 +32,7 @@ class Auth0Middleware implements MiddlewareInterface, LoggerAwareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // TODO: Remove the $GLOBALS array when dropping TYPO3 9 LTS support
-        $feUserAuthentication = $request->getAttribute('frontend.user') ?? $GLOBALS['TSFE']->fe_user;
+        $feUserAuthentication = $request->getAttribute('frontend.user');
 
         // TODO: Add application ID
         // TODO: Application and context is set to avoid initialization of EnvironmentService since GLOBALS['TYPO3_REQUEST'] is not

@@ -18,7 +18,6 @@ use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
-use TYPO3\CMS\Frontend\Page\PageRepository;
 
 class RoutingUtility implements LoggerAwareInterface
 {
@@ -37,34 +36,6 @@ class RoutingUtility implements LoggerAwareInterface
     public function __construct()
     {
         $this->targetPage = (int)$GLOBALS['TSFE']->id;
-    }
-
-    /**
-     * @deprecated Use PSR-15 Middleware instead.
-     */
-    public function setCallback(int $pageUid, int $pageType): self
-    {
-        if ($pageUid !== 0) {
-            // Check whether page exists
-            if (class_exists('TYPO3\\CMS\\Core\\Domain\\Repository\\PageRepository')) {
-                $page = GeneralUtility::makeInstance(ObjectManager::class)->get('TYPO3\\CMS\\Core\\Domain\\Repository\\PageRepository')->checkRecord('pages', $pageUid);
-            } else {
-                // TODO: Remove this when dropping TYPO3 9 LTS support.
-                $page = GeneralUtility::makeInstance(ObjectManager::class)->get(PageRepository::class)->checkRecord('pages', $pageUid);
-            }
-
-            if (!empty($page)) {
-                $this->setTargetPage($pageUid);
-            } else {
-                $this->logger->warning(sprintf('No page found for given uid "%s".', $pageUid));
-            }
-        }
-
-        if ($pageType !== 0) {
-            $this->setTargetPageType($pageType);
-        }
-
-        return $this;
     }
 
     public function getUri(): string

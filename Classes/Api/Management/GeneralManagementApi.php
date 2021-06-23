@@ -26,7 +26,6 @@ use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use TYPO3\CMS\Core\Core\Environment;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Object\Exception;
 
 class GeneralManagementApi implements LoggerAwareInterface
@@ -202,7 +201,7 @@ class GeneralManagementApi implements LoggerAwareInterface
     {
         $errorMessage = sprintf('%s (%s): %s', $error->getError(), $error->getErrorCode(), $error->getMessage());
         $this->logger->critical($errorMessage);
-        $context = version_compare(TYPO3_version, '10.0.0', '>=') ? Environment::getContext() : GeneralUtility::getApplicationContext();
+        $context = Environment::getContext();
 
         if ($context->isProduction()) {
             throw new ApiException('Could not handle request. See log for further details.', 1549382279);

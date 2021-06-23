@@ -15,7 +15,6 @@ namespace Bitmotion\Auth0\Api;
 
 use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
-use Bitmotion\Auth0\ErrorCode;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\Middleware\CallbackMiddleware;
@@ -25,51 +24,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Auth0 extends \Auth0\SDK\Auth0
 {
-    /**
-     * Error codes provided by Auth0
-     * @see: https://auth0.com/docs/libraries/error-messages
-     */
-
-    // Sign up errors
-    /** @deprecated Use ErrorCodes class instead */
-    const ERROR_INVALID_PASSWORD = ErrorCode::ERROR_INVALID_PASSWORD;
-    /** @deprecated Use ErrorCodes class instead */
-    const ERROR_INVALID_SIGNUP = ErrorCode::ERROR_INVALID_SIGNUP;
-    /** @deprecated Use ErrorCodes class instead */
-    const ERROR_PASSWORD_DICTIONARY = ErrorCode::ERROR_PASSWORD_DICTIONARY;
-    /** @deprecated Use ErrorCodes class instead */
-    const ERROR_PASSWORD_NO_USER_INFO = ErrorCode::ERROR_PASSWORD_NO_USER_INFO;
-    /** @deprecated Use ErrorCodes class instead */
-    const ERROR_PASSWORD_STRENGTH_SIGN_UP = ErrorCode::ERROR_PASSWORD_STRENGTH_SIGN_UP;
-    /** @deprecated Use ErrorCodes class instead */
-    const ERROR_USER_EXISTS = ErrorCode::ERROR_USER_EXISTS;
-    /** @deprecated Use ErrorCodes class instead */
-    const ERROR_USERNAME_EXISTS = ErrorCode::ERROR_USERNAME_EXISTS;
-
-    // Login errors
-    /** @deprecated Use ErrorCodes class instead. */
-    const ERROR_ACCESS_DENIED = ErrorCode::ERROR_ACCESS_DENIED;
-    /** @deprecated Use ErrorCodes class instead. */
-    const ERROR_INVALID_USER_PASSWORD = ErrorCode::ERROR_INVALID_USER_PASSWORD;
-    /** @deprecated Use ErrorCodes class instead. */
-    const ERROR_MFA_INVALID_CODE = ErrorCode::ERROR_MFA_INVALID_CODE;
-    /** @deprecated Use ErrorCodes class instead. */
-    const ERROR_MFA_REGISTRATION_REQUIRED = ErrorCode::ERROR_MFA_REGISTRATION_REQUIRED;
-    /** @deprecated Use ErrorCodes class instead. */
-    const ERROR_MFA_REQUIRED = ErrorCode::ERROR_MFA_REQUIRED;
-    /** @deprecated Use ErrorCodes class instead. */
-    const ERROR_PASSWORD_LEAKED = ErrorCode::ERROR_PASSWORD_LEAKED;
-    /** @deprecated Use ErrorCodes class instead. */
-    const ERROR_PASSWORD_HISTORY = ErrorCode::ERROR_PASSWORD_HISTORY;
-    /** @deprecated Use ErrorCodes class instead. */
-    const ERROR_PASSWORD_STRENGTH_LOG_IN = ErrorCode::ERROR_PASSWORD_STRENGTH_LOG_IN;
-    /** @deprecated Use ErrorCodes class instead. */
-    const ERROR_TOO_MANY_ATTEMPTS = ErrorCode::ERROR_TOO_MANY_ATTEMPTS;
-
-    // Errors occurs during log in and sign up
-    /** @deprecated Use ErrorCodes class instead. */
-    const ERROR_UNAUTHORIZED = ErrorCode::ERROR_UNAUTHORIZED;
-
     /**
      * @throws CoreException
      */
@@ -104,7 +58,7 @@ class Auth0 extends \Auth0\SDK\Auth0
     protected function enrichConfigByApplication(int $applicationId, array &$config): void
     {
         try {
-            $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationId, true);
+            $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationId);
         } catch (InvalidApplicationException $exception) {
             // TODO: Log this
 

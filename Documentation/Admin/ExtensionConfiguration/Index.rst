@@ -192,22 +192,6 @@ reactivateDeletedFrontendUsers
    Description
          Allow log in for deleted frontend users.
 
-.. _admin-extensionConfiguration-properties-genericCallback:
-
-genericCallback
----------------
-.. container:: table-row
-
-   Property
-         genericCallback
-   Data type
-         boolean
-   Default
-         :code:`true`
-   Description
-         A generic callback URI for all requests (frontend and backend) will be used. The callback URI will be
-         `https://www.example.com/auth0/callback`.
-
 .. _admin-extensionConfiguration-properties-privateKeyFile:
 
 privateKeyFile

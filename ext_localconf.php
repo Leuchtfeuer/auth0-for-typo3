@@ -4,8 +4,7 @@ defined('TYPO3_MODE') || die('Access denied.');
 call_user_func(
     function ($extensionKey) {
         // Load libraries when TYPO3 is not in composer mode
-        // TODO: Use environment class when dropping TYPO3 v9 support.
-        if (!defined('TYPO3_COMPOSER_MODE') || !TYPO3_COMPOSER_MODE) {
+        if (\TYPO3\CMS\Core\Core\Environment::isComposerMode() === true) {
             require \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($extensionKey) . 'Libraries/vendor/autoload.php';
         }
 
@@ -18,22 +17,12 @@ call_user_func(
             $subtypes[] = 'authUserFE';
             $subtypes[] = 'getUserFE';
 
-            // Define some variables depending on TYPO3 Version
-            // TODO: Remove this when dropping TYPO3 9 LTS support.
-            if (version_compare(TYPO3_version, '10.0.0', '>=')) {
-                $extensionName = 'Auth0';
-                $controllerName = \Bitmotion\Auth0\Controller\LoginController::class;
-            } else {
-                $extensionName = 'Bitmotion.Auth0';
-                $controllerName = 'Login';
-            }
-
             // Configure Auth0 plugin
             \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-                $extensionName,
+                $extensionKey,
                 'LoginForm',
-                [$controllerName => 'form, login, logout'],
-                [$controllerName => 'form, login, logout']
+                [\Bitmotion\Auth0\Controller\LoginController::class => 'form, login, logout'],
+                [\Bitmotion\Auth0\Controller\LoginController::class => 'form, login, logout']
             );
         }
 

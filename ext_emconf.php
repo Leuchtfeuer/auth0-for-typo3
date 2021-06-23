@@ -7,7 +7,7 @@ $EM_CONF['auth0'] = [
     'category' => 'misc',
     'constraints' => [
         'depends' => [
-            'typo3' => '9.5.0-11.2.99',
+            'typo3' => '10.4.0-11.2.99',
         ],
         'conflicts' => [],
         'suggests' => [],

@@ -26,14 +26,14 @@ use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\Controller\LoginController;
 use TYPO3\CMS\Backend\LoginProvider\LoginProviderInterface;
 use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 
-class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
+class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, SingletonInterface
 {
     use LoggerAwareTrait;
 
@@ -68,9 +68,8 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
      */
     protected $frameworkConfiguration;
 
-    public function __construct()
+    public function __construct(ConfigurationManager $configurationManager)
     {
-        $configurationManager = GeneralUtility::makeInstance(ObjectManager::class)->get(ConfigurationManager::class);
         $this->frameworkConfiguration = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK, 'auth0');
     }
 
@@ -132,22 +131,16 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
 
     protected function getCallbackUri()
     {
-        $callback = GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL');
+        $tokenUtility = new TokenUtility();
+        $tokenUtility->withPayload('application', $this->configuration->getBackendConnection());
 
-        if ($this->configuration->isGenericCallback()) {
-            $tokenUtility = new TokenUtility();
-            $tokenUtility->withPayload('application', $this->configuration->getBackendConnection());
-
-            $callback = sprintf(
-                '%s%s?%s=%s',
-                $tokenUtility->getIssuer(),
-                CallbackMiddleware::PATH,
-                CallbackMiddleware::TOKEN_PARAMETER,
-                $tokenUtility->buildToken()
-            );
-        }
-
-        return $callback;
+        return sprintf(
+            '%s%s?%s=%s',
+            $tokenUtility->getIssuer(),
+            CallbackMiddleware::PATH,
+            CallbackMiddleware::TOKEN_PARAMETER,
+            $tokenUtility->buildToken()
+        );
     }
 
     protected function getUserInfo()
@@ -212,7 +205,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface
         $this->auth0->logout();
 
         $applicationRepository = GeneralUtility::makeInstance(ApplicationRepository::class);
-        $application = $applicationRepository->findByUid($this->configuration->getBackendConnection(), true);
+        $application = $applicationRepository->findByUid($this->configuration->getBackendConnection());
         $redirectUri = str_replace('auth0[action]=logout', '', GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
         $logoutUri = $this->auth0->getLogoutUri(rtrim($redirectUri, '&'), $application->getClientId());
 

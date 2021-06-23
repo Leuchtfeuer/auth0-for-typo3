@@ -57,21 +57,7 @@ class RedirectService implements LoggerAwareInterface
 
             if (!empty($redirectUris)) {
                 $redirectUri = $this->addAdditionalParamsToRedirectUri($this->getUri($redirectUris), $additionalParameters);
-
-                // TODO: Remove this when dropping TYPO3 v9 support
-                foreach ($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['auth0']['redirect_pre_processing'] ?? [] as $_funcRef) {
-                    trigger_error('Using the redirect_pre_processing hook is deprecated. You should use the RedirectPreProcessingEvent instead.', E_USER_DEPRECATED);
-                    if ($_funcRef) {
-                        GeneralUtility::callUserFunction($_funcRef, $redirectUri, $this);
-                    }
-                }
-
-                if (version_compare(TYPO3_version, '10.4.0', '>=')) {
-                    $redirectUri = $this
-                        ->getEventDispatcher()
-                        ->dispatch(new RedirectPreProcessingEvent($redirectUri, $this))
-                        ->getRedirectUri();
-                }
+                $redirectUri = $this->getEventDispatcher()->dispatch(new RedirectPreProcessingEvent($redirectUri, $this))->getRedirectUri();
 
                 $this->logger->notice(sprintf('Redirect to: %s', $redirectUri));
                 header('Location: ' . $redirectUri, false, 307);

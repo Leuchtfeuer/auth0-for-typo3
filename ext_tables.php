@@ -18,18 +18,6 @@ call_user_func(
             ]
         );
 
-        if (version_compare(TYPO3_version, '10.0.0', '<')) {
-            // Connect to signal slots
-            // TODO: Remove this when dropping TYPO3 v9 support
-            $signalSlotDispatcher = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher::class);
-            $signalSlotDispatcher->connect(
-                \TYPO3\CMS\Extensionmanager\Utility\InstallUtility::class,
-                'afterExtensionInstall',
-                \Bitmotion\Auth0\Slots\ConfigurationSlot::class,
-                'addCacheHashExcludedParameters'
-            );
-        }
-
         // Load extension configuration
         $configuration = new \Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration();
 
@@ -57,29 +45,17 @@ call_user_func(
         }
 
         // Register Backend Module
-        $controllerActions = [
-            \Bitmotion\Auth0\Controller\BackendController::class => 'list',
-            \Bitmotion\Auth0\Controller\ApplicationController::class => 'list,delete',
-            \Bitmotion\Auth0\Controller\RoleController::class => 'list,update,acquireMappingTypoScript',
-            \Bitmotion\Auth0\Controller\PropertyController::class => 'list,new,create,edit,update,delete,acquireMappingTypoScript',
-        ];
-        $extensionName = $extensionKey;
-        if (version_compare(TYPO3_version, '10.0.0', '<')) {
-            $controllerActions = [
-                'Backend' => 'list',
-                'Application' => 'list,delete',
-                'Role' => 'list,update,acquireMappingTypoScript',
-                'Property' => 'list,new,create,edit,update,delete,acquireMappingTypoScript',
-            ];
-            $extensionName = 'Bitmotion.' . ucfirst($extensionKey);
-        }
         \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
-            $extensionName,
+            $extensionKey,
             'tools',
             'Auth0',
             'bottom',
-            $controllerActions,
             [
+                \Bitmotion\Auth0\Controller\BackendController::class => 'list',
+                \Bitmotion\Auth0\Controller\ApplicationController::class => 'list,delete',
+                \Bitmotion\Auth0\Controller\RoleController::class => 'list,update',
+                \Bitmotion\Auth0\Controller\PropertyController::class => 'list,new,create,edit,update,delete',
+            ], [
                 'access' => 'admin',
                 'icon' => 'EXT:auth0/Resources/Public/Icons/Module.svg',
                 'labels' => 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf'

@@ -168,51 +168,6 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         return $saltFactory->getHashedPassword($password);
     }
 
-    /**
-     * @deprecated Will be removed in next major release.
-     */
-    public function convertAuth0UserToUserInfo(User $auth0User): array
-    {
-        return [
-            'sub' => $auth0User->getUserId(),
-            'given_name' => $auth0User->getGivenName(),
-            'family_name' => $auth0User->getFamilyName(),
-            'nickname' => $auth0User->getNickname(),
-            'name' => $auth0User->getName(),
-            'picture' => $auth0User->getPicture(),
-            'updated_at' => $auth0User->getUpdatedAt(),
-        ];
-    }
-
-    /**
-     * @deprecated Use $auth0->login() instead.
-     */
-    public function loginUser(Auth0 $auth0): void
-    {
-        try {
-            $userInfo = $auth0->getUser();
-
-            if (!$userInfo) {
-                // Try to login user to Auth0
-                $this->logger->notice('Try to login user to Auth0.');
-                $auth0->login();
-            }
-        } catch (\Exception $exception) {
-            if (isset($auth0) && $auth0 instanceof Auth0) {
-                $auth0->deleteAllPersistentData();
-            }
-        }
-    }
-
-    /**
-     * @deprecated Use $auth0->logout() instead.
-     */
-    public function logoutUser(Auth0 $auth0): void
-    {
-        $this->logger->notice('Log out user');
-        $auth0->logout();
-    }
-
     public function updateUser(Auth0 $auth0, int $application): void
     {
         try {

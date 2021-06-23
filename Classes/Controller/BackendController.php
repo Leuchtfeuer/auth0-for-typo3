@@ -35,10 +35,6 @@ class BackendController extends ActionController
     public function __construct(ApplicationRepository $applicationRepository)
     {
         $this->applicationRepository = $applicationRepository;
-
-        if (version_compare(TYPO3_version, '10.0.0', '<')) {
-            parent::__construct();
-        }
     }
 
     public function listAction(): void

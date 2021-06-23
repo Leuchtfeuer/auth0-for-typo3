@@ -17,17 +17,14 @@ use Auth0\SDK\Exception\CoreException;
 use Bitmotion\Auth0\Api\Auth0;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Bitmotion\Auth0\ErrorCode;
 use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\Middleware\CallbackMiddleware;
-use Bitmotion\Auth0\Service\RedirectService;
 use Bitmotion\Auth0\Utility\ApiUtility;
 use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use Bitmotion\Auth0\Utility\ParametersUtility;
 use Bitmotion\Auth0\Utility\RoutingUtility;
 use Bitmotion\Auth0\Utility\TokenUtility;
-use Bitmotion\Auth0\Utility\UserUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
@@ -88,38 +85,9 @@ class LoginController extends ActionController implements LoggerAwareInterface
      */
     public function formAction(): void
     {
-        $context = GeneralUtility::makeInstance(Context::class);
-        $redirectService = GeneralUtility::makeInstance(RedirectService::class, $this->settings);
-
-        if ($context->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
+        if (GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
             // Get Auth0 user from session storage
             $userInfo = (new SessionFactory())->getSessionStoreForApplication($this->application, SessionFactory::SESSION_PREFIX_FRONTEND)->getUserInfo();
-
-            // Redirect when user just logged in (and update him)
-            if (!$this->extensionConfiguration->isGenericCallback() && GeneralUtility::_GET('logintype') === 'login' && !empty($userInfo)) {
-                if (!empty(GeneralUtility::_GET('referrer'))) {
-                    $this->logger->notice('Handle referrer redirect prior to updating user.');
-                    $redirectService->forceRedirectByReferrer(['logintype' => 'login']);
-                }
-
-                GeneralUtility::makeInstance(UserUtility::class)->updateUser($this->getAuth0(), (int)$this->settings['application']);
-                $redirectService->handleRedirect(['groupLogin', 'userLogin', 'login', 'getpost', 'referrer']);
-            }
-        } elseif (!$this->extensionConfiguration->isGenericCallback() && GeneralUtility::_GET('logintype') === 'logout' && !empty(GeneralUtility::_GET('referrer'))) {
-            // User was logged out prior to this method. That's why there is no valid TYPO3 frontend user anymore.
-            $this->redirectToUri(GeneralUtility::_GET('referrer'));
-        }
-
-        if (!$this->extensionConfiguration->isGenericCallback()) {
-            // Force redirect due to Auth0 sign up or login errors
-            $validErrorCodes = (new \ReflectionClass(ErrorCode::class))->getConstants();
-            if (!empty(GeneralUtility::_GET('referrer')) && in_array($this->error, $validErrorCodes)) {
-                $this->logger->notice('Handle referrer redirect because of Auth0 errors.');
-                $redirectService->forceRedirectByReferrer([
-                    'error' => $this->error,
-                    'error_description' => $this->errorDescription,
-                ]);
-            }
         }
 
         $this->view->assignMultiple([
@@ -165,18 +133,12 @@ class LoginController extends ActionController implements LoggerAwareInterface
      */
     public function logoutAction(): void
     {
-        $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($this->application, true);
+        $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($this->application);
         $singleLogOut = isset($this->settings['softLogout']) ? !(bool)$this->settings['softLogout'] : $application->isSingleLogOut();
 
-        if ($singleLogOut === false || !$this->extensionConfiguration->isGenericCallback()) {
+        if ($singleLogOut === false) {
             $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
             $routingUtility->addArgument('logintype', 'logout');
-
-            if (!$this->extensionConfiguration->isGenericCallback()) {
-                trigger_error('Using logout settings for frontend request is deprecated as there is a dedicated callback middleware.', E_USER_DEPRECATED);
-                $logoutSettings = $this->settings['frontend']['logout'] ?? [];
-                $routingUtility->setCallback((int)$logoutSettings['targetPageUid'], (int)$logoutSettings['targetPageType']);
-            }
 
             if (strpos($this->settings['redirectMode'], 'logout') !== false && (bool)$this->settings['redirectDisable'] === false) {
                 $routingUtility->addArgument('referrer', $this->addLogoutRedirect());
@@ -193,13 +155,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
         $auth0 = $this->getAuth0();
         $auth0->logout();
 
-        if ($this->extensionConfiguration->isGenericCallback()) {
-            $logoutUri = $auth0->getLogoutUri($this->getCallback('logout'), $application->getClientId());
-        } else {
-            $logoutUri = $auth0->getLogoutUri($returnUrl, $application->getClientId());
-        }
-
-        $this->redirectToUri($logoutUri);
+        $this->redirectToUri($auth0->getLogoutUri($this->getCallback('logout'), $application->getClientId()));
     }
 
     /**
@@ -212,24 +168,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
             return $this->auth0;
         }
 
-        if ($this->extensionConfiguration->isGenericCallback()) {
-            $callback = $this->getCallback('login');
-        } else {
-            trigger_error('Using callback settings for frontend request is deprecated as there is a dedicated callback middleware.', E_USER_DEPRECATED);
-            $uri = $GLOBALS['TYPO3_REQUEST']->getUri();
-            $referrer = sprintf('%s://%s%s', $uri->getScheme(), $uri->getHost(), $uri->getPath());
-
-            $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
-            $callbackSettings = $this->settings['frontend']['callback'] ?? [];
-            $callback = $routingUtility
-                ->addArgument('logintype', 'login')
-                ->addArgument('application', (int)$this->settings['application'])
-                ->addArgument('referrer', $referrer)
-                ->setCallback((int)$callbackSettings['targetPageUid'], (int)$callbackSettings['targetPageType'])
-                ->getUri();
-        }
-
-        return GeneralUtility::makeInstance(ApiUtility::class, $this->application)->getAuth0($callback);
+        return GeneralUtility::makeInstance(ApiUtility::class, $this->application)->getAuth0($this->getCallback());
     }
 
     protected function getCallback(string $loginType = 'login'): string

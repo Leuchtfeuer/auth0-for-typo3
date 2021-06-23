@@ -17,7 +17,6 @@ use Bitmotion\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Factory\ConfigurationFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
 class RoleController extends BackendController
@@ -58,26 +57,6 @@ class RoleController extends BackendController
 
         $auth0Configuration->write($configuration);
         $this->addFlashMessage($this->getTranslation('message.role.updated.text'), $this->getTranslation('message.role.updated.title'));
-        $this->redirect('list');
-    }
-
-    /**
-     * @throws InvalidConfigurationTypeException
-     * @throws StopActionException
-     * @deprecated This method will be removed in version 4.
-     */
-    public function acquireMappingTypoScriptAction(): void
-    {
-        $settings = $this->settings['roles'];
-        (new FrontendUserGroupRepository())->translate($settings['fe_users']);
-        (new BackendUserGroupRepository())->translate($settings['be_users']);
-
-        $auth0Configuration = GeneralUtility::makeInstance(Auth0Configuration::class);
-        $configuration = $auth0Configuration->load();
-        $configuration['roles']['key'] = $settings['key'];
-        $auth0Configuration->write($configuration);
-
-        $this->addFlashMessage($this->getTranslation('message.role.imported.text'), $this->getTranslation('message.role.imported.title'));
         $this->redirect('list');
     }
 }

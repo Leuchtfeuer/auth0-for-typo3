@@ -8,30 +8,6 @@ plugin.tx_auth0 {
     persistence {
         storagePid =
     }
-
-    # These frontend constants are deprecated and will be removed in next major version of this extension
-    settings {
-        backend {
-            view {
-                layoutPath = EXT:auth0/Resources/Private/Layouts/
-                templateFile = EXT:auth0/Resources/Private/Templates/Backend.html
-            }
-        }
-
-        frontend {
-            callback {
-                targetPageType = 1547536919
-                targetPageUid = 1
-            }
-
-            logout {
-                targetPageType = 0
-                targetPageUid = 1
-            }
-        }
-
-        roles.key = roles
-    }
 }
 
 module.tx_auth0 {

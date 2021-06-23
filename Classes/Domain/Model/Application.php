@@ -19,16 +19,6 @@ use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 class Application extends AbstractEntity
 {
     /**
-     * @deprecated Use JwtConfiguration::ALG_HS256 instead
-     */
-    public const SIGNATURE_HS256 = JwtConfiguration::ALG_HS256;
-
-    /**
-     * @deprecated Use JwtConfiguration::ALG_RS256 instead
-     */
-    public const SIGNATURE_RS256 = JwtConfiguration::ALG_RS256;
-
-    /**
      * @var string
      */
     protected $title = '';
@@ -88,14 +78,6 @@ class Application extends AbstractEntity
         $this->title = $title;
     }
 
-    /**
-     * @deprecated Use $this->getClientId() instead.
-     */
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
     public function getClientId(): string
     {
         return $this->id;
@@ -104,14 +86,6 @@ class Application extends AbstractEntity
     public function setId(string $id): void
     {
         $this->id = $id;
-    }
-
-    /**
-     * @deprecated Use $this->getClientSecret() instead.
-     */
-    public function getSecret(): string
-    {
-        return $this->secret;
     }
 
     public function getClientSecret(): string
@@ -180,8 +154,7 @@ class Application extends AbstractEntity
 
     public function getSignatureAlgorithm(): string
     {
-        // TODO: Keep this condition until dropping TYPO3 9 Support
-        return !empty($this->signatureAlgorithm) ? $this->signatureAlgorithm : JwtConfiguration::ALG_RS256;
+        return $this->signatureAlgorithm;
     }
 
     public function setSignatureAlgorithm(string $signatureAlgorithm): void

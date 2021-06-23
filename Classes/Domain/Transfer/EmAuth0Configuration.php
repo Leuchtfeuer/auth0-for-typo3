@@ -42,11 +42,6 @@ class EmAuth0Configuration implements SingletonInterface
 
     protected $enableFrontendLogin = true;
 
-    /**
-     * @deprecated Will be removed in next major version and become default
-     */
-    protected $genericCallback = false;
-
     protected $privateKeyFile = '';
 
     protected $publicKeyFile = '';
@@ -75,14 +70,6 @@ class EmAuth0Configuration implements SingletonInterface
         }
     }
 
-    /**
-     * @deprecated Will be removed in version 4. Use $this->isEnableBackendLogin() instead.
-     */
-    public function getEnableBackendLogin(): bool
-    {
-        return $this->isEnableBackendLogin();
-    }
-
     public function isEnableBackendLogin(): bool
     {
         return (bool)$this->enableBackendLogin;
@@ -98,25 +85,9 @@ class EmAuth0Configuration implements SingletonInterface
         return (int)$this->userStoragePage;
     }
 
-    /**
-     * @deprecated Will be removed in version 4. Use $this->isReactivateDisabledBackendUsers() instead.
-     */
-    public function getReactivateDisabledBackendUsers(): bool
-    {
-        return $this->isReactivateDisabledBackendUsers();
-    }
-
     public function isReactivateDisabledBackendUsers(): bool
     {
         return (bool)$this->reactivateDisabledBackendUsers;
-    }
-
-    /**
-     * @deprecated Will be removed in version 4. Use $this->isReactivateDeletedBackendUsers() instead.
-     */
-    public function getReactivateDeletedBackendUsers(): bool
-    {
-        return $this->isReactivateDeletedBackendUsers();
     }
 
     public function isReactivateDeletedBackendUsers(): bool
@@ -124,25 +95,9 @@ class EmAuth0Configuration implements SingletonInterface
         return (bool)$this->reactivateDeletedBackendUsers;
     }
 
-    /**
-     * @deprecated Will be removed in version 4. Use $this->isReactivateDisabledFrontendUsers() instead.
-     */
-    public function getReactivateDisabledFrontendUsers(): bool
-    {
-        return $this->isReactivateDisabledFrontendUsers();
-    }
-
     public function isReactivateDisabledFrontendUsers(): bool
     {
         return (bool)$this->reactivateDisabledFrontendUsers;
-    }
-
-    /**
-     * @deprecated Will be removed in version 4. Use $this->isReactivateDeletedFrontendUsers() instead.
-     */
-    public function getReactivateDeletedFrontendUsers(): bool
-    {
-        return $this->isReactivateDeletedFrontendUsers();
     }
 
     public function isReactivateDeletedFrontendUsers(): bool
@@ -163,14 +118,6 @@ class EmAuth0Configuration implements SingletonInterface
     public function isEnableFrontendLogin(): bool
     {
         return (bool)$this->enableFrontendLogin;
-    }
-
-    /**
-     * @deprecated Will be removed in version 4 and becomes default.
-     */
-    public function isGenericCallback(): bool
-    {
-        return (bool)$this->genericCallback;
     }
 
     public function getPrivateKeyFile(): string

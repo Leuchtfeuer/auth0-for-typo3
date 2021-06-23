@@ -26,19 +26,17 @@
     "docs": "https://docs.typo3.org/p/leuchtfeuer/auth0/master/en-us/"
   },
   "require": {
-    "typo3/cms-core": "^9.5.25 || ^10.4.14 || ^11.2.0",
-    "typo3/cms-backend": "^9.5.25 || ^10.4.14 || ^11.2.0",
-    "typo3/cms-extbase": "^9.5.25 || ^10.4.14 || ^11.2.0",
-    "typo3/cms-extensionmanager": "^9.5.25 || ^10.4.14 || ^11.2.0",
-    "typo3/cms-fluid": "^9.5.25 || ^10.4.14 || ^11.2.0",
-    "typo3/cms-frontend": "^9.5.25 || ^10.4.14 || ^11.2.0",
+    "typo3/cms-core": "^10.4.14 || ^11.2.0",
+    "typo3/cms-backend": "^10.4.14 || ^11.2.0",
+    "typo3/cms-extbase": "^10.4.14 || ^11.2.0",
+    "typo3/cms-extensionmanager": "^10.4.14 || ^11.2.0",
+    "typo3/cms-fluid": "^10.4.14 || ^11.2.0",
+    "typo3/cms-frontend": "^10.4.14 || ^11.2.0",
     "auth0/auth0-php": "^7.1",
     "symfony/serializer": "^4.2 || ^5.0",
-    "symfony/property-access": "^4.2 || ^5.0",
-    "symfony/property-info": "^4.2 || ^5.0",
-    "symfony/http-foundation": "^4.2.9 || ^5.0.7",
-    "ext-pdo": "*",
-    "ext-json": "*"
+    "symfony/property-access": "^4.4 || ^5.0",
+    "symfony/property-info": "^4.4 || ^5.0",
+    "symfony/http-foundation": "^4.4 || ^5.0.7"
   },
   "suggest": {
     "typo3/cms-scheduler": "TYPO3 Scheduler"

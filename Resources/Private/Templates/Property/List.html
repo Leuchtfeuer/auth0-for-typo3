@@ -5,15 +5,6 @@
 <f:section name="content">
 	<h1><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.title" /></h1>
 
-	<f:if condition="{settings.propertyMapping.fe_users} || {settings.propertyMapping.be_users}">
-		<f:be.infobox state="-1" title="{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.infobox.title')}">
-			<p>{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.infobox.content', arguments: '{0: "propertyMapping"}') -> f:format.html()}</p>
-			<f:link.action action="acquireMappingTypoScript" class="btn btn-primary">
-				<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.infobox.button" />
-			</f:link.action>
-		</f:be.infobox>
-	</f:if>
-
 	<f:be.infobox title="{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.infobox.api.title')}">
 		<p>{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.infobox.api.content')}</p>
 	</f:be.infobox>

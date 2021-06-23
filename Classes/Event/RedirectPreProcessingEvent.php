@@ -43,7 +43,7 @@ final class RedirectPreProcessingEvent
         $this->redirectUri = $redirectUri;
     }
 
-    public function getRedirectService(): array
+    public function getRedirectService(): RedirectService
     {
         return $this->redirectService;
     }

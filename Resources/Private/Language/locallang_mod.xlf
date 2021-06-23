@@ -17,15 +17,6 @@
 			<trans-unit id="roles.title">
 				<source>Role Mapping</source>
 			</trans-unit>
-			<trans-unit id="roles.infobox.title">
-				<source>Import Your TypoScript Configuration</source>
-			</trans-unit>
-			<trans-unit id="roles.infobox.content">
-				<source><![CDATA[The shown configuration may be overwritten by your TypoScript configuration. Please make sure to adapt your TypoScript configuration in <code>plugin.tx_auth0.settings.%s</code>. You can import the mapping from your TypoScript settings. But be aware, that some configuration shown below might get lost after the import.<br/><strong>Do not forget to clear your TypoScript settings afterwards.</strong>]]></source>
-			</trans-unit>
-			<trans-unit id="roles.infobox.button">
-				<source>Import configuration from TypoScript</source>
-			</trans-unit>
 			<trans-unit id="roles.frontend.text">
 				<source>This website usergroup is assigned to an user if none of his Auth0 roles is assigned to a website usergroup.</source>
 			</trans-unit>

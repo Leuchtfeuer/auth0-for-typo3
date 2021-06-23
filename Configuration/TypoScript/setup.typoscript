@@ -2,44 +2,24 @@ plugin.tx_auth0 {
     view {
         layoutRootPaths {
             0 = EXT:auth0/Resources/Private/Layouts/
-            1 = {$plugin.tx_auth0.view.layoutRootPath}
+            10 = {$plugin.tx_auth0.view.layoutRootPath}
         }
 
         templateRootPaths {
             0 = EXT:auth0/Resources/Private/Templates/
-            1 = {$plugin.tx_auth0.view.templateRootPath}
+            10 = {$plugin.tx_auth0.view.templateRootPath}
         }
 
         partialRootPaths {
             0 = EXT:auth0/Resources/Private/Partials/
-            1 = {$plugin.tx_auth0.view.partialRootPath}
+            10 = {$plugin.tx_auth0.view.partialRootPath}
         }
     }
 
     persistence.storagePid = {$plugin.tx_auth0.persistence.storagePid}
 
     settings {
-        # The backend settings are deprecated. Please use module.tx_auth0.view instead
-        backend {
-            view {
-                layoutPath = {$plugin.tx_auth0.settings.backend.view.layoutPath}
-                stylesheet = {$plugin.tx_auth0.settings.backend.view.stylesheet}
-            }
-        }
-
-        frontend {
-            # The callback settings are deprecated and will be removed in next major version of this extension
-            callback {
-                targetPageType = {$plugin.tx_auth0.settings.frontend.callback.targetPageType}
-                targetPageUid = {$plugin.tx_auth0.settings.frontend.callback.targetPageUid}
-            }
-
-            # The logout settings are deprecated and will be removed in next major version of this extension
-            logout {
-                targetPageType = {$plugin.tx_auth0.settings.frontend.logout.targetPageType}
-                targetPageUid = {$plugin.tx_auth0.settings.frontend.logout.targetPageUid}
-            }
-
+       frontend {
             login {
                 additionalAuthorizeParameters {
                     # key = value
@@ -48,93 +28,19 @@ plugin.tx_auth0 {
                 }
             }
         }
-
-        # maps auth0 roles to TYPO3 fe_groups or be_groups
-        # The roles configuration via TypoScript is deprecated. Please use the dedicated backend
-        # module for configuring the roles. You can easily import your TypoScript settings there.
-        # See: https://docs.typo3.org/p/leuchtfeuer/auth0/master/en-us/Admin/Module/Index.html
-        roles {
-            key = {$plugin.tx_auth0.settings.roles.key}
-
-            # table name
-            be_users {
-                # mapping for auth0 role to be_groups
-                # add your own mapping here
-                # Example: basic_editor = 1
-
-                # special: sets the admin flag
-                # admin = admin
-            }
-
-            fe_users {
-                # mapping for auth0 role to fe_groups
-                # add your own mapping here
-                # Example: admin = 1 or: user = 2
-            }
-        }
-
-        # The property Mapping configuration via TypoScript is deprecated. Please use the dedicated backend
-        # module for configuring the roles. You can easily import your TypoScript settings there.
-        # See: https://docs.typo3.org/p/leuchtfeuer/auth0/master/en-us/Admin/Module/Index.html
-        propertyMapping {
-            be_users {
-                username = nickname
-
-                crdate = created_at
-                crdate.parseFunc = strtotime
-
-                tstamp = updated_at
-                tstamp.parseFunc = strtotime
-
-                disable = email_verified
-                disable.parseFunc = bool|negate
-
-                # Example for mapping metadata:
-                # description = user_metadata.description
-                #
-                # or:
-                # admin = user_metadata.admin
-                # admin.parseFunc = bool
-            }
-
-            fe_users {
-                crdate = created_at
-                crdate.parseFunc = strtotime
-
-                tstamp = updated_at
-                tstamp.parseFunc = strtotime
-            }
-        }
     }
-}
-
-# This page type is marked as deprecated and will be removed in next major version of this extension
-# Please use the generic callback instead: https://docs.typo3.org/p/leuchtfeuer/auth0/master/en-us/Admin/Callback/Index.html
-auth0_callback = PAGE
-auth0_callback {
-    typeNum = 1547536919
-
-    config {
-        disableAllHeaderCode = 1
-        no_cache = 1
-        debug = 0
-        admPanel = 0
-    }
-
-    10 =< tt_content.list.20.auth0_loginform
 }
 
 module.tx_auth0 {
     view {
         layoutRootPaths {
             0 = EXT:auth0/Resources/Private/Layouts/
-            1 = {$module.tx_auth0.view.layoutRootPath}
-            2 = {$plugin.tx_auth0.settings.backend.view.layoutPath}
+            10 = {$module.tx_auth0.view.layoutRootPath}
         }
 
         templateRootPaths {
             0 = EXT:auth0/Resources/Private/Templates/
-            1 = {$module.tx_auth0.view.templateRootPath}
+            10 = {$module.tx_auth0.view.templateRootPath}
         }
     }
 
