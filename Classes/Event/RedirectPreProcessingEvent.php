@@ -17,14 +17,8 @@ use Bitmotion\Auth0\Service\RedirectService;
 
 final class RedirectPreProcessingEvent
 {
-    /**
-     * @var string
-     */
     private $redirectUri;
 
-    /**
-     * @var array
-     */
     private $redirectService;
 
     public function __construct(string $redirectUri, RedirectService $redirectService)

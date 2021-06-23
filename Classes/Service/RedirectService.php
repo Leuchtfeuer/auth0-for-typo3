@@ -99,7 +99,7 @@ class RedirectService implements LoggerAwareInterface
                                     ->where(
                                         $queryBuilder->expr()->neq(
                                             'felogin_redirectPid',
-                                            $queryBuilder->createNamedParameter('', \PDO::PARAM_STR)
+                                            $queryBuilder->createNamedParameter('')
                                         ),
                                         $queryBuilder->expr()->in(
                                             'uid',
@@ -127,7 +127,7 @@ class RedirectService implements LoggerAwareInterface
                                 ->where(
                                     $queryBuilder->expr()->neq(
                                         'felogin_redirectPid',
-                                        $queryBuilder->createNamedParameter('', \PDO::PARAM_STR)
+                                        $queryBuilder->createNamedParameter('')
                                     ),
                                     $queryBuilder->expr()->eq(
                                         $GLOBALS['TSFE']->fe_user->userid_column,

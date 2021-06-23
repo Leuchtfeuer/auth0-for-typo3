@@ -17,7 +17,7 @@ final class ErrorCode
 {
     /**
      * Error codes provided by Auth0
-     * @see: https://auth0.com/docs/libraries/error-messages
+     * @see: https://auth0.com/docs/libraries/common-auth0-library-authentication-errors
      */
 
     // Sign up errors

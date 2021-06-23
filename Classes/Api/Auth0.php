@@ -73,7 +73,7 @@ class Auth0 extends \Auth0\SDK\Auth0
         $config['secret_base64_encoded'] = $application->isSecretBase64Encoded();
     }
 
-    private function getContext()
+    private function getContext(): string
     {
         if (($GLOBALS['TYPO3_REQUEST'] ?? null) instanceof ServerRequest) {
             return ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend() ? SessionFactory::SESSION_PREFIX_FRONTEND : SessionFactory::SESSION_PREFIX_BACKEND;
