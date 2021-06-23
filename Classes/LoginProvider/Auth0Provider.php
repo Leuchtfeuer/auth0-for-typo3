@@ -180,7 +180,8 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     protected function prepareView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
     {
-        $standaloneView->setTemplate('Backend');
+        $templateName = version_compare(TYPO3_version, '11.0', '>=') ? 'BackendV11' : 'Backend';
+        $standaloneView->setTemplate($templateName);
         $standaloneView->setLayoutRootPaths($this->frameworkConfiguration['view']['layoutRootPaths']);
         $standaloneView->setTemplateRootPaths($this->frameworkConfiguration['view']['templateRootPaths']);
 
