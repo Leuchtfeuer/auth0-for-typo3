@@ -4,7 +4,7 @@ defined('TYPO3_MODE') || die('Access denied.');
 call_user_func(
     function ($extensionKey) {
         // Load libraries when TYPO3 is not in composer mode
-        if (\TYPO3\CMS\Core\Core\Environment::isComposerMode() === true) {
+        if (\TYPO3\CMS\Core\Core\Environment::isComposerMode() !== true) {
             require \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($extensionKey) . 'Libraries/vendor/autoload.php';
         }
 
