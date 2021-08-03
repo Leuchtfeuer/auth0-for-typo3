@@ -87,7 +87,7 @@
 				<target><![CDATA[Additional query parameters for authentication (e.g. "access_type=offline&connection=google-oauth2")]]></target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.referrerAnchor">
-				<target>Anchor for the referrer/callback url</target>
+				<target>Anker für die Referrer/Callback url</target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.sheet_redirect">
 				<target>Weiterleitungen</target>
