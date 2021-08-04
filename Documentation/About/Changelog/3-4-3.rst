@@ -1,0 +1,27 @@
+.. include:: ../../Includes.txt
+
+==========================
+Version 3.4.3 - 2021/08/04
+==========================
+
+This release is a minor feature release which adds the possibility to add an anchor to the referrer url.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v3.4.3>`__.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+   2021-08-04 [TASK] Add possibility to add an anchor to the referrer url (Commit f4ff9745 by Fabian Martin)
+
+Contributors
+============
+
+This release was sponsored by `MEDIUM Werbeagentur Bielefeld <https://www.medium.ag/>`__.
+
+Thank you very much for your support. The next beer is on us! 🍻
