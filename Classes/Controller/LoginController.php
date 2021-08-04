@@ -176,6 +176,10 @@ class LoginController extends ActionController implements LoggerAwareInterface
         $uri = $GLOBALS['TYPO3_REQUEST']->getUri();
         $referrer = $GLOBALS['TYPO3_REQUEST']->getQueryParams()['referrer'] ?? sprintf('%s://%s%s', $uri->getScheme(), $uri->getHost(), $uri->getPath());
 
+        if ($this->settings['referrerAnchor']) {
+            $referrer .= '#' . $this->settings['referrerAnchor'];
+        }
+
         $tokenUtility = GeneralUtility::makeInstance(TokenUtility::class);
         $tokenUtility->withPayload('application', $this->application);
         $tokenUtility->withPayload('referrer', $referrer);
