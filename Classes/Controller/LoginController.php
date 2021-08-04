@@ -211,13 +211,15 @@ class LoginController extends ActionController implements LoggerAwareInterface
         if ($this->auth0 instanceof Auth0) {
             return $this->auth0;
         }
-
         if ($this->extensionConfiguration->isGenericCallback()) {
             $callback = $this->getCallback('login');
         } else {
             trigger_error('Using callback settings for frontend request is deprecated as there is a dedicated callback middleware.', E_USER_DEPRECATED);
             $uri = $GLOBALS['TYPO3_REQUEST']->getUri();
             $referrer = sprintf('%s://%s%s', $uri->getScheme(), $uri->getHost(), $uri->getPath());
+            if ($this->settings['referrerAnchor']) {
+                $referrer .= '#' . $this->settings['referrerAnchor'];
+            }
 
             $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
             $callbackSettings = $this->settings['frontend']['callback'] ?? [];
@@ -235,7 +237,11 @@ class LoginController extends ActionController implements LoggerAwareInterface
     protected function getCallback(string $loginType = 'login'): string
     {
         $uri = $GLOBALS['TYPO3_REQUEST']->getUri();
+
         $referrer = $GLOBALS['TYPO3_REQUEST']->getQueryParams()['referrer'] ?? sprintf('%s://%s%s', $uri->getScheme(), $uri->getHost(), $uri->getPath());
+        if ($this->settings['referrerAnchor']) {
+            $referrer .= '#' . $this->settings['referrerAnchor'];
+        }
 
         $tokenUtility = GeneralUtility::makeInstance(TokenUtility::class);
         $tokenUtility->withPayload('application', $this->application);
