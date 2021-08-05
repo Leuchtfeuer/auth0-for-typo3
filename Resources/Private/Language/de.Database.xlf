@@ -67,7 +67,7 @@
 				<target>Auth0 (Management) API</target>
 			</trans-unit>
 			<trans-unit id="palettes.client">
-				<target>Klient Konfiguration</target>
+				<target>Client Konfiguration</target>
 			</trans-unit>
 
 			<trans-unit id="fe_users.tx_extbase_type.Tx_Auth0_FrontendUser">
@@ -81,7 +81,7 @@
 				<target>Generell</target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.softLogout">
-				<target>Nur vom TYPO3 abmelde (nicht von Auth0)</target>
+				<target>Nur vom TYPO3 abmelden (nicht von Auth0)</target>
 			</trans-unit>
 			<trans-unit id="tt_content.pi_flexform.rawAdditionalAuthorizeParameters">
 				<target><![CDATA[Additional query parameters for authentication (e.g. "access_type=offline&connection=google-oauth2")]]></target>

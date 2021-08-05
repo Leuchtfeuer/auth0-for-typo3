@@ -8,7 +8,7 @@
 				<target>Auth0</target>
 			</trans-unit>
 			<trans-unit id="mlang_labels_tabdescr">
-				<target>Ein mapping von Auth0 Rollen zu TYPO3 Benutzergruppen.</target>
+				<target>Ein Mapping von Auth0 Rollen zu TYPO3 Benutzergruppen.</target>
 			</trans-unit>
 			<trans-unit id="mlang_labels_tablabel">
 				<target>Auth0 Rollen Mapping.</target>
@@ -18,7 +18,7 @@
 				<target>Auth0 Rollen Mapping</target>
 			</trans-unit>
 			<trans-unit id="roles.frontend.text">
-				<target>Diese Webseiten Benutzergruppe wird einem Nutzer zugewiesen, wenn keine der hinterleten Mapping Konfigurationen zutrifft oder der Nutzer keine Auth0 Rolle hinterlegt hat.</target>
+				<target>Diese Webseiten Benutzergruppe wird einem Nutzer zugewiesen, wenn keine der hinterlegten Mapping Konfigurationen zutrifft oder der Nutzer keine Auth0 Rolle hinterlegt hat.</target>
 			</trans-unit>
 			<trans-unit id="roles.frontend.label">
 				<target>Standard Webseiten-Nutzergruppe</target>
@@ -30,7 +30,7 @@
 				<target>Keine Webseiten-Nutzergruppe gefunden.</target>
 			</trans-unit>
 			<trans-unit id="roles.backend.text">
-				<target>Diese Backend Benutzergruppe wird einem Nutzer zugewiesen, wenn keine der hinterleten Mapping Konfigurationen zutrifft oder der Nutzer keine Auth0 Rolle hinterlegt hat.</target>
+				<target>Diese Backend Benutzergruppe wird einem Nutzer zugewiesen, wenn keine der hinterlegten Mapping Konfigurationen zutrifft oder der Nutzer keine Auth0 Rolle hinterlegt hat.</target>
 			</trans-unit>
 			<trans-unit id="roles.backend.label">
 				<target>Keine Standardgruppe</target>
@@ -192,7 +192,7 @@
 				<target>Verfügbarkeit von Auth0-Benutzerdaten</target>
 			</trans-unit>
 			<trans-unit id="properties.infobox.api.content">
-				<target>Bitte beachte, dass möglicherweise nicht alle Benutzerdaten (insbesondere die user und app Metadaten) verfügbar sind, wenn die Anwendung die Verwendung der API deaktiviert hat.</target>
+				<target>Bitte beachte, dass möglicherweise nicht alle Benutzerdaten (insbesondere die User und App Metadaten) verfügbar sind, wenn die Anwendung die Verwendung der API deaktiviert hat.</target>
 			</trans-unit>
 
 			<trans-unit id="message.application.deleted.title">
