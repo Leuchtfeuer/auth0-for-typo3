@@ -25,6 +25,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\Controller\LoginController;
 use TYPO3\CMS\Backend\LoginProvider\LoginProviderInterface;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -180,7 +181,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     protected function prepareView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
     {
-        $templateName = version_compare(TYPO3_version, '11.0', '>=') ? 'BackendV11' : 'Backend';
+        $templateName = version_compare(GeneralUtility::makeInstance(Typo3Version::class)->getVersion(), '11.0', '>=') ? 'BackendV11' : 'Backend';
         $standaloneView->setTemplate($templateName);
         $standaloneView->setLayoutRootPaths($this->frameworkConfiguration['view']['layoutRootPaths']);
         $standaloneView->setTemplateRootPaths($this->frameworkConfiguration['view']['templateRootPaths']);
