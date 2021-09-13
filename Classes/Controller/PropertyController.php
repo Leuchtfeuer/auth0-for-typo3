@@ -15,6 +15,7 @@ use Bitmotion\Auth0\Configuration\Auth0Configuration;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Factory\ConfigurationFactory;
 use Bitmotion\Auth0\Utility\TcaUtility;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
@@ -51,12 +52,12 @@ class PropertyController extends BackendController
      * @param string $table
      * @param string $type
      *
-     * @throws StopActionException
+     * @return ResponseInterface
      */
-    public function createAction(array $property, string $table, string $type): void
+    public function createAction(array $property, string $table, string $type): ResponseInterface
     {
         if (empty($property['databaseField']) || empty($property['auth0Property'])) {
-            $this->forward('new');
+            return $this->forward('new');
         }
 
         ksort($property);
@@ -67,7 +68,7 @@ class PropertyController extends BackendController
         $auth0Configuration->write($configuration);
 
         $this->addFlashMessage($this->getTranslation('message.property.created.text'), $this->getTranslation('message.property.created.title'));
-        $this->redirect('list');
+        return $this->redirect('list');
     }
 
     /**
@@ -75,9 +76,9 @@ class PropertyController extends BackendController
      * @param string $table
      * @param string $type
      *
-     * @throws StopActionException
+     * @return ResponseInterface
      */
-    public function deleteAction(array $property, string $table, string $type): void
+    public function deleteAction(array $property, string $table, string $type): ResponseInterface
     {
         if ((bool)$property['readOnly'] === false) {
             $auth0Configuration = GeneralUtility::makeInstance(Auth0Configuration::class);
@@ -94,7 +95,7 @@ class PropertyController extends BackendController
         }
 
         $this->addFlashMessage($this->getTranslation('message.property.deleted.text'), $this->getTranslation('message.property.deleted.title'));
-        $this->redirect('list');
+        return $this->redirect('list');
     }
 
     /**
@@ -118,9 +119,9 @@ class PropertyController extends BackendController
      * @param string $table
      * @param string $type
      *
-     * @throws StopActionException
+     * @return ResponseInterface
      */
-    public function updateAction(array $property, string $table, string $type): void
+    public function updateAction(array $property, string $table, string $type): ResponseInterface
     {
         $auth0Configuration = GeneralUtility::makeInstance(Auth0Configuration::class);
         $configuration = $auth0Configuration->load();
@@ -134,6 +135,6 @@ class PropertyController extends BackendController
 
         $auth0Configuration->write($configuration);
         $this->addFlashMessage($this->getTranslation('message.property.updated.text'), $this->getTranslation('message.property.updated.title'));
-        $this->redirect('list');
+        return $this->redirect('list');
     }
 }

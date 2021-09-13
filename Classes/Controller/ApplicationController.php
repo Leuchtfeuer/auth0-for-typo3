@@ -13,6 +13,7 @@ namespace Bitmotion\Auth0\Controller;
 
 use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
@@ -33,13 +34,13 @@ class ApplicationController extends BackendController
     /**
      * @param Application $application
      *
-     * @throws StopActionException
+     * @return ResponseInterface
      */
-    public function deleteAction(Application $application): void
+    public function deleteAction(Application $application): ResponseInterface
     {
         $this->applicationRepository->remove($application);
         $this->addFlashMessage($this->getTranslation('message.application.deleted.text'), $this->getTranslation('message.application.deleted.title'));
-        $this->redirect('list');
+        return $this->redirect('list');
     }
 
     protected function getStoragePage(): int

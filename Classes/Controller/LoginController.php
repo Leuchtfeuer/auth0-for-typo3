@@ -25,6 +25,7 @@ use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use Bitmotion\Auth0\Utility\ParametersUtility;
 use Bitmotion\Auth0\Utility\RoutingUtility;
 use Bitmotion\Auth0\Utility\TokenUtility;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
@@ -103,10 +104,10 @@ class LoginController extends ActionController implements LoggerAwareInterface
      *
      * @throws AspectNotFoundException
      * @throws CoreException
+     * @return ResponseInterface
      * @throws InvalidApplicationException
-     * @throws StopActionException
      */
-    public function loginAction(?string $rawAdditionalAuthorizeParameters = null): void
+    public function loginAction(?string $rawAdditionalAuthorizeParameters = null): ResponseInterface
     {
         $context = GeneralUtility::makeInstance(Context::class);
         $userInfo = (new SessionFactory())->getSessionStoreForApplication($this->application, SessionFactory::SESSION_PREFIX_FRONTEND)->getUserInfo();
@@ -123,7 +124,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
             $this->getAuth0()->login(null, null, $additionalAuthorizeParameters);
         }
 
-        $this->redirect('form');
+        return $this->redirect('form');
     }
 
     /**
