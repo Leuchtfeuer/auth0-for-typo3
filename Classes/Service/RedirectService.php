@@ -40,6 +40,11 @@ class RedirectService implements LoggerAwareInterface
      */
     protected $settings = [];
 
+    /**
+     * @param string|null
+     */
+    protected $referrer;
+
     public function __construct(array $redirectSettings)
     {
         $this->settings = $redirectSettings;
@@ -47,6 +52,11 @@ class RedirectService implements LoggerAwareInterface
         if (!$this->logger instanceof Logger) {
             $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
         }
+    }
+
+    public function setReferrer(?string $referrer)
+    {
+        $this->referrer = $referrer;
     }
 
     public function handleRedirect(array $allowedMethods, array $additionalParameters = []): void
@@ -166,7 +176,7 @@ class RedirectService implements LoggerAwareInterface
                             break;
 
                         case 'referrer':
-                            $redirect_url[] = $this->validateRedirectUrl(GeneralUtility::_GP('referrer'));
+                            $redirect_url[] = $this->validateRedirectUrl($this->referrer ?? GeneralUtility::_GP('referrer'));
                             break;
 
                         case 'loginError':

@@ -237,8 +237,9 @@ class LoginController extends ActionController implements LoggerAwareInterface
     protected function getCallback(string $loginType = 'login'): string
     {
         $uri = $GLOBALS['TYPO3_REQUEST']->getUri();
+        $rawReferrer = $GLOBALS['TYPO3_REQUEST']->getQueryParams()['referrer'];
+        $referrer = !empty($rawReferrer) ? $rawReferrer : sprintf('%s://%s%s', $uri->getScheme(), $uri->getHost(), $uri->getPath());
 
-        $referrer = $GLOBALS['TYPO3_REQUEST']->getQueryParams()['referrer'] ?? sprintf('%s://%s%s', $uri->getScheme(), $uri->getHost(), $uri->getPath());
         if ($this->settings['referrerAnchor']) {
             $referrer .= '#' . $this->settings['referrerAnchor'];
         }

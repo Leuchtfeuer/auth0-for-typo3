@@ -105,6 +105,8 @@ class CallbackMiddleware implements MiddlewareInterface
             return $this->enrichReferrerByErrorCode($errorCode, $token);
         }
 
+        $referrer = $token->getClaim('referrer');
+
         if ($this->isUserLoggedIn($request)) {
             $loginType = GeneralUtility::_GET('logintype');
             $application = $token->getClaim('application');
@@ -116,18 +118,18 @@ class CallbackMiddleware implements MiddlewareInterface
 
                 if ((bool)$token->getClaim('redirectDisable') === false) {
                     $allowedMethods = ['groupLogin', 'userLogin', 'login', 'getpost', 'referrer'];
-                    $this->performRedirectFromPluginConfiguration($token, $allowedMethods);
+                    $this->performRedirectFromPluginConfiguration($token, $allowedMethods, $referrer);
                 } else {
-                    return new RedirectResponse($token->getClaim('referrer'));
+                    return new RedirectResponse($referrer);
                 }
             } elseif ($loginType === 'logout') {
                 // User was logged out prior to this method. That's why there is no valid TYPO3 frontend user anymore.
-                $this->performRedirectFromPluginConfiguration($token, ['logout', 'referrer']);
+                $this->performRedirectFromPluginConfiguration($token, ['logout', 'referrer'], $referrer);
             }
         }
 
         // Redirect back to logout page if no redirect was executed before
-        return new RedirectResponse($token->getClaim('referrer'));
+        return new RedirectResponse($referrer);
     }
 
     /**
@@ -182,7 +184,7 @@ class CallbackMiddleware implements MiddlewareInterface
         $updateUtility->updateGroups();
     }
 
-    protected function performRedirectFromPluginConfiguration(Token $token, array $allowedMethods): void
+    protected function performRedirectFromPluginConfiguration(Token $token, array $allowedMethods, ?string $referrer = null): void
     {
         $redirectService = new RedirectService([
             'redirectDisable' => false,
@@ -193,6 +195,7 @@ class CallbackMiddleware implements MiddlewareInterface
             'redirectPageLogout' => $token->getClaim('redirectPageLogout')
         ]);
 
+        $redirectService->setReferrer($referrer);
         $redirectService->handleRedirect($allowedMethods);
     }
 }
