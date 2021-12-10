@@ -3,3 +3,4 @@
 /Tests/Build/.phpunit.result.cache
 /Libraries/vendor
 /composer.lock
+/.idea/

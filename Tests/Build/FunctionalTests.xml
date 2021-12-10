@@ -8,15 +8,27 @@
 	TYPO3 CMS functional test suite also needs phpunit bootstrap code, the
 	file is located next to this .xml as FunctionalTestsBootstrap.php
 -->
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="true" bootstrap="../../../../../../vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php" colors="true" convertErrorsToExceptions="true" convertWarningsToExceptions="true" forceCoversAnnotation="true" stopOnError="false" stopOnFailure="false" stopOnIncomplete="false" stopOnSkipped="false" verbose="false" beStrictAboutTestsThatDoNotTestAnything="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         backupGlobals="true"
+         bootstrap="../../.Build/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertWarningsToExceptions="true"
+         forceCoversAnnotation="true"
+         stopOnError="false"
+         stopOnFailure="false"
+         stopOnIncomplete="false"
+         stopOnSkipped="false"
+         verbose="false"
+         beStrictAboutTestsThatDoNotTestAnything="false">
   <coverage>
     <include>
       <directory>../../Classes/</directory>
     </include>
   </coverage>
   <testsuites>
-    <testsuite name="EXT:auth0 API tests">
-      <directory>../Functional/API/</directory>
+    <testsuite name="EXT:auth0 tests">
+      <directory>../Functional/</directory>
     </testsuite>
   </testsuites>
   <php>
@@ -24,6 +36,6 @@
     <env name="typo3DatabaseUsername" value="root"/>
     <env name="typo3DatabaseName" value="auth0"/>
     <env name="typo3DatabaseHost" value="127.0.0.1"/>
-    <env name="typo3DatabasePassword" value="$3cret"/>
+    <env name="typo3DatabasePassword" value="start"/>
   </php>
 </phpunit>
