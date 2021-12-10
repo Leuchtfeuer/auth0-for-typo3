@@ -15,7 +15,7 @@ LICENSE.txt file that was distributed with this source code.
 Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
 COMMENT;
 
-$finder = (new PhpCsFixer\Finder())
+$finder = PhpCsFixer\Finder::create()
     ->name('*.php')
     ->in(__DIR__)
     ->exclude('Configuration')
