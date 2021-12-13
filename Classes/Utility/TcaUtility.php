@@ -12,11 +12,12 @@
 namespace Bitmotion\Auth0\Utility;
 
 use Bitmotion\Auth0\Configuration\Auth0Configuration;
+use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TcaUtility
 {
-    const EXCLUDE_LIST = [
+    private const EXCLUDE_PROPERTY_LIST = [
         'password' => 1,
         'usergroup' => 1,
         'felogin_forgotHash' => 1,
@@ -25,12 +26,30 @@ class TcaUtility
         'auth0_last_application' => 1,
     ];
 
+    private const EXCLUDE_TABLES_LIST = [];
+
+    /** @var array */
+    private $tca;
+
+    /** @var array */
+    private $configuration;
+
+    /** @var LanguageService */
+    private $languageService;
+
+    public function __construct(array $tca = null, $configuration = null, ?LanguageService $languageService = null)
+    {
+        $this->tca = $tca ?? $GLOBALS['TCA'];
+        $this->configuration = $configuration ?? GeneralUtility::makeInstance(Auth0Configuration::class)->load();
+        $this->languageService = $languageService ?? $GLOBALS['LANG'];
+    }
+
     public function getColumnsFromTable(string $tableName): array
     {
         $columns = [];
 
-        foreach ($GLOBALS['TCA'][$tableName]['columns'] ?? [] as $name => $column) {
-            if (!isset(self::EXCLUDE_LIST[$name])) {
+        foreach ($this->tca[$tableName]['columns'] ?? [] as $name => $column) {
+            if (!isset(self::EXCLUDE_PROPERTY_LIST[$name])) {
                 $type = $column['config']['type'];
 
                 if ($type === 'passthrough') {
@@ -38,7 +57,7 @@ class TcaUtility
                 }
 
                 $columns[$name] = [
-                    'label' => $GLOBALS['LANG']->sl($column['label']),
+                    'label' => $this->languageService->sl($column['label']),
                     'type' => $type,
                 ];
 
@@ -54,10 +73,10 @@ class TcaUtility
         return $columns;
     }
 
-    public function getUnusedColumnsFromTable(string $tableName, ?string $exclude = null): array
+    public function getUnusedColumnsFromTable(string $tableName, ?string $exclude = null, ?string $foreignTable = null): array
     {
-        $properties = $this->getColumnsFromTable($tableName);
-        $configurationProperties = $this->getColumnsFromConfiguration($tableName);
+        $properties = $this->getColumnsFromTable($foreignTable ?? $tableName);
+        $configurationProperties = $this->getColumnsFromConfiguration($tableName, $foreignTable);
 
         foreach ($configurationProperties as $configurationProperty) {
             if (isset($properties[$configurationProperty]) && $configurationProperty !== $exclude) {
@@ -68,15 +87,43 @@ class TcaUtility
         return $properties;
     }
 
-    protected function getColumnsFromConfiguration(string $tableName): array
+    public function getTables(string $excludedTable = null): array
     {
-        $configuration = GeneralUtility::makeInstance(Auth0Configuration::class)->load();
-        $propertyGroups = $configuration['properties'][$tableName];
+        if (empty($this->tca)) {
+            return [];
+        }
+
+        $tables = [];
+        foreach ($this->tca as $table => $columns) {
+            if (in_array($table, self::EXCLUDE_TABLES_LIST)) {
+                continue;
+            }
+
+            if ($table === $excludedTable) {
+                continue;
+            }
+
+            $tables[] = $table;
+        }
+
+        return $tables;
+    }
+
+    protected function getColumnsFromConfiguration(string $tableName, ?string $foreignTable = null): array
+    {
+        $propertyGroups = $this->configuration['properties'][$tableName];
         $properties = [];
 
         foreach ($propertyGroups as $group) {
             foreach ($group as $property) {
-                $properties[] = $property['databaseField'];
+                if (!$foreignTable && empty($property['foreignTable'])) {
+                    $properties[] = $property['databaseField'];
+                    continue;
+                }
+
+                if (isset($property['foreignTable']) && $property['foreignTable'] === $foreignTable) {
+                    $properties[] = $property['databaseField'];
+                }
             }
         }
 
