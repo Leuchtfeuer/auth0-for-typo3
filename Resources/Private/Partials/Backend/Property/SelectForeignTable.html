@@ -1,0 +1,44 @@
+<f:form action="{action}" controller="ForeignProperty" class="form row" arguments="{table: table, type: type}">
+	<div class="form-group col-sm-12 col-md-5 col-lg-3">
+		<label for="rolesKey">
+			<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.selectforeigntable"/>
+		</label>
+
+		<select id="rolesKey" class="form-control" name="tx_auth0_tools_auth0auth0[property][foreignTable]">
+			<f:for each="{foreignTables}" key="index" as="item">
+				<option value="{item}">{item}</option>
+			</f:for>
+		</select>
+	</div>
+	<div class="form-group col-sm-12 col-md-5 col-lg-3">
+		<label for="rolesKey">
+			<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.selectforeigntableviaForeignTable"/>
+		</label>
+
+		<select id="rolesKey" class="form-control" name="tx_auth0_tools_auth0auth0[property][firstJoinTable]">
+			<option value=""><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.selectforeigntable.no"/></option>
+			<f:for each="{foreignTables}" key="index" as="item">
+				<option value="{item}">{item}</option>
+			</f:for>
+		</select>
+	</div>
+	<div class="form-group col-sm-12 col-md-5 col-lg-3">
+		<label for="rolesKey">
+			<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.selectforeigntableviaForeignTable"/>
+		</label>
+
+		<select id="rolesKey" class="form-control" name="tx_auth0_tools_auth0auth0[property][secondJoinTable]">
+			<option value=""><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.selectforeigntable.no"/></option>
+			<f:for each="{foreignTables}" key="index" as="item">
+				<option value="{item}">{item}</option>
+			</f:for>
+		</select>
+	</div>
+	<div class="col-sm-12">
+		<f:form.button class="btn btn-default">
+			<core:icon identifier="actions-document-new" />
+			<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.new"/>
+		</f:form.button>
+	</div>
+</f:form>
+

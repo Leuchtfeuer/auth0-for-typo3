@@ -62,6 +62,7 @@ call_user_func(
             \Bitmotion\Auth0\Controller\ApplicationController::class => 'list,delete',
             \Bitmotion\Auth0\Controller\RoleController::class => 'list,update,acquireMappingTypoScript',
             \Bitmotion\Auth0\Controller\PropertyController::class => 'list,new,create,edit,update,delete,acquireMappingTypoScript',
+            \Bitmotion\Auth0\Controller\ForeignPropertyController::class => 'selectForeignTable,create,edit,update',
         ];
         $extensionName = $extensionKey;
         if (version_compare(TYPO3_version, '10.0.0', '<')) {
@@ -70,6 +71,7 @@ call_user_func(
                 'Application' => 'list,delete',
                 'Role' => 'list,update,acquireMappingTypoScript',
                 'Property' => 'list,new,create,edit,update,delete,acquireMappingTypoScript',
+                'ForeignProperty' => 'selectForeignTable,create,edit,update',
             ];
             $extensionName = 'Bitmotion.' . ucfirst($extensionKey);
         }

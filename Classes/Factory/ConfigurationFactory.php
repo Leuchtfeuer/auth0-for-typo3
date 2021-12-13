@@ -13,13 +13,28 @@ namespace Bitmotion\Auth0\Factory;
 
 class ConfigurationFactory
 {
-    public function buildProperty(string $auth0Property, string $databaseField, string $processing = 'null'): array
-    {
+    public function buildProperty(
+        string $auth0Property,
+        string $databaseField,
+        string $processing = 'null',
+        ?string $foreignTable = null,
+        ?string $foreignKey = null,
+        ?string $firstJoinTable = null,
+        ?string $firstJoinColumn = null,
+        ?string $secondJoinTable = null,
+        ?string $secondJoinColumn = null
+    ): array {
         return [
             'auth0Property' => $auth0Property,
             'databaseField' => $databaseField,
             'readOnly' => false,
             'processing' => $processing,
+            'foreignTable' => $foreignTable,
+            'foreignKey' => $foreignKey,
+            'firstJoinTable' => $firstJoinTable,
+            'firstJoinColumn' => $firstJoinColumn,
+            'secondJoinTable' => $secondJoinTable,
+            'secondJoinColumn' => $secondJoinColumn,
         ];
     }
 
