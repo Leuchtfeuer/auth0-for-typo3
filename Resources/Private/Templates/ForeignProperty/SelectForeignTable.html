@@ -1,0 +1,8 @@
+{namespace be=TYPO3\CMS\Backend\ViewHelpers}
+{namespace core=TYPO3\CMS\Core\ViewHelpers}
+<f:layout name="Backend" />
+
+<f:section name="content">
+	<h1><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.title.add" /></h1>
+	<f:render partial="Backend/Property/ForeignTableFrom" arguments="{table: table, type: type, properties: properties, foreignTable: foreignTable, joins: joins, action: 'create'}" />
+</f:section>

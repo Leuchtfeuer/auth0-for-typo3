@@ -35,9 +35,18 @@
 										</span>
 									</f:then>
 									<f:else>
-										<f:link.action action="edit" arguments="{table: table, type: type, property: property}" class="btn btn-default">
-											<core:icon identifier="actions-open" size="small"/>
-										</f:link.action>
+										<f:if condition="{property.foreignTable}">
+											<f:then>
+												<f:link.action action="edit" controller="ForeignProperty" arguments="{table: table, type: type, property: property}" class="btn btn-default">
+													<core:icon identifier="actions-open" size="small"/>
+												</f:link.action>
+											</f:then>
+											<f:else>
+												<f:link.action action="edit" arguments="{table: table, type: type, property: property}" class="btn btn-default">
+													<core:icon identifier="actions-open" size="small"/>
+												</f:link.action>
+											</f:else>
+										</f:if>
 										<a class="btn btn-default t3js-modal-trigger"
 										   href="{f:uri.action(action: 'delete', controller: 'Property', arguments: '{table: table, type: type, property: property}')}"
 										   data-severity="warning"

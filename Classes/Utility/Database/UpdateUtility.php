@@ -261,6 +261,10 @@ class UpdateUtility implements LoggerAwareInterface
 
         foreach ($mappingConfiguration as $configurationType => $properties) {
             foreach ($properties as $property) {
+                if (!empty($property['foreignTable'])) {
+                   continue;
+                }
+
                 $value = $parseFuncUtility->updateWithoutParseFunc($configurationType, $property['auth0Property'], $this->user);
 
                 if (($property['processing'] ?? 'null') !== 'null') {

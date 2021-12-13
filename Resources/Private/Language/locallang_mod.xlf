@@ -256,6 +256,25 @@
 			<trans-unit id="menu.button.cancel">
 				<source>Back to list view</source>
 			</trans-unit>
+
+			<trans-unit id="properties.title.add.forigntable">
+				<source>Or Add Property from a foreign table</source>
+			</trans-unit>
+			<trans-unit id="properties.table.selectforeigntable">
+				<source>Select foreign table</source>
+			</trans-unit>
+			<trans-unit id="properties.table.selectforeigntableviaForeignTable">
+				<source>Joined via foreign table</source>
+			</trans-unit>
+			<trans-unit id="properties.table.selectforeigntable.no">
+				<source>No</source>
+			</trans-unit>
+			<trans-unit id="properties.table.selectjoin">
+				<source>Select join column from</source>
+			</trans-unit>
+			<trans-unit id="properties.table.typo3.foreignKey">
+				<source>Select foreign key column</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

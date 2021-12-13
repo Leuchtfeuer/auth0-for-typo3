@@ -55,6 +55,7 @@ call_user_func(
                 \Bitmotion\Auth0\Controller\ApplicationController::class => 'list,delete',
                 \Bitmotion\Auth0\Controller\RoleController::class => 'list,update',
                 \Bitmotion\Auth0\Controller\PropertyController::class => 'list,new,create,edit,update,delete',
+                \Bitmotion\Auth0\Controller\ForeignPropertyController::class => 'selectForeignTable,create,edit,update',
             ], [
                 'access' => 'admin',
                 'icon' => 'EXT:auth0/Resources/Public/Icons/Module.svg',

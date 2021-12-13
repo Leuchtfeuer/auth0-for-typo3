@@ -43,6 +43,7 @@ class PropertyController extends BackendController
             'table' => $table,
             'type' => $type,
             'properties' => (new TcaUtility())->getUnusedColumnsFromTable($table),
+            'foreignTables' => (new TcaUtility())->getTables($table),
         ]);
     }
 
@@ -60,7 +61,12 @@ class PropertyController extends BackendController
         }
 
         ksort($property);
-        $propertyConfiguration = (new ConfigurationFactory())->buildProperty(...array_values($property));
+        $propertyConfiguration = (new ConfigurationFactory())
+            ->buildProperty(
+                $property['auth0Property'],
+                $property['databaseField'],
+                $property['processing'] ?? 'null'
+            );
         $auth0Configuration = GeneralUtility::makeInstance(Auth0Configuration::class);
         $configuration = $auth0Configuration->load();
         $configuration['properties'][$table][$type][] = $propertyConfiguration;
