@@ -68,9 +68,11 @@
     "cs-fix": ".Build/bin/php-cs-fixer fix --config php-cs-fixer.php --using-cache no --show-progress dots -vvv",
     "phpstan": ".Build/bin/phpstan analyse -l 1 Classes/ Configuration/ Resources/",
     "functional-test": ".Build/bin/phpunit --configuration Tests/Build/FunctionalTests.xml",
+    "unit-test": ".Build/bin/phpunit --configuration Tests/Build/UnitTests.xml",
     "deploy": [
       "@cs-fix",
-      "@functional-test"
+      "@functional-test",
+      "@unit-test"
     ]
   },
   "extra": {
