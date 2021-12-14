@@ -18,24 +18,6 @@
                 </f:for>
             </select>
         </div>
-        <div class="form-group col-sm-12 col-md-5 col-lg-3">
-            <label for="rolesKey">
-                <f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.typo3.foreignKey"/>
-            </label>
-
-            <select id="rolesKey" class="form-control" name="tx_auth0_tools_auth0auth0[property][foreignKey]">
-                <f:for each="{properties}" key="databaseField" as="item">
-                    <f:if condition="{databaseField} === {property.foreignKey}">
-                        <f:then>
-                            <option selected value="{databaseField}">{item.label}</option>
-                        </f:then>
-                        <f:else>
-                            <option value="{databaseField}">{item.label}</option>
-                        </f:else>
-                    </f:if>
-                </f:for>
-            </select>
-        </div>
         <f:if condition="{joins.firstJoinTable}">
             <div class="form-group col-sm-12 col-md-5 col-lg-3">
                 <label for="rolesKey">
@@ -85,6 +67,26 @@
     <div class="form-group col-sm-12">
         <div class="form-group col-sm-12 col-md-5 col-lg-3">
             <label for="rolesKey">
+                <f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.typo3.foreignKey"/>
+            </label>
+
+            <select id="rolesKey" class="form-control" name="tx_auth0_tools_auth0auth0[property][foreignKey]">
+                <f:for each="{foreignKey}" key="databaseField" as="item">
+                    <f:if condition="{foreignKey} === {property.foreignKey}">
+                        <f:then>
+                            <option selected value="{databaseField}">{item.label}</option>
+                        </f:then>
+                        <f:else>
+                            <option value="{databaseField}">{item.label}</option>
+                        </f:else>
+                    </f:if>
+                </f:for>
+            </select>
+        </div>
+    </div>
+    <div class="form-group col-sm-12">
+        <div class="form-group col-sm-12 col-md-5 col-lg-3">
+            <label for="rolesKey">
                 <f:translate
                         key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.auth0"/>
             </label>
@@ -99,7 +101,7 @@
             </label>
             <f:form.select id="rolesKey" class="form-control" name="property[processing]"
                            value="{property.processing}"
-                           options="{null: '', bool: 'bool', negate-bool: 'negate bool', strtotime: 'strtotime'}"/>
+                           options="{null: '', bool: 'bool', negate-bool: 'negate bool', strtotime: 'strtotime', mm-relation: 'mm relation'}"/>
         </div>
     </div>
     <f:form.hidden name="property[foreignTable]" value="{foreignTable}"/>
