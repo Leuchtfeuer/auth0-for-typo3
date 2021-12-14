@@ -24,14 +24,19 @@ class ForeignPropertyController extends BackendController
         $this->addButton('menu.button.cancel', 'list', 'Property', 'actions-close');
 
         $tca = new TcaUtility();
+        $properties = $tca->getUnusedColumnsFromTable($table, $property['databaseField'], $property['foreignTable']);
+        $foreignKeyColumns = $properties;
+
         $joins = [];
         if (!empty($property['firstJoinTable'])) {
             $joins['firstJoinTable'] = $property['firstJoinTable'];
             $joins['firstJoinColumns'] = $tca->getColumnsFromTable($property['firstJoinTable']);
+            $foreignKeyColumns = $joins['firstJoinColumns'];
         }
         if (!empty($property['secondJoinTable'])) {
             $joins['secondJoinTable'] = $property['secondJoinTable'];
             $joins['secondJoinColumns'] = $tca->getColumnsFromTable($property['secondJoinTable']);
+            $foreignKeyColumns = $joins['secondJoinColumns'];
         }
 
         $this->view->assignMultiple([
@@ -40,6 +45,7 @@ class ForeignPropertyController extends BackendController
             'properties' => $tca->getUnusedColumnsFromTable($table, null, $property['foreignTable']),
             'foreignTable' => $property['foreignTable'],
             'joins' => $joins,
+            'foreignKey' => $foreignKeyColumns,
         ]);
     }
 
@@ -48,22 +54,29 @@ class ForeignPropertyController extends BackendController
         $this->addButton('menu.button.cancel', 'list', 'Property', 'actions-close');
 
         $tca = new TcaUtility();
+
+        $properties = $tca->getUnusedColumnsFromTable($table, $property['databaseField'], $property['foreignTable']);
+        $foreignKeyColumns = $properties;
+
         if (!empty($property['firstJoinTable'])) {
             $joins['firstJoinTable'] = $property['firstJoinTable'];
             $joins['firstJoinColumns'] = $tca->getColumnsFromTable($property['firstJoinTable']);
+            $foreignKeyColumns = $joins['firstJoinColumns'];
         }
         if (!empty($property['secondJoinTable'])) {
             $joins['secondJoinTable'] = $property['secondJoinTable'];
             $joins['secondJoinColumns'] = $tca->getColumnsFromTable($property['secondJoinTable']);
+            $foreignKeyColumns = $joins['secondJoinColumns'];
         }
 
         $this->view->assignMultiple([
             'property' => $property,
             'table' => $table,
             'type' => $type,
-            'properties' => $tca->getUnusedColumnsFromTable($table, $property['databaseField'], $property['foreignTable']),
+            'properties' => $properties,
             'foreignTable' => $property['foreignTable'],
-            'joins' => $joins
+            'joins' => $joins,
+            'foreignKey' => $foreignKeyColumns
         ]);
     }
 
