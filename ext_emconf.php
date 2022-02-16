@@ -7,17 +7,15 @@ $EM_CONF['auth0'] = [
     'category' => 'misc',
     'constraints' => [
         'depends' => [
-            'typo3' => '10.4.0-11.2.99',
+            'typo3' => '10.4.0-11.5.99',
         ],
         'conflicts' => [],
         'suggests' => [],
     ],
     'state' => 'stable',
-    'uploadfolder' => false,
-    'createDirs' => '',
     'clearCacheOnLoad' => true,
-    'author' => 'Florian Wessels',
-    'author_email' => 'f.wessels@Leuchtfeuer.com',
+    'author' => 'Max Rösch',
+    'author_email' => 'm.roesch@Leuchtfeuer.com',
     'author_company' => 'Leuchtfeuer Digital Marketing',
     'autoload' => [
         'psr-4' => [
