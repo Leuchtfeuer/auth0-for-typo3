@@ -21,6 +21,7 @@ use Bitmotion\Auth0\Domain\Repository\UserRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Scope;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
+use GuzzleHttp\Utils;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -114,7 +115,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             'email' => $user['email'] ?? '',
             'crdate' => time(),
             'auth0_user_id' => $user[$userIdentifier],
-            'auth0_metadata' => \GuzzleHttp\json_encode($user['user_metadata'] ?? ''),
+            'auth0_metadata' => Utils::jsonEncode($user['user_metadata'] ?? ''),
         ]);
 
         GeneralUtility::makeInstance(UserRepository::class, $tableName)->insertUser($values);
