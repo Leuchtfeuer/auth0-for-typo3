@@ -13,12 +13,16 @@ namespace Bitmotion\Auth0\Controller;
 
 use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
+use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
 class ApplicationController extends BackendController
 {
+    /**
+     * @throws RouteNotFoundException
+     */
     public function listAction(): void
     {
         $pid = $this->getStoragePage();

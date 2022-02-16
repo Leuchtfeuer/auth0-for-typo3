@@ -12,6 +12,7 @@
 namespace Bitmotion\Auth0\Controller;
 
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
+use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
 use TYPO3\CMS\Backend\View\BackendTemplateView;
@@ -30,7 +31,7 @@ class BackendController extends ActionController
 
     protected $defaultViewObjectName = BackendTemplateView::class;
 
-    protected $applicationRepository;
+    protected ApplicationRepository $applicationRepository;
 
     public function __construct(ApplicationRepository $applicationRepository)
     {
@@ -117,6 +118,9 @@ class BackendController extends ActionController
         $buttonBar->addButton($linkButton, ButtonBar::BUTTON_POSITION_RIGHT);
     }
 
+    /**
+     * @throws RouteNotFoundException
+     */
     protected function getModuleUrl(bool $encoded = true, string $referenceType = BackendUriBuilder::ABSOLUTE_PATH): string
     {
         $backendUriBuilder = $this->objectManager->get(BackendUriBuilder::class);
