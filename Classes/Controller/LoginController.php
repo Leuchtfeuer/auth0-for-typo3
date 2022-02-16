@@ -40,9 +40,9 @@ class LoginController extends ActionController implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    protected $error = '';
+    protected string $error = '';
 
-    protected $errorDescription = '';
+    protected string $errorDescription = '';
 
     protected $auth0;
 
