@@ -16,7 +16,7 @@ return [
             'disabled' => 'hidden',
         ],
         'searchFields' => 'title,id,domain,audience',
-        'iconfile' => 'EXT:auth0/Resources/Public/Icons/tx_auth0_domain_model_application.png',
+        'iconfile' => 'EXT:auth0/Resources/Public/Icons/auth0.svg',
     ],
     'types' => [
         '1' => ['showitem' => '

@@ -8,7 +8,7 @@ call_user_func(
             <INCLUDE_TYPOSCRIPT: source="FILE:EXT:auth0/Configuration/TSconfig/Page/ContentElementWizard/setup.tsconfig">
         ');
 
-        // Register icons
+        // Register icons - deprecated will move to Configuration/Icons.php in future
         $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Imaging\IconRegistry::class);
         $iconRegistry->registerIcon(
             'auth0',
