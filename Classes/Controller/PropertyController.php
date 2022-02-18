@@ -32,10 +32,6 @@ class PropertyController extends BackendController
         ]);
     }
 
-    /**
-     * @param string $table
-     * @param string $type
-     */
     public function newAction(string $table, string $type): void
     {
         $this->addButton('menu.button.cancel', 'list', 'Property', 'actions-close');
@@ -47,10 +43,6 @@ class PropertyController extends BackendController
     }
 
     /**
-     * @param array $property
-     * @param string $table
-     * @param string $type
-     *
      * @throws StopActionException
      */
     public function createAction(array $property, string $table, string $type): void
@@ -71,10 +63,6 @@ class PropertyController extends BackendController
     }
 
     /**
-     * @param array $property
-     * @param string $table
-     * @param string $type
-     *
      * @throws StopActionException
      */
     public function deleteAction(array $property, string $table, string $type): void
@@ -97,11 +85,6 @@ class PropertyController extends BackendController
         $this->redirect('list');
     }
 
-    /**
-     * @param array $property
-     * @param string $table
-     * @param string $type
-     */
     public function editAction(array $property, string $table, string $type): void
     {
         $this->addButton('menu.button.cancel', 'list', 'Property', 'actions-close');
@@ -114,10 +97,6 @@ class PropertyController extends BackendController
     }
 
     /**
-     * @param array $property
-     * @param string $table
-     * @param string $type
-     *
      * @throws StopActionException
      */
     public function updateAction(array $property, string $table, string $type): void
