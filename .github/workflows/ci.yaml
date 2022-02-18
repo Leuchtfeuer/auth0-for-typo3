@@ -9,17 +9,10 @@ on:
 jobs:
   integration:
     name: Integration tests
-<<<<<<< HEAD
-    runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        php-version: [ 7.2, 7.3, 7.4 ]
-=======
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php-version: [7.4, 8.0]
->>>>>>> 838bd45... [TASK] Adapt CI for TYPO3 v10 / v11 with PHP 7.4 / 8.0
+        php-version: [ 7.4, 8.0 ]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -29,53 +22,33 @@ jobs:
           php-version: ${{ matrix.php-version }}
           tools: php-cs-fixer:3.5
       - name: Check PHP CS
-        run: php-cs-fixer fix --config php-cs-fixer.php --dry-run --using-cache no --show-progress dots -vvv
+        run: php-cs-fixer fix --config .php-cs-fixer.php --dry-run --using-cache no --show-progress dots -vvv
 
   phpunit:
     needs: integration
     name: PHP ${{ matrix.php-version }} - T3 ${{ matrix.typo3-version }}
-<<<<<<< HEAD
-    runs-on: ubuntu-20.04
-    continue-on-error: ${{ matrix.experimental }}
-    strategy:
-      matrix:
-        experimental: [ false ]
-        php-version: [ 7.2, 7.3, 7.4 ]
-        typo3-version: [ ^9.5, ^10.4 ]
-=======
     runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        experimental: [false]
-        php-version: [7.4, 8.0]
-        typo3-version: [^10.4, ^11.5]
->>>>>>> 838bd45... [TASK] Adapt CI for TYPO3 v10 / v11 with PHP 7.4 / 8.0
+        experimental: [ false ]
+        php-version: [ 7.4, 8.0 ]
+        typo3-version: [ ^10.4, ^11.5 ]
         include:
           - php-version: 7.4
             typo3-version: 10.4.x-dev
             experimental: true
 
-<<<<<<< HEAD
-          - php-version: 7.4
-            typo3-version: ^10.4
-=======
           - php-version: 8.0
             typo3-version: 10.4.x-dev
->>>>>>> 838bd45... [TASK] Adapt CI for TYPO3 v10 / v11 with PHP 7.4 / 8.0
             experimental: true
 
           - php-version: 7.4
             typo3-version: ^11.5
             experimental: false
 
-<<<<<<< HEAD
-          - php-version: 7.4
-            typo3-version: dev-main
-=======
           - php-version: 8.0
             typo3-version: ^11.5
->>>>>>> 838bd45... [TASK] Adapt CI for TYPO3 v10 / v11 with PHP 7.4 / 8.0
             experimental: true
     env:
       PHP_VERSION: ${{ matrix.php-version }}
