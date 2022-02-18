@@ -13,24 +13,26 @@ declare(strict_types=1);
 
 namespace Bitmotion\Auth0\LoginProvider;
 
-use Bitmotion\Auth0\Api\Auth0;
+use Auth0\SDK\Auth0;
+use Auth0\SDK\Exception\ConfigurationException;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Bitmotion\Auth0\Exception\InvalidApplicationException;
+use Bitmotion\Auth0\Factory\ApplicationFactory;
 use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\Middleware\CallbackMiddleware;
-use Bitmotion\Auth0\Utility\ApiUtility;
 use Bitmotion\Auth0\Utility\TokenUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\Controller\LoginController;
 use TYPO3\CMS\Backend\LoginProvider\LoginProviderInterface;
+use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 
 class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, SingletonInterface
@@ -43,54 +45,40 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     public const LOGIN_PROVIDER = 1526966635;
 
-    /**
-     * @var Auth0
-     */
-    protected $auth0;
+    protected Auth0 $auth0;
+
+    protected ?array $userInfo = [];
+
+    protected EmAuth0Configuration $configuration;
+
+    protected ?string $action;
+
+    protected array $frameworkConfiguration;
 
     /**
-     * @var array
+     * @throws InvalidConfigurationTypeException
      */
-    protected $userInfo = [];
-
-    /**
-     * @var EmAuth0Configuration
-     */
-    protected $configuration;
-
-    /**
-     * @var ?string
-     */
-    protected $action;
-
-    /**
-     * @var array
-     */
-    protected $frameworkConfiguration;
-
     public function __construct(ConfigurationManager $configurationManager)
     {
         $this->frameworkConfiguration = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK, 'auth0');
     }
 
-    public function render(StandaloneView $standaloneView, PageRenderer $pageRenderer, LoginController $loginController): void
+    public function render(StandaloneView $view, PageRenderer $pageRenderer, LoginController $loginController): void
     {
         $this->logger->notice('Auth0 login is used.');
 
         // Figure out whether TypoScript is loaded
         if (!$this->isTypoScriptLoaded()) {
             // In this case we need a default template
-            $this->getDefaultView($standaloneView, $pageRenderer);
-
+            $this->getDefaultView($view, $pageRenderer);
             return;
         }
 
-        $this->prepareView($standaloneView, $pageRenderer);
+        $this->prepareView($view, $pageRenderer);
 
         // Throw error if there is no application
         if (!$this->setAuth0()) {
-            $standaloneView->assign('error', 'no_application');
-
+            $view->assign('error', 'no_application');
             return;
         }
 
@@ -104,7 +92,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         }
 
         // Assign variables and Auth0 response to view
-        $standaloneView->assignMultiple([
+        $view->assignMultiple([
             'auth0Error' => GeneralUtility::_GET('error'),
             'auth0ErrorDescription' => GeneralUtility::_GET('error_description'),
             'code' => GeneralUtility::_GET('code'),
@@ -117,9 +105,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     {
         try {
             $this->configuration = new EmAuth0Configuration();
-            $this->auth0 = GeneralUtility::makeInstance(ApiUtility::class, $this->configuration->getBackendConnection())
-                ->withContext(SessionFactory::SESSION_PREFIX_BACKEND)
-                ->getAuth0($this->getCallbackUri());
+            $this->auth0 = (new ApplicationFactory())->getAuth0($this->configuration->getBackendConnection());
         } catch (\Exception $exception) {
             $this->logger->critical($exception->getMessage());
 
@@ -139,7 +125,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
             $tokenUtility->getIssuer(),
             CallbackMiddleware::PATH,
             CallbackMiddleware::TOKEN_PARAMETER,
-            $tokenUtility->buildToken()
+            $tokenUtility->buildToken()->toString()
         );
     }
 
@@ -153,13 +139,16 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
                 $userInfo = $this->auth0->getUser();
             } catch (\Exception $exception) {
                 $this->logger->critical($exception->getMessage());
-                $this->auth0->deleteAllPersistentData();
+                $this->auth0->clear();
             }
         }
 
         return $userInfo;
     }
 
+    /**
+     * @throws ConfigurationException
+     */
     protected function handleRequest(): void
     {
         if ($this->action === self::ACTION_LOGOUT) {
@@ -169,7 +158,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         } elseif ($this->action === self::ACTION_LOGIN) {
             // Login user to Auth0
             $this->logger->notice('Handle backend login.');
-            $this->auth0->login(null, null, $this->configuration->getAdditionalAuthorizeParameters());
+            header('Location: ' . $this->auth0->login($this->getCallbackUri()));
         }
     }
 
@@ -180,7 +169,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     protected function prepareView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
     {
-        $templateName = version_compare(TYPO3_version, '11.0', '>=') ? 'BackendV11' : 'Backend';
+        $templateName = version_compare(GeneralUtility::makeInstance(Typo3Version::class)->getVersion(), '11.0', '>=') ? 'BackendV11' : 'Backend';
         $standaloneView->setTemplate($templateName);
         $standaloneView->setLayoutRootPaths($this->frameworkConfiguration['view']['layoutRootPaths']);
         $standaloneView->setTemplateRootPaths($this->frameworkConfiguration['view']['templateRootPaths']);
@@ -199,18 +188,19 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     }
 
     /**
-     * @throws InvalidApplicationException
+     * @throws ConfigurationException
      */
     protected function logoutFromAuth0(): void
     {
-        $this->auth0->logout();
-
         $applicationRepository = GeneralUtility::makeInstance(ApplicationRepository::class);
         $application = $applicationRepository->findByUid($this->configuration->getBackendConnection());
-        $redirectUri = str_replace('auth0[action]=logout', '', GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
-        $logoutUri = $this->auth0->getLogoutUri(rtrim($redirectUri, '&'), $application->getClientId());
 
-        header('Location: ' . $logoutUri);
+        $this->auth0->logout();
+
+        // TODO: Check logic. Current documentation mentions to use central auth0/callback url for configuration, but this isn't used here, should result in error
+        // Checked: The "returnTo" querystring parameter "https://www.xyz.leuchtfeuer.com/typo3/index.php?loginProvider=1526966635" is not defined as a valid URL in "Allowed Logout URLs".
+        $redirectUri = str_replace('auth0[action]=logout', '', GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
+        header('Location: ' . $this->auth0->authentication()->getLogoutLink(rtrim($redirectUri, '&'), ['client_id' => $application->getClientId()]));
         exit;
     }
 }

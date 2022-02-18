@@ -13,25 +13,20 @@ declare(strict_types=1);
 
 namespace Bitmotion\Auth0\Utility;
 
-use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Api\Auth0;
-use Bitmotion\Auth0\Api\Management;
-use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\Scope;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ApiUtility implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    protected $scope = 'openid profile read:current_user';
+    protected array $scope = ['openid', 'profile', 'read:current_user'];
 
-    protected $application = 0;
+    protected int $application = 0;
 
-    protected $context = SessionFactory::SESSION_PREFIX_FRONTEND;
+    protected string $context = SessionFactory::SESSION_PREFIX_FRONTEND;
 
     public function __construct(int $application = 0)
     {
@@ -40,9 +35,8 @@ class ApiUtility implements LoggerAwareInterface
 
     /**
      * @throws CoreException
-     * @throws InvalidApplicationException
      */
-    public function getAuth0(?string $redirectUri = null, string ...$scopes): Auth0
+    public function getAuth0(?string $redirectUri = null, array ...$scopes): Auth0
     {
         try {
             $this->setScope($scopes);
@@ -69,7 +63,7 @@ class ApiUtility implements LoggerAwareInterface
                 $targetScopes = $this->getTargetScopes($scopes, $allowedScopes);
 
                 if (!empty($targetScopes)) {
-                    $this->scope = implode(' ', $targetScopes);
+                    $this->scope = $targetScopes;
                 }
             } catch (\ReflectionException $exception) {
                 $this->logger->critical('Could not instantiate reflection class.');
@@ -93,23 +87,11 @@ class ApiUtility implements LoggerAwareInterface
         return $targetScopes;
     }
 
-    public function getApi(string $className, string ...$scopes): Management\GeneralManagementApi
-    {
-        return $this->getManagement(...$scopes)->getApi($className);
-    }
-
     public function withContext(string $context): self
     {
         $cloneObject = clone $this;
         $cloneObject->context = $context;
 
         return $cloneObject;
-    }
-
-    protected function getManagement(... $scopes): Management
-    {
-        $this->setScope($scopes);
-
-        return GeneralUtility::makeInstance(Management::class, $this->application, $this->scope);
     }
 }
