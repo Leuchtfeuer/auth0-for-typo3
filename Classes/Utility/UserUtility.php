@@ -13,13 +13,11 @@ declare(strict_types=1);
 
 namespace Bitmotion\Auth0\Utility;
 
-use Bitmotion\Auth0\Api\Auth0;
-use Bitmotion\Auth0\Api\Management\UserApi;
+use Auth0\SDK\Auth0;
 use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Domain\Repository\UserRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Bitmotion\Auth0\Scope;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use GuzzleHttp\Utils;
 use Psr\Log\LoggerAwareInterface;
@@ -97,6 +95,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             $this->extensionConfiguration->getUserIdentifier() => $user->getUserId(),
         ];
     }
+
     /**
      * Inserts a new frontend user
      *
@@ -177,9 +176,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             $application = BackendUtility::getRecord(ApplicationRepository::TABLE_NAME, $application, 'api, uid');
 
             if ((bool)$application['api'] === true) {
-                $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $application['uid']);
-                $userApi = $apiUtility->getApi(UserApi::class, Scope::USER_READ);
-                $user = $userApi->get($user[$this->extensionConfiguration->getUserIdentifier()]);
+                $user = $auth0->management()->users()->get($user[$this->extensionConfiguration->getUserIdentifier()]);
             }
 
             // Update existing user on every login

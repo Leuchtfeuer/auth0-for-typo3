@@ -16,14 +16,18 @@ namespace Bitmotion\Auth0\Utility;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Exception\TokenException;
 use Bitmotion\Auth0\Middleware\CallbackMiddleware;
-use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Parser;
+use DateTimeImmutable;
+use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Hmac;
 use Lcobucci\JWT\Signer\Key;
+use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa;
 use Lcobucci\JWT\Token;
-use Lcobucci\JWT\ValidationData;
+use Lcobucci\JWT\Validation\Constraint;
+use Lcobucci\JWT\Validation\Constraint\IssuedBy;
+use Lcobucci\JWT\Validation\Constraint\PermittedFor;
+use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
@@ -43,33 +47,57 @@ class TokenUtility implements LoggerAwareInterface
 
     const ENVIRONMENT_BACKEND = 'BE';
 
-    protected $configuration;
+    protected EmAuth0Configuration $configuration;
 
-    protected $time = 0;
+    protected DateTimeImmutable $time;
 
-    protected $issuer = '';
+    protected string $issuer = '';
 
-    protected $payload = [];
+    protected array $payload = [];
 
-    protected $token;
+    protected ?Token $token;
 
-    protected $verified = false;
+    protected bool $verified = false;
+
+    protected Configuration $config;
 
     public function __construct()
     {
         $this->configuration = new EmAuth0Configuration();
-        $this->time = time();
+        $this->time = new DateTimeImmutable();
         $this->setIssuer();
+        // TODO: Check if extension should support certification file free usage
+        $this->config = Configuration::forAsymmetricSigner(
+            $this->getSigner(),
+            $this->getKey(),
+            $this->getKey(self::KEY_TYPE_PUBLIC)
+        );
+        $this->config->setValidationConstraints(...$this->getConstraints());
     }
 
-    public function buildToken()
+    /**
+     * @return Constraint[]
+     */
+    private function getConstraints(): array
     {
-        $builder = new Builder();
+        $contraints[] = new IssuedBy($this->getIssuer());
+        $contraints[] = new PermittedFor(CallbackMiddleware::PATH);
+        $contraints[] = new SignedWith($this->getSigner(), $this->getKey(self::KEY_TYPE_PUBLIC));
+        return $contraints;
+    }
+
+    public function buildToken(): Token\Plain
+    {
+        $builder = $this->config->builder();
         $builder->issuedBy($this->getIssuer());
         $builder->permittedFor(CallbackMiddleware::PATH);
+        $builder->issuedAt($this->time);
+        $builder->canOnlyBeUsedAfter($this->time);
+        $builder->expiresAt($this->time->modify('+1 hour'));
 
-        $this->addTime($builder);
-        $this->addClaims($builder);
+        foreach ($this->payload as $key => $value) {
+            $builder->withClaim($key, $value);
+        }
 
         return $builder->getToken($this->getSigner(), $this->getKey());
     }
@@ -97,23 +125,17 @@ class TokenUtility implements LoggerAwareInterface
         }
 
         try {
-            $token = (new Parser())->parse($token);
-            $this->token = $token;
+            $this->token = $this->config->parser()->parse($token);
         } catch (\Exception $exception) {
+            $this->logger->error($exception->getMessage());
             $this->logger->warning('Could not parse token.');
             return false;
         }
 
-        if (!$token->validate($this->getValidationData())) {
+        if (!$this->config->validator()->validate($this->token, ...$this->config->validationConstraints())) {
             $this->logger->warning('Token validation failed.');
             return false;
         }
-
-        if (!$token->verify($this->getSigner(), $this->getKey(self::KEY_TYPE_PUBLIC))) {
-            $this->logger->warning('Token verification failed.');
-            return false;
-        }
-
         $this->verified = true;
         return true;
     }
@@ -159,20 +181,6 @@ class TokenUtility implements LoggerAwareInterface
         }
     }
 
-    protected function addTime(Builder &$builder): void
-    {
-        $builder->issuedAt($this->time);
-        $builder->canOnlyBeUsedAfter($this->time);
-        $builder->expiresAt($this->time + 3600);
-    }
-
-    protected function addClaims(Builder &$builder): void
-    {
-        foreach ($this->payload as $key => $value) {
-            $builder->withClaim($key, $value);
-        }
-    }
-
     protected function getSigner(): Signer
     {
         if ($this->configuration->useKeyFiles()) {
@@ -186,24 +194,15 @@ class TokenUtility implements LoggerAwareInterface
     {
         if ($this->configuration->useKeyFiles()) {
             if ($type === self::KEY_TYPE_PRIVATE) {
-                return new Key($this->configuration->getPrivateKeyFile());
+                return InMemory::plainText($this->configuration->getPrivateKeyFile());
             }
             if ($type === self::KEY_TYPE_PUBLIC) {
-                return new Key($this->configuration->getPublicKeyFile());
+                return InMemory::plainText($this->configuration->getPublicKeyFile());
             }
 
             $this->logger->warning(sprintf('Type %s is not allowed. Using encryption key.', $type));
         }
 
-        return new Key($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
-    }
-
-    protected function getValidationData(): ValidationData
-    {
-        $validationData = new ValidationData();
-        $validationData->setIssuer($this->getIssuer());
-        $validationData->setAudience(CallbackMiddleware::PATH);
-
-        return $validationData;
+        return InMemory::plainText($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
     }
 }
