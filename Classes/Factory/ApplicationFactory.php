@@ -32,7 +32,8 @@ class ApplicationFactory implements LoggerAwareInterface
         return new Auth0($this->getConfiguration($applicationId));
     }
 
-    protected function getConfiguration(int $applicationId): ?SdkConfiguration
+    //TODO: Context handling needs to be readded
+    public function getConfiguration(int $applicationId): ?SdkConfiguration
     {
         $config = [];
         $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationId);

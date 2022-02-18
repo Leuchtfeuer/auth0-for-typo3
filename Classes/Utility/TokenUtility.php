@@ -22,8 +22,9 @@ use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Hmac;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Signer\Rsa;
+use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
+use Lcobucci\JWT\Token\Plain;
 use Lcobucci\JWT\Validation\Constraint;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
 use Lcobucci\JWT\Validation\Constraint\PermittedFor;
@@ -86,7 +87,7 @@ class TokenUtility implements LoggerAwareInterface
         return $contraints;
     }
 
-    public function buildToken(): Token\Plain
+    public function buildToken(): Plain
     {
         $builder = $this->config->builder();
         $builder->issuedBy($this->getIssuer());
@@ -184,7 +185,7 @@ class TokenUtility implements LoggerAwareInterface
     protected function getSigner(): Signer
     {
         if ($this->configuration->useKeyFiles()) {
-            return new Rsa\Sha256();
+            return new Sha256();
         }
 
         return new Hmac\Sha256();
