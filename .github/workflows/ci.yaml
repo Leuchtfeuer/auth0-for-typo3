@@ -24,82 +24,82 @@ jobs:
       - name: Check PHP CS
         run: php-cs-fixer fix --config .php-cs-fixer.php --dry-run --using-cache no --show-progress dots -vvv
 
-  phpunit:
-    needs: integration
-    name: PHP ${{ matrix.php-version }} - T3 ${{ matrix.typo3-version }}
-    runs-on: ubuntu-latest
-    continue-on-error: ${{ matrix.experimental }}
-    strategy:
-      matrix:
-        experimental: [ false ]
-        php-version: [ 7.4, 8.0 ]
-        typo3-version: [ ^10.4, ^11.5 ]
-        include:
-          - php-version: 7.4
-            typo3-version: 10.4.x-dev
-            experimental: true
-
-          - php-version: 8.0
-            typo3-version: 10.4.x-dev
-            experimental: true
-
-          - php-version: 7.4
-            typo3-version: ^11.5
-            experimental: false
-
-          - php-version: 8.0
-            typo3-version: ^11.5
-            experimental: true
-    env:
-      PHP_VERSION: ${{ matrix.php-version }}
-      TYPO3_VERSION: ${{ matrix.typo3-version }}
-
-    steps:
-      - name: Output Environment Data
-        run: |
-          echo "Running tests with TYPO3 ${TYPO3_VERSION} and PHP ${PHP_VERSION}"
-
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 10
-
-      - uses: shogo82148/actions-setup-mysql@v1
-        with:
-          mysql-version: '5.7'
-          root-password: $3cret
-
-      - name: Setup PHP Environment
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php-version }}
-          extensions: fileinfo, gd, zip, zlib, openssl, intl, PDO, json, pcre, session, xml, filter, hash, mbstring, SPL, standard, mysqli
-          ini-values: max_execution_time=240,memory_limit=256M
-          tools: composer:v2
-
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - name: Cache dependencies
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
-
-      - name: Install Dependencies
-        env:
-          PHP_VERSION: ${{ matrix.php-version }}
-          TYPO3_VERSION: ${{ matrix.typo3-version }}
-        run: |
-          ./Build/install.sh
-          export TYPO3_PATH_WEB=$PWD/.Build/web
-
-      - name: Run PHP Unit
-        run: |
-          .Build/bin/phpunit --colors --configuration Tests/Build/FunctionalTests.xml Tests/Functional --bootstrap .Build/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php --coverage-clover=coverage.xml
-
-          if [[ "${{ matrix.php-version }}" == "7.4" ]] && [[ "${{ matrix.typo3-version }}" == "^10.4"  ]]; then
-            bash <(curl -s https://codecov.io/bash)
-          fi
+#  phpunit:
+#    needs: integration
+#    name: PHP ${{ matrix.php-version }} - T3 ${{ matrix.typo3-version }}
+#    runs-on: ubuntu-latest
+#    continue-on-error: ${{ matrix.experimental }}
+#    strategy:
+#      matrix:
+#        experimental: [ false ]
+#        php-version: [ 7.4, 8.0 ]
+#        typo3-version: [ ^10.4, ^11.5 ]
+#        include:
+#          - php-version: 7.4
+#            typo3-version: 10.4.x-dev
+#            experimental: true
+#
+#          - php-version: 8.0
+#            typo3-version: 10.4.x-dev
+#            experimental: true
+#
+#          - php-version: 7.4
+#            typo3-version: ^11.5
+#            experimental: false
+#
+#          - php-version: 8.0
+#            typo3-version: ^11.5
+#            experimental: true
+#    env:
+#      PHP_VERSION: ${{ matrix.php-version }}
+#      TYPO3_VERSION: ${{ matrix.typo3-version }}
+#
+#    steps:
+#      - name: Output Environment Data
+#        run: |
+#          echo "Running tests with TYPO3 ${TYPO3_VERSION} and PHP ${PHP_VERSION}"
+#
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#        with:
+#          fetch-depth: 10
+#
+#      - uses: shogo82148/actions-setup-mysql@v1
+#        with:
+#          mysql-version: '5.7'
+#          root-password: $3cret
+#
+#      - name: Setup PHP Environment
+#        uses: shivammathur/setup-php@v2
+#        with:
+#          php-version: ${{ matrix.php-version }}
+#          extensions: fileinfo, gd, zip, zlib, openssl, intl, PDO, json, pcre, session, xml, filter, hash, mbstring, SPL, standard, mysqli
+#          ini-values: max_execution_time=240,memory_limit=256M
+#          tools: composer:v2
+#
+#      - name: Get composer cache directory
+#        id: composer-cache
+#        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+#
+#      - name: Cache dependencies
+#        uses: actions/cache@v2
+#        with:
+#          path: ${{ steps.composer-cache.outputs.dir }}
+#          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+#          restore-keys: ${{ runner.os }}-composer-
+#
+#      - name: Install Dependencies
+#        env:
+#          PHP_VERSION: ${{ matrix.php-version }}
+#          TYPO3_VERSION: ${{ matrix.typo3-version }}
+#        run: |
+#          ./Build/install.sh
+#          export TYPO3_PATH_WEB=$PWD/.Build/web
+#
+#      - name: Run PHP Unit
+#        run: |
+#          .Build/bin/phpunit --colors --configuration Tests/Build/FunctionalTests.xml Tests/Functional --bootstrap .Build/vendor/typo3/testing-framework/Resources/Core/Build/FunctionalTestsBootstrap.php --coverage-clover=coverage.xml
+#
+#          if [[ "${{ matrix.php-version }}" == "7.4" ]] && [[ "${{ matrix.typo3-version }}" == "^10.4"  ]]; then
+#            bash <(curl -s https://codecov.io/bash)
+#          fi
