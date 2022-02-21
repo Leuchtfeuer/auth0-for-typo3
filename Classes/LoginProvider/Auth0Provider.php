@@ -30,7 +30,6 @@ use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\PathUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
@@ -119,10 +118,14 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         return true;
     }
 
-    protected function getCallbackUri()
+    protected function getCallbackUri(?string $redirectUri = ''): string
     {
         $tokenUtility = new TokenUtility();
         $tokenUtility->withPayload('application', $this->configuration->getBackendConnection());
+
+        if ($redirectUri !== '') {
+            $tokenUtility->withPayload('redirectUri', $redirectUri);
+        }
 
         return sprintf(
             '%s%s?%s=%s',
@@ -136,7 +139,6 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     protected function getUserInfo()
     {
         $userInfo = $this->auth0->configuration()->getSessionStorage()->get('user');
-        //var_dump($userInfo);
         if (empty($userInfo)) {
             try {
                 $this->logger->notice('Try to get user via Auth0 API');
@@ -198,12 +200,8 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
      */
     protected function logoutFromAuth0(): void
     {
-        $this->auth0->logout();
-
-        // TODO: Check logic. Current documentation mentions to use central auth0/callback url for configuration, but this isn't used here, should result in error
-        // Checked: The "returnTo" querystring parameter "https://www.xyz.leuchtfeuer.com/typo3/index.php?loginProvider=1526966635" is not defined as a valid URL in "Allowed Logout URLs".
-        $redirectUri = str_replace('auth0[action]=logout', '', GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
-        header('Location: ' . $this->auth0->authentication()->getLogoutLink(rtrim($redirectUri, '&'), ['client_id' => $this->application->getClientId()]));
-        exit;
+        $redirectUri = GeneralUtility::getIndpEnv('TYPO3_SITE_URL') . 'typo3/logout';
+        header('Location: ' . $this->auth0->logout($this->getCallbackUri($redirectUri)));
+        exit();
     }
 }
