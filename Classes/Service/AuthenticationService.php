@@ -64,6 +64,7 @@ class AuthenticationService extends BasicAuthenticationService
      */
     public function initAuth($mode, $loginData, $authInfo, $pObj): void
     {
+        $this->logger->notice('Max: initauth');
         if ($this->isResponsible($authInfo['loginType']) === false) {
             $this->logger->debug('Auth0 authentication is not responsible for this request.');
             return;
@@ -179,6 +180,9 @@ class AuthenticationService extends BasicAuthenticationService
      */
     protected function initSessionStore(string $loginType): bool
     {
+
+        echo "do not hit";
+        die();
         // TODO: Add application UID
         $session = (new SessionFactory())->getSessionStoreForApplication(0, $loginType);
         $userInfo = $session->getUserInfo();
@@ -288,6 +292,7 @@ class AuthenticationService extends BasicAuthenticationService
         try {
             // TODO: Context needs to be readded (->withContext($this->authInfo['loginType']))
             $this->auth0 = (new ApplicationFactory())->getAuth0($this->application);
+
             $this->userInfo = $this->auth0->getUser() ?? [];
 
             if (!isset($this->userInfo[$this->userIdentifier]) || $this->getAuth0User() === false) {
@@ -295,6 +300,9 @@ class AuthenticationService extends BasicAuthenticationService
             }
 
             $this->login['responsible'] = true;
+            echo "dasd";
+            var_dump($this->login['responsible']);
+            die();
             $this->logger->notice(sprintf('Found user with Auth0 identifier "%s".', $this->userInfo[$this->userIdentifier]));
 
             return true;
@@ -310,9 +318,10 @@ class AuthenticationService extends BasicAuthenticationService
      */
     public function getUser()
     {
-        if ($this->login['status'] !== 'login' || $this->login['responsible'] === false || !isset($this->userInfo[$this->userIdentifier])) {
-            return false;
-        }
+
+//        if ($this->login['status'] !== 'login' || $this->login['responsible'] === false || !isset($this->userInfo[$this->userIdentifier])) {
+//            return false;
+//        }
 
         $user = $this->fetchUserRecord($this->login['uname'], 'auth0_user_id = "' . $this->userInfo[$this->userIdentifier] . '"');
 
@@ -343,10 +352,12 @@ class AuthenticationService extends BasicAuthenticationService
 
     public function authUser(array $user): int
     {
-        if ($this->login['responsible'] === false) {
-            // Service is not responsible. Check other services.
-            return 100;
-        }
+
+
+//        if ($this->login['responsible'] === false) {
+//            // Service is not responsible. Check other services.
+//            return 100;
+//        }
 
         if (empty($user['auth0_user_id']) || $user['auth0_user_id'] !== $this->userInfo[$this->userIdentifier]) {
             // Verification failed as identifier does not match. Maybe other services can handle this login.
@@ -361,6 +372,8 @@ class AuthenticationService extends BasicAuthenticationService
             // Responsible, authentication failed, do NOT check other services
             return 0;
         }
+
+
 
         // Skip when there is an Auth0 session but the corresponding TYPO3 user has no user group assigned.
         if (empty($user['usergroup']) && $this->loginViaSession === true) {

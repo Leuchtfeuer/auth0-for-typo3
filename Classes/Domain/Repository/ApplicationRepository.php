@@ -22,7 +22,7 @@ class ApplicationRepository
 {
     const TABLE_NAME = 'tx_auth0_domain_model_application';
 
-    public function findByUid(int $uid): Application
+    public function findByUid(int $uid): ?Application
     {
         return GeneralUtility::makeInstance(PersistenceManager::class)->getObjectByIdentifier($uid, Application::class);
     }
