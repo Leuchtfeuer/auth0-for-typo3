@@ -37,23 +37,18 @@ class ApplicationFactory implements LoggerAwareInterface
     {
         $config = [];
         $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationId);
+        $config['audience'] = [$application->getAudience(true)];
+        $config['clientId'] = $application->getClientId();
+        $config['clientSecret'] = $application->getClientSecret();
+        $config['cookieSecret'] = $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'];
+        $config['domain'] = $application->getDomain();
+        $config['id_token_alg'] = $application->getSignatureAlgorithm();
 
         // TODO: Check if this can or should be static
         $config['redirectUri'] = $redirectUri ?? $this->getCallbackUri();
         //TODO: Check scope handling and usage before introducing parameter
         $config['scope'] = $scope ?? $this->scope;
-
-        //$config['store'] = (new SessionFactory())->getSessionStoreForApplication((int)$application, $context ?? $this->getContext()),
-
-        $config['audience'] = [$application->getAudience(true)];
-        $config['clientId'] = $application->getClientId();
-        $config['clientSecret'] = $application->getClientSecret();
-        $config['domain'] = $application->getDomain();
-        $config['id_token_alg'] = $application->getSignatureAlgorithm();
         $config['secret_base64_encoded'] = $application->isSecretBase64Encoded();
-
-        // TODO: Check if needed or if only token bases session should be used
-        $config['cookieSecret'] = $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'];
 
         try {
             return new SdkConfiguration($config);

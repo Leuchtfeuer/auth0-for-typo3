@@ -15,6 +15,7 @@ namespace Bitmotion\Auth0\LoginProvider;
 
 use Auth0\SDK\Auth0;
 use Auth0\SDK\Exception\ConfigurationException;
+use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Factory\ApplicationFactory;
@@ -45,6 +46,8 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     public const LOGIN_PROVIDER = 1526966635;
 
+    protected ?Application $application = null;
+
     protected Auth0 $auth0;
 
     protected ?array $userInfo = [];
@@ -60,6 +63,8 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
      */
     public function __construct(ConfigurationManager $configurationManager)
     {
+        $this->configuration = new EmAuth0Configuration();
+        $this->application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($this->configuration->getBackendConnection());
         $this->frameworkConfiguration = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK, 'auth0');
     }
 
@@ -97,7 +102,6 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
             'auth0ErrorDescription' => GeneralUtility::_GET('error_description'),
             'code' => GeneralUtility::_GET('code'),
             'userInfo' => $this->userInfo,
-            'auth0Image' => PathUtility::getAbsoluteWebPath(GeneralUtility::getFileAbsFileName('EXT:auth0/Resources/Public/Images/auth0-logo-horizontal-color.svg')),
         ]);
     }
 
@@ -131,12 +135,14 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     protected function getUserInfo()
     {
-        $userInfo = (new SessionFactory())->getSessionStoreForApplication($this->configuration->getBackendConnection(), SessionFactory::SESSION_PREFIX_BACKEND)->getUserInfo();
-
+        $userInfo = $this->auth0->configuration()->getSessionStorage()->get('user');
+        //var_dump($userInfo);
         if (empty($userInfo)) {
             try {
                 $this->logger->notice('Try to get user via Auth0 API');
-                $userInfo = $this->auth0->getUser();
+                if ($this->auth0->exchange($this->getCallbackUri(), GeneralUtility::_GET('code'), GeneralUtility::_GET('state'))) {
+                    $userInfo = $this->auth0->getUser();
+                }
             } catch (\Exception $exception) {
                 $this->logger->critical($exception->getMessage());
                 $this->auth0->clear();
@@ -192,15 +198,12 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
      */
     protected function logoutFromAuth0(): void
     {
-        $applicationRepository = GeneralUtility::makeInstance(ApplicationRepository::class);
-        $application = $applicationRepository->findByUid($this->configuration->getBackendConnection());
-
         $this->auth0->logout();
 
         // TODO: Check logic. Current documentation mentions to use central auth0/callback url for configuration, but this isn't used here, should result in error
         // Checked: The "returnTo" querystring parameter "https://www.xyz.leuchtfeuer.com/typo3/index.php?loginProvider=1526966635" is not defined as a valid URL in "Allowed Logout URLs".
         $redirectUri = str_replace('auth0[action]=logout', '', GeneralUtility::getIndpEnv('TYPO3_REQUEST_URL'));
-        header('Location: ' . $this->auth0->authentication()->getLogoutLink(rtrim($redirectUri, '&'), ['client_id' => $application->getClientId()]));
+        header('Location: ' . $this->auth0->authentication()->getLogoutLink(rtrim($redirectUri, '&'), ['client_id' => $this->application->getClientId()]));
         exit;
     }
 }
