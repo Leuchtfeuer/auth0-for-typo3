@@ -66,16 +66,19 @@ class CallbackMiddleware implements MiddlewareInterface
         }
 
         if ($dataSet->get('environment') === TokenUtility::ENVIRONMENT_BACKEND) {
-            return $this->handleBackendCallback($request, $tokenUtility);
+            return $this->handleBackendCallback($request, $tokenUtility, $dataSet);
         }
         // Perform frontend callback as environment can only be 'BE' or 'FE'
         return $this->handleFrontendCallback($request, $dataSet);
     }
 
-    protected function handleBackendCallback(ServerRequestInterface $request, TokenUtility $tokenUtility): RedirectResponse
+    protected function handleBackendCallback(ServerRequestInterface $request, TokenUtility $tokenUtility, DataSet $dataSet): RedirectResponse
     {
-        $queryParams = $request->getQueryParams();
+        if ($dataSet->get('redirectUri') !== null) {
+            return new RedirectResponse($dataSet->get('redirectUri'), 302);
+        }
 
+        $queryParams = $request->getQueryParams();
         $redirectUri = sprintf(
             self::BACKEND_URI,
             $tokenUtility->getIssuer(),
