@@ -1,18 +1,23 @@
+<html
+        xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+        xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+        data-namespace-typo3-fluid="true">
+
 <div class="card-header">
-	<f:if condition="{icon}">
-		<div class="card-icon">
+    <f:if condition="{icon}">
+        <div class="card-icon">
 			<span class="card-header-icon-image">
-				<core:icon identifier="{icon}" size="large" />
+				<core:icon identifier="{icon}" size="large"/>
 			</span>
-		</div>
-	</f:if>
-	<div class="card-header-body">
-		<f:if condition="{title}">
-			<h2 class="card-title">{title}</h2>
-		</f:if>
-		<f:if condition="{subtitle}">
-			<span class="card-subtitle">{subtitle}</span>
-		</f:if>
-	</div>
+        </div>
+    </f:if>
+    <div class="card-header-body">
+        <f:if condition="{title}">
+            <h2 class="card-title">{title}</h2>
+        </f:if>
+        <f:if condition="{subtitle}">
+            <span class="card-subtitle">{subtitle}</span>
+        </f:if>
+    </div>
 </div>
 </html>
