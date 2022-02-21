@@ -1,3 +1,8 @@
+<html
+		xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+		xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+		data-namespace-typo3-fluid="true">
+
 <f:if condition="{configuration}">
 	<f:then>
 		<div class="panel panel-default">
@@ -26,14 +31,14 @@
 						<td class="col-control nowrap">
 							<div class="btn-group" role="group">
 								<f:if condition="{property.readOnly}">
-									<f:then>
+                                    <f:then>
 										<span class="btn btn-default disabled">
 											<core:icon identifier="actions-open"/>
 										</span>
-										<span class="btn btn-default disabled">
-											<core:icon identifier="actions-delete" />
+                                        <span class="btn btn-default disabled">
+											<core:icon identifier="actions-delete"/>
 										</span>
-									</f:then>
+                                    </f:then>
 									<f:else>
 										<f:link.action action="edit" arguments="{table: table, type: type, property: property}" class="btn btn-default">
 											<core:icon identifier="actions-open" size="small"/>
@@ -74,4 +79,4 @@
 		</f:link.action>
 	</div>
 </div>
-
+</html>

@@ -13,7 +13,7 @@
 					<label for="rolesKey">
 						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.key.label"/>
 					</label>
-					<f:form.textfield id="rolesKey" class="form-control" name="key" value="{yamlConfiguration.roles.key}"/>
+					<f:form.textfield id="rolesKey" class="form-control form-select" name="key" value="{yamlConfiguration.roles.key}"/>
 					<small class="form-text text-muted">
 						<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.key.text"/>
 					</small>
@@ -24,7 +24,7 @@
 						<label for="defaultFrontendUserGroup">
 							<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.frontend.label"/>
 						</label>
-						<f:form.select id="defaultFrontendUserGroup" class="form-control" name="defaultFrontendUserGroup"
+						<f:form.select id="defaultFrontendUserGroup" class="form-control form-select" name="defaultFrontendUserGroup"
 									   options="{frontendUserGroupMapping}" optionValueField="uid" optionLabelField="title"
 									   prependOptionValue="0" value="{yamlConfiguration.roles.default.frontend}"
 									   prependOptionLabel="{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.frontend.default')}"/>
@@ -39,7 +39,7 @@
 						<label for="defaultBackendUserGroup">
 							<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.backend.label"/>
 						</label>
-						<f:form.select id="defaultBackendUserGroup" class="form-control" name="defaultBackendUserGroup"
+						<f:form.select id="defaultBackendUserGroup" class="form-control form-select" name="defaultBackendUserGroup"
 									   options="{backendUserGroupMapping}" optionValueField="uid" optionLabelField="title"
 									   prependOptionValue="0" value="{yamlConfiguration.roles.default.backend}"
 									   prependOptionLabel="{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.backend.default')}"/>
@@ -51,7 +51,7 @@
 						<label for="adminRole">
 							<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.admin.label"/>
 						</label>
-						<f:form.textfield id="adminRole" class="form-control" name="adminRole" value="{yamlConfiguration.roles.beAdmin}"/>
+						<f:form.textfield id="adminRole" class="form-control form-select" name="adminRole" value="{yamlConfiguration.roles.beAdmin}"/>
 						<small class="form-text text-muted">
 							<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:roles.admin.text"/>
 						</small>
