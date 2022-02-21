@@ -44,8 +44,6 @@
                                         <f:render partial="Login/InterfaceSelector" arguments="{_all}" />
                                     </form>
                                 </div>
-                                <f:count>{loginProviders}</f:count>
-
                                 <f:if condition="{loginProviders -> f:count()} > 1">
                                     <nav aria-label="{f:translate(key: 'login.navigation.loginProvider')}">
                                         <f:comment><!--role is for VoiceOver--></f:comment>
