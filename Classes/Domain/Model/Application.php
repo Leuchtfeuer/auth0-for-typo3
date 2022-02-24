@@ -13,11 +13,13 @@ declare(strict_types=1);
 
 namespace Bitmotion\Auth0\Domain\Model;
 
-use Bitmotion\Auth0\Domain\Model\Auth0\Management\Client\JwtConfiguration;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 class Application extends AbstractEntity
 {
+    public const ALG_HS256 = 'HS256';
+    public const ALG_RS256 = 'RS256';
+
     /**
      * @var string
      */
@@ -58,7 +60,7 @@ class Application extends AbstractEntity
      */
     protected $api = true;
 
-    protected string $signatureAlgorithm = JwtConfiguration::ALG_RS256;
+    protected string $signatureAlgorithm = self::ALG_RS256;
 
     /**
      * @var bool
