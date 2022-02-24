@@ -38,19 +38,22 @@ class ApplicationFactory
         $scope = ['openid', 'profile', 'read:current_user'];
         $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationId);
 
-        // TODO: Reintroduce auth0 configuration without API usage
-        $client = new Client();
-        $response = $client->post($application->getManagementTokenDomain(), [
-            'form_params' => [
-                'grant_type' => 'client_credentials',
-                'client_id' => $application->getClientId(),
-                'client_secret' => $application->getClientSecret(),
-                'audience' => $application->getAudience()
-            ]]);
+        // Management API should be used
+        if ($application->hasApi()) {
+            $client = new Client();
+            $response = $client->post($application->getManagementTokenDomain(), [
+                'form_params' => [
+                    'grant_type' => 'client_credentials',
+                    'client_id' => $application->getClientId(),
+                    'client_secret' => $application->getClientSecret(),
+                    'audience' => $application->getAudience()
+                ]]);
 
-        $result = json_decode($response->getBody()->getContents(), true);
-        $managementToken = $result['access_token'];
+            $result = json_decode($response->getBody()->getContents(), true);
+            $managementToken = $result['access_token'];
+        }
 
+        // TODO: If management API is disabled audience needs to be empty - authorization is broken atm
         $sdkConfiguration = new SdkConfiguration([
             'audience' => [$application->getAudience(true)],
             'clientId' => $application->getClientId(),
