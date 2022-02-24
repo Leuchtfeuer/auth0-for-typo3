@@ -129,7 +129,7 @@ class BackendController extends ActionController
             'tx_auth0_tools_auth0auth0' => [
                 'action' => $this->request->getControllerActionName(),
                 'controller' => $this->request->getControllerName(),
-            ]
+            ],
         ];
 
         $uri = $backendUriBuilder->buildUriFromRoute('tools_Auth0Auth0', $parameters, $referenceType);

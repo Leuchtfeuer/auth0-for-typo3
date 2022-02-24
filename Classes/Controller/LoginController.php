@@ -156,7 +156,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
             CallbackMiddleware::PATH,
             $loginType,
             CallbackMiddleware::TOKEN_PARAMETER,
-            $tokenUtility->buildToken()
+            $tokenUtility->buildToken()->toString()
         );
     }
 
