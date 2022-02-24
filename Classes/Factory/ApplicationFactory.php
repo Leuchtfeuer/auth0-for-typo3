@@ -62,7 +62,6 @@ class ApplicationFactory
             'redirectUri' => GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . CallbackMiddleware::PATH,
             'scope' => $scope,
             'sessionStorageId' => sprintf('auth0_session_%s', $context),
-            'secret_base64_encoded' => $application->isSecretBase64Encoded(),
         ]);
         return new Auth0($sdkConfiguration);
     }

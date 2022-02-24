@@ -36,11 +36,6 @@ class Application extends AbstractEntity
     protected $secret = '';
 
     /**
-     * @var bool
-     */
-    protected $secretBase64Encoded = false;
-
-    /**
      * @var string
      */
     protected $domain = '';
@@ -138,16 +133,6 @@ class Application extends AbstractEntity
     public function setSingleLogOut(bool $singleLogOut): void
     {
         $this->singleLogOut = $singleLogOut;
-    }
-
-    public function isSecretBase64Encoded(): bool
-    {
-        return $this->secretBase64Encoded;
-    }
-
-    public function setSecretBase64Encoded(bool $secretBase64Encoded): void
-    {
-        $this->secretBase64Encoded = $secretBase64Encoded;
     }
 
     public function getSignatureAlgorithm(): string

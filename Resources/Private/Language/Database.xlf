@@ -45,9 +45,6 @@
 			<trans-unit id="tx_auth0_domain_model_application.api" resname="tx_auth0_domain_model_application.api">
 				<source>Use API</source>
 			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_application.secret_base64_encoded" resname="tx_auth0_domain_model_application.secret_base64_encoded">
-				<source>Client Secret Base64 Encoded</source>
-			</trans-unit>
 			<trans-unit id="tx_auth0_domain_model_application.signature_algorithm" resname="tx_auth0_domain_model_application.signature_algorithm">
 				<source>JWT Signature Algorithm</source>
 			</trans-unit>
