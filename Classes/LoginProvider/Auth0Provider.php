@@ -21,6 +21,7 @@ use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Factory\ApplicationFactory;
 use Bitmotion\Auth0\Middleware\CallbackMiddleware;
 use Bitmotion\Auth0\Utility\TokenUtility;
+use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\Controller\LoginController;
@@ -80,13 +81,14 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         $this->prepareView($view, $pageRenderer);
 
         // Throw error if there is no application
-        if (!$this->setAuth0()) {
+        if (!$this->application) {
             $view->assign('error', 'no_application');
             return;
         }
 
         // Try to get user info from session storage
         $this->userInfo = $this->getUserInfo();
+
         $urlData = GeneralUtility::_GET('auth0') ?? [];
         $this->action = $urlData['action'] ?? null;
 
@@ -106,10 +108,12 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     protected function setAuth0(): bool
     {
         try {
-            $this->auth0 = (new ApplicationFactory())->getAuth0($this->configuration->getBackendConnection());
+            $this->auth0 = ApplicationFactory::build($this->configuration->getBackendConnection());
         } catch (\Exception $exception) {
             $this->logger->critical($exception->getMessage());
-
+            return false;
+        } catch (GuzzleException $exception) {
+            $this->logger->critical($exception->getMessage());
             return false;
         }
 
@@ -136,6 +140,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     protected function getUserInfo()
     {
+        $this->setAuth0();
         $userInfo = $this->auth0->configuration()->getSessionStorage()->get('user');
         if (empty($userInfo)) {
             try {

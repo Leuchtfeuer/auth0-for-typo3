@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Bitmotion\Auth0\Middleware;
 
-use Bitmotion\Auth0\Factory\SessionFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;

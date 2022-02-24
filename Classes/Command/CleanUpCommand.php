@@ -19,6 +19,9 @@ use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Factory\ApplicationFactory;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Driver\Exception;
+use GuzzleHttp\Exception\GuzzleException;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -28,8 +31,10 @@ use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class CleanUpCommand extends Command
+class CleanUpCommand extends Command implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     protected array $allowedMethods = [
         'disable',
         'delete',
@@ -189,22 +194,24 @@ class CleanUpCommand extends Command
 
     /**
      * @return int
-     * @throws ArgumentException
-     * @throws NetworkException
-     * @throws DBALException
      */
     protected function updateUsers(): int
     {
-        $auth0 = (new ApplicationFactory())->getAuth0($this->configuration->getBackendConnection());
         $userCount = 0;
-
-        foreach ($this->users as $user) {
-            $auth0User = $auth0->management()->users()->get($user['auth0_user_id']);
-            if (isset($auth0User['statusCode']) && $auth0User['statusCode'] === 404) {
-                $this->handleUser($user);
-                $this->clearSessionData($user);
-                $userCount++;
+        try {
+            $auth0 = ApplicationFactory::build($this->configuration->getBackendConnection());
+            foreach ($this->users as $user) {
+                $auth0User = $auth0->management()->users()->get($user['auth0_user_id']);
+                if (isset($auth0User['statusCode']) && $auth0User['statusCode'] === 404) {
+                    $this->handleUser($user);
+                    $this->clearSessionData($user);
+                    $userCount++;
+                }
             }
+        } catch (\Exception $exception) {
+            $this->logger->critical($exception->getMessage());
+        } catch (GuzzleException $exception) {
+            $this->logger->critical($exception->getMessage());
         }
 
         return $userCount;

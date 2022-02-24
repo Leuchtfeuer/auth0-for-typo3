@@ -21,7 +21,6 @@ use Bitmotion\Auth0\ErrorCode;
 use Bitmotion\Auth0\Exception\TokenException;
 use Bitmotion\Auth0\Exception\UnknownErrorCodeException;
 use Bitmotion\Auth0\Factory\ApplicationFactory;
-use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\LoginProvider\Auth0Provider;
 use Bitmotion\Auth0\Service\RedirectService;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
@@ -120,7 +119,8 @@ class CallbackMiddleware implements MiddlewareInterface
         if ($this->isUserLoggedIn($request)) {
             $loginType = GeneralUtility::_GET('logintype');
             $application = $tokenDataSet->get('application');
-            $userInfo = (new SessionFactory())->getSessionStoreForApplication($application, SessionFactory::SESSION_PREFIX_FRONTEND)->getUserInfo();
+            $auth0 = ApplicationFactory::build($application, ApplicationFactory::SESSION_PREFIX_FRONTEND);
+            $userInfo = $auth0->configuration()->getSessionStorage()->get('user');
 
             // Redirect when user just logged in (and update him)
             if ($loginType === 'login' && !empty($userInfo)) {
@@ -178,8 +178,10 @@ class CallbackMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @throws NetworkException
      * @throws ArgumentException
+     * @throws NetworkException
+     * @throws \Auth0\SDK\Exception\ConfigurationException
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     protected function updateTypo3User(int $applicationId, array $user): void
     {
@@ -187,7 +189,7 @@ class CallbackMiddleware implements MiddlewareInterface
         $application = BackendUtility::getRecord(ApplicationRepository::TABLE_NAME, $applicationId, 'api, uid');
 
         if ((bool)$application['api'] === true) {
-            $auth0 = (new ApplicationFactory())->getAuth0($applicationId);
+            $auth0 = ApplicationFactory::build($applicationId);
             $user = $auth0->management()->users()->get($user[GeneralUtility::makeInstance(EmAuth0Configuration::class)->getUserIdentifier()]);
         }
 

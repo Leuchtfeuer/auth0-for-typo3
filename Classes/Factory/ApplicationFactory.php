@@ -18,69 +18,52 @@ use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Middleware\CallbackMiddleware;
 use GuzzleHttp\Client;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
+use GuzzleHttp\Exception\GuzzleException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class ApplicationFactory implements LoggerAwareInterface
+class ApplicationFactory
 {
-    use LoggerAwareTrait;
+    public const SESSION_PREFIX_BACKEND = 'BE';
 
-    protected array $scope = ['openid', 'profile', 'read:current_user'];
+    public const SESSION_PREFIX_FRONTEND = 'FE';
 
     protected ?Application $application;
 
-    //TODO: Context handling needs to be readded
-    public function getAuth0(int $applicationId): Auth0
+    /**
+     * @throws ConfigurationException
+     * @throws GuzzleException
+     */
+    public static function build(int $applicationId, string $context = self::SESSION_PREFIX_BACKEND): Auth0
     {
-        $this->application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationId);
-        return new Auth0($this->getConfiguration($applicationId));
-    }
-
-    //TODO: Context handling needs to be readded
-    public function getConfiguration(int $applicationId): ?SdkConfiguration
-    {
-        $config = [];
+        $scope = ['openid', 'profile', 'read:current_user'];
         $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationId);
-        $this->application = $application;
-        $config['audience'] = [$application->getAudience(true)];
-        $config['clientId'] = $application->getClientId();
-        $config['clientSecret'] = $application->getClientSecret();
-        $config['cookieSecret'] = $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'];
-        $config['domain'] = $application->getDomain();
-        $config['id_token_alg'] = $application->getSignatureAlgorithm();
-        $config['managementToken'] = $this->getManagementToken();
-        // TODO: Check if this can or should be static
-        $config['redirectUri'] = $redirectUri ?? $this->getCallbackUri();
-        //TODO: Check scope handling and usage before introducing parameter
-        $config['scope'] = $scope ?? $this->scope;
-        $config['secret_base64_encoded'] = $application->isSecretBase64Encoded();
 
-        try {
-            return new SdkConfiguration($config);
-        } catch (ConfigurationException $e) {
-            $this->logger->error($e->getMessage());
-        }
-        return null;
-    }
-
-    protected function getCallbackUri(): string
-    {
-        return GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . CallbackMiddleware::PATH;
-    }
-
-    private function getManagementToken(): string
-    {
+        // TODO: Reintroduce auth0 configuration without API usage
         $client = new Client();
-        $response = $client->post($this->application->getManagementTokenDomain(), [
+        $response = $client->post($application->getManagementTokenDomain(), [
             'form_params' => [
                 'grant_type' => 'client_credentials',
-                'client_id' => $this->application->getClientId(),
-                'client_secret' => $this->application->getClientSecret(),
-                'audience' => $this->application->getAudience()
+                'client_id' => $application->getClientId(),
+                'client_secret' => $application->getClientSecret(),
+                'audience' => $application->getAudience()
             ]]);
 
         $result = json_decode($response->getBody()->getContents(), true);
-        return $result['access_token'];
+        $managementToken = $result['access_token'];
+
+        $sdkConfiguration = new SdkConfiguration([
+            'audience' => [$application->getAudience(true)],
+            'clientId' => $application->getClientId(),
+            'clientSecret' => $application->getClientSecret(),
+            'cookieSecret' => $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'],
+            'domain' => $application->getDomain(),
+            'id_token_alg' => $application->getSignatureAlgorithm(),
+            'managementToken' => $managementToken ?? null,
+            'redirectUri' => GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . CallbackMiddleware::PATH,
+            'scope' => $scope,
+            'sessionStorageId' => sprintf('auth0_session_%s', $context),
+            'secret_base64_encoded' => $application->isSecretBase64Encoded(),
+        ]);
+        return new Auth0($sdkConfiguration);
     }
 }
