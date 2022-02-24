@@ -73,7 +73,6 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      */
     public function insertUser(string $tableName, $user): void
     {
-
         switch ($tableName) {
             case 'fe_users':
                 $this->insertFeUser($tableName, $user);
