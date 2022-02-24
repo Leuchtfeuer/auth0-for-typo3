@@ -33,7 +33,7 @@ return [
     'palettes' => [
         'client' => [
             'label' => 'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:palettes.client',
-            'showitem' => 'id,secret,--linebreak--,signature_algorithm,secret_base64_encoded',
+            'showitem' => 'id,secret,--linebreak--,signature_algorithm',
         ],
         'api' => [
             'label' => 'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:palettes.api',
@@ -133,20 +133,6 @@ return [
                 'size' => 30,
                 'eval' => 'trim,required',
                 'default' => 'api/v2/',
-            ],
-        ],
-        'secret_base64_encoded' => [
-            'label' => 'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_application.secret_base64_encoded',
-            'config' => [
-                'type' => 'check',
-                'renderType' => 'checkboxToggle',
-                'items' => [
-                    [
-                        0 => '',
-                        1 => '',
-                    ],
-                ],
-                'default' => 0,
             ],
         ],
         'signature_algorithm' => [
