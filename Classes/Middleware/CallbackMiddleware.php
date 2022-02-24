@@ -207,7 +207,7 @@ class CallbackMiddleware implements MiddlewareInterface
             'redirectFirstMethod' => $tokenDataSet->get('redirectFirstMethod'),
             'redirectPageLogin' => $tokenDataSet->get('redirectPageLogin'),
             'redirectPageLoginError' => $tokenDataSet->get('redirectPageLoginError'),
-            'redirectPageLogout' => $tokenDataSet->get('redirectPageLogout')
+            'redirectPageLogout' => $tokenDataSet->get('redirectPageLogout'),
         ]);
 
         $redirectService->handleRedirect($allowedMethods);
