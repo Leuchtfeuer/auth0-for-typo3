@@ -28,6 +28,7 @@ use Bitmotion\Auth0\Middleware\CallbackMiddleware;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Bitmotion\Auth0\Utility\TokenUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
+use GuzzleHttp\Exception\GuzzleException;
 use JsonException;
 use TYPO3\CMS\Core\Authentication\AuthenticationService as BasicAuthenticationService;
 use TYPO3\CMS\Core\Authentication\LoginType;
@@ -186,9 +187,11 @@ class AuthenticationService extends BasicAuthenticationService
     {
         echo 'do not hit';
         die();
-        // TODO: Add application UID
-        $session = (new SessionFactory())->getSessionStoreForApplication(0, $loginType);
-        $userInfo = $session->getUserInfo();
+//        $session = (new SessionFactory())->getSessionStoreForApplication(0, $loginType);
+//        $userInfo = $session->getUserInfo();
+
+        // TODO: Check if context needs to be set
+        $userInfo = $this->auth0->configuration()->getSessionStorage()->get('user');
 
         if (!empty($userInfo[$this->userIdentifier])) {
             $this->logger->debug('Try to login user via Auth0 session');
@@ -292,8 +295,7 @@ class AuthenticationService extends BasicAuthenticationService
     protected function initializeAuth0Connection(): bool
     {
         try {
-            // TODO: Context needs to be readded (->withContext($this->authInfo['loginType']))
-            $this->auth0 = (new ApplicationFactory())->getAuth0($this->application);
+            $this->auth0 = ApplicationFactory::build($this->application, $this->authInfo['loginType']);
 
             $this->userInfo = $this->auth0->getUser() ?? [];
 
@@ -306,6 +308,8 @@ class AuthenticationService extends BasicAuthenticationService
             return true;
         } catch (\Exception $exception) {
             $this->logger->emergency(sprintf('Error %s: %s', $exception->getCode(), $exception->getMessage()));
+        } catch (GuzzleException $e) {
+            $this->logger->error($e->getMessage());
         }
 
         return false;
@@ -325,13 +329,6 @@ class AuthenticationService extends BasicAuthenticationService
         if (!is_array($user)) {
             // Delete persistent Auth0 user data
             try {
-                if ($this->auth0 instanceof Auth0 === false) {
-                    var_dump('auth0 not present');
-                    die();
-                    // TODO: Context needs to be readded (->withContext($this->authInfo['loginType']))
-                    $this->auth0 = (new ApplicationFactory())->getAuth0($this->application);
-                }
-
                 $this->auth0->clear();
             } catch (\Exception $exception) {
                 // ignore this...
@@ -361,22 +358,17 @@ class AuthenticationService extends BasicAuthenticationService
             return 100;
         }
 
-        // Do not login if email address is not verified (only available if API is enabled)
-        // TODO:: Support this even API is disabled
-        if ($this->auth0User !== null && !$this->auth0User->isEmailVerified()) {
-            $this->logger->warning('Email not verified. Do not login user.');
-            // Responsible, authentication failed, do NOT check other services
-            return 0;
-        }
+//        // Do not login if email address is not verified (only available if API is enabled)
+//        // TODO:: Support this even API is disabled
+//        if ($this->auth0User !== null && !$this->auth0User->isEmailVerified()) {
+//            $this->logger->warning('Email not verified. Do not login user.');
+//            // Responsible, authentication failed, do NOT check other services
+//            return 0;
+//        }
 
         // Skip when there is an Auth0 session but the corresponding TYPO3 user has no user group assigned.
         if (empty($user['usergroup']) && $this->loginViaSession === true) {
             $this->logger->warning('Could not login user via session as it has no group assigned.');
-
-            if ($this->auth0 instanceof Auth0 === false) {
-                // TODO: Context needs to be readded (->withContext($this->authInfo['loginType']))
-                $this->auth0 = (new ApplicationFactory())->getAuth0($this->application);
-            }
 
             // TODO: Pass return URI
             $this->auth0->logout();

@@ -50,15 +50,9 @@ class Application extends AbstractEntity
      */
     protected $audience = '';
 
-    /**
-     * @var bool
-     */
-    protected $singleLogOut = false;
+    protected bool $singleLogOut = false;
 
-    /**
-     * @var bool
-     */
-    protected $api = true;
+    protected bool $api = true;
 
     protected string $signatureAlgorithm = self::ALG_RS256;
 

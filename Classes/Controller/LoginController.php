@@ -18,7 +18,6 @@ use Auth0\SDK\Exception\ConfigurationException;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Factory\ApplicationFactory;
-use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\Middleware\CallbackMiddleware;
 use Bitmotion\Auth0\Utility\ParametersUtility;
 use Bitmotion\Auth0\Utility\RoutingUtility;
@@ -56,6 +55,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
         }
 
         $this->application = (int)($this->settings['application'] ?? GeneralUtility::_GET('application'));
+        $this->auth0 = ApplicationFactory::build($this->application, ApplicationFactory::SESSION_PREFIX_FRONTEND);
         $this->extensionConfiguration = new EmAuth0Configuration();
     }
 
@@ -66,7 +66,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
     {
         if (GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
             // Get Auth0 user from session storage
-            $userInfo = (new SessionFactory())->getSessionStoreForApplication($this->application, SessionFactory::SESSION_PREFIX_FRONTEND)->getUserInfo();
+            $userInfo = $this->auth0->configuration()->getSessionStorage()->get('user');
         }
 
         $this->view->assignMultiple([
@@ -86,7 +86,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
     public function loginAction(?string $rawAdditionalAuthorizeParameters = null): void
     {
         $context = GeneralUtility::makeInstance(Context::class);
-        $userInfo = (new SessionFactory())->getSessionStoreForApplication($this->application, SessionFactory::SESSION_PREFIX_FRONTEND)->getUserInfo();
+        $userInfo = $this->auth0->configuration()->getSessionStorage()->get('user');
 
         // Log in user to auth0 when there is neither a TYPO3 frontend user nor an Auth0 user
         if (!$context->getPropertyFromAspect('frontend.user', 'isLoggedIn') || empty($userInfo)) {
@@ -97,9 +97,8 @@ class LoginController extends ActionController implements LoggerAwareInterface
             }
 
             $this->logger->notice('Try to login user.');
-            $auth0 = (new ApplicationFactory())->getAuth0($this->application);
             // TODO: Support $additionalAuthorizeParameters to be passed and used
-            $auth0->login();
+            $this->auth0->login();
         }
 
         $this->redirect('form');
@@ -126,10 +125,9 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
         $this->logger->notice('Proceed with single log out.');
 
-        $auth0 = (new ApplicationFactory())->getAuth0($this->application);
-        $auth0->logout();
-        //TODO: Refactor with generic callback and support redirect from middleware
-        $this->redirectToUri($auth0->logout($this->getCallback('logout'), $application->getClientId()));
+        $this->auth0->logout();
+
+        $this->redirectToUri($this->auth0->logout($this->getCallback('logout')));
     }
 
     protected function getCallback(string $loginType = 'login'): string
