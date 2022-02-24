@@ -19,7 +19,6 @@ use Bitmotion\Auth0\Domain\Model\Application;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Factory\ApplicationFactory;
-use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\Middleware\CallbackMiddleware;
 use Bitmotion\Auth0\Utility\TokenUtility;
 use Psr\Log\LoggerAwareInterface;
@@ -107,7 +106,6 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     protected function setAuth0(): bool
     {
         try {
-            $this->configuration = new EmAuth0Configuration();
             $this->auth0 = (new ApplicationFactory())->getAuth0($this->configuration->getBackendConnection());
         } catch (\Exception $exception) {
             $this->logger->critical($exception->getMessage());
@@ -175,16 +173,6 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         return isset($this->frameworkConfiguration['settings']['stylesheet']);
     }
 
-    protected function prepareView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
-    {
-        $templateName = version_compare(GeneralUtility::makeInstance(Typo3Version::class)->getVersion(), '11.0', '>=') ? 'BackendV11' : 'Backend';
-        $standaloneView->setTemplate($templateName);
-        $standaloneView->setLayoutRootPaths($this->frameworkConfiguration['view']['layoutRootPaths']);
-        $standaloneView->setTemplateRootPaths($this->frameworkConfiguration['view']['templateRootPaths']);
-
-        $pageRenderer->addCssFile($this->frameworkConfiguration['settings']['stylesheet']);
-    }
-
     protected function getDefaultView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
     {
         $standaloneView->setLayoutRootPaths(['EXT:auth0/Resources/Private/Layouts/']);
@@ -193,6 +181,16 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         );
         $standaloneView->assign('error', 'no_typoscript');
         $pageRenderer->addCssFile('EXT:auth0/Resources/Public/Styles/backend.css');
+    }
+
+    protected function prepareView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
+    {
+        $templateName = version_compare(GeneralUtility::makeInstance(Typo3Version::class)->getVersion(), '11.0', '>=') ? 'BackendV11' : 'Backend';
+        $standaloneView->setTemplate($templateName);
+        $standaloneView->setLayoutRootPaths($this->frameworkConfiguration['view']['layoutRootPaths']);
+        $standaloneView->setTemplateRootPaths($this->frameworkConfiguration['view']['templateRootPaths']);
+
+        $pageRenderer->addCssFile($this->frameworkConfiguration['settings']['stylesheet']);
     }
 
     /**

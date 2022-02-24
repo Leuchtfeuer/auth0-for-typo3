@@ -17,7 +17,6 @@ use Auth0\SDK\Auth0;
 use Auth0\SDK\Exception\ConfigurationException;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Bitmotion\Auth0\Exception\InvalidApplicationException;
 use Bitmotion\Auth0\Factory\ApplicationFactory;
 use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\Middleware\CallbackMiddleware;
@@ -81,7 +80,6 @@ class LoginController extends ActionController implements LoggerAwareInterface
     /**
      * @param string|null $rawAdditionalAuthorizeParameters
      * @throws AspectNotFoundException
-     * @throws InvalidApplicationException
      * @throws StopActionException
      * @throws ConfigurationException
      */

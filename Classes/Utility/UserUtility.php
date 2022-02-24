@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Utility;
 
 use Auth0\SDK\Auth0;
-use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
+
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Domain\Repository\UserRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
@@ -73,7 +73,6 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      */
     public function insertUser(string $tableName, $user): void
     {
-        $user = $user instanceof User ? $this->transformAuth0User($user) : $user;
 
         switch ($tableName) {
             case 'fe_users':
@@ -87,13 +86,10 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         }
     }
 
-    protected function transformAuth0User(User $user): array
+    public function enrichManagementUser(array $managementUser): array
     {
-        return [
-            'email' => $user->getEmail(),
-            'user_metadata' => $user->getUserMetadata(),
-            $this->extensionConfiguration->getUserIdentifier() => $user->getUserId(),
-        ];
+        $managementUser[$this->extensionConfiguration->getUserIdentifier()] = $managementUser['user_id'];
+        return $managementUser;
     }
 
     /**

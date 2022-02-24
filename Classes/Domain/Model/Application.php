@@ -58,10 +58,7 @@ class Application extends AbstractEntity
      */
     protected $api = true;
 
-    /**
-     * @var string
-     */
-    protected $signatureAlgorithm = JwtConfiguration::ALG_RS256;
+    protected string $signatureAlgorithm = JwtConfiguration::ALG_RS256;
 
     /**
      * @var bool
@@ -108,9 +105,14 @@ class Application extends AbstractEntity
         $this->domain = $domain;
     }
 
-    public function getFullDomain()
+    public function getFullDomain(): string
     {
         return sprintf('https://%s', rtrim($this->domain, '/'));
+    }
+
+    public function getManagementTokenDomain(): string
+    {
+        return sprintf('https://%s/oauth/token', rtrim($this->domain, '/'));
     }
 
     public function getAudience(bool $asFullDomain = false): string
@@ -127,7 +129,7 @@ class Application extends AbstractEntity
         $this->audience = trim($audience, '/') . '/';
     }
 
-    public function getApiBasePath()
+    public function getApiBasePath(): string
     {
         return sprintf('/%s/', trim(parse_url($this->getAudience(true), PHP_URL_PATH), '/'));
     }

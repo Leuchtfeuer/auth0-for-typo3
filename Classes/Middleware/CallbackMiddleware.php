@@ -46,6 +46,11 @@ class CallbackMiddleware implements MiddlewareInterface
 
     const BACKEND_URI = '%s/typo3/?loginProvider=%d&code=%s&state=%s';
 
+    /**
+     * @throws NetworkException
+     * @throws UnknownErrorCodeException
+     * @throws ArgumentException
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (strpos($request->getUri()->getPath(), self::PATH) === false) {
@@ -99,6 +104,11 @@ class CallbackMiddleware implements MiddlewareInterface
         return new RedirectResponse($redirectUri, 302);
     }
 
+    /**
+     * @throws NetworkException
+     * @throws UnknownErrorCodeException
+     * @throws ArgumentException
+     */
     protected function handleFrontendCallback(ServerRequestInterface $request, DataSet $tokenDataSet): RedirectResponse
     {
         $errorCode = (string)GeneralUtility::_GET('error');

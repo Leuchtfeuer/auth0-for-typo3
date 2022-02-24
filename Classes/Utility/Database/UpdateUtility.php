@@ -222,6 +222,7 @@ class UpdateUtility implements LoggerAwareInterface
         $this->mapUserData($updates, $mappingConfiguration);
 
         // Fixed values
+        // TODO: Check - seems no to be used anymore
         if ($reactivateUser) {
             $updates['disable'] = 0;
             $updates['deleted'] = 0;
