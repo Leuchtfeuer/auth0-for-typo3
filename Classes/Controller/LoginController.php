@@ -98,7 +98,9 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
             $this->logger->notice('Try to login user.');
             // TODO: Support $additionalAuthorizeParameters to be passed and used
-            $this->auth0->login();
+            // TODO: Debug whole login process
+            echo $this->auth0->login($this->getCallback());
+            die();
         }
 
         $this->redirect('form');
