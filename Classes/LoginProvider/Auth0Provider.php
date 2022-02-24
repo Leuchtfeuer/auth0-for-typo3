@@ -120,7 +120,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         return true;
     }
 
-    protected function getCallbackUri(?string $redirectUri = ''): string
+    protected function getCallback(?string $redirectUri = ''): string
     {
         $tokenUtility = new TokenUtility();
         $tokenUtility->withPayload('application', $this->configuration->getBackendConnection());
@@ -145,7 +145,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         if (empty($userInfo)) {
             try {
                 $this->logger->notice('Try to get user via Auth0 API');
-                if ($this->auth0->exchange($this->getCallbackUri(), GeneralUtility::_GET('code'), GeneralUtility::_GET('state'))) {
+                if ($this->auth0->exchange($this->getCallback(), GeneralUtility::_GET('code'), GeneralUtility::_GET('state'))) {
                     $userInfo = $this->auth0->getUser();
                 }
             } catch (\Exception $exception) {
@@ -169,7 +169,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         } elseif ($this->action === self::ACTION_LOGIN) {
             // Login user to Auth0
             $this->logger->notice('Handle backend login.');
-            header('Location: ' . $this->auth0->login($this->getCallbackUri()));
+            header('Location: ' . $this->auth0->login($this->getCallback()));
         }
     }
 
@@ -204,7 +204,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     protected function logoutFromAuth0(): void
     {
         $redirectUri = GeneralUtility::getIndpEnv('TYPO3_SITE_URL') . 'typo3/logout';
-        header('Location: ' . $this->auth0->logout($this->getCallbackUri($redirectUri)));
+        header('Location: ' . $this->auth0->logout($this->getCallback($redirectUri)));
         exit();
     }
 }
