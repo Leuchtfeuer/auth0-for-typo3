@@ -11,7 +11,7 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Domain\Model\Auth0\Management;
+namespace Bitmotion\Auth0\Domain\Model;
 
 class User
 {

@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Utility\Database;
 
 use Bitmotion\Auth0\Configuration\Auth0Configuration;
-use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
+use Bitmotion\Auth0\Domain\Model\User;
 use Bitmotion\Auth0\Domain\Repository\UserGroup\AbstractUserGroupRepository;
 use Bitmotion\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
 use Bitmotion\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
