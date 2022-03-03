@@ -1,0 +1,40 @@
+.. include:: ../../Includes.txt
+
+==========================
+Version 4.0.0 - 2022/03/03
+==========================
+
+This release is a major release, which will likely be breaking.
+Let's briefly explain why this has become a breaking release. Florian Wessels left Leuchtfeuer (thanks for the good work
+again) and we had to deal with the extension completely from scratch. At the same time Auth0 released a new SDK which
+also supports PHP 8. With a view to the future and TYPO3 v12 we wanted to be prepared accordingly.
+We first concentrated on the functionality of the backend login with the help of Auth0 and refactored and restructured
+most of it.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v4.0.0>`__.
+
+Added
+=====
+
+* Support for TYPO3 v11.5
+
+Deprecated
+==========
+
+Removed
+=======
+
+* Obsolete PHPUnit tests - for the moment
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+   2021-08-04 [TASK] Add possibility to add an anchor to the referrer url (Commit f4ff9745 by Fabian Martin)
+
+s
