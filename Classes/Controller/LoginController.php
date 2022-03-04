@@ -13,27 +13,20 @@ declare(strict_types=1);
 
 namespace Bitmotion\Auth0\Controller;
 
-use Auth0\SDK\Exception\CoreException;
-use Bitmotion\Auth0\Api\Auth0;
+use Auth0\SDK\Auth0;
+use Auth0\SDK\Exception\ConfigurationException;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Bitmotion\Auth0\Exception\InvalidApplicationException;
-use Bitmotion\Auth0\Factory\SessionFactory;
+use Bitmotion\Auth0\Factory\ApplicationFactory;
 use Bitmotion\Auth0\Middleware\CallbackMiddleware;
-use Bitmotion\Auth0\Utility\ApiUtility;
-use Bitmotion\Auth0\Utility\ConfigurationUtility;
 use Bitmotion\Auth0\Utility\ParametersUtility;
 use Bitmotion\Auth0\Utility\RoutingUtility;
 use Bitmotion\Auth0\Utility\TokenUtility;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
@@ -41,30 +34,18 @@ class LoginController extends ActionController implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    protected $error = '';
+    protected string $error = '';
 
-    protected $errorDescription = '';
+    protected string $errorDescription = '';
 
-    protected $auth0;
+    protected ?Auth0 $auth0;
 
-    protected $application = 0;
+    protected int $application = 0;
 
-    /**
-     * @var EmAuth0Configuration
-     */
-    protected $extensionConfiguration;
+    protected EmAuth0Configuration $extensionConfiguration;
 
-    /**
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     * @throws ExtensionConfigurationPathDoesNotExistException
-     * @throws InvalidConfigurationTypeException
-     */
     public function initializeAction(): void
     {
-        if (!ConfigurationUtility::isLoaded()) {
-            throw new InvalidConfigurationTypeException('No TypoScript found.', 1547449321);
-        }
-
         if (!empty(GeneralUtility::_GET('error'))) {
             $this->error = htmlspecialchars((string)GeneralUtility::_GET('error'));
         }
@@ -74,21 +55,18 @@ class LoginController extends ActionController implements LoggerAwareInterface
         }
 
         $this->application = (int)($this->settings['application'] ?? GeneralUtility::_GET('application'));
+        $this->auth0 = ApplicationFactory::build($this->application, ApplicationFactory::SESSION_PREFIX_FRONTEND);
         $this->extensionConfiguration = new EmAuth0Configuration();
     }
 
     /**
      * @throws AspectNotFoundException
-     * @throws CoreException
-     * @throws InvalidApplicationException
-     * @throws StopActionException
-     * @throws \ReflectionException
      */
     public function formAction(): void
     {
         if (GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
             // Get Auth0 user from session storage
-            $userInfo = (new SessionFactory())->getSessionStoreForApplication($this->application, SessionFactory::SESSION_PREFIX_FRONTEND)->getUserInfo();
+            $userInfo = $this->auth0->configuration()->getSessionStorage()->get('user');
         }
 
         $this->view->assignMultiple([
@@ -100,17 +78,15 @@ class LoginController extends ActionController implements LoggerAwareInterface
     }
 
     /**
-     * @param string $rawAdditionalAuthorizeParameters
-     *
+     * @param string|null $rawAdditionalAuthorizeParameters
      * @throws AspectNotFoundException
-     * @throws CoreException
-     * @return ResponseInterface
-     * @throws InvalidApplicationException
+     * @throws StopActionException
+     * @throws ConfigurationException
      */
-    public function loginAction(?string $rawAdditionalAuthorizeParameters = null): ResponseInterface
+    public function loginAction(?string $rawAdditionalAuthorizeParameters = null): void
     {
         $context = GeneralUtility::makeInstance(Context::class);
-        $userInfo = (new SessionFactory())->getSessionStoreForApplication($this->application, SessionFactory::SESSION_PREFIX_FRONTEND)->getUserInfo();
+        $userInfo = $this->auth0->configuration()->getSessionStorage()->get('user');
 
         // Log in user to auth0 when there is neither a TYPO3 frontend user nor an Auth0 user
         if (!$context->getPropertyFromAspect('frontend.user', 'isLoggedIn') || empty($userInfo)) {
@@ -121,15 +97,17 @@ class LoginController extends ActionController implements LoggerAwareInterface
             }
 
             $this->logger->notice('Try to login user.');
-            $this->getAuth0()->login(null, null, $additionalAuthorizeParameters);
+            // TODO: Support $additionalAuthorizeParameters to be passed and used
+            // TODO: Debug whole login process
+            echo $this->auth0->login($this->getCallback());
+            die();
         }
 
-        return $this->redirect('form');
+        $this->redirect('form');
     }
 
     /**
-     * @throws CoreException
-     * @throws InvalidApplicationException
+     * @throws ConfigurationException
      * @throws StopActionException
      */
     public function logoutAction(): void
@@ -144,32 +122,14 @@ class LoginController extends ActionController implements LoggerAwareInterface
             if (strpos($this->settings['redirectMode'], 'logout') !== false && (bool)$this->settings['redirectDisable'] === false) {
                 $routingUtility->addArgument('referrer', $this->addLogoutRedirect());
             }
-
-            $returnUrl = $routingUtility->getUri();
-
-            if ($singleLogOut === false) {
-                $this->redirectToUri($returnUrl);
-            }
+            $this->redirectToUri($routingUtility->getUri());
         }
 
         $this->logger->notice('Proceed with single log out.');
-        $auth0 = $this->getAuth0();
-        $auth0->logout();
 
-        $this->redirectToUri($auth0->getLogoutUri($this->getCallback('logout'), $application->getClientId()));
-    }
+        $this->auth0->logout();
 
-    /**
-     * @throws CoreException
-     * @throws InvalidApplicationException
-     */
-    protected function getAuth0(): Auth0
-    {
-        if ($this->auth0 instanceof Auth0) {
-            return $this->auth0;
-        }
-
-        return GeneralUtility::makeInstance(ApiUtility::class, $this->application)->getAuth0($this->getCallback());
+        $this->redirectToUri($this->auth0->logout($this->getCallback('logout')));
     }
 
     protected function getCallback(string $loginType = 'login'): string
@@ -177,6 +137,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
         $uri = $GLOBALS['TYPO3_REQUEST']->getUri();
         $referrer = $GLOBALS['TYPO3_REQUEST']->getQueryParams()['referrer'] ?? sprintf('%s://%s%s', $uri->getScheme(), $uri->getHost(), $uri->getPath());
 
+        //TODO: Check this functionality again. Auth0 documentation states that they remove everything anchor related to maintain OAuth2 specification
         if ($this->settings['referrerAnchor']) {
             $referrer .= '#' . $this->settings['referrerAnchor'];
         }
@@ -197,7 +158,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
             CallbackMiddleware::PATH,
             $loginType,
             CallbackMiddleware::TOKEN_PARAMETER,
-            $tokenUtility->buildToken()
+            $tokenUtility->buildToken()->toString()
         );
     }
 

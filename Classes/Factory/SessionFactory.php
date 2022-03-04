@@ -12,7 +12,6 @@
 namespace Bitmotion\Auth0\Factory;
 
 use Bitmotion\Auth0\Store\SessionStore;
-use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Service\EnvironmentService;
 
@@ -22,12 +21,13 @@ class SessionFactory
 
     public const SESSION_PREFIX_FRONTEND = 'FE';
 
-    public function getSessionStoreForApplication(int $application = 0, ?string $context = self::SESSION_PREFIX_FRONTEND)
+    public function getSessionStoreForApplication(int $application = 0, ?string $context = self::SESSION_PREFIX_FRONTEND): SessionStore
     {
-        // TODO: Add Application to session store
-        $storeName = sprintf('%s%s_', SessionStore::BASE_NAME, $context);
+        // TODO: Add Application to session store - check if handled by sdk configuration
+        $sessionPrefix = sprintf('%s%s_', SessionStore::SESSION_PREFIX, $context);
+        $configuration = (new ApplicationFactory())->getConfiguration($application);
 
-        return new SessionStore($storeName);
+        return new SessionStore($configuration, $sessionPrefix);
     }
 
     public function getContext(): string

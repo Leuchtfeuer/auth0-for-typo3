@@ -13,11 +13,13 @@ declare(strict_types=1);
 
 namespace Bitmotion\Auth0\Domain\Model;
 
-use Bitmotion\Auth0\Domain\Model\Auth0\Management\Client\JwtConfiguration;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 class Application extends AbstractEntity
 {
+    public const ALG_HS256 = 'HS256';
+    public const ALG_RS256 = 'RS256';
+
     /**
      * @var string
      */
@@ -34,11 +36,6 @@ class Application extends AbstractEntity
     protected $secret = '';
 
     /**
-     * @var bool
-     */
-    protected $secretBase64Encoded = false;
-
-    /**
      * @var string
      */
     protected $domain = '';
@@ -48,20 +45,11 @@ class Application extends AbstractEntity
      */
     protected $audience = '';
 
-    /**
-     * @var bool
-     */
-    protected $singleLogOut = false;
+    protected bool $singleLogOut = false;
 
-    /**
-     * @var bool
-     */
-    protected $api = true;
+    protected bool $api = true;
 
-    /**
-     * @var string
-     */
-    protected $signatureAlgorithm = JwtConfiguration::ALG_RS256;
+    protected string $signatureAlgorithm = self::ALG_RS256;
 
     /**
      * @var bool
@@ -108,9 +96,14 @@ class Application extends AbstractEntity
         $this->domain = $domain;
     }
 
-    public function getFullDomain()
+    public function getFullDomain(): string
     {
         return sprintf('https://%s', rtrim($this->domain, '/'));
+    }
+
+    public function getManagementTokenDomain(): string
+    {
+        return sprintf('https://%s/oauth/token', rtrim($this->domain, '/'));
     }
 
     public function getAudience(bool $asFullDomain = false): string
@@ -127,7 +120,7 @@ class Application extends AbstractEntity
         $this->audience = trim($audience, '/') . '/';
     }
 
-    public function getApiBasePath()
+    public function getApiBasePath(): string
     {
         return sprintf('/%s/', trim(parse_url($this->getAudience(true), PHP_URL_PATH), '/'));
     }
@@ -140,16 +133,6 @@ class Application extends AbstractEntity
     public function setSingleLogOut(bool $singleLogOut): void
     {
         $this->singleLogOut = $singleLogOut;
-    }
-
-    public function isSecretBase64Encoded(): bool
-    {
-        return $this->secretBase64Encoded;
-    }
-
-    public function setSecretBase64Encoded(bool $secretBase64Encoded): void
-    {
-        $this->secretBase64Encoded = $secretBase64Encoded;
     }
 
     public function getSignatureAlgorithm(): string

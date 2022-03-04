@@ -14,27 +14,26 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Hooks;
 
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Service\EnvironmentService;
 
 class SingleSignOutHook implements SingletonInterface
 {
     protected $configuration;
 
-    protected $environmentService;
-
-    protected $responsible = false;
+    protected bool $responsible = false;
 
     public function __construct()
     {
         $this->configuration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
-        $this->environmentService = GeneralUtility::makeInstance(EnvironmentService::class);
     }
 
     public function isResponsible(): void
     {
-        if ($this->environmentService->isEnvironmentInBackendMode()) {
+        if (($GLOBALS['TYPO3_REQUEST'] ?? null) instanceof ServerRequestInterface
+            && ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isBackend()) {
             $beUser = $GLOBALS['BE_USER'];
             $this->responsible = isset($beUser->user['auth0_user_id']) && !empty($beUser->user['auth0_user_id']);
         }
@@ -43,10 +42,11 @@ class SingleSignOutHook implements SingletonInterface
     public function performLogout(): void
     {
         if ($this->responsible === true) {
-            if ($this->environmentService->isEnvironmentInBackendMode()) {
-                $this->performBackendLogout();
-            } elseif ($this->environmentService->isEnvironmentInFrontendMode()) {
+            if (($GLOBALS['TYPO3_REQUEST'] ?? null) instanceof ServerRequestInterface
+                && ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()) {
                 $this->performFrontendLogout();
+            } else {
+                $this->performBackendLogout();
             }
         }
     }

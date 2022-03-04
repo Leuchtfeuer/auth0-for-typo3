@@ -1,3 +1,6 @@
+<html
+		xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+		data-namespace-typo3-fluid="true">
 <div class="typo3-login auth0-login">
 	<div class="typo3-login-inner">
 		<div class="typo3-login-container">
@@ -92,7 +95,7 @@
 						<div class="typo3-login-copyright-wrap">
 							<a href="#loginCopyright" class="typo3-login-copyright-link collapsed" data-toggle="collapse" data-bs-toggle="collapse" aria-expanded="false" aria-controls="loginCopyright">
 								<span><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.login.copyright" /></span>
-								<img src="{auth0Image}" height="20" />
+								<f:image src="EXT:auth0/Resources/Public/Images/auth0-logo-horizontal-color.svg" alt="Auth0 logo" height="20" />
 							</a>
 							<div id="loginCopyright" class="collapse">
 								<div class="typo3-login-copyright-text">
@@ -117,3 +120,4 @@
 		</f:if>
 	</div>
 </div>
+</html>

@@ -1,57 +1,62 @@
+<html
+        xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+        xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+        data-namespace-typo3-fluid="true">
+
 <f:form action="{action}" class="form row" arguments="{table: table, type: type}">
-	<div class="form-group col-sm-12 col-md-5 col-lg-3">
-		<label for="rolesKey">
-			<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.typo3"/>
-		</label>
+    <div class="form-group col-sm-12 col-md-5 col-lg-3">
+        <label for="rolesKey">
+            <f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.typo3"/>
+        </label>
 
-		<select id="rolesKey" class="form-control" name="tx_auth0_tools_auth0auth0[property][databaseField]">
-			<f:for each="{properties}" key="databaseField" as="item">
-				<f:if condition="{databaseField} === {property.databaseField}">
-					<f:then>
-						<option selected value="{databaseField}">{item.label}</option>
-					</f:then>
-					<f:else>
-						<option value="{databaseField}">{item.label}</option>
-					</f:else>
-				</f:if>
-			</f:for>
-		</select>
-	</div>
+        <select id="rolesKey" class="form-control form-select" name="tx_auth0_tools_auth0auth0[property][databaseField]">
+            <f:for each="{properties}" key="databaseField" as="item">
+                <f:if condition="{databaseField} === {property.databaseField}">
+                    <f:then>
+                        <option selected value="{databaseField}">{item.label}</option>
+                    </f:then>
+                    <f:else>
+                        <option value="{databaseField}">{item.label}</option>
+                    </f:else>
+                </f:if>
+            </f:for>
+        </select>
+    </div>
 
-	<div class="form-group col-sm-12 col-md-5 col-lg-3">
-		<label for="rolesKey">
-			<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.auth0"/>
-		</label>
-		<f:form.textfield class="form-control" name="property[auth0Property]" value="{property.auth0Property}"/>
-	</div>
+    <div class="form-group col-sm-12 col-md-5 col-lg-3">
+        <label for="rolesKey">
+            <f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.auth0"/>
+        </label>
+        <f:form.textfield class="form-control" name="property[auth0Property]" value="{property.auth0Property}"/>
+    </div>
 
-	<div class="form-group col-sm-12 col-md-2 col-lg-2">
-		<label for="rolesKey">
-			<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.processing"/>
-		</label>
-		<f:form.select id="rolesKey" class="form-control" name="property[processing]" value="{property.processing}"
-					   options="{null: '', bool: 'bool', negate-bool: 'negate bool', strtotime: 'strtotime'}"/>
-	</div>
+    <div class="form-group col-sm-12 col-md-2 col-lg-2">
+        <label for="rolesKey">
+            <f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.processing"/>
+        </label>
+        <f:form.select id="rolesKey" class="form-control form-select" name="property[processing]" value="{property.processing}"
+                       options="{null: '', bool: 'bool', negate-bool: 'negate bool', strtotime: 'strtotime'}"/>
+    </div>
 
-	<div class="form-group col-sm-12">
-		<f:form.button class="btn btn-default">
-			<core:icon identifier="actions-save" />
-			<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.button.save"/>
-		</f:form.button>
-	</div>
+    <div class="form-group col-sm-12">
+        <f:form.button class="btn btn-default">
+            <core:icon identifier="actions-save"/>
+            <f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.button.save"/>
+        </f:form.button>
+    </div>
 </f:form>
 
 <div class="row">
-	<div class="col-sm-12 text-right">
-		<f:if condition="{table} === 'fe_users'">
-			<f:then>
-				<core:icon identifier="status-user-frontend" />
-			</f:then>
-			<f:else>
-				<core:icon identifier="status-user-backend" />
-			</f:else>
-		</f:if>
-		<strong>{type}</strong>
-	</div>
+    <div class="col-sm-12 text-right">
+        <f:if condition="{table} === 'fe_users'">
+            <f:then>
+                <core:icon identifier="status-user-frontend"/>
+            </f:then>
+            <f:else>
+                <core:icon identifier="status-user-backend"/>
+            </f:else>
+        </f:if>
+        <strong>{type}</strong>
+    </div>
 </div>
-
+</html>

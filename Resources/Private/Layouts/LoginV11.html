@@ -1,4 +1,6 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<html
+        xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+        data-namespace-typo3-fluid="true">
 <div class="typo3-login auth0-login">
     <div class="typo3-login-inner">
         <div class="typo3-login-container">
@@ -42,9 +44,9 @@
                                         <f:render partial="Login/InterfaceSelector" arguments="{_all}" />
                                     </form>
                                 </div>
-                                <f:if condition="{loginProviders->f:count()} > 1">
+                                <f:if condition="{loginProviders -> f:count()} > 1">
                                     <nav aria-label="{f:translate(key: 'login.navigation.loginProvider')}">
-                                        <f:comment>role is for VoiceOver</f:comment>
+                                        <f:comment><!--role is for VoiceOver--></f:comment>
                                         <ul class="list-unstyled typo3-login-links" role="list">
                                             <f:for each="{loginProviders}" as="provider" key="providerKey">
                                                 <f:if condition="{provider.label}">
@@ -98,8 +100,7 @@
                         <div class="typo3-login-copyright-wrap">
                             <a href="#loginCopyright" class="typo3-login-copyright-link t3js-login-copyright-link collapsed" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="loginCopyright">
                                 <span><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.login.copyright" /></span>
-                                <f:comment>the image within the button is only decorative</f:comment>
-                                <img src="{auth0Image}" alt="" height="20" />
+                                <f:image src="EXT:auth0/Resources/Public/Images/auth0-logo-horizontal-color.svg" alt="Auth0 logo" height="20" />
                             </a>
                             <div id="loginCopyright" class="collapse">
                                 <div class="typo3-login-copyright-text">
@@ -107,7 +108,7 @@
                                         <f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.login.copyright.description" />
                                     </p>
                                     <nav aria-label="{f:translate(key: 'login.navigation.typo3')}">
-                                        <f:comment>role is for VoiceOver</f:comment>
+                                        <f:comment><!--role is for VoiceOver--></f:comment>
                                         <ul class="list-unstyled" role="list">
                                             <li><a href="https://www.auth0.com" target="_blank" rel="noreferrer" class="t3-login-link-typo3"><i class="fa fa-external-link"></i> Auth0.com</a></li>
                                             <li><a href="https://Leuchtfeuer.com?utm_source=link&utm_medium=auth0" target="_blank" rel="noreferrer" class="t3-login-link-donate"><i class="fa fa-external-link"></i> Leuchtfeuer.com</a></li>
@@ -126,7 +127,7 @@
             </aside>
         </f:if>
     </div>
-    <f:comment>This link is only used for protection of the backend.</f:comment>
+    <f:comment><!--This link is only used for protection of the backend.--></f:comment>
     <a href="{loginUrl}" id="t3js-login-url" data-referrer-check-enabled="{f:if(condition: '{referrerCheckEnabled}', then: '1', else: '0')}" aria-hidden="true" tabindex="-1"></a>
 </div>
 </html>

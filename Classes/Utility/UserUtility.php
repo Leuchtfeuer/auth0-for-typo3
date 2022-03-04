@@ -13,14 +13,13 @@ declare(strict_types=1);
 
 namespace Bitmotion\Auth0\Utility;
 
-use Bitmotion\Auth0\Api\Auth0;
-use Bitmotion\Auth0\Api\Management\UserApi;
-use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
+use Auth0\SDK\Auth0;
+
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Domain\Repository\UserRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Bitmotion\Auth0\Scope;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
+use GuzzleHttp\Utils;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -74,8 +73,6 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      */
     public function insertUser(string $tableName, $user): void
     {
-        $user = $user instanceof User ? $this->transformAuth0User($user) : $user;
-
         switch ($tableName) {
             case 'fe_users':
                 $this->insertFeUser($tableName, $user);
@@ -88,14 +85,12 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         }
     }
 
-    protected function transformAuth0User(User $user): array
+    public function enrichManagementUser(array $managementUser): array
     {
-        return [
-            'email' => $user->getEmail(),
-            'user_metadata' => $user->getUserMetadata(),
-            $this->extensionConfiguration->getUserIdentifier() => $user->getUserId(),
-        ];
+        $managementUser[$this->extensionConfiguration->getUserIdentifier()] = $managementUser['user_id'];
+        return $managementUser;
     }
+
     /**
      * Inserts a new frontend user
      *
@@ -114,7 +109,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             'email' => $user['email'] ?? '',
             'crdate' => time(),
             'auth0_user_id' => $user[$userIdentifier],
-            'auth0_metadata' => \GuzzleHttp\json_encode($user['user_metadata'] ?? ''),
+            'auth0_metadata' => Utils::jsonEncode($user['user_metadata'] ?? ''),
         ]);
 
         GeneralUtility::makeInstance(UserRepository::class, $tableName)->insertUser($values);
@@ -172,13 +167,14 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     {
         try {
             $this->logger->notice('Try to update user.');
-            $user = $auth0->getUser();
+            if ($auth0->exchange()) {
+                $user = $auth0->getUser();
+            }
+
             $application = BackendUtility::getRecord(ApplicationRepository::TABLE_NAME, $application, 'api, uid');
 
-            if ((bool)$application['api'] === true) {
-                $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $application['uid']);
-                $userApi = $apiUtility->getApi(UserApi::class, Scope::USER_READ);
-                $user = $userApi->get($user[$this->extensionConfiguration->getUserIdentifier()]);
+            if ((bool)$application['api'] === true && $user) {
+                $user = $auth0->management()->users()->get($user[$this->extensionConfiguration->getUserIdentifier()]);
             }
 
             // Update existing user on every login

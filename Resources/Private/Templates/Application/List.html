@@ -1,9 +1,13 @@
-{namespace be=TYPO3\CMS\Backend\ViewHelpers}
-{namespace core=TYPO3\CMS\Core\ViewHelpers}
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+	  xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+	  xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+	  data-namespace-typo3-fluid="true">
 <f:layout name="Backend" />
 
 <f:section name="content">
-	<h1><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:application.title" /></h1>
+    <h1>
+        <f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:application.title"/>
+    </h1>
 
 	<f:if condition="!{settings}">
 		<f:be.infobox title="{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:application.ts.title')}" state="1">
@@ -17,12 +21,13 @@
 	</f:if>
 
 	<f:if condition="{directory}">
-		<f:then>
-			<p class="lead">
-				<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:application.text" />
-				<core:iconForRecord row="{directory}" table="pages" /> {directory.title} ({directory.uid})
-			</p>
-		</f:then>
+        <f:then>
+            <p class="lead">
+                <f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:application.text"/>
+                <core:iconForRecord row="{directory}" table="pages"/>
+                {directory.title} ({directory.uid})
+            </p>
+        </f:then>
 		<f:else>
 			<f:be.infobox state="1">
 				{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:application.no_directory') -> f:format.html()}
@@ -31,9 +36,9 @@
 	</f:if>
 
 	<f:if condition="{applications}">
-		<f:then>
-			<f:render partial="Backend/ApplicationTable" arguments="{_all}" />
-		</f:then>
+        <f:then>
+            <f:render partial="Backend/ApplicationTable" arguments="{_all}"/>
+        </f:then>
 		<f:else>
 			<f:be.infobox title="{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:application.infobox.title')}" state="-1">
 				<p>
@@ -43,8 +48,9 @@
 		</f:else>
 	</f:if>
 
-	<be:link.newRecord table="tx_auth0_domain_model_application" class="btn btn-default" pid="{pid}" returnUrl="{returnUrl}">
-		<core:icon identifier="actions-document-new" size="small"/>
-		<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:application.new"/>
-	</be:link.newRecord>
+    <be:link.newRecord table="tx_auth0_domain_model_application" class="btn btn-default" pid="{pid}" returnUrl="{returnUrl}">
+        <core:icon identifier="actions-document-new" size="small"/>
+        <f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:application.new"/>
+    </be:link.newRecord>
 </f:section>
+</html>

@@ -1,76 +1,76 @@
 {
-  "name": "leuchtfeuer/auth0",
-  "description": "Auth0 is the solution you need for web, mobile, IoT, and internal applications. Loved by developers and trusted by enterprises.",
-  "keywords": [
-    "TYPO3",
-    "Auth0",
-    "SSO",
-    "Login",
-    "User"
-  ],
-  "type": "typo3-cms-extension",
-  "license": "GPL-2.0-or-later",
-  "homepage": "https://www.Leuchtfeuer.com",
-  "authors": [
-    {
-      "name": "Florian Wessels",
-      "email": "f.wessels@Leuchtfeuer.com",
-      "role": "Developer",
-      "homepage": "https://www.Leuchtfeuer.com"
+    "name": "leuchtfeuer/auth0",
+    "description": "Auth0 is the solution you need for web, mobile, IoT, and internal applications. Loved by developers and trusted by enterprises.",
+    "license": "GPL-2.0-or-later",
+    "type": "typo3-cms-extension",
+    "keywords": [
+        "TYPO3",
+        "Auth0",
+        "SSO",
+        "Login",
+        "User"
+    ],
+    "authors": [
+        {
+            "name": "Florian Wessels",
+            "email": "flo.wessels@gmail.com",
+            "homepage": "https://www.Leuchtfeuer.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Max Rösch",
+            "email": "m.roesch@Leuchtfeuer.com",
+            "homepage": "https://www.Leuchtfeuer.com",
+            "role": "Developer"
+        }
+    ],
+    "homepage": "https://www.Leuchtfeuer.com",
+    "require": {
+        "php": ">=7.4",
+        "auth0/auth0-php": "^8.1",
+        "lcobucci/jwt": "^4.1",
+        "symfony/http-foundation": "^5.4",
+        "symfony/property-access": "^4.4 || ^5.4",
+        "symfony/property-info": "^5.0",
+        "symfony/serializer": "^4.4 || ^5.4",
+        "typo3/cms-backend": "^10.4.25 || ^11.5.7",
+        "typo3/cms-core": "^10.4.25 || ^11.5.7",
+        "typo3/cms-extbase": "^10.4.25 || ^11.5.7",
+        "typo3/cms-extensionmanager": "^10.4.25 || ^11.5.7",
+        "typo3/cms-fluid": "^10.4.25 || ^11.5.7",
+        "typo3/cms-frontend": "^10.4.25 || ^11.5.7"
+    },
+    "replace": {
+        "bitmotion/auth0": "self.version",
+        "typo3-ter/auth0": "self.version"
+    },
+    "suggest": {
+        "typo3/cms-scheduler": "TYPO3 Scheduler"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bitmotion\\Auth0\\": "Classes/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "typo3/cms-composer-installers": true,
+            "typo3/class-alias-loader": true
+        },
+        "bin-dir": ".Build/bin",
+        "vendor-dir": ".Build/vendor"
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "auth0",
+            "web-dir": ".Build/web"
+        }
+    },
+    "scripts": {
+        "post-autoload-dump": [
+            "TYPO3\\TestingFramework\\Composer\\ExtensionTestEnvironment::prepare",
+            "mkdir -p .Build/web/typo3conf/ext/",
+            "[ -L .Build/web/typo3conf/ext/auth0 ] || ln -snvf ../../../../. .Build/web/typo3conf/ext/auth0"
+        ]
     }
-  ],
-  "support": {
-    "issues": "https://github.com/Leuchtfeuer/auth0-for-typo3/issues",
-    "source": "https://github.com/Leuchtfeuer/auth0-for-typo3",
-    "email": "dev@Leuchtfeuer.com",
-    "docs": "https://docs.typo3.org/p/leuchtfeuer/auth0/master/en-us/"
-  },
-  "require": {
-    "typo3/cms-core": "^10.4.14 || ^11.2.0",
-    "typo3/cms-backend": "^10.4.14 || ^11.2.0",
-    "typo3/cms-extbase": "^10.4.14 || ^11.2.0",
-    "typo3/cms-extensionmanager": "^10.4.14 || ^11.2.0",
-    "typo3/cms-fluid": "^10.4.14 || ^11.2.0",
-    "typo3/cms-frontend": "^10.4.14 || ^11.2.0",
-    "auth0/auth0-php": "^7.1",
-    "symfony/serializer": "^4.2 || ^5.0",
-    "symfony/property-access": "^4.4 || ^5.0",
-    "symfony/property-info": "^4.4 || ^5.0",
-    "symfony/http-foundation": "^4.4 || ^5.0.7"
-  },
-  "suggest": {
-    "typo3/cms-scheduler": "TYPO3 Scheduler"
-  },
-  "replace": {
-    "bitmotion/auth0": "self.version",
-    "typo3-ter/auth0": "self.version"
-  },
-  "autoload": {
-    "psr-4": {
-      "Bitmotion\\Auth0\\": "Classes/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "Leuchtfeuer\\Auth0\\Tests\\": "Tests/"
-    }
-  },
-  "config": {
-    "vendor-dir": ".Build/vendor",
-    "bin-dir": ".Build/bin"
-  },
-  "scripts": {
-    "post-autoload-dump": [
-      "TYPO3\\TestingFramework\\Composer\\ExtensionTestEnvironment::prepare",
-      "mkdir -p .Build/web/typo3conf/ext/",
-      "[ -L .Build/web/typo3conf/ext/auth0 ] || ln -snvf ../../../../. .Build/web/typo3conf/ext/auth0"
-    ]
-  },
-  "extra": {
-    "typo3/cms": {
-      "cms-package-dir": "{$vendor-dir}/typo3/cms",
-      "web-dir": ".Build/web",
-      "extension-key": "auth0"
-    }
-  }
 }

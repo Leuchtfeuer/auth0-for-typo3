@@ -1,7 +1,7 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
-use Bitmotion\Auth0\Domain\Model\Auth0\Management\Client\JwtConfiguration;
+use Bitmotion\Auth0\Domain\Model\Application;
 
 return [
     'ctrl' => [
@@ -16,7 +16,7 @@ return [
             'disabled' => 'hidden',
         ],
         'searchFields' => 'title,id,domain,audience',
-        'iconfile' => 'EXT:auth0/Resources/Public/Icons/tx_auth0_domain_model_application.png',
+        'iconfile' => 'EXT:auth0/Resources/Public/Icons/auth0.svg',
     ],
     'types' => [
         '1' => ['showitem' => '
@@ -33,7 +33,7 @@ return [
     'palettes' => [
         'client' => [
             'label' => 'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:palettes.client',
-            'showitem' => 'id,secret,--linebreak--,signature_algorithm,secret_base64_encoded',
+            'showitem' => 'id,secret,--linebreak--,signature_algorithm',
         ],
         'api' => [
             'label' => 'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:palettes.api',
@@ -135,30 +135,16 @@ return [
                 'default' => 'api/v2/',
             ],
         ],
-        'secret_base64_encoded' => [
-            'label' => 'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_application.secret_base64_encoded',
-            'config' => [
-                'type' => 'check',
-                'renderType' => 'checkboxToggle',
-                'items' => [
-                    [
-                        0 => '',
-                        1 => '',
-                    ],
-                ],
-                'default' => 0,
-            ],
-        ],
         'signature_algorithm' => [
             'label' => 'LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_application.signature_algorithm',
             'config' => [
                 'type' => 'select',
                 'renderType' => 'selectSingle',
                 'items' => [
-                    [ JwtConfiguration::ALG_RS256, JwtConfiguration::ALG_RS256 ],
-                    [ JwtConfiguration::ALG_HS256, JwtConfiguration::ALG_HS256 ],
+                    [Application::ALG_RS256, Application::ALG_RS256],
+                    [Application::ALG_HS256, Application::ALG_HS256],
                 ],
-                'default' => JwtConfiguration::ALG_RS256,
+                'default' => Application::ALG_RS256,
             ],
         ]
     ],

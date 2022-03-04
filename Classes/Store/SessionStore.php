@@ -11,22 +11,28 @@
 
 namespace Bitmotion\Auth0\Store;
 
-use Auth0\SDK\Store\SessionStore as Auth0SessionStore;
+use Auth0\SDK\Configuration\SdkConfiguration;
 
-class SessionStore extends Auth0SessionStore
+class SessionStore
 {
-    public function __construct($base_name = Auth0SessionStore::BASE_NAME)
+    const SESSION_PREFIX = 'auth0';
+    /**
+     * @var \Auth0\SDK\Store\SessionStore
+     */
+    private \Auth0\SDK\Store\SessionStore $sessionStore;
+
+    public function __construct(SdkConfiguration $configuration, string $sessionPrefix = self::SESSION_PREFIX)
     {
-        parent::__construct($base_name);
+        $this->sessionStore = new \Auth0\SDK\Store\SessionStore($configuration, $sessionPrefix);
     }
 
     public function getUserInfo(): array
     {
-        return $this->get('user') ?? [];
+        return $this->sessionStore->get('user') ?? [];
     }
 
     public function deleteUserInfo(): void
     {
-        $this->delete('user');
+        $this->sessionStore->delete('user');
     }
 }

@@ -13,14 +13,12 @@ declare(strict_types=1);
 
 namespace Bitmotion\Auth0\Middleware;
 
-use Bitmotion\Auth0\Factory\SessionFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Extbase\Service\EnvironmentService;
 use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
 class Auth0Middleware implements MiddlewareInterface, LoggerAwareInterface
@@ -37,8 +35,8 @@ class Auth0Middleware implements MiddlewareInterface, LoggerAwareInterface
         // TODO: Add application ID
         // TODO: Application and context is set to avoid initialization of EnvironmentService since GLOBALS['TYPO3_REQUEST'] is not
         // TODO: set in TYPO3 v11 at this early point.
-        $session =  (new SessionFactory())->getSessionStoreForApplication(0, SessionFactory::SESSION_PREFIX_FRONTEND);
-        $userInfo = $session->getUserInfo();
+        //$session = (new SessionFactory())->getSessionStoreForApplication(0, SessionFactory::SESSION_PREFIX_FRONTEND);
+        //$userInfo = $session->getUserInfo();
 
         if (empty($userInfo) && $this->loggedInUserIsAuth0User($feUserAuthentication)) {
             // Log off user from TYPO3 as there is no valid Auth0 session

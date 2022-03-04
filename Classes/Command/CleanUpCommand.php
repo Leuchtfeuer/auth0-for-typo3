@@ -13,59 +13,46 @@ declare(strict_types=1);
 
 namespace Bitmotion\Auth0\Command;
 
-use Bitmotion\Auth0\Api\Management\UserApi;
+use Auth0\SDK\Exception\ArgumentException;
+use Auth0\SDK\Exception\NetworkException;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Bitmotion\Auth0\Scope;
-use Bitmotion\Auth0\Utility\ApiUtility;
+use Bitmotion\Auth0\Factory\ApplicationFactory;
+use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\Exception;
+use GuzzleHttp\Exception\GuzzleException;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class CleanUpCommand extends Command
+class CleanUpCommand extends Command implements LoggerAwareInterface
 {
-    /**
-     * @var array
-     */
-    protected $allowedMethods = [
+    use LoggerAwareTrait;
+
+    protected array $allowedMethods = [
         'disable',
         'delete',
         'deleteIrrevocable',
     ];
 
-    /**
-     * @var array
-     */
-    protected $tableNames = [
+    protected array $tableNames = [
         'users' => 'be_users',
         'sessions' => 'be_sessions',
     ];
 
-    /**
-     * @var array
-     */
-    protected $users = [];
+    protected array $users = [];
 
-    /**
-     * @var string
-     */
-    protected $method = '';
+    protected string $method = '';
 
-    /**
-     * @var OutputInterface
-     */
-    protected $output;
+    protected OutputInterface $output;
 
-    /**
-     * @var EmAuth0Configuration
-     */
-    protected $configuration;
+    protected EmAuth0Configuration $configuration;
 
     protected function configure(): void
     {
@@ -73,10 +60,12 @@ class CleanUpCommand extends Command
     }
 
     /**
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     * @throws ExtensionConfigurationPathDoesNotExistException
-     * @throws \Exception
-     * @return int|void|null
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @throws ArgumentException
+     * @throws NetworkException
+     * @throws DBALException
+     * @throws Exception
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
@@ -118,11 +107,7 @@ class CleanUpCommand extends Command
         return true;
     }
 
-    /**
-     * @throws ExtensionConfigurationExtensionNotConfiguredException
-     * @throws ExtensionConfigurationPathDoesNotExistException
-     */
-    protected function isBackendLoginEnabled()
+    protected function isBackendLoginEnabled(): bool
     {
         $configuration = new EmAuth0Configuration();
 
@@ -135,6 +120,10 @@ class CleanUpCommand extends Command
         return true;
     }
 
+    /**
+     * @throws Exception
+     * @throws DBALException
+     */
     protected function setUsers(): bool
     {
         $queryBuilder = $this->getQueryBuilder('users');
@@ -148,11 +137,14 @@ class CleanUpCommand extends Command
             ->from($this->tableNames['users'])
             ->where($queryBuilder->expr()->neq('auth0_user_id', $queryBuilder->createNamedParameter('')))
             ->execute()
-            ->fetchAll();
+            ->fetchAllAssociative();
 
         return !empty($this->users);
     }
 
+    /**
+     * @throws DBALException
+     */
     protected function handleUser(array $user): void
     {
         $queryBuilder = $this->getQueryBuilder('users');
@@ -184,6 +176,9 @@ class CleanUpCommand extends Command
         return GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableNames[$type]);
     }
 
+    /**
+     * @throws DBALException
+     */
     protected function clearSessionData(array $user): void
     {
         $queryBuilder = $this->getQueryBuilder('sessions');
@@ -198,20 +193,25 @@ class CleanUpCommand extends Command
     }
 
     /**
-     * @throws \Exception
+     * @return int
      */
     protected function updateUsers(): int
     {
-        $userApi = GeneralUtility::makeInstance(ApiUtility::class, $this->configuration->getBackendConnection())->getApi(UserApi::class, Scope::USER_READ);
         $userCount = 0;
-
-        foreach ($this->users as $user) {
-            $auth0User = $userApi->get($user['auth0_user_id']);
-            if (isset($auth0User['statusCode']) && $auth0User['statusCode'] === 404) {
-                $this->handleUser($user);
-                $this->clearSessionData($user);
-                $userCount++;
+        try {
+            $auth0 = ApplicationFactory::build($this->configuration->getBackendConnection());
+            foreach ($this->users as $user) {
+                $auth0User = $auth0->management()->users()->get($user['auth0_user_id']);
+                if (isset($auth0User['statusCode']) && $auth0User['statusCode'] === 404) {
+                    $this->handleUser($user);
+                    $this->clearSessionData($user);
+                    $userCount++;
+                }
             }
+        } catch (\Exception $exception) {
+            $this->logger->critical($exception->getMessage());
+        } catch (GuzzleException $exception) {
+            $this->logger->critical($exception->getMessage());
         }
 
         return $userCount;

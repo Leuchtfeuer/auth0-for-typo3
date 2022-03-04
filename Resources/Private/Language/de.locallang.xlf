@@ -1,21 +1,22 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="2018-06-05T08:42:01Z" 
-		  target-language="de" product-name="auth0">
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file source-language="en" target-language="de" datatype="plaintext" original="EXT:auth0/Resources/Private/Language/locallang.xlf" date="2022-02-16T09:59:14Z" product-name="auth0">
 		<header/>
 		<body>
-			<trans-unit id="backendLogin.switch.label">
+			<trans-unit id="backendLogin.switch.label" resname="backendLogin.switch.label">
+				<source>Login with Auth0</source>
 				<target>Mit Auth0 anmelden</target>
 			</trans-unit>
-
-			<trans-unit id="auth0.alert.label.close">
+			<trans-unit id="auth0.alert.label.close" resname="auth0.alert.label.close">
+				<source>Close</source>
 				<target>Schließen</target>
 			</trans-unit>
-
-			<trans-unit id="plugin.login.login">
+			<trans-unit id="plugin.login.login" resname="plugin.login.login">
+				<source>Login</source>
 				<target>Anmelden</target>
 			</trans-unit>
-			<trans-unit id="plugin.login.logout">
+			<trans-unit id="plugin.login.logout" resname="plugin.login.logout">
+				<source>Logout</source>
 				<target>Abmelden</target>
 			</trans-unit>
 		</body>
