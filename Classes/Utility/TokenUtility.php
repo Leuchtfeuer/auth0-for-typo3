@@ -70,7 +70,7 @@ class TokenUtility implements LoggerAwareInterface
         // TODO: Check if extension should support certification file free usage
         $this->config = Configuration::forAsymmetricSigner(
             $this->getSigner(),
-            $this->getKey(),
+            $this->getKey(self::KEY_TYPE_PRIVATE),
             $this->getKey(self::KEY_TYPE_PUBLIC)
         );
         $this->config->setValidationConstraints(...$this->getConstraints());
@@ -100,7 +100,7 @@ class TokenUtility implements LoggerAwareInterface
             $builder->withClaim($key, $value);
         }
 
-        return $builder->getToken($this->getSigner(), $this->getKey());
+        return $builder->getToken($this->getSigner(), $this->getKey(self::KEY_TYPE_PRIVATE));
     }
 
     public function getIssuer(): string
@@ -191,7 +191,7 @@ class TokenUtility implements LoggerAwareInterface
         return new Hmac\Sha256();
     }
 
-    protected function getKey(string $type = self::KEY_TYPE_PRIVATE): Key
+    protected function getKey(string $type): Key
     {
         if ($this->configuration->useKeyFiles()) {
             if ($type === self::KEY_TYPE_PRIVATE) {
