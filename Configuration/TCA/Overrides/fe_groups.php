@@ -1,6 +1,7 @@
 <?php
 declare(strict_types = 1);
-defined('TYPO3_MODE') || die();
+defined('TYPO3') or die();
+
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns(
     \Bitmotion\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository::TABLE_NAME,
     [

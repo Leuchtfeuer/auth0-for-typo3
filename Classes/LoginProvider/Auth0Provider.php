@@ -178,16 +178,6 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         return isset($this->frameworkConfiguration['settings']['stylesheet']);
     }
 
-    protected function getDefaultView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
-    {
-        $standaloneView->setLayoutRootPaths(['EXT:auth0/Resources/Private/Layouts/']);
-        $standaloneView->setTemplatePathAndFilename(
-            GeneralUtility::getFileAbsFileName('EXT:auth0/Resources/Private/Templates/Backend.html')
-        );
-        $standaloneView->assign('error', 'no_typoscript');
-        $pageRenderer->addCssFile('EXT:auth0/Resources/Public/Styles/backend.css');
-    }
-
     protected function prepareView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
     {
         $templateName = version_compare(GeneralUtility::makeInstance(Typo3Version::class)->getVersion(), '11.0', '>=') ? 'BackendV11' : 'Backend';
@@ -196,6 +186,15 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         $standaloneView->setTemplateRootPaths($this->frameworkConfiguration['view']['templateRootPaths']);
 
         $pageRenderer->addCssFile($this->frameworkConfiguration['settings']['stylesheet']);
+
+    protected function getDefaultView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
+    {
+        $standaloneView->setLayoutRootPaths(['EXT:auth0/Resources/Private/Layouts/']);
+        $standaloneView->setTemplatePathAndFilename(
+            GeneralUtility::getFileAbsFileName('EXT:auth0/Resources/Private/Templates/Backend.html')
+        );
+        $standaloneView->assign('error', 'no_typoscript');
+        $pageRenderer->addCssFile('EXT:auth0/Resources/Public/Styles/backend.css');
     }
 
     /**
