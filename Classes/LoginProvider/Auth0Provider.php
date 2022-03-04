@@ -186,6 +186,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         $standaloneView->setTemplateRootPaths($this->frameworkConfiguration['view']['templateRootPaths']);
 
         $pageRenderer->addCssFile($this->frameworkConfiguration['settings']['stylesheet']);
+    }
 
     protected function getDefaultView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
     {
