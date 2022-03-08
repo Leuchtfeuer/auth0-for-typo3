@@ -33,13 +33,13 @@ class UpdateUtility implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    protected $tableName = '';
+    protected string $tableName = '';
 
     protected $extensionConfiguration;
 
     protected $user = [];
 
-    protected $userFromIdToken = true;
+    protected bool $userFromIdToken = true;
 
     /**
      * @var ParseFuncUtility

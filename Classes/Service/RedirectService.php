@@ -38,7 +38,7 @@ class RedirectService implements LoggerAwareInterface
     /**
      * @var array
      */
-    protected $settings = [];
+    protected array $settings = [];
 
     public function __construct(array $redirectSettings)
     {
@@ -110,7 +110,7 @@ class RedirectService implements LoggerAwareInterface
                                         )
                                     )
                                     ->execute()
-                                    ->fetch();
+                                    ->fetchAssociative();
                                 if ($row) {
                                     $redirect_url[] = $this->pi_getPageLink($row['felogin_redirectPid']);
                                 }
@@ -138,7 +138,7 @@ class RedirectService implements LoggerAwareInterface
                                     )
                                 )
                                 ->execute()
-                                ->fetch();
+                                ->fetchAssociative();
 
                             if ($row) {
                                 $redirect_url[] = $this->pi_getPageLink($row['felogin_redirectPid']);
@@ -190,7 +190,7 @@ class RedirectService implements LoggerAwareInterface
      * @param array $redirectUris
      * @return string
      */
-    public function getUri($redirectUris)
+    public function getUri(array $redirectUris): string
     {
         return ((bool)$this->settings['redirectFirstMethod']) ? array_shift($redirectUris) : array_pop($redirectUris);
     }
@@ -224,7 +224,7 @@ class RedirectService implements LoggerAwareInterface
      * @param array $urlParameters
      * @return string
      */
-    protected function pi_getPageLink($id, $target = '', $urlParameters = [])
+    protected function pi_getPageLink($id, string $target = '', array $urlParameters = [])
     {
         if ($GLOBALS['TSFE']->cObj instanceof ContentObjectRenderer) {
             return $GLOBALS['TSFE']->cObj->getTypoLink_URL($id, $urlParameters, $target);
@@ -239,7 +239,7 @@ class RedirectService implements LoggerAwareInterface
      * @param string $url
      * @return string cleaned referrer or empty string if not valid
      */
-    protected function validateRedirectUrl($url)
+    protected function validateRedirectUrl($url): string
     {
         $url = (string)$url;
         if ($url === '') {
@@ -299,9 +299,8 @@ class RedirectService implements LoggerAwareInterface
      * @param string $url Absolute URL which needs to be checked
      * @return bool Whether the URL is considered to be local
      */
-    protected function isInLocalDomain($url)
+    protected function isInLocalDomain(string $url): bool
     {
-        $result = false;
         if (GeneralUtility::isValidUrl($url)) {
             $parsedUrl = parse_url($url);
             if ($parsedUrl['scheme'] === 'http' || $parsedUrl['scheme'] === 'https') {
@@ -314,22 +313,21 @@ class RedirectService implements LoggerAwareInterface
                 $localDomains = $queryBuilder->select('domainName')
                     ->from('sys_domain')
                     ->execute()
-                    ->fetchAll();
+                    ->fetchAllAssociative();
 
                 if (is_array($localDomains)) {
                     foreach ($localDomains as $localDomain) {
                         // strip trailing slashes (if given)
                         $domainName = rtrim($localDomain['domainName'], '/');
                         if (GeneralUtility::isFirstPartOfStr($host . $path . '/', $domainName . '/')) {
-                            $result = true;
-                            break;
+                            return true;
                         }
                     }
                 }
             }
         }
 
-        return $result;
+        return false;
     }
 
     protected function getEventDispatcher(): EventDispatcherInterface
