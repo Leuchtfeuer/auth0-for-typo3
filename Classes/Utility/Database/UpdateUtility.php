@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Utility\Database;
 
 use Bitmotion\Auth0\Configuration\Auth0Configuration;
-use Bitmotion\Auth0\Domain\Model\User;
 use Bitmotion\Auth0\Domain\Repository\UserGroup\AbstractUserGroupRepository;
 use Bitmotion\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
 use Bitmotion\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
@@ -23,9 +22,6 @@ use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Utility\ParseFuncUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -39,38 +35,14 @@ class UpdateUtility implements LoggerAwareInterface
 
     protected $user = [];
 
-    protected bool $userFromIdToken = true;
-
-    /**
-     * @var ParseFuncUtility
-     */
-    protected $parseFuncUtility;
-
     protected $yamlConfiguration = [];
 
-    public function __construct(string $tableName, $user)
+    public function __construct(string $tableName, array $user)
     {
         $this->tableName = $tableName;
         $this->configuration = new EmAuth0Configuration();
-
-        if ($user instanceof User) {
-            $user = $this->transformUser($user);
-        }
-
         $this->user = $user;
         $this->yamlConfiguration = GeneralUtility::makeInstance(Auth0Configuration::class)->load();
-    }
-
-    private function transformUser(User $user): array
-    {
-        $this->userFromIdToken = false;
-
-        $normalizer = new ObjectNormalizer(null, new CamelCaseToSnakeCaseNameConverter());
-        $serializer = new Serializer([$normalizer]);
-        $user = $serializer->normalize($user, 'array');
-        $user[$this->configuration->getUserIdentifier()] = $user['user_id'];
-
-        return $user;
     }
 
     public function updateGroups(): void
@@ -163,7 +135,7 @@ class UpdateUtility implements LoggerAwareInterface
     protected function mapRoles(array $groupMapping, array &$groupsToAssign, bool &$isBeAdmin, bool &$shouldUpdate): void
     {
         $rolesKey = $this->yamlConfiguration['roles']['key'] ?? 'roles';
-        $roles = (array)($this->userFromIdToken ? $this->user[$rolesKey] : $this->user['app_metadata'][$rolesKey]) ?? [];
+        $roles = (array)$this->user['app_metadata'][$rolesKey] ?? [];
 
         foreach ($roles as $role) {
             if (isset($groupMapping[$role])) {

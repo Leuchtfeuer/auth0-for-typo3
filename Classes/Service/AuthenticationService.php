@@ -274,9 +274,9 @@ class AuthenticationService extends BasicAuthenticationService
         // Insert a new user into database
         if (empty($this->user)) {
             $this->logger->notice('Insert new user.');
-            $userUtility->insertUser($this->tableName, $this->auth0User ?? $this->userInfo);
+            $userUtility->insertUser($this->tableName, $this->userInfo);
         }
-        $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User ?? $this->userInfo);
+        $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->userInfo);
         $updateUtility->updateGroups();
 
         // Update existing user on every login when we are in BE context (since TypoScript is loaded).
