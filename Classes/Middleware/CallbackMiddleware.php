@@ -15,6 +15,7 @@ namespace Bitmotion\Auth0\Middleware;
 
 use Auth0\SDK\Exception\ArgumentException;
 use Auth0\SDK\Exception\NetworkException;
+use Auth0\SDK\Utility\HttpResponse;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\ErrorCode;
@@ -25,6 +26,7 @@ use Bitmotion\Auth0\LoginProvider\Auth0Provider;
 use Bitmotion\Auth0\Service\RedirectService;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
 use Bitmotion\Auth0\Utility\TokenUtility;
+use Bitmotion\Auth0\Utility\UserUtility;
 use Lcobucci\JWT\Token\DataSet;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -120,7 +122,8 @@ class CallbackMiddleware implements MiddlewareInterface
             $loginType = GeneralUtility::_GET('logintype');
             $application = $tokenDataSet->get('application');
             $auth0 = ApplicationFactory::build($application, ApplicationFactory::SESSION_PREFIX_FRONTEND);
-            $userInfo = $auth0->configuration()->getSessionStorage()->get('user');
+            $auth0->exchange(null, GeneralUtility::_GET('code'), GeneralUtility::_GET('state'));
+            $userInfo = $auth0->getUser();
 
             // Redirect when user just logged in (and update him)
             if ($loginType === 'login' && !empty($userInfo)) {
@@ -190,7 +193,11 @@ class CallbackMiddleware implements MiddlewareInterface
 
         if ((bool)$application['api'] === true) {
             $auth0 = ApplicationFactory::build($applicationId);
-            $user = $auth0->management()->users()->get($user[GeneralUtility::makeInstance(EmAuth0Configuration::class)->getUserIdentifier()]);
+            $response = $auth0->management()->users()->get($user[GeneralUtility::makeInstance(EmAuth0Configuration::class)->getUserIdentifier()]);
+            if (HttpResponse::wasSuccessful($response)) {
+                $userUtility = GeneralUtility::makeInstance(UserUtility::class);
+                $user =  $userUtility->enrichManagementUser(HttpResponse::decodeContent($response));
+            }
         }
 
         // Update user
