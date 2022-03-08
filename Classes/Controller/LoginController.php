@@ -127,9 +127,11 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
         $this->logger->notice('Proceed with single log out.');
 
-        $this->auth0->logout();
-
-        $this->redirectToUri($this->auth0->logout($this->getCallback('logout')));
+        if ($application->isSingleLogOut() && $this->extensionConfiguration->isSoftLogout()) {
+            $this->redirectToUri($this->getCallback('logout'));
+        } else {
+            $this->redirectToUri($this->auth0->logout($this->getCallback('logout')));
+        }
     }
 
     protected function getCallback(string $loginType = 'login'): string
