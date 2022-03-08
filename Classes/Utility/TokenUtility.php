@@ -67,7 +67,6 @@ class TokenUtility implements LoggerAwareInterface
         $this->configuration = new EmAuth0Configuration();
         $this->time = new DateTimeImmutable();
         $this->setIssuer();
-        // TODO: Check if extension should support certification file free usage
         $this->config = Configuration::forAsymmetricSigner(
             $this->getSigner(),
             $this->getKey(self::KEY_TYPE_PRIVATE),
