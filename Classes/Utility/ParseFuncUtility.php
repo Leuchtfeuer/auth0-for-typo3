@@ -59,7 +59,7 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
 
             case 'bool-negate':
             case 'negate-bool':
-                $value = (bool)$value ? 0 : 1;
+                $value = !(bool)$value;
                 break;
 
             default:
