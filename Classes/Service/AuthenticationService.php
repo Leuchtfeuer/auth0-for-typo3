@@ -22,7 +22,6 @@ use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\ErrorCode;
 use Bitmotion\Auth0\Exception\TokenException;
 use Bitmotion\Auth0\Factory\ApplicationFactory;
-use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\LoginProvider\Auth0Provider;
 use Bitmotion\Auth0\Middleware\CallbackMiddleware;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
