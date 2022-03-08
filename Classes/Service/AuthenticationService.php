@@ -117,8 +117,8 @@ class AuthenticationService extends BasicAuthenticationService
 
     protected function initApplication(string $loginType): bool
     {
-        $extensionConfiguration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
-        $this->userIdentifier = $extensionConfiguration->getUserIdentifier();
+        $configuration = new EmAuth0Configuration();
+        $this->userIdentifier = $configuration->getUserIdentifier();
 
         switch ($loginType) {
             case self::FRONTEND_AUTHENTICATION:
@@ -129,7 +129,7 @@ class AuthenticationService extends BasicAuthenticationService
 
             case self::BACKEND_AUTHENTICATION:
                 $this->logger->info('Handle backend login.');
-                $this->application = $extensionConfiguration->getBackendConnection();
+                $this->application = $configuration->getBackendConnection();
                 $this->tableName = 'be_users';
                 break;
 

@@ -42,7 +42,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
     protected int $application = 0;
 
-    protected EmAuth0Configuration $extensionConfiguration;
+    protected EmAuth0Configuration $configuration;
 
     public function initializeAction(): void
     {
@@ -56,7 +56,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
         $this->application = (int)($this->settings['application'] ?? GeneralUtility::_GET('application'));
         $this->auth0 = ApplicationFactory::build($this->application, ApplicationFactory::SESSION_PREFIX_FRONTEND);
-        $this->extensionConfiguration = new EmAuth0Configuration();
+        $this->configuration = new EmAuth0Configuration();
     }
 
     /**
@@ -127,7 +127,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
         $this->logger->notice('Proceed with single log out.');
 
-        if ($application->isSingleLogOut() && $this->extensionConfiguration->isSoftLogout()) {
+        if ($application->isSingleLogOut() && $this->configuration->isSoftLogout()) {
             $this->redirectToUri($this->getCallback('logout'));
         } else {
             $this->redirectToUri($this->auth0->logout($this->getCallback('logout')));
