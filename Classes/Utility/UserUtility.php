@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Utility;
 
 use Auth0\SDK\Auth0;
-
+use Auth0\SDK\Utility\HttpResponse;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Domain\Repository\UserRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
@@ -174,7 +174,11 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             $application = BackendUtility::getRecord(ApplicationRepository::TABLE_NAME, $application, 'api, uid');
 
             if ((bool)$application['api'] === true && $user) {
-                $user = $auth0->management()->users()->get($user[$this->extensionConfiguration->getUserIdentifier()]);
+                $response = $auth0->management()->users()->get($user[$this->extensionConfiguration->getUserIdentifier()]);
+                if (HttpResponse::wasSuccessful($response)) {
+                    $userUtility = GeneralUtility::makeInstance(UserUtility::class);
+                    $user =  $userUtility->enrichManagementUser(HttpResponse::decodeContent($response));
+                }
             }
 
             // Update existing user on every login
