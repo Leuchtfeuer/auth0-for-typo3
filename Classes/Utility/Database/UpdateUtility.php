@@ -35,7 +35,7 @@ class UpdateUtility implements LoggerAwareInterface
 
     protected string $tableName = '';
 
-    protected $extensionConfiguration;
+    protected EmAuth0Configuration $configuration;
 
     protected $user = [];
 
@@ -51,7 +51,7 @@ class UpdateUtility implements LoggerAwareInterface
     public function __construct(string $tableName, $user)
     {
         $this->tableName = $tableName;
-        $this->extensionConfiguration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
+        $this->configuration = new EmAuth0Configuration();
 
         if ($user instanceof User) {
             $user = $this->transformUser($user);
@@ -68,7 +68,7 @@ class UpdateUtility implements LoggerAwareInterface
         $normalizer = new ObjectNormalizer(null, new CamelCaseToSnakeCaseNameConverter());
         $serializer = new Serializer([$normalizer]);
         $user = $serializer->normalize($user, 'array');
-        $user[$this->extensionConfiguration->getUserIdentifier()] = $user['user_id'];
+        $user[$this->configuration->getUserIdentifier()] = $user['user_id'];
 
         return $user;
     }
@@ -202,7 +202,7 @@ class UpdateUtility implements LoggerAwareInterface
 
         if (!empty($updates)) {
             $userRepository = GeneralUtility::makeInstance(UserRepository::class, $this->tableName);
-            $userRepository->updateUserByAuth0Id($updates, $this->user[$this->extensionConfiguration->getUserIdentifier()]);
+            $userRepository->updateUserByAuth0Id($updates, $this->user[$this->configuration->getUserIdentifier()]);
         }
     }
 
@@ -212,7 +212,7 @@ class UpdateUtility implements LoggerAwareInterface
             sprintf(
                 '%s: Prepare update for Auth0 user "%s"',
                 $this->tableName,
-                $this->user[$this->extensionConfiguration->getUserIdentifier()]
+                $this->user[$this->configuration->getUserIdentifier()]
             )
         );
 
@@ -229,7 +229,7 @@ class UpdateUtility implements LoggerAwareInterface
         }
 
         $this->addRestrictions($userRepository);
-        $userRepository->updateUserByAuth0Id($updates, $this->user[$this->extensionConfiguration->getUserIdentifier()]);
+        $userRepository->updateUserByAuth0Id($updates, $this->user[$this->configuration->getUserIdentifier()]);
     }
 
     protected function addRestrictions(UserRepository &$userRepository): void
@@ -238,11 +238,11 @@ class UpdateUtility implements LoggerAwareInterface
         $reactivateDisabled = false;
 
         if ($this->tableName === 'fe_users') {
-            $reactivateDeleted = $this->extensionConfiguration->isReactivateDeletedFrontendUsers();
-            $reactivateDisabled = $this->extensionConfiguration->isReactivateDisabledFrontendUsers();
+            $reactivateDeleted = $this->configuration->isReactivateDeletedFrontendUsers();
+            $reactivateDisabled = $this->configuration->isReactivateDisabledFrontendUsers();
         } elseif ($this->tableName === 'be_users') {
-            $reactivateDeleted = $this->extensionConfiguration->isReactivateDeletedBackendUsers();
-            $reactivateDisabled = $this->extensionConfiguration->isReactivateDisabledBackendUsers();
+            $reactivateDeleted = $this->configuration->isReactivateDeletedBackendUsers();
+            $reactivateDisabled = $this->configuration->isReactivateDisabledBackendUsers();
         } else {
             $this->logger->notice('Undefined environment');
         }
