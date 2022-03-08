@@ -370,9 +370,8 @@ class AuthenticationService extends BasicAuthenticationService
         if (empty($user['usergroup']) && $this->loginViaSession === true) {
             $this->logger->warning('Could not login user via session as it has no group assigned.');
 
-            // TODO: Pass return URI
-            $this->auth0->logout();
-
+            // TODO: Pass error message for clarification
+            $this->auth0->logout(GeneralUtility::getIndpEnv('TYPO3_SITE_URL') . 'typo3/logout');
             // Responsible, authentication failed, do NOT check other services
             return 0;
         }
