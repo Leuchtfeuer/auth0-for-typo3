@@ -42,7 +42,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
     protected int $application = 0;
 
-    protected EmAuth0Configuration $extensionConfiguration;
+    protected EmAuth0Configuration $configuration;
 
     public function initializeAction(): void
     {
@@ -56,7 +56,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
         $this->application = (int)($this->settings['application'] ?? GeneralUtility::_GET('application'));
         $this->auth0 = ApplicationFactory::build($this->application, ApplicationFactory::SESSION_PREFIX_FRONTEND);
-        $this->extensionConfiguration = new EmAuth0Configuration();
+        $this->configuration = new EmAuth0Configuration();
     }
 
     /**
@@ -98,9 +98,8 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
             $this->logger->notice('Try to login user.');
             // TODO: Support $additionalAuthorizeParameters to be passed and used
-            // TODO: Debug whole login process
-            echo $this->auth0->login($this->getCallback());
-            die();
+
+            $this->redirectToUri($this->auth0->login($this->getCallback()));
         }
 
         $this->redirect('form');
@@ -127,9 +126,11 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
         $this->logger->notice('Proceed with single log out.');
 
-        $this->auth0->logout();
-
-        $this->redirectToUri($this->auth0->logout($this->getCallback('logout')));
+        if ($application->isSingleLogOut() && $this->configuration->isSoftLogout()) {
+            $this->redirectToUri($this->getCallback('logout'));
+        } else {
+            $this->redirectToUri($this->auth0->logout($this->getCallback('logout')));
+        }
     }
 
     protected function getCallback(string $loginType = 'login'): string

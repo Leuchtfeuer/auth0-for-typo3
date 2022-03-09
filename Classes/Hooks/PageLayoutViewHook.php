@@ -22,12 +22,12 @@ class PageLayoutViewHook
     /**
      * @var string
      */
-    protected $listType = '';
+    protected string $listType = '';
 
     /**
      * @var array
      */
-    protected $flexFormData = [];
+    protected array $flexFormData = [];
 
     public function getSummary(array $params): string
     {

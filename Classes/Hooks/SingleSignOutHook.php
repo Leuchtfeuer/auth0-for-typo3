@@ -27,7 +27,7 @@ class SingleSignOutHook implements SingletonInterface
 
     public function __construct()
     {
-        $this->configuration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
+        $this->configuration = new EmAuth0Configuration();
     }
 
     public function isResponsible(): void

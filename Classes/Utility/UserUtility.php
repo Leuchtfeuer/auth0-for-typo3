@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Bitmotion\Auth0\Utility;
 
 use Auth0\SDK\Auth0;
-
+use Auth0\SDK\Utility\HttpResponse;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
 use Bitmotion\Auth0\Domain\Repository\UserRepository;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
@@ -34,11 +34,11 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    protected $extensionConfiguration;
+    protected EmAuth0Configuration $configuration;
 
     public function __construct()
     {
-        $this->extensionConfiguration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
+        $this->configuration = new EmAuth0Configuration();
     }
 
     public function checkIfUserExists(string $tableName, string $auth0UserId): array
@@ -87,7 +87,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
 
     public function enrichManagementUser(array $managementUser): array
     {
-        $managementUser[$this->extensionConfiguration->getUserIdentifier()] = $managementUser['user_id'];
+        $managementUser[$this->configuration->getUserIdentifier()] = $managementUser['user_id'];
         return $managementUser;
     }
 
@@ -99,10 +99,10 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     public function insertFeUser(string $tableName, array $user): void
     {
         $values = $this->getTcaDefaults($tableName);
-        $userIdentifier = $this->extensionConfiguration->getUserIdentifier();
+        $userIdentifier = $this->configuration->getUserIdentifier();
 
         ArrayUtility::mergeRecursiveWithOverrule($values, [
-            'pid' => $this->extensionConfiguration->getUserStoragePage(),
+            'pid' => $this->configuration->getUserStoragePage(),
             'tstamp' => time(),
             'username' => $user['email'] ?? $user[$userIdentifier],
             'password' => $this->getPassword(),
@@ -123,7 +123,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     public function insertBeUser(string $tableName, array $user): void
     {
         $values = $this->getTcaDefaults($tableName);
-        $userIdentifier = $this->extensionConfiguration->getUserIdentifier();
+        $userIdentifier = $this->configuration->getUserIdentifier();
 
         ArrayUtility::mergeRecursiveWithOverrule($values, [
             'pid' => 0,
@@ -174,7 +174,11 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             $application = BackendUtility::getRecord(ApplicationRepository::TABLE_NAME, $application, 'api, uid');
 
             if ((bool)$application['api'] === true && $user) {
-                $user = $auth0->management()->users()->get($user[$this->extensionConfiguration->getUserIdentifier()]);
+                $response = $auth0->management()->users()->get($user[$this->configuration->getUserIdentifier()]);
+                if (HttpResponse::wasSuccessful($response)) {
+                    $userUtility = GeneralUtility::makeInstance(UserUtility::class);
+                    $user =  $userUtility->enrichManagementUser(HttpResponse::decodeContent($response));
+                }
             }
 
             // Update existing user on every login

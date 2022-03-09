@@ -22,7 +22,6 @@ use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\ErrorCode;
 use Bitmotion\Auth0\Exception\TokenException;
 use Bitmotion\Auth0\Factory\ApplicationFactory;
-use Bitmotion\Auth0\Factory\SessionFactory;
 use Bitmotion\Auth0\LoginProvider\Auth0Provider;
 use Bitmotion\Auth0\Middleware\CallbackMiddleware;
 use Bitmotion\Auth0\Utility\Database\UpdateUtility;
@@ -117,8 +116,8 @@ class AuthenticationService extends BasicAuthenticationService
 
     protected function initApplication(string $loginType): bool
     {
-        $extensionConfiguration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
-        $this->userIdentifier = $extensionConfiguration->getUserIdentifier();
+        $configuration = new EmAuth0Configuration();
+        $this->userIdentifier = $configuration->getUserIdentifier();
 
         switch ($loginType) {
             case self::FRONTEND_AUTHENTICATION:
@@ -129,7 +128,7 @@ class AuthenticationService extends BasicAuthenticationService
 
             case self::BACKEND_AUTHENTICATION:
                 $this->logger->info('Handle backend login.');
-                $this->application = $extensionConfiguration->getBackendConnection();
+                $this->application = $configuration->getBackendConnection();
                 $this->tableName = 'be_users';
                 break;
 
@@ -275,9 +274,9 @@ class AuthenticationService extends BasicAuthenticationService
         // Insert a new user into database
         if (empty($this->user)) {
             $this->logger->notice('Insert new user.');
-            $userUtility->insertUser($this->tableName, $this->auth0User ?? $this->userInfo);
+            $userUtility->insertUser($this->tableName, $this->userInfo);
         }
-        $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->auth0User ?? $this->userInfo);
+        $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->userInfo);
         $updateUtility->updateGroups();
 
         // Update existing user on every login when we are in BE context (since TypoScript is loaded).
@@ -370,9 +369,8 @@ class AuthenticationService extends BasicAuthenticationService
         if (empty($user['usergroup']) && $this->loginViaSession === true) {
             $this->logger->warning('Could not login user via session as it has no group assigned.');
 
-            // TODO: Pass return URI
-            $this->auth0->logout();
-
+            // TODO: Pass error message for clarification
+            $this->auth0->logout(GeneralUtility::getIndpEnv('TYPO3_SITE_URL') . 'typo3/logout');
             // Responsible, authentication failed, do NOT check other services
             return 0;
         }
