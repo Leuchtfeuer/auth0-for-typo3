@@ -40,11 +40,11 @@ jobs:
             experimental: true
 
           - php-version: 7.4
-            typo3-version: 10.4.x-dev
+            typo3-version: ^10.4
             experimental: true
 
           - php-version: 7.4
-            typo3-version: ^11.0
+            typo3-version: ^11.5
             experimental: false
 
           - php-version: 7.4
