@@ -48,7 +48,7 @@ jobs:
             experimental: false
 
           - php-version: 7.4
-            typo3-version: dev-master
+            typo3-version: dev-main
             experimental: true
     env:
       PHP_VERSION: ${{ matrix.php-version }}
