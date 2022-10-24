@@ -104,7 +104,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         ArrayUtility::mergeRecursiveWithOverrule($values, [
             'pid' => $this->configuration->getUserStoragePage(),
             'tstamp' => time(),
-            'username' => $user['email'] ?? $user[$userIdentifier],
+            'username' => $user['mail'] ?? $user[$userIdentifier],
             'password' => $this->getPassword(),
             'email' => $user['email'] ?? '',
             'crdate' => time(),

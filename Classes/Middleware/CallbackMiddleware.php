@@ -38,6 +38,7 @@ use TYPO3\CMS\Core\Http\RedirectResponse;
 use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 class CallbackMiddleware implements MiddlewareInterface
 {
@@ -74,8 +75,9 @@ class CallbackMiddleware implements MiddlewareInterface
         if ($dataSet->get('environment') === TokenUtility::ENVIRONMENT_BACKEND) {
             return $this->handleBackendCallback($request, $tokenUtility, $dataSet);
         }
+
         // Perform frontend callback as environment can only be 'BE' or 'FE'
-        return $this->handleFrontendCallback($request, $dataSet);
+        return $this->handleFrontendCallback($request, $tokenUtility, $dataSet);
     }
 
     protected function handleBackendCallback(ServerRequestInterface $request, TokenUtility $tokenUtility, DataSet $dataSet): RedirectResponse
@@ -110,7 +112,7 @@ class CallbackMiddleware implements MiddlewareInterface
      * @throws UnknownErrorCodeException
      * @throws ArgumentException
      */
-    protected function handleFrontendCallback(ServerRequestInterface $request, DataSet $tokenDataSet): RedirectResponse
+    protected function handleFrontendCallback(ServerRequestInterface $request, TokenUtility $tokenUtility, DataSet $tokenDataSet): RedirectResponse
     {
         $errorCode = (string)GeneralUtility::_GET('error');
 
@@ -133,14 +135,13 @@ class CallbackMiddleware implements MiddlewareInterface
                     $allowedMethods = ['groupLogin', 'userLogin', 'login', 'getpost', 'referrer'];
                     $this->performRedirectFromPluginConfiguration($tokenDataSet, $allowedMethods);
                 } else {
-                    return new RedirectResponse($tokenDataSet->get('referrer'));
+                    return new RedirectResponse($tokenDataSet->get('referrer') . '&loginProvider=' . Auth0Provider::LOGIN_PROVIDER);
                 }
             } elseif ($loginType === 'logout') {
                 // User was logged out prior to this method. That's why there is no valid TYPO3 frontend user anymore.
                 $this->performRedirectFromPluginConfiguration($tokenDataSet, ['logout', 'referrer']);
             }
         }
-
         // Redirect back to logout page if no redirect was executed before
         return new RedirectResponse($tokenDataSet->get('referrer'));
     }
@@ -215,6 +216,7 @@ class CallbackMiddleware implements MiddlewareInterface
             'redirectPageLogin' => $tokenDataSet->get('redirectPageLogin'),
             'redirectPageLoginError' => $tokenDataSet->get('redirectPageLoginError'),
             'redirectPageLogout' => $tokenDataSet->get('redirectPageLogout'),
+            'loginProvider' => Auth0Provider::LOGIN_PROVIDER,
         ]);
 
         $redirectService->handleRedirect($allowedMethods);

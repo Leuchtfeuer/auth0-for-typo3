@@ -20,6 +20,7 @@ use Bitmotion\Auth0\Middleware\CallbackMiddleware;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 class ApplicationFactory
 {
@@ -35,7 +36,7 @@ class ApplicationFactory
      */
     public static function build(int $applicationId, string $context = self::SESSION_PREFIX_BACKEND): Auth0
     {
-        $scope = ['openid', 'profile', 'read:current_user'];
+        $scope = ['openid', 'profile', 'read:current_user', 'email'];
         $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationId);
 
         // Management API should be used
@@ -55,7 +56,7 @@ class ApplicationFactory
 
         // TODO: If management API is disabled audience needs to be empty - authorization is broken atm
         $sdkConfiguration = new SdkConfiguration([
-            'audience' => [$application->getAudience(true)],
+            'audience' => $application->hasApi() ? [$application->getAudience(true)] : [],
             'clientId' => $application->getClientId(),
             'clientSecret' => $application->getClientSecret(),
             'cookieSecret' => $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'],
@@ -66,6 +67,7 @@ class ApplicationFactory
             'scope' => $scope,
             'sessionStorageId' => sprintf('auth0_session_%s', $context),
         ]);
+
         return new Auth0($sdkConfiguration);
     }
 }

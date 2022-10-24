@@ -29,6 +29,7 @@ use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 class LoginController extends ActionController implements LoggerAwareInterface
 {
@@ -136,7 +137,11 @@ class LoginController extends ActionController implements LoggerAwareInterface
     protected function getCallback(string $loginType = 'login'): string
     {
         $uri = $GLOBALS['TYPO3_REQUEST']->getUri();
-        $referrer = $GLOBALS['TYPO3_REQUEST']->getQueryParams()['referrer'] ?? sprintf('%s://%s%s', $uri->getScheme(), $uri->getHost(), $uri->getPath());
+
+        $referrer = $GLOBALS['TYPO3_REQUEST']->getQueryParams()['referrer'];
+        if (empty($referrer)) {
+            $referrer = sprintf('%s://%s%s', $uri->getScheme(), $uri->getHost(), $uri->getPath());
+        }
 
         //TODO: Check this functionality again. Auth0 documentation states that they remove everything anchor related to maintain OAuth2 specification
         if ($this->settings['referrerAnchor']) {

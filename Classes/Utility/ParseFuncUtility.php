@@ -17,6 +17,7 @@ use Bitmotion\Auth0\Configuration\Auth0Configuration;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
 class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
 {
@@ -32,7 +33,8 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
                 break;
 
             case Auth0Configuration::CONFIG_TYPE_USER:
-                $value = $this->getAuth0ValueRecursive($user[Auth0Configuration::CONFIG_TYPE_USER], explode('.', $auth0FieldName));
+                DebuggerUtility::var_dump($user);
+                $value = $this->getAuth0ValueRecursive($user[Auth0Configuration::CONFIG_TYPE_USER] ?? [], explode('.', $auth0FieldName));
                 break;
 
             case Auth0Configuration::CONFIG_TYPE_APP:
