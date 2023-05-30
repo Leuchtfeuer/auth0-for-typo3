@@ -10,7 +10,7 @@ You can easily access the data of the current logged in user by calling the foll
 
 .. code-block:: php
 
-   $session = (new Bitmotion\Auth0\Factory\SessionFactory())->getSessionStoreForApplication();
+   $session = (new Leuchtfeuer\Auth0\Factory\SessionFactory())->getSessionStoreForApplication();
    $userInfo = $session->getUserInfo();
 
 
