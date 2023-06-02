@@ -29,7 +29,7 @@ Deprecated
 ==========
 
 * All methods and classes regarding the TypoScript migrations are now deprecated and will be removed with the next major release
-* Domain model :php:`\Bitmotion\Auth0\Domain\Model\FrontendUser` will be removed in future releases. This applies also to all
+* Domain model :php:`\Leuchtfeuer\Auth0\Domain\Model\FrontendUser` will be removed in future releases. This applies also to all
   extbase persistence configurations and the files containing this configuration.
 
 All Changes

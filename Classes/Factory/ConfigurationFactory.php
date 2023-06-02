@@ -9,7 +9,7 @@
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Factory;
+namespace Leuchtfeuer\Auth0\Factory;
 
 class ConfigurationFactory
 {

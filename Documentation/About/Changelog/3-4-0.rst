@@ -18,7 +18,7 @@ Added
 =====
 
 * The login context (`FE` or `BE`) is now always set. Therefore the method :php:`withContext(string $context)` was added to the
-  :php:`\Bitmotion\Auth0\Utility\ApiUtility` class
+  :php:`\Leuchtfeuer\Auth0\Utility\ApiUtility` class
 * Basic support for TYPO3 v11.0. Please note that this extension is in beta state until TYPO3 v11 LTS is supported
 * One Auth0 role can now be mapped to multiple TYPO3 user groups
 * Make :ref:`key containing Auth0 user ID <admin-extensionConfiguration-properties-userIdentifier>` configurable (default value
@@ -40,9 +40,9 @@ Deprecated
 
 * Using of :php:`EnvironmentService` class in :php:`AuthenticationService`. You can retrieve the proper context from
   :php:`$authenticationService->authInfo['loginType']`
-* Specific API initialization via :php:`\Bitmotion\Auth0\Api\Management`. You should use
+* Specific API initialization via :php:`\Leuchtfeuer\Auth0\Api\Management`. You should use
   :php:`$management->getApi(\Your\Api\Class::class);` instead
-* Specific API initialization via :php:`\Bitmotion\Auth0\Utility\ApiUtility`. You should use
+* Specific API initialization via :php:`\Leuchtfeuer\Auth0\Utility\ApiUtility`. You should use
   :php:`$apiUtility->getApi(\Your\Api\Class::class, ...$scopes);` instead
 
 Removed

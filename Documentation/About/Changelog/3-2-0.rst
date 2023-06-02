@@ -18,7 +18,7 @@ Added
 =====
 
 * Separate sessions for frontend and backend log ins are now be used
-* Dedicated class :php:`\Bitmotion\Auth0\ErrorCode` containing all valid Auth0 error codes
+* Dedicated class :php:`\Leuchtfeuer\Auth0\ErrorCode` containing all valid Auth0 error codes
 * A default value for the redirect URI within oauth2 requests will now be used when there is no valid callback URI
 * A new PSR-15 Middleware will take care of all Auth0 :ref:`callbacks <admin-callback>`
 * JSON Web Tokens are used for transmitting information between TYPO3 and Auth0
@@ -29,21 +29,21 @@ Changed
 
 * A dedicated factory class is now responsible for creating user sessions
 * User related data is now retrieved from the frontend user aspect (where possible)
-* Logging levels of :php:`\Bitmotion\Auth0\Service\AuthenticationService`
+* Logging levels of :php:`\Leuchtfeuer\Auth0\Service\AuthenticationService`
 * Warnings and errors will be logged into dedicated log file. :ref:`Learn <admin-logging>` how to configure logging.
-* Constants of class :php:`\Bitmotion\Auth0\Api\Auth0` were moved into dedicated class :php:`\Bitmotion\Auth0\ErrorCode`
+* Constants of class :php:`\Leuchtfeuer\Auth0\Api\Auth0` were moved into dedicated class :php:`\Leuchtfeuer\Auth0\ErrorCode`
 * :ref:`Plugin <editor-plugin>` can now be found in the forms tab (was plugins)
 
 Deprecated
 ==========
 
-* Unused properties of :php:`\Bitmotion\Auth0\Service\AuthenticationService`
+* Unused properties of :php:`\Leuchtfeuer\Auth0\Service\AuthenticationService`
 
    * :php:`$auth0Response`
    * :php:`$auth0Data`
    * :php:`$tokenInfo`
 
-* All constants containing error codes of class :php:`\Bitmotion\Auth0\Api\Auth0`
+* All constants containing error codes of class :php:`\Leuchtfeuer\Auth0\Api\Auth0`
 * Following TypoScript settings and constants are now deprecated. You should consider to use the newly introduced generic
   :ref:`callbacks <admin-callback>`
 

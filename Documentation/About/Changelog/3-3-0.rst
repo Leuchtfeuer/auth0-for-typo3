@@ -22,7 +22,7 @@ Download this version from the `TYPO3 extension repository <https://extensions.t
 Added
 =====
 
-* PSR-14 :ref:`event <developer-events>` :php:`Bitmotion\Auth0\Event\RedirectPreProcessingEvent` which will replace the now
+* PSR-14 :ref:`event <developer-events>` :php:`Leuchtfeuer\Auth0\Event\RedirectPreProcessingEvent` which will replace the now
   deprecated :php:`$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['auth0']['redirect_pre_processing']`
   hook
 * `Settings.yaml` file for listening to PSR-14 events in TYPO3 v10

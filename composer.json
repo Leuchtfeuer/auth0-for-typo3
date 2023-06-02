@@ -40,7 +40,7 @@
         "typo3/cms-frontend": "^10.4.25 || ^11.5.7"
     },
     "replace": {
-        "bitmotion/auth0": "self.version",
+        "leuchtfeuer/auth0": "self.version",
         "typo3-ter/auth0": "self.version"
     },
     "suggest": {
@@ -48,7 +48,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Bitmotion\\Auth0\\": "Classes/"
+            "Leuchtfeuer\\Auth0\\": "Classes/"
         }
     },
     "config": {

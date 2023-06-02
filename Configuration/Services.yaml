@@ -4,16 +4,16 @@ services:
     autoconfigure: true
     public: false
 
-  Bitmotion\Auth0\:
+  Leuchtfeuer\Auth0\:
     resource: '../Classes/*'
 
-  Bitmotion\Auth0\Command\CleanUpCommand:
+  Leuchtfeuer\Auth0\Command\CleanUpCommand:
     tags:
       - name: 'console.command'
         command: 'auth0:cleanupusers'
         description: 'Disable or remove obsolete website users.'
 
-  Bitmotion\Auth0\EventListener\AfterPackageActivation:
+  Leuchtfeuer\Auth0\EventListener\AfterPackageActivation:
     tags:
       - name: event.listener
         identifier: auth0AfterPackageActivationEvent

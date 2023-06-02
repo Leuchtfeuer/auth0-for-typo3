@@ -23,8 +23,8 @@ Added
 Deprecated
 ==========
 
-* Constant :php:`AUTH_LOGIN_PROVIDER` of class :php:`\Bitmotion\Auth0\Service\AuthenticationService`
-* Following methods of the utility class :php:`\Bitmotion\Auth0\Utility\UserUtility`:
+* Constant :php:`AUTH_LOGIN_PROVIDER` of class :php:`\Leuchtfeuer\Auth0\Service\AuthenticationService`
+* Following methods of the utility class :php:`\Leuchtfeuer\Auth0\Utility\UserUtility`:
 
    * :php:`loginUser()`
    * :php:`logoutUser()`

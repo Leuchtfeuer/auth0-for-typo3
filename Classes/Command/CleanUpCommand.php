@@ -11,12 +11,12 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Command;
+namespace Leuchtfeuer\Auth0\Command;
 
 use Auth0\SDK\Exception\ArgumentException;
 use Auth0\SDK\Exception\NetworkException;
-use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Bitmotion\Auth0\Factory\ApplicationFactory;
+use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Leuchtfeuer\Auth0\Factory\ApplicationFactory;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Driver\Exception;
 use GuzzleHttp\Exception\GuzzleException;

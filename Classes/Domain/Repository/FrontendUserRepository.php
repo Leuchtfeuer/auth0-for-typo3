@@ -11,7 +11,7 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Domain\Repository;
+namespace Leuchtfeuer\Auth0\Domain\Repository;
 
 use TYPO3\CMS\Extbase\Persistence\Repository;
 

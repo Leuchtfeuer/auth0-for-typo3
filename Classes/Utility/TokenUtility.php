@@ -11,11 +11,11 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Utility;
+namespace Leuchtfeuer\Auth0\Utility;
 
-use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Bitmotion\Auth0\Exception\TokenException;
-use Bitmotion\Auth0\Middleware\CallbackMiddleware;
+use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Leuchtfeuer\Auth0\Exception\TokenException;
+use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
 use DateTimeImmutable;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer;

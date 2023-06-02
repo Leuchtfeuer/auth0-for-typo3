@@ -11,9 +11,9 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Service;
+namespace Leuchtfeuer\Auth0\Service;
 
-use Bitmotion\Auth0\Event\RedirectPreProcessingEvent;
+use Leuchtfeuer\Auth0\Event\RedirectPreProcessingEvent;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;

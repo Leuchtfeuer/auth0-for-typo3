@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Bitmotion\Auth0\Domain\Model\Application;
+use Leuchtfeuer\Auth0\Domain\Model\Application;
 
 return [
     'ctrl' => [

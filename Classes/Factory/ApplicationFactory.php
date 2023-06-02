@@ -9,14 +9,14 @@
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Factory;
+namespace Leuchtfeuer\Auth0\Factory;
 
 use Auth0\SDK\Auth0;
 use Auth0\SDK\Configuration\SdkConfiguration;
 use Auth0\SDK\Exception\ConfigurationException;
-use Bitmotion\Auth0\Domain\Model\Application;
-use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
-use Bitmotion\Auth0\Middleware\CallbackMiddleware;
+use Leuchtfeuer\Auth0\Domain\Model\Application;
+use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
+use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;

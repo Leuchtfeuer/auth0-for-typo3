@@ -11,35 +11,31 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Service;
+namespace Leuchtfeuer\Auth0\Service;
 
 use Auth0\SDK\Auth0;
 use Auth0\SDK\Exception\ArgumentException;
 use Auth0\SDK\Exception\NetworkException;
 use Auth0\SDK\Utility\HttpResponse;
 
-use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
-use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Bitmotion\Auth0\ErrorCode;
-use Bitmotion\Auth0\Exception\TokenException;
-use Bitmotion\Auth0\Factory\ApplicationFactory;
-use Bitmotion\Auth0\Factory\SessionFactory;
-use Bitmotion\Auth0\LoginProvider\Auth0Provider;
-use Bitmotion\Auth0\Middleware\CallbackMiddleware;
-use Bitmotion\Auth0\Utility\Database\UpdateUtility;
-use Bitmotion\Auth0\Utility\TokenUtility;
-use Bitmotion\Auth0\Utility\UserUtility;
+use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\Exception;
+use Lcobucci\JWT\Token\DataSet;
+use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
+use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Leuchtfeuer\Auth0\ErrorCode;
+use Leuchtfeuer\Auth0\Exception\TokenException;
+use Leuchtfeuer\Auth0\Factory\ApplicationFactory;
+use Leuchtfeuer\Auth0\LoginProvider\Auth0Provider;
+use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
+use Leuchtfeuer\Auth0\Utility\Database\UpdateUtility;
+use Leuchtfeuer\Auth0\Utility\TokenUtility;
+use Leuchtfeuer\Auth0\Utility\UserUtility;
 use GuzzleHttp\Exception\GuzzleException;
-use JsonException;
 use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;
 use TYPO3\CMS\Core\Authentication\AuthenticationService as BasicAuthenticationService;
-use TYPO3\CMS\Core\Authentication\LoginType;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
-use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\SysLog\Action\Login as SystemLogLoginAction;
-use TYPO3\CMS\Core\SysLog\Error as SystemLogErrorClassification;
-use TYPO3\CMS\Core\SysLog\Type as SystemLogType;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 
@@ -55,10 +51,7 @@ class AuthenticationService extends BasicAuthenticationService
 
     protected string $tableName = 'fe_users';
 
-    /**
-     * @var Auth0
-     */
-    protected $auth0;
+    protected Auth0 $auth0;
 
     protected bool $loginViaSession = false;
 
@@ -105,7 +98,7 @@ class AuthenticationService extends BasicAuthenticationService
     {
         $validErrorCodes = (new \ReflectionClass(ErrorCode::class))->getConstants();
         $auth0ErrorCode = GeneralUtility::_GET('error') ?? '';
-        if ($auth0ErrorCode && in_array($auth0ErrorCode, $validErrorCodes)) {
+        if ($auth0ErrorCode && in_array($auth0ErrorCode, $validErrorCodes, true)) {
             $this->logger->notice('Access denied. Skip.');
             return true;
         }
@@ -161,12 +154,12 @@ class AuthenticationService extends BasicAuthenticationService
         }
 
         try {
-            $dataSet = $tokenUtility->getToken()->claims();
+            $dataSet = $tokenUtility->getToken() ? $tokenUtility->getToken()->claims() : null;
         } catch (TokenException $exception) {
             return 0;
         }
 
-        return (int)$dataSet->get('application');
+        return $dataSet instanceof DataSet ? (int)($dataSet->get('application')) : 0;
     }
 
     protected function setDefaults(
@@ -184,6 +177,10 @@ class AuthenticationService extends BasicAuthenticationService
         $this->pObj = $pObj;
     }
 
+    /**
+     * @throws DBALException
+     * @throws Exception
+     */
     protected function setApplicationByUser(string $auth0UserId): void
     {
         DebuggerUtility::var_dump('setApplicationByUser');
@@ -193,7 +190,7 @@ class AuthenticationService extends BasicAuthenticationService
             ->select('auth0_last_application')
             ->from($this->tableName)
             ->where($queryBuilder->expr()->eq('auth0_user_id', $queryBuilder->createNamedParameter($auth0UserId)))
-            ->execute()
+            ->executeQuery()
             ->fetchOne();
 
         $this->logger->debug(sprintf('Found application (ID: %s) for active Auth0 session.', $application));
@@ -226,7 +223,7 @@ class AuthenticationService extends BasicAuthenticationService
             $userUtility = GeneralUtility::makeInstance(UserUtility::class);
             $managementUser = HttpResponse::decodeContent($this->auth0->management()->users()->get($this->userInfo[$this->userIdentifier]));
             $this->userInfo = $userUtility->enrichManagementUser($managementUser);
-        } catch (ArgumentException|NetworkException|JsonException $e) {
+        } catch (ArgumentException|NetworkException|\JsonException $e) {
             $this->logger->error($e->getMessage());
             return false;
         }
@@ -269,7 +266,12 @@ class AuthenticationService extends BasicAuthenticationService
         DebuggerUtility::var_dump('initializeAuth0Connection');
         try {
             $this->auth0 = ApplicationFactory::build($this->applicationId, $this->authInfo['loginType']);
-            $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($this->applicationId);
+            $application = GeneralUtility::makeInstance(ApplicationRepository::class)
+                ->findByUid($this->applicationId);
+
+            if (!$application) {
+                return false;
+            }
 
             if (!$application->hasApi()) {
                 $this->auth0->exchange();
@@ -278,7 +280,6 @@ class AuthenticationService extends BasicAuthenticationService
                 $this->userInfo = $this->auth0->getUser();
                 $this->initializeAuth0UserWithManagementApi();
             }
-
 
             if (!isset($this->userInfo[$this->userIdentifier]) || $this->getAuth0User() === false) {
                 return false;
@@ -299,7 +300,7 @@ class AuthenticationService extends BasicAuthenticationService
     }
 
     /**
-     * @return bool|mixed
+     * @return bool|array
      */
     public function getUser()
     {

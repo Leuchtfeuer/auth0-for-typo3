@@ -5,7 +5,7 @@ declare(strict_types = 1);
 //   PLUGINS   //
 /////////////////
 
-$configuration = new \Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration();
+$configuration = new \Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration();
 
 // Register LoginForm PlugIn
 if ($configuration->isEnableFrontendLogin()) {

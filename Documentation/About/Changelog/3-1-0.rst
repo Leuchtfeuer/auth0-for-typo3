@@ -25,7 +25,7 @@ Added
 * Support for custom domains
 * Support for base64 encoded secrets
 * Allow to change signature algorithm
-* Third parameter :php:`federated` of the method :php:`\Bitmotion\Auth0\Api\Auth0::getLogoutUri()`
+* Third parameter :php:`federated` of the method :php:`\Leuchtfeuer\Auth0\Api\Auth0::getLogoutUri()`
 * Application record:
 
    * You can now choose a signature algorithm: `RS256` (default) or `HS256`
@@ -41,7 +41,7 @@ Changed
 Deprecated
 ==========
 
-* Following methods of the domain transfer object :php:`\Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration`:
+* Following methods of the domain transfer object :php:`\Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration`:
 
    * :php:`getEnableBackendLogin()`
    * :php:`getReactivateDisabledBackendUser()`
@@ -50,17 +50,17 @@ Deprecated
    * :php:`getReactivateDeletedFrontendUser()`
 
 * Retrieving application as array from the database
-* Following methods of the domain model object :php:`\Bitmotion\Auth0\Domain\Model\Application`:
+* Following methods of the domain model object :php:`\Leuchtfeuer\Auth0\Domain\Model\Application`:
 
    * :php:`getId()`
    * :php:`getSecret()`
 
-* :php:`\Bitmotion\Auth0\Utility\UserUtility::convertAuth0UserToUserInfo`
+* :php:`\Leuchtfeuer\Auth0\Utility\UserUtility::convertAuth0UserToUserInfo`
 
 Removed
 =======
 
-* Class :php:`\Bitmotion\Auth0\Api\Authorization`
+* Class :php:`\Leuchtfeuer\Auth0\Api\Authorization`
 
 All Changes
 ===========
