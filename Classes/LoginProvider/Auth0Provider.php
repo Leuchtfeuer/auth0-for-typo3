@@ -181,8 +181,9 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     protected function getDefaultView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
     {
         $standaloneView->setLayoutRootPaths(['EXT:auth0/Resources/Private/Layouts/']);
+        $templateName = version_compare(GeneralUtility::makeInstance(Typo3Version::class)->getVersion(), '11.0', '>=') ? 'BackendV11' : 'Backend';
         $standaloneView->setTemplatePathAndFilename(
-            GeneralUtility::getFileAbsFileName('EXT:auth0/Resources/Private/Templates/Backend.html')
+            GeneralUtility::getFileAbsFileName('EXT:auth0/Resources/Private/Templates/' . $templateName . '.html')
         );
         $standaloneView->assign('error', 'no_typoscript');
         $pageRenderer->addCssFile('EXT:auth0/Resources/Public/Styles/backend.css');
