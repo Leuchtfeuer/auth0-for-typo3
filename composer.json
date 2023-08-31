@@ -54,7 +54,8 @@
     "config": {
         "allow-plugins": {
             "typo3/cms-composer-installers": true,
-            "typo3/class-alias-loader": true
+            "typo3/class-alias-loader": true,
+            "php-http/discovery": true
         },
         "bin-dir": ".Build/bin",
         "platform": {
@@ -74,5 +75,8 @@
             "mkdir -p .Build/web/typo3conf/ext/",
             "[ -L .Build/web/typo3conf/ext/auth0 ] || ln -snvf ../../../../. .Build/web/typo3conf/ext/auth0"
         ]
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.14"
     }
 }
