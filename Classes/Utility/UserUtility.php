@@ -105,7 +105,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             'pid' => $this->configuration->getUserStoragePage(),
             'tstamp' => time(),
             'username' => $user['email'] ?? $user[$userIdentifier],
-            'password' => $this->getPassword(),
+            'password' => $this->getPassword('FE'),
             'email' => $user['email'] ?? '',
             'crdate' => time(),
             'auth0_user_id' => $user[$userIdentifier],
@@ -129,7 +129,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             'pid' => 0,
             'tstamp' => time(),
             'username' => $user['email'] ?? $user[$userIdentifier],
-            'password' => $this->getPassword(),
+            'password' => $this->getPassword('BE'),
             'email' => $user['email'] ?? '',
             'crdate' => time(),
             'auth0_user_id' => $user[$userIdentifier],
@@ -155,9 +155,9 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     /**
      * @throws InvalidPasswordHashException
      */
-    protected function getPassword(): string
+    protected function getPassword(string $mode): string
     {
-        $saltFactory = GeneralUtility::makeInstance(PasswordHashFactory::class)->getDefaultHashInstance(TYPO3_MODE);
+        $saltFactory = GeneralUtility::makeInstance(PasswordHashFactory::class)->getDefaultHashInstance($mode);
         $password = GeneralUtility::makeInstance(Random::class)->generateRandomHexString(50);
 
         return $saltFactory->getHashedPassword($password);
