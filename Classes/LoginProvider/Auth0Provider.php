@@ -205,6 +205,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     {
         $redirectUri = GeneralUtility::getIndpEnv('TYPO3_SITE_URL') . 'typo3/logout';
         if ($this->application->isSingleLogOut() && $this->configuration->isSoftLogout()) {
+            $this->auth0->clear();
             header('Location: ' . $redirectUri);
         } else {
             header('Location: ' . $this->auth0->logout($this->getCallback($redirectUri)));
