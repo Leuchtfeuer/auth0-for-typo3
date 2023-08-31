@@ -155,12 +155,12 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
                 $queryBuilder->update($this->tableNames['users'])->set('disable', 1);
                 break;
 
-            // Set deleted flag to 1
+                // Set deleted flag to 1
             case 'delete':
                 $queryBuilder->update($this->tableNames['users'])->set('deleted', 1);
                 break;
 
-            // Remove record from database
+                // Remove record from database
             case 'deleteIrrevocable':
                 $queryBuilder->delete($this->tableNames['users']);
                 break;
