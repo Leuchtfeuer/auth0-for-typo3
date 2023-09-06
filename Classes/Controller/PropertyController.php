@@ -11,6 +11,8 @@
 
 namespace Bitmotion\Auth0\Controller;
 
+use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Extbase\Http\ForwardResponse;
 use Bitmotion\Auth0\Configuration\Auth0Configuration;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Factory\ConfigurationFactory;
@@ -20,7 +22,7 @@ use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
 class PropertyController extends BackendController
 {
-    public function listAction(): void
+    public function listAction(): ResponseInterface
     {
         $tcaUtility = new TcaUtility();
 
@@ -30,9 +32,10 @@ class PropertyController extends BackendController
             'extensionConfiguration' => new EmAuth0Configuration(),
             'yamlConfiguration' => GeneralUtility::makeInstance(Auth0Configuration::class)->load(),
         ]);
+        return $this->htmlResponse();
     }
 
-    public function newAction(string $table, string $type): void
+    public function newAction(string $table, string $type): ResponseInterface
     {
         $this->addButton('menu.button.cancel', 'list', 'Property', 'actions-close');
         $this->view->assignMultiple([
@@ -40,15 +43,16 @@ class PropertyController extends BackendController
             'type' => $type,
             'properties' => (new TcaUtility())->getUnusedColumnsFromTable($table),
         ]);
+        return $this->htmlResponse();
     }
 
     /**
      * @throws StopActionException
      */
-    public function createAction(array $property, string $table, string $type): void
+    public function createAction(array $property, string $table, string $type)
     {
         if (empty($property['databaseField']) || empty($property['auth0Property'])) {
-            $this->forward('new');
+            return new ForwardResponse('new');
         }
 
         ksort($property);
@@ -85,7 +89,7 @@ class PropertyController extends BackendController
         $this->redirect('list');
     }
 
-    public function editAction(array $property, string $table, string $type): void
+    public function editAction(array $property, string $table, string $type): ResponseInterface
     {
         $this->addButton('menu.button.cancel', 'list', 'Property', 'actions-close');
         $this->view->assignMultiple([
@@ -94,6 +98,7 @@ class PropertyController extends BackendController
             'type' => $type,
             'properties' => (new TcaUtility())->getUnusedColumnsFromTable($table, $property['databaseField']),
         ]);
+        return $this->htmlResponse();
     }
 
     /**

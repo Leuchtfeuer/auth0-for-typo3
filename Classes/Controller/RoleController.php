@@ -21,7 +21,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class RoleController extends BackendController
 {
-    public function listAction(): void
+    public function listAction(): ResponseInterface
     {
         $this->view->assignMultiple([
             'frontendUserGroupMapping' => (new FrontendUserGroupRepository())->findAll(),
@@ -29,6 +29,7 @@ class RoleController extends BackendController
             'extensionConfiguration' => new EmAuth0Configuration(),
             'yamlConfiguration' => GeneralUtility::makeInstance(Auth0Configuration::class)->load(),
         ]);
+        return $this->htmlResponse();
     }
 
     /**
