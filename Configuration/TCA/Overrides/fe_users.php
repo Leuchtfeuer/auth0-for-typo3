@@ -1,8 +1,10 @@
 <?php
 declare(strict_types = 1);
+
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 defined('TYPO3') or die();
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns(
+ExtensionManagementUtility::addTCAcolumns(
     'fe_users',
     [
         'auth0_user_id' => [

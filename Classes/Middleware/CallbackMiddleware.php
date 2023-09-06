@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Bitmotion\Auth0\Middleware;
 
+use Auth0\SDK\Exception\ConfigurationException;
+use GuzzleHttp\Exception\GuzzleException;
 use Auth0\SDK\Exception\ArgumentException;
 use Auth0\SDK\Exception\NetworkException;
 use Auth0\SDK\Utility\HttpResponse;
@@ -183,8 +185,8 @@ class CallbackMiddleware implements MiddlewareInterface
     /**
      * @throws ArgumentException
      * @throws NetworkException
-     * @throws \Auth0\SDK\Exception\ConfigurationException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws ConfigurationException
+     * @throws GuzzleException
      */
     protected function updateTypo3User(int $applicationId, array $user): void
     {

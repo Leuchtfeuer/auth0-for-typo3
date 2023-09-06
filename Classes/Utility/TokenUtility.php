@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Bitmotion\Auth0\Utility;
 
+use TYPO3\CMS\Core\Http\ApplicationType;
 use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Bitmotion\Auth0\Exception\TokenException;
 use Bitmotion\Auth0\Middleware\CallbackMiddleware;
@@ -160,7 +161,7 @@ class TokenUtility implements LoggerAwareInterface
     {
         $environmentService = GeneralUtility::makeInstance(EnvironmentService::class);
 
-        if ($environmentService->isEnvironmentInFrontendMode()) {
+        if (ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()) {
             try {
                 $pageId = (int)$GLOBALS['TSFE']->id;
                 $base = GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId($pageId)->getBase();
@@ -175,7 +176,7 @@ class TokenUtility implements LoggerAwareInterface
                 $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
             }
             $this->withPayload('environment', self::ENVIRONMENT_FRONTEND);
-        } elseif ($environmentService->isEnvironmentInBackendMode()) {
+        } elseif (ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isBackend()) {
             $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
             $this->withPayload('environment', self::ENVIRONMENT_BACKEND);
         }

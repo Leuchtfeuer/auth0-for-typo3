@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Bitmotion\Auth0\Controller;
 
+use Psr\Http\Message\ResponseInterface;
 use Auth0\SDK\Auth0;
 use Auth0\SDK\Exception\ConfigurationException;
 use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
@@ -62,7 +63,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
     /**
      * @throws AspectNotFoundException
      */
-    public function formAction(): void
+    public function formAction(): ResponseInterface
     {
         if (GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
             // Get Auth0 user from session storage
@@ -75,6 +76,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
             'auth0Error' => $this->error,
             'auth0ErrorDescription' => $this->errorDescription,
         ]);
+        return $this->htmlResponse();
     }
 
     /**

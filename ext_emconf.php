@@ -13,7 +13,6 @@ $EM_CONF['auth0'] = [
         'suggests' => [],
     ],
     'state' => 'stable',
-    'clearCacheOnLoad' => true,
     'author' => 'Max Rösch',
     'author_email' => 'm.roesch@Leuchtfeuer.com',
     'author_company' => 'Leuchtfeuer Digital Marketing',
