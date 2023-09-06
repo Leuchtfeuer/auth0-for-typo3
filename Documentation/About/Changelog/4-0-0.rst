@@ -1,7 +1,7 @@
 .. include:: ../../Includes.txt
 
 ==========================
-Version 4.0.0 - 2023/09/01
+Version 4.0.0 - 2023/09/05
 ==========================
 
 This release is a major release, which will likely be breaking.
@@ -35,6 +35,9 @@ All Changes
 
 This is a list of all changes in this release::
 
+    2023-09-05 [TASK] Adjust Libraries for non composer installation (Commit 8988203 by Yassine Abid)
+    2023-09-01 [TASK] Adjust changelog of v4.0.0 (Commit 7a0e63c by Yassine Abid)
+    2023-09-01 [TASK] Adjust changelog of v4.0.0 (Commit 7a0e63c by Yassine Abid)
     2023-08-31 [BUGFIX] Fix no_typoscript error for version 11 (Commit ee9a068 by Yassine Abid)
     2023-08-31 [TASK] Fix soft logout (Commit d509179 by Yassine Abid)
     2023-08-31 [TASK] Fix cs (Commit 014547d by Yassine Abid)
