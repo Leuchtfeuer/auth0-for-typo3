@@ -13,6 +13,8 @@ namespace Leuchtfeuer\Auth0\Utility;
 
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Http\ApplicationType;
+use TYPO3\CMS\Core\Information\Typo3Version;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ModeUtility
 {
@@ -34,5 +36,10 @@ class ModeUtility
             && ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()
             ? self::FRONTEND_MODE
             : self::BACKEND_MODE;
+    }
+
+    public static function isTYPO3V12(): bool
+    {
+        return version_compare(GeneralUtility::makeInstance(Typo3Version::class)->getVersion(), '12.0', '>=');
     }
 }
