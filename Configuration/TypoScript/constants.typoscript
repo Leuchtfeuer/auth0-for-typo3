@@ -6,7 +6,7 @@ plugin.tx_auth0 {
     }
 
     persistence {
-        storagePid =
+        storagePid = 94
     }
 }
 
@@ -15,6 +15,6 @@ module.tx_auth0 {
         templateRootPath = EXT:auth0/Resources/Private/Templates/
         layoutRootPath = EXT:auth0/Resources/Private/Layouts/
     }
-    persistence.storagePid = 1
+    persistence.storagePid = 94
     settings.stylesheet = EXT:auth0/Resources/Public/Styles/backend.css
 }

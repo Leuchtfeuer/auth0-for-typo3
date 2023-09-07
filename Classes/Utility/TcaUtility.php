@@ -45,7 +45,7 @@ class TcaUtility
                 if ($type === 'select') {
                     $columns[$name]['items'] = [];
                     foreach ($column['config']['items'] ?? [] as $item) {
-                        $columns[$name]['items'][$item[1]] = $GLOBALS['LANG']->sl($item[0]);
+                        $columns[$name]['items'][$item[1] ?? $item['value']] = $GLOBALS['LANG']->sl($item[0] ?? $item['label']);
                     }
                 }
             }

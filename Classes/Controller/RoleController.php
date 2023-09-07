@@ -23,13 +23,16 @@ class RoleController extends BackendController
 {
     public function listAction(): ResponseInterface
     {
+        $moduleTemplate = $this->initView();
         $this->view->assignMultiple([
             'frontendUserGroupMapping' => (new FrontendUserGroupRepository())->findAll(),
             'backendUserGroupMapping' => (new BackendUserGroupRepository())->findAll(),
             'extensionConfiguration' => new EmAuth0Configuration(),
             'yamlConfiguration' => GeneralUtility::makeInstance(Auth0Configuration::class)->load(),
         ]);
-        return $this->htmlResponse();
+        $moduleTemplate->setContent($this->view->render());
+
+        return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
     /**
@@ -58,6 +61,7 @@ class RoleController extends BackendController
 
         $auth0Configuration->write($configuration);
         $this->addFlashMessage($this->getTranslation('message.role.updated.text'), $this->getTranslation('message.role.updated.title'));
+
         return $this->redirect('list');
     }
 }

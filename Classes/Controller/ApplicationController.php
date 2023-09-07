@@ -13,6 +13,7 @@ namespace Leuchtfeuer\Auth0\Controller;
 
 use Leuchtfeuer\Auth0\Domain\Model\Application;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Leuchtfeuer\Auth0\Utility\ModeUtility;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -26,26 +27,30 @@ class ApplicationController extends BackendController
      */
     public function listAction(): ResponseInterface
     {
+        $moduleTemplate = $this->initView();
         $pid = $this->getStoragePage();
         $this->view->assignMultiple([
             'applications' => $this->applicationRepository->findAll(),
             'pid' => $pid,
             'directory' => BackendUtility::getRecord('pages', $pid),
-            'returnUrl' => $this->getModuleUrl(false),
         ]);
-        return $this->htmlResponse();
+        if (!ModeUtility::isTYPO3V12()) {
+            $this->view->assign('returnUrl', $this->getModuleUrl(false));
+        }
+        $moduleTemplate->setContent($this->view->render());
+
+        return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
     /**
-     * @param Application $application
-     *
      * @throws StopActionException
      */
-    public function deleteAction(Application $application): void
+    public function deleteAction(Application $application): ResponseInterface
     {
         $this->applicationRepository->remove($application);
         $this->addFlashMessage($this->getTranslation('message.application.deleted.text'), $this->getTranslation('message.application.deleted.title'));
-        $this->redirect('list');
+
+        return $this->redirect('list');
     }
 
     protected function getStoragePage(): int
