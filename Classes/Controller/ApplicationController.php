@@ -9,11 +9,11 @@
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Controller;
+namespace Leuchtfeuer\Auth0\Controller;
 
 use Psr\Http\Message\ResponseInterface;
-use Bitmotion\Auth0\Domain\Model\Application;
-use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Leuchtfeuer\Auth0\Domain\Model\Application;
+use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;

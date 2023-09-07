@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 

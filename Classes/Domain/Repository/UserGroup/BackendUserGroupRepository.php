@@ -9,7 +9,7 @@
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Domain\Repository\UserGroup;
+namespace Leuchtfeuer\Auth0\Domain\Repository\UserGroup;
 
 class BackendUserGroupRepository extends AbstractUserGroupRepository
 {

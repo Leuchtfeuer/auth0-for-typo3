@@ -11,7 +11,7 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0;
+namespace Leuchtfeuer\Auth0;
 
 final class ErrorCode
 {

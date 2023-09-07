@@ -11,24 +11,24 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Middleware;
+namespace Leuchtfeuer\Auth0\Middleware;
 
 use Auth0\SDK\Exception\ConfigurationException;
 use GuzzleHttp\Exception\GuzzleException;
 use Auth0\SDK\Exception\ArgumentException;
 use Auth0\SDK\Exception\NetworkException;
 use Auth0\SDK\Utility\HttpResponse;
-use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
-use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Bitmotion\Auth0\ErrorCode;
-use Bitmotion\Auth0\Exception\TokenException;
-use Bitmotion\Auth0\Exception\UnknownErrorCodeException;
-use Bitmotion\Auth0\Factory\ApplicationFactory;
-use Bitmotion\Auth0\LoginProvider\Auth0Provider;
-use Bitmotion\Auth0\Service\RedirectService;
-use Bitmotion\Auth0\Utility\Database\UpdateUtility;
-use Bitmotion\Auth0\Utility\TokenUtility;
-use Bitmotion\Auth0\Utility\UserUtility;
+use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
+use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Leuchtfeuer\Auth0\ErrorCode;
+use Leuchtfeuer\Auth0\Exception\TokenException;
+use Leuchtfeuer\Auth0\Exception\UnknownErrorCodeException;
+use Leuchtfeuer\Auth0\Factory\ApplicationFactory;
+use Leuchtfeuer\Auth0\LoginProvider\Auth0Provider;
+use Leuchtfeuer\Auth0\Service\RedirectService;
+use Leuchtfeuer\Auth0\Utility\Database\UpdateUtility;
+use Leuchtfeuer\Auth0\Utility\TokenUtility;
+use Leuchtfeuer\Auth0\Utility\UserUtility;
 use Lcobucci\JWT\Token\DataSet;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
