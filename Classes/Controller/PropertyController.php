@@ -9,14 +9,14 @@
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Controller;
+namespace Leuchtfeuer\Auth0\Controller;
 
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Extbase\Http\ForwardResponse;
-use Bitmotion\Auth0\Configuration\Auth0Configuration;
-use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Bitmotion\Auth0\Factory\ConfigurationFactory;
-use Bitmotion\Auth0\Utility\TcaUtility;
+use Leuchtfeuer\Auth0\Configuration\Auth0Configuration;
+use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Leuchtfeuer\Auth0\Factory\ConfigurationFactory;
+use Leuchtfeuer\Auth0\Utility\TcaUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class PropertyController extends BackendController

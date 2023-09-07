@@ -9,7 +9,7 @@ call_user_func(
         }
 
         // Load extension configuration
-        $configuration = new \Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration();
+        $configuration = new \Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration();
 
         // Get proper subtypes for authentication service
         $subtypes = [];
@@ -21,8 +21,8 @@ call_user_func(
             \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
                 $extensionKey,
                 'LoginForm',
-                [\Bitmotion\Auth0\Controller\LoginController::class => 'form, login, logout'],
-                [\Bitmotion\Auth0\Controller\LoginController::class => 'form, login, logout']
+                [\Leuchtfeuer\Auth0\Controller\LoginController::class => 'form, login, logout'],
+                [\Leuchtfeuer\Auth0\Controller\LoginController::class => 'form, login, logout']
             );
         }
 
@@ -47,7 +47,7 @@ call_user_func(
             \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addService(
                 $extensionKey,
                 'auth',
-                \Bitmotion\Auth0\Service\AuthenticationService::class,
+                \Leuchtfeuer\Auth0\Service\AuthenticationService::class,
                 [
                     'title' => 'Auth0 authentication',
                     'description' => 'Authentication with Auth0.',
@@ -57,7 +57,7 @@ call_user_func(
                     'quality' => $overrulingPriority,
                     'os' => '',
                     'exec' => '',
-                    'className' => \Bitmotion\Auth0\Service\AuthenticationService::class
+                    'className' => \Leuchtfeuer\Auth0\Service\AuthenticationService::class
                 ]
             );
         }

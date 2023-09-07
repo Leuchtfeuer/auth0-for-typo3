@@ -11,9 +11,9 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Domain\Repository;
+namespace Leuchtfeuer\Auth0\Domain\Repository;
 
-use Bitmotion\Auth0\Domain\Model\Application;
+use Leuchtfeuer\Auth0\Domain\Model\Application;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;

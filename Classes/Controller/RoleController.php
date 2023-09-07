@@ -9,13 +9,13 @@
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Controller;
+namespace Leuchtfeuer\Auth0\Controller;
 
-use Bitmotion\Auth0\Configuration\Auth0Configuration;
-use Bitmotion\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
-use Bitmotion\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
-use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Bitmotion\Auth0\Factory\ConfigurationFactory;
+use Leuchtfeuer\Auth0\Configuration\Auth0Configuration;
+use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
+use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
+use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Leuchtfeuer\Auth0\Factory\ConfigurationFactory;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 

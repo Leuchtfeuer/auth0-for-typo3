@@ -2,8 +2,8 @@
 declare(strict_types = 1);
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use Bitmotion\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
-use Bitmotion\Auth0\Domain\Repository\UserGroup\AbstractUserGroupRepository;
+use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
+use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\AbstractUserGroupRepository;
 defined('TYPO3') or die();
 
 ExtensionManagementUtility::addTCAcolumns(

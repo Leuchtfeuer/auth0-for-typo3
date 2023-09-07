@@ -18,12 +18,12 @@ $EM_CONF['auth0'] = [
     'author_company' => 'Leuchtfeuer Digital Marketing',
     'autoload' => [
         'psr-4' => [
-            'Bitmotion\\Auth0\\' => 'Classes',
+            'Leuchtfeuer\\Auth0\\' => 'Classes',
         ],
     ],
     'autoload-dev' => [
         'psr-4' => [
-            'Bitmotion\\Auth0\\Tests\\' => 'Classes/Tests',
+            'Leuchtfeuer\\Auth0\\Tests\\' => 'Classes/Tests',
         ],
     ],
 ];

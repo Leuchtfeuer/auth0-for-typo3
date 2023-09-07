@@ -9,17 +9,22 @@
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Controller;
+namespace Leuchtfeuer\Auth0\Controller;
 
-use Bitmotion\Auth0\Domain\Model\Application;
-use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Psr\Http\Message\ResponseInterface;
+use Leuchtfeuer\Auth0\Domain\Model\Application;
+use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
+use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
 class ApplicationController extends BackendController
 {
-    public function listAction(): void
+    /**
+     * @throws RouteNotFoundException
+     */
+    public function listAction(): ResponseInterface
     {
         $pid = $this->getStoragePage();
         $this->view->assignMultiple([
@@ -28,18 +33,19 @@ class ApplicationController extends BackendController
             'directory' => BackendUtility::getRecord('pages', $pid),
             'returnUrl' => $this->getModuleUrl(false),
         ]);
+        return $this->htmlResponse();
     }
 
     /**
      * @param Application $application
      *
-     * @return ResponseInterface
+     * @throws StopActionException
      */
-    public function deleteAction(Application $application): ResponseInterface
+    public function deleteAction(Application $application): void
     {
         $this->applicationRepository->remove($application);
         $this->addFlashMessage($this->getTranslation('message.application.deleted.text'), $this->getTranslation('message.application.deleted.title'));
-        return $this->redirect('list');
+        $this->redirect('list');
     }
 
     protected function getStoragePage(): int

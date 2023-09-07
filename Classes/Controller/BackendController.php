@@ -9,11 +9,11 @@
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Controller;
+namespace Leuchtfeuer\Auth0\Controller;
 
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use Psr\Http\Message\ResponseInterface;
-use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
+use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;

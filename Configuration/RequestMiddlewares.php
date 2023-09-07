@@ -1,11 +1,11 @@
 <?php
 declare(strict_types = 1);
 
-use Bitmotion\Auth0\Middleware\CallbackMiddleware;
+use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
 
 return [
     'frontend' => [
-        'bitmotion/auth0/callback' => [
+        'leuchtfeuer/auth0/callback' => [
             'target' => CallbackMiddleware::class,
             'after' => [
                 'typo3/cms-frontend/authentication',
