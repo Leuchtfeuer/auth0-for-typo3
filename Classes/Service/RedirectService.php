@@ -24,7 +24,6 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Felogin\Controller\FrontendLoginController;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 

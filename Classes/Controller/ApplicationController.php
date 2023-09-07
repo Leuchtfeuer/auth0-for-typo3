@@ -11,9 +11,9 @@
 
 namespace Leuchtfeuer\Auth0\Controller;
 
-use Psr\Http\Message\ResponseInterface;
 use Leuchtfeuer\Auth0\Domain\Model\Application;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;

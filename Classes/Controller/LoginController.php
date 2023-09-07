@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Leuchtfeuer\Auth0\Controller;
 
-use Psr\Http\Message\ResponseInterface;
 use Auth0\SDK\Auth0;
 use Auth0\SDK\Exception\ConfigurationException;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
@@ -23,6 +22,7 @@ use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
 use Leuchtfeuer\Auth0\Utility\ParametersUtility;
 use Leuchtfeuer\Auth0\Utility\RoutingUtility;
 use Leuchtfeuer\Auth0\Utility\TokenUtility;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Context\Context;

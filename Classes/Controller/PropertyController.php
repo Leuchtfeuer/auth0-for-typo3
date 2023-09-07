@@ -11,13 +11,13 @@
 
 namespace Leuchtfeuer\Auth0\Controller;
 
-use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Extbase\Http\ForwardResponse;
 use Leuchtfeuer\Auth0\Configuration\Auth0Configuration;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\Factory\ConfigurationFactory;
 use Leuchtfeuer\Auth0\Utility\TcaUtility;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Http\ForwardResponse;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
 class PropertyController extends BackendController

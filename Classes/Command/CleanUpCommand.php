@@ -15,11 +15,11 @@ namespace Leuchtfeuer\Auth0\Command;
 
 use Auth0\SDK\Exception\ArgumentException;
 use Auth0\SDK\Exception\NetworkException;
-use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Leuchtfeuer\Auth0\Factory\ApplicationFactory;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Driver\Exception;
 use GuzzleHttp\Exception\GuzzleException;
+use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Leuchtfeuer\Auth0\Factory\ApplicationFactory;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\Console\Command\Command;

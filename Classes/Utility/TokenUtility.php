@@ -13,10 +13,6 @@ declare(strict_types=1);
 
 namespace Leuchtfeuer\Auth0\Utility;
 
-use TYPO3\CMS\Core\Http\ApplicationType;
-use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Leuchtfeuer\Auth0\Exception\TokenException;
-use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
 use DateTimeImmutable;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer;
@@ -30,12 +26,14 @@ use Lcobucci\JWT\Validation\Constraint;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
 use Lcobucci\JWT\Validation\Constraint\PermittedFor;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
+use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Leuchtfeuer\Auth0\Exception\TokenException;
+use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Service\EnvironmentService;
 
 class TokenUtility implements LoggerAwareInterface
 {
@@ -157,11 +155,9 @@ class TokenUtility implements LoggerAwareInterface
         return $this->token;
     }
 
-    protected function setIssuer(): void
+    public function setIssuer(?string $mode = null): void
     {
-        $environmentService = GeneralUtility::makeInstance(EnvironmentService::class);
-
-        if (ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()) {
+        if (!ModeUtility::isBackend($mode)) {
             try {
                 $pageId = (int)$GLOBALS['TSFE']->id;
                 $base = GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId($pageId)->getBase();
@@ -176,10 +172,10 @@ class TokenUtility implements LoggerAwareInterface
                 $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
             }
             $this->withPayload('environment', self::ENVIRONMENT_FRONTEND);
-        } elseif (ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isBackend()) {
-            $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
-            $this->withPayload('environment', self::ENVIRONMENT_BACKEND);
         }
+
+        $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
+        $this->withPayload('environment', self::ENVIRONMENT_BACKEND);
     }
 
     protected function getSigner(): Signer

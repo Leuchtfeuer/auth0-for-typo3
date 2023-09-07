@@ -13,11 +13,12 @@ declare(strict_types=1);
 
 namespace Leuchtfeuer\Auth0\Middleware;
 
-use Auth0\SDK\Exception\ConfigurationException;
-use GuzzleHttp\Exception\GuzzleException;
 use Auth0\SDK\Exception\ArgumentException;
+use Auth0\SDK\Exception\ConfigurationException;
 use Auth0\SDK\Exception\NetworkException;
 use Auth0\SDK\Utility\HttpResponse;
+use GuzzleHttp\Exception\GuzzleException;
+use Lcobucci\JWT\Token\DataSet;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\ErrorCode;
@@ -29,7 +30,6 @@ use Leuchtfeuer\Auth0\Service\RedirectService;
 use Leuchtfeuer\Auth0\Utility\Database\UpdateUtility;
 use Leuchtfeuer\Auth0\Utility\TokenUtility;
 use Leuchtfeuer\Auth0\Utility\UserUtility;
-use Lcobucci\JWT\Token\DataSet;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
