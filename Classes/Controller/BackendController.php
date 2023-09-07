@@ -11,12 +11,12 @@
 
 namespace Leuchtfeuer\Auth0\Controller;
 
-use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
-use Psr\Http\Message\ResponseInterface;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Backend\View\BackendTemplateView;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Localization\LanguageService;

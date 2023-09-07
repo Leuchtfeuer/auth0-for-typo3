@@ -15,11 +15,11 @@ namespace Leuchtfeuer\Auth0\Utility;
 
 use Auth0\SDK\Auth0;
 use Auth0\SDK\Utility\HttpResponse;
+use GuzzleHttp\Utils;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use Leuchtfeuer\Auth0\Domain\Repository\UserRepository;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\Utility\Database\UpdateUtility;
-use GuzzleHttp\Utils;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\Utility\BackendUtility;

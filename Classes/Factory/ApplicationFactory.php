@@ -14,11 +14,11 @@ namespace Leuchtfeuer\Auth0\Factory;
 use Auth0\SDK\Auth0;
 use Auth0\SDK\Configuration\SdkConfiguration;
 use Auth0\SDK\Exception\ConfigurationException;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Leuchtfeuer\Auth0\Domain\Model\Application;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ApplicationFactory

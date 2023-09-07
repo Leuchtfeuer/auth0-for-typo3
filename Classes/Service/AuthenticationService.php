@@ -18,6 +18,8 @@ use Auth0\SDK\Exception\ArgumentException;
 use Auth0\SDK\Exception\NetworkException;
 use Auth0\SDK\Utility\HttpResponse;
 
+use GuzzleHttp\Exception\GuzzleException;
+use JsonException;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\ErrorCode;
 use Leuchtfeuer\Auth0\Exception\TokenException;
@@ -27,8 +29,6 @@ use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
 use Leuchtfeuer\Auth0\Utility\Database\UpdateUtility;
 use Leuchtfeuer\Auth0\Utility\TokenUtility;
 use Leuchtfeuer\Auth0\Utility\UserUtility;
-use GuzzleHttp\Exception\GuzzleException;
-use JsonException;
 use TYPO3\CMS\Core\Authentication\AuthenticationService as BasicAuthenticationService;
 use TYPO3\CMS\Core\Authentication\LoginType;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
@@ -186,8 +186,8 @@ class AuthenticationService extends BasicAuthenticationService
     {
         echo 'do not hit';
         die();
-//        $session = (new SessionFactory())->getSessionStoreForApplication(0, $loginType);
-//        $userInfo = $session->getUserInfo();
+        //        $session = (new SessionFactory())->getSessionStoreForApplication(0, $loginType);
+        //        $userInfo = $session->getUserInfo();
 
         // TODO: Check if context needs to be set
         $userInfo = $this->auth0->configuration()->getSessionStorage()->get('user');
@@ -357,13 +357,13 @@ class AuthenticationService extends BasicAuthenticationService
             return 100;
         }
 
-//        // Do not login if email address is not verified (only available if API is enabled)
-//        // TODO:: Support this even API is disabled
-//        if ($this->auth0User !== null && !$this->auth0User->isEmailVerified()) {
-//            $this->logger->warning('Email not verified. Do not login user.');
-//            // Responsible, authentication failed, do NOT check other services
-//            return 0;
-//        }
+        //        // Do not login if email address is not verified (only available if API is enabled)
+        //        // TODO:: Support this even API is disabled
+        //        if ($this->auth0User !== null && !$this->auth0User->isEmailVerified()) {
+        //            $this->logger->warning('Email not verified. Do not login user.');
+        //            // Responsible, authentication failed, do NOT check other services
+        //            return 0;
+        //        }
 
         // Skip when there is an Auth0 session but the corresponding TYPO3 user has no user group assigned.
         if (empty($user['usergroup']) && $this->loginViaSession === true) {

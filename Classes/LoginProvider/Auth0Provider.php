@@ -15,13 +15,14 @@ namespace Leuchtfeuer\Auth0\LoginProvider;
 
 use Auth0\SDK\Auth0;
 use Auth0\SDK\Exception\ConfigurationException;
+use GuzzleHttp\Exception\GuzzleException;
 use Leuchtfeuer\Auth0\Domain\Model\Application;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\Factory\ApplicationFactory;
 use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
+use Leuchtfeuer\Auth0\Utility\ModeUtility;
 use Leuchtfeuer\Auth0\Utility\TokenUtility;
-use GuzzleHttp\Exception\GuzzleException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\Controller\LoginController;
@@ -123,6 +124,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     protected function getCallback(?string $redirectUri = ''): string
     {
         $tokenUtility = new TokenUtility();
+        $tokenUtility->setIssuer(ModeUtility::BACKEND_MODE);
         $tokenUtility->withPayload('application', $this->configuration->getBackendConnection());
 
         if ($redirectUri !== '') {
@@ -178,25 +180,23 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         return isset($this->frameworkConfiguration['settings']['stylesheet']);
     }
 
-    protected function getDefaultView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
-    {
-        $standaloneView->setLayoutRootPaths(['EXT:auth0/Resources/Private/Layouts/']);
-        $templateName = version_compare(GeneralUtility::makeInstance(Typo3Version::class)->getVersion(), '11.0', '>=') ? 'BackendV11' : 'Backend';
-        $standaloneView->setTemplatePathAndFilename(
-            GeneralUtility::getFileAbsFileName('EXT:auth0/Resources/Private/Templates/' . $templateName . '.html')
-        );
-        $standaloneView->assign('error', 'no_typoscript');
-        $pageRenderer->addCssFile('EXT:auth0/Resources/Public/Styles/backend.css');
-    }
-
     protected function prepareView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
     {
-        $templateName = version_compare(GeneralUtility::makeInstance(Typo3Version::class)->getVersion(), '11.0', '>=') ? 'BackendV11' : 'Backend';
-        $standaloneView->setTemplate($templateName);
+        $standaloneView->setTemplate($this->getTemplateName());
         $standaloneView->setLayoutRootPaths($this->frameworkConfiguration['view']['layoutRootPaths']);
         $standaloneView->setTemplateRootPaths($this->frameworkConfiguration['view']['templateRootPaths']);
 
         $pageRenderer->addCssFile($this->frameworkConfiguration['settings']['stylesheet']);
+    }
+
+    protected function getDefaultView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
+    {
+        $standaloneView->setLayoutRootPaths(['EXT:auth0/Resources/Private/Layouts/']);
+        $standaloneView->setTemplatePathAndFilename(
+            GeneralUtility::getFileAbsFileName('EXT:auth0/Resources/Private/Templates/' . $this->getTemplateName() . '.html')
+        );
+        $standaloneView->assign('error', 'no_typoscript');
+        $pageRenderer->addCssFile('EXT:auth0/Resources/Public/Styles/backend.css');
     }
 
     /**
@@ -212,5 +212,12 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
             header('Location: ' . $this->auth0->logout($this->getCallback($redirectUri)));
         }
         exit();
+    }
+
+    private function getTemplateName(): string
+    {
+        $templateName = version_compare(GeneralUtility::makeInstance(Typo3Version::class)->getVersion(), '12.0', '>=') ? 'BackendV12' : 'BackendV11';
+
+        return 'LoginProvider/' . $templateName;
     }
 }
