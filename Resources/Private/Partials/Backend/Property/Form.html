@@ -9,7 +9,7 @@
             <f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.table.typo3"/>
         </label>
 
-        <select id="rolesKey" class="form-control form-select" name="tx_auth0_tools_auth0auth0[property][databaseField]">
+        <select id="rolesKey" class="form-control form-select" name="property[databaseField]">
             <f:for each="{properties}" key="databaseField" as="item">
                 <f:if condition="{databaseField} === {property.databaseField}">
                     <f:then>
