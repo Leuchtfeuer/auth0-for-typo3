@@ -11,7 +11,7 @@ return [
         'position' => ['after' => 'web_info'],
         'access' => 'admin',
         'workspaces' => 'live',
-        'iconIdentifier' => 'auth0',
+        'iconIdentifier' => 'moduleAuth0',
         'path' => '/module/system/auth0',
         'labels' => 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf',
         'extensionName' => 'auth0',

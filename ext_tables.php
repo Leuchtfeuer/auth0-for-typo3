@@ -23,6 +23,13 @@ $iconRegistry->registerIcon(
         'source' => 'EXT:auth0/Resources/Public/Icons/auth0.svg',
     ]
 );
+$iconRegistry->registerIcon(
+    'moduleAuth0',
+    \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
+    [
+        'source' => 'EXT:auth0/Resources/Public/Icons/Module.svg',
+    ]
+);
 
 // Load extension configuration
 $configuration = new \Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration();
