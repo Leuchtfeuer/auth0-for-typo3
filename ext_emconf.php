@@ -13,8 +13,8 @@ $EM_CONF['auth0'] = [
         'suggests' => [],
     ],
     'state' => 'stable',
-    'author' => 'Max Rösch',
-    'author_email' => 'm.roesch@Leuchtfeuer.com',
+    'author' => 'Dev Leuchtfeuer',
+    'author_email' => 'dev@Leuchtfeuer.com',
     'author_company' => 'Leuchtfeuer Digital Marketing',
     'autoload' => [
         'psr-4' => [
