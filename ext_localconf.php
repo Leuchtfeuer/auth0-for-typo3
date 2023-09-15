@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
-use TYPO3\CMS\Core\Authentication\AuthenticationService;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 defined('TYPO3') || die('');
@@ -53,7 +52,7 @@ if (!empty($subtypes)) {
     ExtensionManagementUtility::addService(
         'auth0',
         'auth',
-        AuthenticationService::class,
+        Leuchtfeuer\Auth0\Service\AuthenticationService::class,
         [
             'title' => 'Auth0 authentication',
             'description' => 'Authentication with Auth0.',
