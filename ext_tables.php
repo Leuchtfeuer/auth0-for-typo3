@@ -30,6 +30,13 @@ $iconRegistry->registerIcon(
         'source' => 'EXT:auth0/Resources/Public/Icons/Module.svg',
     ]
 );
+$iconRegistry->registerIcon(
+    'auth0LoginProvider',
+    \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
+    [
+        'source' => 'EXT:auth0/Resources/Public/Icons/sign-in.svg',
+    ]
+);
 
 // Load extension configuration
 $configuration = new \Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration();
@@ -73,6 +80,6 @@ if ($configuration->isEnableBackendLogin()) {
 $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['backend']['loginProviders'][Auth0Provider::LOGIN_PROVIDER] = [
     'provider' => Auth0Provider::class,
     'sorting' => 25,
-    'iconIdentifier' => 'fa-sign-in',
+    'iconIdentifier' => 'auth0LoginProvider',
     'label' => 'LLL:EXT:auth0/Resources/Private/Language/locallang.xlf:backendLogin.switch.label'
 ];
