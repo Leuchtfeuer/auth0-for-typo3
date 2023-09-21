@@ -155,27 +155,33 @@ class TokenUtility implements LoggerAwareInterface
         return $this->token;
     }
 
-    public function setIssuer(?string $mode = null): void
+    public function setIssuer(): void
     {
-        if (!ModeUtility::isBackend($mode)) {
+        if (!ModeUtility::isBackend()) {
             try {
+                if (!$GLOBALS['TSFE']) {
+                    $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
+                    return;
+                }
+
                 $pageId = (int)$GLOBALS['TSFE']->id;
                 $base = GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId($pageId)->getBase();
 
                 if ($base->getScheme() !== null) {
                     $this->issuer = sprintf('%s://%s', $base->getScheme(), $base->getHost());
-                } else {
-                    // Base of site configuration might be "/" so we have to retrieve the domain from the ENV
-                    $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
+                    return;
                 }
-            } catch (SiteNotFoundException $exception) {
+
+                // Base of site configuration might be "/" so we have to retrieve the domain from the ENV
+                $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
+            } catch (\Exception $exception) {
                 $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
             }
-            $this->withPayload('environment', self::ENVIRONMENT_FRONTEND);
+
+            return;
         }
 
         $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
-        $this->withPayload('environment', self::ENVIRONMENT_BACKEND);
     }
 
     protected function getSigner(): Signer
