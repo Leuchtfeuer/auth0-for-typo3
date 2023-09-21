@@ -123,7 +123,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     protected function getCallback(?string $redirectUri = ''): string
     {
         $tokenUtility = new TokenUtility();
-        $tokenUtility->setIssuer(ModeUtility::BACKEND_MODE);
+        $tokenUtility->withPayload('environment', ModeUtility::BACKEND_MODE);
         $tokenUtility->withPayload('application', $this->configuration->getBackendConnection());
 
         if ($redirectUri !== '') {

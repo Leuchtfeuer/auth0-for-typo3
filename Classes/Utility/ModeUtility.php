@@ -21,7 +21,7 @@ class ModeUtility
     public const BACKEND_MODE = 'BE';
     public const FRONTEND_MODE = 'FE';
 
-    public static function isBackend(?string $mode): bool
+    public static function isBackend(?string $mode=null): bool
     {
         if (!$mode) {
             $mode = self::getModeFromRequest();
