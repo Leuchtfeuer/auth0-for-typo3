@@ -1,7 +1,5 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
-	  data-namespace-typo3-fluid="true">
-
-<f:layout name="Login"/>
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" data-namespace-typo3-fluid="true">
+<f:layout name="LoginV12"/>
 
 <f:section name="loginFormFields">
 	<f:if condition="!{error}">
@@ -27,7 +25,7 @@
 						<strong>{userInfo.nickname}</strong> 👋
 					</p>
 					<div class="form-group" id="t3-login-submit-section">
-						<button class="btn btn-block btn-login t3js-login-submit" id="t3-login-submit" type="submit" name="commandLI" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> {f:translate(key: 'login.process')}">
+						<button class="btn btn-block btn-login t3js-login-submit" id="t3-login-submit" type="submit" name="commandLI" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> {f:translate(key: 'LLL:EXT:backend/Resources/Private/Language/locallang.xlf:login.process')}">
 							<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.login.typo3" />
 						</button>
 						<a class="btn btn-auth0 btn-block btn-login" href="?loginProvider={loginProviderIdentifier}&auth0[action]=logout"><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.logout.auth0" /></a>
@@ -35,7 +33,7 @@
 				</f:then>
 				<f:else>
 					<p class="info text-center">
-						{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.not-logged-in') -> f:format.html()}
+						<f:sanitize.html>{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.not-logged-in')}</f:sanitize.html>
 					</p>
 					<div class="form-group">
 						<a class="btn btn-block btn-auth0 btn-login" href="/typo3/?loginProvider={loginProviderIdentifier}&auth0[action]=login">

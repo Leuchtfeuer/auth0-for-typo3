@@ -1,0 +1,47 @@
+.. include:: ../../Includes.txt
+
+==========================
+Version 5.0.0 - 2023/09/11
+==========================
+
+This release is a major release, which will likely be breaking. Please be careful when upgrading to this version the namespace is changed from Bitmotion into Leuchtfeuer.
+It introduces TYPO3 12.4 Support as well as support for PHP 7.4+.
+We first concentrated on the functionality of the backend login with the help of Auth0 and refactored and restructured
+most of it.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v5.0.0>`__.
+
+Added
+=====
+
+* Support for TYPO3 v12.4
+
+Deprecated
+==========
+
+Removed
+=======
+
+* Support for TYPO3 v10
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2023-09-08 [TASK]Remove unused files (Commit 1a1e811 by Yassine Abid)
+    2023-09-08 [BUGFIX]Fix field naming in property form (Commit 241f0db by Yassine Abid)
+    2023-09-08 [TASK]Adjust backend module icon (Commit 9f8f06f by Yassine Abid)
+    2023-09-08 [BUGFIX]Fix field naming in property form (Commit 50f9cdf by Yassine Abid)
+    2023-09-08 [TASK]Adjust backend module icon (Commit 74d52be by Yassine Abid)
+    2023-09-08 [TASK]Adjust backend module for TYPO3V12 (Commit 2dc7137 by Yassine Abid)
+    2023-09-07 [TASK]Backend login for 12 and remove support for 10 (Commit e8c641d by Yassine Abid)
+    2023-09-07 [TASK]Remove Bitmotion as namespace (Commit 182928c by Yassine Abid)
+    2023-09-06 [TASK]Process ext with rector for typo3 v11 and php74 (Commit fdb1685 by Yassine Abid)
+    2023-09-06 [TASK]Make required libraries compatible for TYPO3 12; Require rector for dev environement (Commit 266ac14 by Yassine Abid)
+
+s

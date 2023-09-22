@@ -9,54 +9,62 @@
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Controller;
+namespace Leuchtfeuer\Auth0\Controller;
 
-use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
+use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
-use TYPO3\CMS\Backend\View\BackendTemplateView;
+use TYPO3\CMS\Backend\Template\ModuleTemplate;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Imaging\Icon;
+use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 
 class BackendController extends ActionController
 {
-    /**
-     * @var BackendTemplateView
-     */
-    protected $view;
-
-    protected $defaultViewObjectName = BackendTemplateView::class;
-
     protected ApplicationRepository $applicationRepository;
+    protected ModuleTemplateFactory $moduleTemplateFactory;
+    protected IconFactory $iconFactory;
+    protected BackendUriBuilder $backendUriBuilder;
 
-    public function __construct(ApplicationRepository $applicationRepository)
-    {
+    public function __construct(
+        ApplicationRepository $applicationRepository,
+        ModuleTemplateFactory $moduleTemplateFactory,
+        IconFactory $iconFactory,
+        UriBuilder $uriBuilder,
+        BackendUriBuilder $backendUriBuilder
+    ) {
         $this->applicationRepository = $applicationRepository;
+        $this->moduleTemplateFactory = $moduleTemplateFactory;
+        $this->iconFactory = $iconFactory;
+        $this->uriBuilder = $uriBuilder;
+        $this->backendUriBuilder = $backendUriBuilder;
     }
 
-    public function listAction(): void
+    public function listAction(): ResponseInterface
     {
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
         // Just an empty view
+        $moduleTemplate->setContent($this->view->render());
+        return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
-    public function initializeView(ViewInterface $view): void
+    public function initView(): ModuleTemplate
     {
-        parent::initializeView($view);
+        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+        $this->createMenu($moduleTemplate);
+        $this->createButtonBar($moduleTemplate);
 
-        if ($this->request->getControllerName() !== 'Backend' && $view instanceof BackendTemplateView) {
-            $view->getModuleTemplate()->getPageRenderer()->loadRequireJsModule('TYPO3/CMS/Backend/Modal');
-            $this->createMenu();
-            $this->createButtonBar();
-        }
+        return $moduleTemplate;
     }
 
-    protected function createMenu(): void
+    protected function createMenu(ModuleTemplate $moduleTemplate): void
     {
-        $menu = $this->view->getModuleTemplate()->getDocHeaderComponent()->getMenuRegistry()->makeMenu();
+        $menu = $moduleTemplate->getDocHeaderComponent()->getMenuRegistry()->makeMenu();
         $menu->setIdentifier('auth0');
 
         $actions = [
@@ -92,28 +100,28 @@ class BackendController extends ActionController
             );
         }
 
-        $this->view->getModuleTemplate()->getDocHeaderComponent()->getMenuRegistry()->addMenu($menu);
+        $moduleTemplate->getDocHeaderComponent()->getMenuRegistry()->addMenu($menu);
     }
 
-    protected function createButtonBar(): void
+    protected function createButtonBar(ModuleTemplate $moduleTemplate): void
     {
-        $buttonBar = $this->view->getModuleTemplate()->getDocHeaderComponent()->getButtonBar();
+        $buttonBar = $moduleTemplate->getDocHeaderComponent()->getButtonBar();
 
         $listButton = $buttonBar->makeLinkButton()
             ->setTitle($this->getTranslation('menu.button.overview'))
             ->setHref($this->getUriBuilder()->reset()->uriFor('list', [], 'Backend'))
-            ->setIcon($this->view->getModuleTemplate()->getIconFactory()->getIcon('actions-viewmode-tiles', Icon::SIZE_SMALL));
-        $buttonBar->addButton($listButton, ButtonBar::BUTTON_POSITION_LEFT);
+            ->setIcon($this->iconFactory->getIcon('actions-viewmode-tiles', Icon::SIZE_SMALL));
+        $buttonBar->addButton($listButton);
     }
 
-    protected function addButton(string $label, string $actionName, string $controllerName, string $icon): void
+    protected function addButton(string $label, string $actionName, string $controllerName, string $icon, ModuleTemplate $moduleTemplate): void
     {
-        $buttonBar = $this->view->getModuleTemplate()->getDocHeaderComponent()->getButtonBar();
+        $buttonBar = $moduleTemplate->getDocHeaderComponent()->getButtonBar();
 
         $linkButton = $buttonBar->makeLinkButton()
             ->setTitle($this->getTranslation($label))
             ->setHref($this->getUriBuilder()->reset()->uriFor($actionName, [], $controllerName))
-            ->setIcon($this->view->getModuleTemplate()->getIconFactory()->getIcon($icon, Icon::SIZE_SMALL));
+            ->setIcon($this->iconFactory->getIcon($icon, Icon::SIZE_SMALL));
 
         $buttonBar->addButton($linkButton, ButtonBar::BUTTON_POSITION_RIGHT);
     }
@@ -123,8 +131,6 @@ class BackendController extends ActionController
      */
     protected function getModuleUrl(bool $encoded = true, string $referenceType = BackendUriBuilder::ABSOLUTE_PATH): string
     {
-        $backendUriBuilder = $this->objectManager->get(BackendUriBuilder::class);
-
         $parameters = [
             'tx_auth0_tools_auth0auth0' => [
                 'action' => $this->request->getControllerActionName(),
@@ -132,17 +138,16 @@ class BackendController extends ActionController
             ],
         ];
 
-        $uri = $backendUriBuilder->buildUriFromRoute('tools_Auth0Auth0', $parameters, $referenceType);
+        $uri = $this->backendUriBuilder->buildUriFromRoute('tools_Auth0Auth0', $parameters, $referenceType);
 
         return $encoded ? rawurlencode($uri) : $uri;
     }
 
     protected function getUriBuilder(): UriBuilder
     {
-        $uriBuilder = $this->objectManager->get(UriBuilder::class);
-        $uriBuilder->setRequest($this->request);
+        $this->uriBuilder->setRequest($this->request);
 
-        return $uriBuilder;
+        return $this->uriBuilder;
     }
 
     protected function getTranslation($key): string

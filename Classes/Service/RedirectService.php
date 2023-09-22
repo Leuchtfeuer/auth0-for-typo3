@@ -11,9 +11,9 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Service;
+namespace Leuchtfeuer\Auth0\Service;
 
-use Bitmotion\Auth0\Event\RedirectPreProcessingEvent;
+use Leuchtfeuer\Auth0\Event\RedirectPreProcessingEvent;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -24,7 +24,6 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Felogin\Controller\FrontendLoginController;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
@@ -267,10 +266,7 @@ class RedirectService implements LoggerAwareInterface
         $parsedUrl = @parse_url($url);
         if ($parsedUrl !== false && !isset($parsedUrl['scheme']) && !isset($parsedUrl['host'])) {
             // If the relative URL starts with a slash, we need to check if it's within the current site path
-            return $parsedUrl['path'][0] !== '/' || GeneralUtility::isFirstPartOfStr(
-                $parsedUrl['path'],
-                GeneralUtility::getIndpEnv('TYPO3_SITE_PATH')
-            );
+            return $parsedUrl['path'][0] !== '/' || \str_starts_with($parsedUrl['path'], GeneralUtility::getIndpEnv('TYPO3_SITE_PATH'));
         }
 
         return false;
@@ -288,8 +284,8 @@ class RedirectService implements LoggerAwareInterface
         $urlWithoutSchema = preg_replace('#^https?://#', '', $url);
         $siteUrlWithoutSchema = preg_replace('#^https?://#', '', GeneralUtility::getIndpEnv('TYPO3_SITE_URL'));
 
-        return StringUtility::beginsWith($urlWithoutSchema . '/', GeneralUtility::getIndpEnv('HTTP_HOST') . '/')
-            && StringUtility::beginsWith($urlWithoutSchema, $siteUrlWithoutSchema);
+        return \str_starts_with($urlWithoutSchema . '/', GeneralUtility::getIndpEnv('HTTP_HOST') . '/')
+            && \str_starts_with($urlWithoutSchema, $siteUrlWithoutSchema);
     }
 
     /**
@@ -319,7 +315,7 @@ class RedirectService implements LoggerAwareInterface
                     foreach ($localDomains as $localDomain) {
                         // strip trailing slashes (if given)
                         $domainName = rtrim($localDomain['domainName'], '/');
-                        if (GeneralUtility::isFirstPartOfStr($host . $path . '/', $domainName . '/')) {
+                        if (\str_starts_with($host . $path . '/', $domainName . '/')) {
                             return true;
                         }
                     }
