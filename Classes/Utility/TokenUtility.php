@@ -162,6 +162,11 @@ class TokenUtility implements LoggerAwareInterface
 
         if ($environmentService->isEnvironmentInFrontendMode()) {
             try {
+                if (!$GLOBALS['TSFE']) {
+                    $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
+                    $this->withPayload('environment', self::ENVIRONMENT_FRONTEND);
+                    return;
+                }
                 $pageId = (int)$GLOBALS['TSFE']->id;
                 $base = GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId($pageId)->getBase();
 
@@ -171,7 +176,7 @@ class TokenUtility implements LoggerAwareInterface
                     // Base of site configuration might be "/" so we have to retrieve the domain from the ENV
                     $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
                 }
-            } catch (SiteNotFoundException $exception) {
+            } catch (\Exception $exception) {
                 $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
             }
             $this->withPayload('environment', self::ENVIRONMENT_FRONTEND);
