@@ -44,7 +44,7 @@ Default Configuration
            auth0Property: email_verified
            databaseField: disable
            readOnly: true
-           processing: bool-negate
+           processing: negate-bool
    roles:
      default:
        frontend: 0

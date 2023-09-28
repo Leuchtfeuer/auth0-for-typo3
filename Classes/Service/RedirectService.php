@@ -11,9 +11,9 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Service;
+namespace Leuchtfeuer\Auth0\Service;
 
-use Bitmotion\Auth0\Event\RedirectPreProcessingEvent;
+use Leuchtfeuer\Auth0\Event\RedirectPreProcessingEvent;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -24,7 +24,6 @@ use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Core\Utility\StringUtility;
 use TYPO3\CMS\Felogin\Controller\FrontendLoginController;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
@@ -38,7 +37,7 @@ class RedirectService implements LoggerAwareInterface
     /**
      * @var array
      */
-    protected $settings = [];
+    protected array $settings = [];
 
     public function __construct(array $redirectSettings)
     {
@@ -110,7 +109,7 @@ class RedirectService implements LoggerAwareInterface
                                         )
                                     )
                                     ->execute()
-                                    ->fetch();
+                                    ->fetchAssociative();
                                 if ($row) {
                                     $redirect_url[] = $this->pi_getPageLink($row['felogin_redirectPid']);
                                 }
@@ -138,7 +137,7 @@ class RedirectService implements LoggerAwareInterface
                                     )
                                 )
                                 ->execute()
-                                ->fetch();
+                                ->fetchAssociative();
 
                             if ($row) {
                                 $redirect_url[] = $this->pi_getPageLink($row['felogin_redirectPid']);
@@ -190,7 +189,7 @@ class RedirectService implements LoggerAwareInterface
      * @param array $redirectUris
      * @return string
      */
-    public function getUri($redirectUris)
+    public function getUri(array $redirectUris): string
     {
         return ((bool)$this->settings['redirectFirstMethod']) ? array_shift($redirectUris) : array_pop($redirectUris);
     }
@@ -224,7 +223,7 @@ class RedirectService implements LoggerAwareInterface
      * @param array $urlParameters
      * @return string
      */
-    protected function pi_getPageLink($id, $target = '', $urlParameters = [])
+    protected function pi_getPageLink($id, string $target = '', array $urlParameters = [])
     {
         if ($GLOBALS['TSFE']->cObj instanceof ContentObjectRenderer) {
             return $GLOBALS['TSFE']->cObj->getTypoLink_URL($id, $urlParameters, $target);
@@ -239,7 +238,7 @@ class RedirectService implements LoggerAwareInterface
      * @param string $url
      * @return string cleaned referrer or empty string if not valid
      */
-    protected function validateRedirectUrl($url)
+    protected function validateRedirectUrl($url): string
     {
         $url = (string)$url;
         if ($url === '') {
@@ -267,10 +266,7 @@ class RedirectService implements LoggerAwareInterface
         $parsedUrl = @parse_url($url);
         if ($parsedUrl !== false && !isset($parsedUrl['scheme']) && !isset($parsedUrl['host'])) {
             // If the relative URL starts with a slash, we need to check if it's within the current site path
-            return $parsedUrl['path'][0] !== '/' || GeneralUtility::isFirstPartOfStr(
-                $parsedUrl['path'],
-                GeneralUtility::getIndpEnv('TYPO3_SITE_PATH')
-            );
+            return $parsedUrl['path'][0] !== '/' || \str_starts_with($parsedUrl['path'], GeneralUtility::getIndpEnv('TYPO3_SITE_PATH'));
         }
 
         return false;
@@ -288,8 +284,8 @@ class RedirectService implements LoggerAwareInterface
         $urlWithoutSchema = preg_replace('#^https?://#', '', $url);
         $siteUrlWithoutSchema = preg_replace('#^https?://#', '', GeneralUtility::getIndpEnv('TYPO3_SITE_URL'));
 
-        return StringUtility::beginsWith($urlWithoutSchema . '/', GeneralUtility::getIndpEnv('HTTP_HOST') . '/')
-            && StringUtility::beginsWith($urlWithoutSchema, $siteUrlWithoutSchema);
+        return \str_starts_with($urlWithoutSchema . '/', GeneralUtility::getIndpEnv('HTTP_HOST') . '/')
+            && \str_starts_with($urlWithoutSchema, $siteUrlWithoutSchema);
     }
 
     /**
@@ -299,9 +295,8 @@ class RedirectService implements LoggerAwareInterface
      * @param string $url Absolute URL which needs to be checked
      * @return bool Whether the URL is considered to be local
      */
-    protected function isInLocalDomain($url)
+    protected function isInLocalDomain(string $url): bool
     {
-        $result = false;
         if (GeneralUtility::isValidUrl($url)) {
             $parsedUrl = parse_url($url);
             if ($parsedUrl['scheme'] === 'http' || $parsedUrl['scheme'] === 'https') {
@@ -314,22 +309,21 @@ class RedirectService implements LoggerAwareInterface
                 $localDomains = $queryBuilder->select('domainName')
                     ->from('sys_domain')
                     ->execute()
-                    ->fetchAll();
+                    ->fetchAllAssociative();
 
                 if (is_array($localDomains)) {
                     foreach ($localDomains as $localDomain) {
                         // strip trailing slashes (if given)
                         $domainName = rtrim($localDomain['domainName'], '/');
-                        if (GeneralUtility::isFirstPartOfStr($host . $path . '/', $domainName . '/')) {
-                            $result = true;
-                            break;
+                        if (\str_starts_with($host . $path . '/', $domainName . '/')) {
+                            return true;
                         }
                     }
                 }
             }
         }
 
-        return $result;
+        return false;
     }
 
     protected function getEventDispatcher(): EventDispatcherInterface

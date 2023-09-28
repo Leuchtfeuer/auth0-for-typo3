@@ -11,27 +11,34 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Domain\Repository;
+namespace Leuchtfeuer\Auth0\Domain\Repository;
 
-use Bitmotion\Auth0\Domain\Model\Application;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
+use Leuchtfeuer\Auth0\Domain\Model\Application;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 
-class ApplicationRepository implements LoggerAwareInterface
+class ApplicationRepository
 {
-    use LoggerAwareTrait;
-
     const TABLE_NAME = 'tx_auth0_domain_model_application';
 
-    /**
-     * @return Application
-     */
-    public function findByUid(int $uid)
+    public function findByUid(int $uid): ?Application
     {
-        return GeneralUtility::makeInstance(PersistenceManager::class)->getObjectByIdentifier($uid, Application::class);
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable(self::TABLE_NAME);
+        $applicationArray = $queryBuilder
+            ->select('*')
+            ->from(self::TABLE_NAME)
+            ->where(
+                $queryBuilder->expr()->eq('uid', $uid)
+            )
+            ->setMaxResults(1)
+            ->executeQuery()->fetchAllAssociative() ?? [];
+
+        if (empty($applicationArray)) {
+            return null;
+        }
+
+        return Application::fromArray($applicationArray[0]);
     }
 
     public function findAll(): array
@@ -41,7 +48,7 @@ class ApplicationRepository implements LoggerAwareInterface
             ->select('*')
             ->from(self::TABLE_NAME)
             ->execute()
-            ->fetchAll();
+            ->fetchAllAssociative();
     }
 
     public function remove(Application $application): void

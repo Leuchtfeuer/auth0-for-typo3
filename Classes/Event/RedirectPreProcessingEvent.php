@@ -11,9 +11,9 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Event;
+namespace Leuchtfeuer\Auth0\Event;
 
-use Bitmotion\Auth0\Service\RedirectService;
+use Leuchtfeuer\Auth0\Service\RedirectService;
 
 final class RedirectPreProcessingEvent
 {

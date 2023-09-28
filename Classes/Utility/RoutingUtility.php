@@ -11,27 +11,26 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Utility;
+namespace Leuchtfeuer\Auth0\Utility;
 
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 
 class RoutingUtility implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    protected $targetPage = 0;
+    protected int $targetPage = 0;
 
-    protected $targetPageType = 0;
+    protected int $targetPageType = 0;
 
-    protected $arguments = [];
+    protected array $arguments = [];
 
-    protected $createAbsoluteUri = true;
+    protected bool $createAbsoluteUri = true;
 
-    protected $buildFrontendUri = true;
+    protected bool $buildFrontendUri = true;
 
     public function __construct()
     {
@@ -40,7 +39,7 @@ class RoutingUtility implements LoggerAwareInterface
 
     public function getUri(): string
     {
-        $uriBuilder = GeneralUtility::makeInstance(ObjectManager::class)->get(UriBuilder::class);
+        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         $uriBuilder
             ->reset()
             ->setTargetPageUid($this->targetPage)
@@ -82,7 +81,7 @@ class RoutingUtility implements LoggerAwareInterface
 
     public function addArgument(string $key, $value): self
     {
-        $this->arguments = array_merge_recursive($this->arguments, [ $key => $value ]);
+        $this->arguments = array_merge_recursive($this->arguments, [$key => $value]);
 
         return $this;
     }

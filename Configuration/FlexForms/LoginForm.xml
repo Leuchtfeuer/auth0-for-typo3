@@ -16,11 +16,11 @@
 							<label>LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_application</label>
 							<config>
 								<type>select</type>
+								<renderType>selectSingle</renderType>
 								<foreign_table>tx_auth0_domain_model_application</foreign_table>
 								<maxitems>1</maxitems>
 								<minitems>1</minitems>
 								<show_thumbs>1</show_thumbs>
-								<renderType>selectSingle</renderType>
 							</config>
 						</TCEforms>
 					</settings.application>

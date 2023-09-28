@@ -1,147 +1,132 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="2017-09-12T18:29:16Z"
-		  product-name="auth0">
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file source-language="en" datatype="plaintext" original="EXT:auth0/Resources/Private/Language/Database.xlf" date="2022-02-16T10:01:24Z" product-name="auth0">
 		<header/>
 		<body>
-			<trans-unit id="tx_auth0_domain_model_frontenduser.auth0_user_id">
+			<trans-unit id="tx_auth0_domain_model_frontenduser.auth0_user_id" resname="tx_auth0_domain_model_frontenduser.auth0_user_id">
 				<source>Auth0 User ID</source>
 			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_frontenduser.auth0_metadata">
+			<trans-unit id="tx_auth0_domain_model_frontenduser.auth0_metadata" resname="tx_auth0_domain_model_frontenduser.auth0_metadata">
 				<source>Auth0 Metadata</source>
 			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_frontenduser.auth0_last_application">
+			<trans-unit id="tx_auth0_domain_model_frontenduser.auth0_last_application" resname="tx_auth0_domain_model_frontenduser.auth0_last_application">
 				<source>Last used Auth0 application</source>
 			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_frontenduser">
+			<trans-unit id="tx_auth0_domain_model_frontenduser" resname="tx_auth0_domain_model_frontenduser">
 				<source>Auth0 Website User</source>
 			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_backenduser">
+			<trans-unit id="tx_auth0_domain_model_backenduser" resname="tx_auth0_domain_model_backenduser">
 				<source>Auth0</source>
 			</trans-unit>
-
-
-			<trans-unit id="tx_auth0_domain_model_frontendusergroup.auth0_user_group">
+			<trans-unit id="tx_auth0_domain_model_frontendusergroup.auth0_user_group" resname="tx_auth0_domain_model_frontendusergroup.auth0_user_group">
 				<source>Auth0 User Group</source>
 			</trans-unit>
-
-
-			<trans-unit id="tx_auth0_domain_model_application">
+			<trans-unit id="tx_auth0_domain_model_application" resname="tx_auth0_domain_model_application">
 				<source>Application</source>
 			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_application.title">
+			<trans-unit id="tx_auth0_domain_model_application.title" resname="tx_auth0_domain_model_application.title">
 				<source>Name</source>
 			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_application.id">
+			<trans-unit id="tx_auth0_domain_model_application.id" resname="tx_auth0_domain_model_application.id">
 				<source>Client ID</source>
 			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_application.secret">
+			<trans-unit id="tx_auth0_domain_model_application.secret" resname="tx_auth0_domain_model_application.secret">
 				<source>Client Secret</source>
 			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_application.domain">
+			<trans-unit id="tx_auth0_domain_model_application.domain" resname="tx_auth0_domain_model_application.domain">
 				<source>Domain / Auth0 Tenant</source>
 			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_application.audience">
+			<trans-unit id="tx_auth0_domain_model_application.audience" resname="tx_auth0_domain_model_application.audience">
 				<source>Audience</source>
 			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_application.single_log_out">
+			<trans-unit id="tx_auth0_domain_model_application.single_log_out" resname="tx_auth0_domain_model_application.single_log_out">
 				<source>Single Log Out</source>
 			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_application.api">
+			<trans-unit id="tx_auth0_domain_model_application.api" resname="tx_auth0_domain_model_application.api">
 				<source>Use API</source>
 			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_application.secret_base64_encoded">
-				<source>Client Secret Base64 Encoded</source>
-			</trans-unit>
-			<trans-unit id="tx_auth0_domain_model_application.signature_algorithm">
+			<trans-unit id="tx_auth0_domain_model_application.signature_algorithm" resname="tx_auth0_domain_model_application.signature_algorithm">
 				<source>JWT Signature Algorithm</source>
 			</trans-unit>
-
-			<trans-unit id="tabs.basic">
+			<trans-unit id="tabs.basic" resname="tabs.basic">
 				<source>Basic</source>
 			</trans-unit>
-			<trans-unit id="tabs.features">
+			<trans-unit id="tabs.features" resname="tabs.features">
 				<source>Features</source>
 			</trans-unit>
-			<trans-unit id="palettes.api">
+			<trans-unit id="palettes.api" resname="palettes.api">
 				<source>Auth0 (Management) API</source>
 			</trans-unit>
-			<trans-unit id="palettes.client">
+			<trans-unit id="palettes.client" resname="palettes.client">
 				<source>Client Configuration</source>
 			</trans-unit>
-
-			<trans-unit id="fe_users.tx_extbase_type.Tx_Auth0_FrontendUser">
+			<trans-unit id="fe_users.tx_extbase_type.Tx_Auth0_FrontendUser" resname="fe_users.tx_extbase_type.Tx_Auth0_FrontendUser">
 				<source>Auth0 Website User</source>
 			</trans-unit>
-			<trans-unit id="fe_groups.tx_extbase_type.Tx_Auth0_FrontendUserGroup">
+			<trans-unit id="fe_groups.tx_extbase_type.Tx_Auth0_FrontendUserGroup" resname="fe_groups.tx_extbase_type.Tx_Auth0_FrontendUserGroup">
 				<source>Auth0 User Group</source>
 			</trans-unit>
-
-			<trans-unit id="tt_content.pi_flexform.sheet_general">
+			<trans-unit id="tt_content.pi_flexform.sheet_general" resname="tt_content.pi_flexform.sheet_general">
 				<source>General</source>
 			</trans-unit>
-			<trans-unit id="tt_content.pi_flexform.softLogout">
+			<trans-unit id="tt_content.pi_flexform.softLogout" resname="tt_content.pi_flexform.softLogout">
 				<source>Logout from TYPO3 only (not from Auth0)</source>
 			</trans-unit>
-			<trans-unit id="tt_content.pi_flexform.rawAdditionalAuthorizeParameters">
+			<trans-unit id="tt_content.pi_flexform.rawAdditionalAuthorizeParameters" resname="tt_content.pi_flexform.rawAdditionalAuthorizeParameters">
 				<source><![CDATA[Additional query parameters for authentication (e.g. "access_type=offline&connection=google-oauth2")]]></source>
 			</trans-unit>
-			<trans-unit id="tt_content.pi_flexform.referrerAnchor">
+			<trans-unit id="tt_content.pi_flexform.referrerAnchor" resname="tt_content.pi_flexform.referrerAnchor">
 				<source>Anchor for the referrer/callback url</source>
 			</trans-unit>
-			<trans-unit id="tt_content.pi_flexform.sheet_redirect">
+			<trans-unit id="tt_content.pi_flexform.sheet_redirect" resname="tt_content.pi_flexform.sheet_redirect">
 				<source>Redirects</source>
 			</trans-unit>
-			<trans-unit id="tt_content.pi_flexform.redirectMode">
+			<trans-unit id="tt_content.pi_flexform.redirectMode" resname="tt_content.pi_flexform.redirectMode">
 				<source>Redirect Mode</source>
 			</trans-unit>
-			<trans-unit id="tt_content.pi_flexform.redirectMode.I.0">
+			<trans-unit id="tt_content.pi_flexform.redirectMode.I.0" resname="tt_content.pi_flexform.redirectMode.I.0">
 				<source>Defined by Usergroup Record</source>
 			</trans-unit>
-			<trans-unit id="tt_content.pi_flexform.redirectMode.I.1">
+			<trans-unit id="tt_content.pi_flexform.redirectMode.I.1" resname="tt_content.pi_flexform.redirectMode.I.1">
 				<source>Defined by User Record</source>
 			</trans-unit>
-			<trans-unit id="tt_content.pi_flexform.redirectMode.I.2">
+			<trans-unit id="tt_content.pi_flexform.redirectMode.I.2" resname="tt_content.pi_flexform.redirectMode.I.2">
 				<source>After Login (TS or Flexform)</source>
 			</trans-unit>
-			<trans-unit id="tt_content.pi_flexform.redirectMode.I.3">
+			<trans-unit id="tt_content.pi_flexform.redirectMode.I.3" resname="tt_content.pi_flexform.redirectMode.I.3">
 				<source>After Logout (TS or Flexform)</source>
 			</trans-unit>
-			<trans-unit id="tt_content.pi_flexform.redirectMode.I.4">
+			<trans-unit id="tt_content.pi_flexform.redirectMode.I.4" resname="tt_content.pi_flexform.redirectMode.I.4">
 				<source>After Login Error (TS or Flexform)</source>
 			</trans-unit>
-			<trans-unit id="tt_content.pi_flexform.redirectMode.I.5">
+			<trans-unit id="tt_content.pi_flexform.redirectMode.I.5" resname="tt_content.pi_flexform.redirectMode.I.5">
 				<source>Defined by GET/POST Parameters</source>
 			</trans-unit>
-			<trans-unit id="tt_content.pi_flexform.redirectMode.I.6">
+			<trans-unit id="tt_content.pi_flexform.redirectMode.I.6" resname="tt_content.pi_flexform.redirectMode.I.6">
 				<source>Defined by Referrer</source>
 			</trans-unit>
-			<trans-unit id="tt_content.pi_flexform.redirectFirstMethod">
+			<trans-unit id="tt_content.pi_flexform.redirectFirstMethod" resname="tt_content.pi_flexform.redirectFirstMethod">
 				<source>Use First Supported Mode from Selection</source>
 			</trans-unit>
-			<trans-unit id="tt_content.pi_flexform.redirectPageLogin">
+			<trans-unit id="tt_content.pi_flexform.redirectPageLogin" resname="tt_content.pi_flexform.redirectPageLogin">
 				<source>After Successful Login Redirect to Page</source>
 			</trans-unit>
-			<trans-unit id="tt_content.pi_flexform.redirectPageLoginError">
+			<trans-unit id="tt_content.pi_flexform.redirectPageLoginError" resname="tt_content.pi_flexform.redirectPageLoginError">
 				<source>After Failed Login Redirect to Page</source>
 			</trans-unit>
-			<trans-unit id="tt_content.pi_flexform.redirectPageLogout">
+			<trans-unit id="tt_content.pi_flexform.redirectPageLogout" resname="tt_content.pi_flexform.redirectPageLogout">
 				<source>After Logout Redirect to Page</source>
 			</trans-unit>
-			<trans-unit id="tt_content.pi_flexform.redirectDisable">
+			<trans-unit id="tt_content.pi_flexform.redirectDisable" resname="tt_content.pi_flexform.redirectDisable">
 				<source>Disable Redirect</source>
 			</trans-unit>
-
-
-			<trans-unit id="backend.page.view.additionalAuthorizeParameters">
+			<trans-unit id="backend.page.view.additionalAuthorizeParameters" resname="backend.page.view.additionalAuthorizeParameters">
 				<source>Authorize Parameters</source>
 			</trans-unit>
-
-
-			<trans-unit id="tabs.auth0">
+			<trans-unit id="tabs.auth0" resname="tabs.auth0">
 				<source>Auth0</source>
 			</trans-unit>
-			<trans-unit id="fe_groups.auth0_user_group">
+			<trans-unit id="fe_groups.auth0_user_group" resname="fe_groups.auth0_user_group">
 				<source>Auth0 Role Identifier</source>
 			</trans-unit>
 		</body>

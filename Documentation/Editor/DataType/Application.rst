@@ -27,8 +27,6 @@ Properties
    Client Identifier              :ref:`id <editor-dataTypes-application-properties-id>`                                      string   Basic
    Client Secret                  :ref:`secret <editor-dataTypes-application-properties-secret>`                              string   Basic
    JWT Signature Algorithm        :ref:`signature_algorithm <editor-dataTypes-application-properties-signatureAlgorithm>`     string   Basic
-   Client Secret Base64 Encoded   :ref:`secret_base64_encoded <editor-dataTypes-application-properties-secretBase64Encoded>`  boolean  Basic
-   Use API                        :ref:`api <editor-dataTypes-application-properties-secretBase64Encoded-api>`                boolean  Features
    Audience                       :ref:`audience <editor-dataTypes-application-properties-audience>`                          string   Features
    Single Log Out                 :ref:`single_log_out <editor-dataTypes-application-properties-singleLogOut>`                boolean  Features
    Enabled                        hidden                                                                                      boolean  Access
@@ -112,21 +110,6 @@ Signature Algorithm
          :code:`RS256`
    Description
          The signature algorithm of the used JSON Web Token. Possible values are `RS256` and `HS256`
-
-.. _editor-dataTypes-application-properties-secretBase64Encoded:
-
-Secret Base64 Encoded
----------------------
-.. container:: table-row
-
-   Property
-         secret_base64_encoded
-   Data type
-         boolean
-   Default
-         :code:`false`
-   Description
-         Set this property to true when your client secret is base64 encoded.
 
 .. _editor-dataTypes-application-properties-api:
 

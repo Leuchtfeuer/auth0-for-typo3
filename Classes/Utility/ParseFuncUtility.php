@@ -11,9 +11,9 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Utility;
+namespace Leuchtfeuer\Auth0\Utility;
 
-use Bitmotion\Auth0\Configuration\Auth0Configuration;
+use Leuchtfeuer\Auth0\Configuration\Auth0Configuration;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -57,6 +57,7 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
                 $value = (int)(bool)$value;
                 break;
 
+            case 'bool-negate':
             case 'negate-bool':
                 $value = (bool)$value ? 0 : 1;
                 break;

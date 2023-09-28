@@ -11,13 +11,15 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Domain\Model;
+namespace Leuchtfeuer\Auth0\Domain\Model;
 
-use Bitmotion\Auth0\Domain\Model\Auth0\Management\Client\JwtConfiguration;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 class Application extends AbstractEntity
 {
+    public const ALG_HS256 = 'HS256';
+    public const ALG_RS256 = 'RS256';
+
     /**
      * @var string
      */
@@ -34,11 +36,6 @@ class Application extends AbstractEntity
     protected $secret = '';
 
     /**
-     * @var bool
-     */
-    protected $secretBase64Encoded = false;
-
-    /**
      * @var string
      */
     protected $domain = '';
@@ -48,20 +45,11 @@ class Application extends AbstractEntity
      */
     protected $audience = '';
 
-    /**
-     * @var bool
-     */
-    protected $singleLogOut = false;
+    protected bool $singleLogOut = false;
 
-    /**
-     * @var bool
-     */
-    protected $api = true;
+    protected bool $api = true;
 
-    /**
-     * @var string
-     */
-    protected $signatureAlgorithm = JwtConfiguration::ALG_RS256;
+    protected string $signatureAlgorithm = self::ALG_RS256;
 
     /**
      * @var bool
@@ -73,9 +61,11 @@ class Application extends AbstractEntity
         return $this->title;
     }
 
-    public function setTitle(string $title): void
+    public function setTitle(string $title): self
     {
         $this->title = $title;
+
+        return $this;
     }
 
     public function getClientId(): string
@@ -83,9 +73,11 @@ class Application extends AbstractEntity
         return $this->id;
     }
 
-    public function setId(string $id): void
+    public function setId(string $id): self
     {
         $this->id = $id;
+
+        return $this;
     }
 
     public function getClientSecret(): string
@@ -93,9 +85,11 @@ class Application extends AbstractEntity
         return $this->secret;
     }
 
-    public function setSecret(string $secret): void
+    public function setSecret(string $secret): self
     {
         $this->secret = $secret;
+
+        return $this;
     }
 
     public function getDomain(): string
@@ -103,14 +97,21 @@ class Application extends AbstractEntity
         return $this->domain;
     }
 
-    public function setDomain(string $domain): void
+    public function setDomain(string $domain): self
     {
         $this->domain = $domain;
+
+        return $this;
     }
 
-    public function getFullDomain()
+    public function getFullDomain(): string
     {
         return sprintf('https://%s', rtrim($this->domain, '/'));
+    }
+
+    public function getManagementTokenDomain(): string
+    {
+        return sprintf('https://%s/oauth/token', rtrim($this->domain, '/'));
     }
 
     public function getAudience(bool $asFullDomain = false): string
@@ -122,12 +123,14 @@ class Application extends AbstractEntity
         return $this->audience;
     }
 
-    public function setAudience(string $audience): void
+    public function setAudience(string $audience): self
     {
         $this->audience = trim($audience, '/') . '/';
+
+        return $this;
     }
 
-    public function getApiBasePath()
+    public function getApiBasePath(): string
     {
         return sprintf('/%s/', trim(parse_url($this->getAudience(true), PHP_URL_PATH), '/'));
     }
@@ -137,19 +140,11 @@ class Application extends AbstractEntity
         return $this->singleLogOut;
     }
 
-    public function setSingleLogOut(bool $singleLogOut): void
+    public function setSingleLogOut(bool $singleLogOut): self
     {
         $this->singleLogOut = $singleLogOut;
-    }
 
-    public function isSecretBase64Encoded(): bool
-    {
-        return $this->secretBase64Encoded;
-    }
-
-    public function setSecretBase64Encoded(bool $secretBase64Encoded): void
-    {
-        $this->secretBase64Encoded = $secretBase64Encoded;
+        return $this;
     }
 
     public function getSignatureAlgorithm(): string
@@ -157,9 +152,11 @@ class Application extends AbstractEntity
         return $this->signatureAlgorithm;
     }
 
-    public function setSignatureAlgorithm(string $signatureAlgorithm): void
+    public function setSignatureAlgorithm(string $signatureAlgorithm): self
     {
         $this->signatureAlgorithm = $signatureAlgorithm;
+
+        return $this;
     }
 
     public function isCustomDomain(): bool
@@ -172,8 +169,23 @@ class Application extends AbstractEntity
         return $this->api;
     }
 
-    public function setApi(bool $api): void
+    public function setApi(bool $api): self
     {
         $this->api = $api;
+
+        return $this;
+    }
+
+    public static function fromArray(array $data): self
+    {
+        return (new self())
+            ->setTitle($data['title'])
+            ->setId($data['id'])
+            ->setSecret($data['secret'])
+            ->setDomain($data['domain'])
+            ->setAudience($data['audience'])
+            ->setSingleLogOut((bool)$data['single_log_out'])
+            ->setSignatureAlgorithm($data['signature_algorithm'] ?? '')
+            ->setApi((bool)$data['api']);
     }
 }

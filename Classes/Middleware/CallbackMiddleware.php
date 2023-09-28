@@ -11,22 +11,25 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Middleware;
+namespace Leuchtfeuer\Auth0\Middleware;
 
-use Bitmotion\Auth0\Api\Management\UserApi;
-use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
-use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Bitmotion\Auth0\ErrorCode;
-use Bitmotion\Auth0\Exception\TokenException;
-use Bitmotion\Auth0\Exception\UnknownErrorCodeException;
-use Bitmotion\Auth0\Factory\SessionFactory;
-use Bitmotion\Auth0\LoginProvider\Auth0Provider;
-use Bitmotion\Auth0\Scope;
-use Bitmotion\Auth0\Service\RedirectService;
-use Bitmotion\Auth0\Utility\ApiUtility;
-use Bitmotion\Auth0\Utility\Database\UpdateUtility;
-use Bitmotion\Auth0\Utility\TokenUtility;
-use Lcobucci\JWT\Token;
+use Auth0\SDK\Exception\ArgumentException;
+use Auth0\SDK\Exception\ConfigurationException;
+use Auth0\SDK\Exception\NetworkException;
+use Auth0\SDK\Utility\HttpResponse;
+use GuzzleHttp\Exception\GuzzleException;
+use Lcobucci\JWT\Token\DataSet;
+use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
+use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Leuchtfeuer\Auth0\ErrorCode;
+use Leuchtfeuer\Auth0\Exception\TokenException;
+use Leuchtfeuer\Auth0\Exception\UnknownErrorCodeException;
+use Leuchtfeuer\Auth0\Factory\ApplicationFactory;
+use Leuchtfeuer\Auth0\LoginProvider\Auth0Provider;
+use Leuchtfeuer\Auth0\Service\RedirectService;
+use Leuchtfeuer\Auth0\Utility\Database\UpdateUtility;
+use Leuchtfeuer\Auth0\Utility\TokenUtility;
+use Leuchtfeuer\Auth0\Utility\UserUtility;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -46,6 +49,11 @@ class CallbackMiddleware implements MiddlewareInterface
 
     const BACKEND_URI = '%s/typo3/?loginProvider=%d&code=%s&state=%s';
 
+    /**
+     * @throws NetworkException
+     * @throws UnknownErrorCodeException
+     * @throws ArgumentException
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (strpos($request->getUri()->getPath(), self::PATH) === false) {
@@ -66,16 +74,19 @@ class CallbackMiddleware implements MiddlewareInterface
         }
 
         if ($dataSet->get('environment') === TokenUtility::ENVIRONMENT_BACKEND) {
-            return $this->handleBackendCallback($request, $tokenUtility);
+            return $this->handleBackendCallback($request, $tokenUtility, $dataSet);
         }
         // Perform frontend callback as environment can only be 'BE' or 'FE'
         return $this->handleFrontendCallback($request, $dataSet);
     }
 
-    protected function handleBackendCallback(ServerRequestInterface $request, TokenUtility $tokenUtility): RedirectResponse
+    protected function handleBackendCallback(ServerRequestInterface $request, TokenUtility $tokenUtility, DataSet $dataSet): RedirectResponse
     {
-        $queryParams = $request->getQueryParams();
+        if ($dataSet->get('redirectUri') !== null) {
+            return new RedirectResponse($dataSet->get('redirectUri'), 302);
+        }
 
+        $queryParams = $request->getQueryParams();
         $redirectUri = sprintf(
             self::BACKEND_URI,
             $tokenUtility->getIssuer(),
@@ -96,7 +107,12 @@ class CallbackMiddleware implements MiddlewareInterface
         return new RedirectResponse($redirectUri, 302);
     }
 
-    protected function handleFrontendCallback(ServerRequestInterface $request, Token\DataSet $tokenDataSet): RedirectResponse
+    /**
+     * @throws NetworkException
+     * @throws UnknownErrorCodeException
+     * @throws ArgumentException
+     */
+    protected function handleFrontendCallback(ServerRequestInterface $request, DataSet $tokenDataSet): RedirectResponse
     {
         $errorCode = (string)GeneralUtility::_GET('error');
 
@@ -107,7 +123,9 @@ class CallbackMiddleware implements MiddlewareInterface
         if ($this->isUserLoggedIn($request)) {
             $loginType = GeneralUtility::_GET('logintype');
             $application = $tokenDataSet->get('application');
-            $userInfo = (new SessionFactory())->getSessionStoreForApplication($application, SessionFactory::SESSION_PREFIX_FRONTEND)->getUserInfo();
+            $auth0 = ApplicationFactory::build($application, ApplicationFactory::SESSION_PREFIX_FRONTEND);
+            $auth0->exchange(null, GeneralUtility::_GET('code'), GeneralUtility::_GET('state'));
+            $userInfo = $auth0->getUser();
 
             // Redirect when user just logged in (and update him)
             if ($loginType === 'login' && !empty($userInfo)) {
@@ -132,7 +150,7 @@ class CallbackMiddleware implements MiddlewareInterface
     /**
      * @throws UnknownErrorCodeException
      */
-    protected function enrichReferrerByErrorCode(string $errorCode, Token\DataSet $tokenDataSet): RedirectResponse
+    protected function enrichReferrerByErrorCode(string $errorCode, DataSet $tokenDataSet): RedirectResponse
     {
         if (in_array($errorCode, (new \ReflectionClass(ErrorCode::class))->getConstants())) {
             $referrer = new Uri($tokenDataSet->get('referrer'));
@@ -164,14 +182,24 @@ class CallbackMiddleware implements MiddlewareInterface
         }
     }
 
-    protected function updateTypo3User(int $application, array $user): void
+    /**
+     * @throws ArgumentException
+     * @throws NetworkException
+     * @throws ConfigurationException
+     * @throws GuzzleException
+     */
+    protected function updateTypo3User(int $applicationId, array $user): void
     {
-        // Get user
-        $application = BackendUtility::getRecord(ApplicationRepository::TABLE_NAME, $application, 'api, uid');
+        // Get application record
+        $application = BackendUtility::getRecord(ApplicationRepository::TABLE_NAME, $applicationId, 'api, uid');
 
         if ((bool)$application['api'] === true) {
-            $userApi = GeneralUtility::makeInstance(ApiUtility::class, $application['uid'])->getApi(UserApi::class, Scope::USER_READ);
-            $user = $userApi->get($user[GeneralUtility::makeInstance(EmAuth0Configuration::class)->getUserIdentifier()]);
+            $auth0 = ApplicationFactory::build($applicationId);
+            $response = $auth0->management()->users()->get($user[GeneralUtility::makeInstance(EmAuth0Configuration::class)->getUserIdentifier()]);
+            if (HttpResponse::wasSuccessful($response)) {
+                $userUtility = GeneralUtility::makeInstance(UserUtility::class);
+                $user =  $userUtility->enrichManagementUser(HttpResponse::decodeContent($response));
+            }
         }
 
         // Update user
@@ -180,7 +208,7 @@ class CallbackMiddleware implements MiddlewareInterface
         $updateUtility->updateGroups();
     }
 
-    protected function performRedirectFromPluginConfiguration(Token\DataSet $tokenDataSet, array $allowedMethods): void
+    protected function performRedirectFromPluginConfiguration(DataSet $tokenDataSet, array $allowedMethods): void
     {
         $redirectService = new RedirectService([
             'redirectDisable' => false,
@@ -188,7 +216,7 @@ class CallbackMiddleware implements MiddlewareInterface
             'redirectFirstMethod' => $tokenDataSet->get('redirectFirstMethod'),
             'redirectPageLogin' => $tokenDataSet->get('redirectPageLogin'),
             'redirectPageLoginError' => $tokenDataSet->get('redirectPageLoginError'),
-            'redirectPageLogout' => $tokenDataSet->get('redirectPageLogout')
+            'redirectPageLogout' => $tokenDataSet->get('redirectPageLogout'),
         ]);
 
         $redirectService->handleRedirect($allowedMethods);

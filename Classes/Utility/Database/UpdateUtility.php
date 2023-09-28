@@ -11,21 +11,17 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Utility\Database;
+namespace Leuchtfeuer\Auth0\Utility\Database;
 
-use Bitmotion\Auth0\Configuration\Auth0Configuration;
-use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
-use Bitmotion\Auth0\Domain\Repository\UserGroup\AbstractUserGroupRepository;
-use Bitmotion\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
-use Bitmotion\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
-use Bitmotion\Auth0\Domain\Repository\UserRepository;
-use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Bitmotion\Auth0\Utility\ParseFuncUtility;
+use Leuchtfeuer\Auth0\Configuration\Auth0Configuration;
+use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\AbstractUserGroupRepository;
+use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
+use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
+use Leuchtfeuer\Auth0\Domain\Repository\UserRepository;
+use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Leuchtfeuer\Auth0\Utility\ParseFuncUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -33,44 +29,20 @@ class UpdateUtility implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    protected $tableName = '';
+    protected string $tableName = '';
 
-    protected $extensionConfiguration;
+    protected EmAuth0Configuration $configuration;
 
     protected $user = [];
 
-    protected $userFromIdToken = true;
-
-    /**
-     * @var ParseFuncUtility
-     */
-    protected $parseFuncUtility;
-
     protected $yamlConfiguration = [];
 
-    public function __construct(string $tableName, $user)
+    public function __construct(string $tableName, array $user)
     {
         $this->tableName = $tableName;
-        $this->extensionConfiguration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
-
-        if ($user instanceof User) {
-            $user = $this->transformUser($user);
-        }
-
+        $this->configuration = new EmAuth0Configuration();
         $this->user = $user;
         $this->yamlConfiguration = GeneralUtility::makeInstance(Auth0Configuration::class)->load();
-    }
-
-    private function transformUser(User $user): array
-    {
-        $this->userFromIdToken = false;
-
-        $normalizer = new ObjectNormalizer(null, new CamelCaseToSnakeCaseNameConverter());
-        $serializer = new Serializer([$normalizer]);
-        $user = $serializer->normalize($user, 'array');
-        $user[$this->extensionConfiguration->getUserIdentifier()] = $user['user_id'];
-
-        return $user;
     }
 
     public function updateGroups(): void
@@ -163,7 +135,7 @@ class UpdateUtility implements LoggerAwareInterface
     protected function mapRoles(array $groupMapping, array &$groupsToAssign, bool &$isBeAdmin, bool &$shouldUpdate): void
     {
         $rolesKey = $this->yamlConfiguration['roles']['key'] ?? 'roles';
-        $roles = (array)($this->userFromIdToken ? $this->user[$rolesKey] : $this->user['app_metadata'][$rolesKey]) ?? [];
+        $roles = (array)$this->user['app_metadata'][$rolesKey] ?? [];
 
         foreach ($roles as $role) {
             if (isset($groupMapping[$role])) {
@@ -202,7 +174,7 @@ class UpdateUtility implements LoggerAwareInterface
 
         if (!empty($updates)) {
             $userRepository = GeneralUtility::makeInstance(UserRepository::class, $this->tableName);
-            $userRepository->updateUserByAuth0Id($updates, $this->user[$this->extensionConfiguration->getUserIdentifier()]);
+            $userRepository->updateUserByAuth0Id($updates, $this->user[$this->configuration->getUserIdentifier()]);
         }
     }
 
@@ -212,7 +184,7 @@ class UpdateUtility implements LoggerAwareInterface
             sprintf(
                 '%s: Prepare update for Auth0 user "%s"',
                 $this->tableName,
-                $this->user[$this->extensionConfiguration->getUserIdentifier()]
+                $this->user[$this->configuration->getUserIdentifier()]
             )
         );
 
@@ -222,13 +194,14 @@ class UpdateUtility implements LoggerAwareInterface
         $this->mapUserData($updates, $mappingConfiguration);
 
         // Fixed values
+        // TODO: Check - seems no to be used anymore
         if ($reactivateUser) {
             $updates['disable'] = 0;
             $updates['deleted'] = 0;
         }
 
         $this->addRestrictions($userRepository);
-        $userRepository->updateUserByAuth0Id($updates, $this->user[$this->extensionConfiguration->getUserIdentifier()]);
+        $userRepository->updateUserByAuth0Id($updates, $this->user[$this->configuration->getUserIdentifier()]);
     }
 
     protected function addRestrictions(UserRepository &$userRepository): void
@@ -237,11 +210,11 @@ class UpdateUtility implements LoggerAwareInterface
         $reactivateDisabled = false;
 
         if ($this->tableName === 'fe_users') {
-            $reactivateDeleted = $this->extensionConfiguration->isReactivateDeletedFrontendUsers();
-            $reactivateDisabled = $this->extensionConfiguration->isReactivateDisabledFrontendUsers();
+            $reactivateDeleted = $this->configuration->isReactivateDeletedFrontendUsers();
+            $reactivateDisabled = $this->configuration->isReactivateDisabledFrontendUsers();
         } elseif ($this->tableName === 'be_users') {
-            $reactivateDeleted = $this->extensionConfiguration->isReactivateDeletedBackendUsers();
-            $reactivateDisabled = $this->extensionConfiguration->isReactivateDisabledBackendUsers();
+            $reactivateDeleted = $this->configuration->isReactivateDeletedBackendUsers();
+            $reactivateDisabled = $this->configuration->isReactivateDisabledBackendUsers();
         } else {
             $this->logger->notice('Undefined environment');
         }

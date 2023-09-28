@@ -9,9 +9,9 @@
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Configuration;
+namespace Leuchtfeuer\Auth0\Configuration;
 
-use Bitmotion\Auth0\Factory\ConfigurationFactory;
+use Leuchtfeuer\Auth0\Factory\ConfigurationFactory;
 use Symfony\Component\Yaml\Yaml;
 use TYPO3\CMS\Core\Configuration\Loader\YamlFileLoader;
 use TYPO3\CMS\Core\Core\Environment;

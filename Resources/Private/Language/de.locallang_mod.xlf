@@ -1,256 +1,334 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<xliff version="1.0">
-	<file source-language="en" datatype="plaintext" original="messages" date="2020-04-14T20:57:31Z"
-		  target-language="de" product-name="auth0">
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+	<file source-language="en" target-language="de" datatype="plaintext" original="EXT:auth0/Resources/Private/Language/locallang_mod.xlf" date="2022-02-16T10:01:01Z" product-name="auth0">
 		<header/>
 		<body>
-			<trans-unit id="mlang_tabs_tab">
+			<trans-unit id="mlang_tabs_tab" resname="mlang_tabs_tab">
+				<source>Auth0</source>
 				<target>Auth0</target>
 			</trans-unit>
-			<trans-unit id="mlang_labels_tabdescr">
+			<trans-unit id="mlang_labels_tabdescr" resname="mlang_labels_tabdescr">
+				<source>A mapping for Auth0 roles to TYPO3 frontend user groups.</source>
 				<target>Ein Mapping von Auth0 Rollen zu TYPO3 Benutzergruppen.</target>
 			</trans-unit>
-			<trans-unit id="mlang_labels_tablabel">
+			<trans-unit id="mlang_labels_tablabel" resname="mlang_labels_tablabel">
+				<source>Auth0 role data mapping.</source>
 				<target>Auth0 Rollen Mapping.</target>
 			</trans-unit>
-
-			<trans-unit id="roles.title">
+			<trans-unit id="roles.title" resname="roles.title">
+				<source>Role Mapping</source>
 				<target>Auth0 Rollen Mapping</target>
 			</trans-unit>
-			<trans-unit id="roles.frontend.text">
+			<trans-unit id="roles.frontend.text" resname="roles.frontend.text">
+				<source>This website usergroup is assigned to an user if none of his Auth0 roles is assigned to a website usergroup.</source>
 				<target>Diese Webseiten Benutzergruppe wird einem Nutzer zugewiesen, wenn keine der hinterlegten Mapping Konfigurationen zutrifft oder der Nutzer keine Auth0 Rolle hinterlegt hat.</target>
 			</trans-unit>
-			<trans-unit id="roles.frontend.label">
+			<trans-unit id="roles.frontend.label" resname="roles.frontend.label">
+				<source>Default Website Usergroup</source>
 				<target>Standard Webseiten-Nutzergruppe</target>
 			</trans-unit>
-			<trans-unit id="roles.frontend.default">
+			<trans-unit id="roles.frontend.default" resname="roles.frontend.default">
+				<source>No default group</source>
 				<target>Keine Standardgruppe</target>
 			</trans-unit>
-			<trans-unit id="roles.frontend.no_groups">
+			<trans-unit id="roles.frontend.no_groups" resname="roles.frontend.no_groups">
+				<source>No website usergroup found.</source>
 				<target>Keine Webseiten-Nutzergruppe gefunden.</target>
 			</trans-unit>
-			<trans-unit id="roles.backend.text">
+			<trans-unit id="roles.backend.text" resname="roles.backend.text">
+				<source>This backend user group is assigned to an user if none of his Auth0 roles is assigned to a backend user group.</source>
 				<target>Diese Backend Benutzergruppe wird einem Nutzer zugewiesen, wenn keine der hinterlegten Mapping Konfigurationen zutrifft oder der Nutzer keine Auth0 Rolle hinterlegt hat.</target>
 			</trans-unit>
-			<trans-unit id="roles.backend.label">
+			<trans-unit id="roles.backend.label" resname="roles.backend.label">
+				<source>Default Backend Usergroup</source>
+				<target>Standardgruppe Backend</target>
+			</trans-unit>
+			<trans-unit id="roles.backend.default" resname="roles.backend.default">
+				<source>No default group</source>
 				<target>Keine Standardgruppe</target>
 			</trans-unit>
-			<trans-unit id="roles.backend.no_groups">
+			<trans-unit id="roles.backend.no_groups" resname="roles.backend.no_groups">
+				<source>No backend usergroup found.</source>
 				<target>Keine Backend Benutzergruppe gefunden.</target>
 			</trans-unit>
-			<trans-unit id="roles.admin.text">
+			<trans-unit id="roles.admin.text" resname="roles.admin.text">
+				<source>If a user has this Auth0 role, he becomes a TYPO3 backend administrator.</source>
 				<target>Wenn ein Auth0 Benutzer über diese Rolle verfügt, wird er zum TYPO3 Backend Administrator.</target>
 			</trans-unit>
-			<trans-unit id="roles.admin.label">
+			<trans-unit id="roles.admin.label" resname="roles.admin.label">
+				<source>Backend-Admin Role</source>
 				<target>Rolle des Backend Administrators</target>
 			</trans-unit>
-			<trans-unit id="roles.key.text">
+			<trans-unit id="roles.key.text" resname="roles.key.text">
+				<source>The key (below the Auth0 application metadata) that contains the roles. The recommended default is &quot;roles&quot;.</source>
 				<target>Der Schlüssel (unterhalb der Auth0 Applikations-Metadaten), der die Rollen beinhaltet.</target>
 			</trans-unit>
-			<trans-unit id="roles.key.label">
+			<trans-unit id="roles.key.label" resname="roles.key.label">
+				<source>Auth0 Key</source>
 				<target>Auth0 Schlüssel</target>
 			</trans-unit>
-			<trans-unit id="roles.button">
+			<trans-unit id="roles.button" resname="roles.button">
+				<source>Save configuration</source>
 				<target>Konfiguration speichern</target>
 			</trans-unit>
-			<trans-unit id="roles.table.head.identifier">
+			<trans-unit id="roles.table.head.identifier" resname="roles.table.head.identifier">
+				<source>Identifier</source>
 				<target>ID</target>
 			</trans-unit>
-			<trans-unit id="roles.table.head.title">
+			<trans-unit id="roles.table.head.title" resname="roles.table.head.title">
+				<source>Title</source>
 				<target>Titel</target>
 			</trans-unit>
-			<trans-unit id="roles.table.head.role">
+			<trans-unit id="roles.table.head.role" resname="roles.table.head.role">
+				<source>Auth0 Role</source>
 				<target>Auth0 Rolle</target>
 			</trans-unit>
-			<trans-unit id="roles.table.head.subgroups">
+			<trans-unit id="roles.table.head.subgroups" resname="roles.table.head.subgroups">
+				<source>Subgroups</source>
 				<target>Untergruppen</target>
 			</trans-unit>
-
-			<trans-unit id="application.title">
+			<trans-unit id="application.title" resname="application.title">
+				<source>Applications</source>
 				<target>Applikationen</target>
 			</trans-unit>
-			<trans-unit id="application.text">
+			<trans-unit id="application.text" resname="application.text">
+				<source>Newly created applications are stored here:</source>
 				<target>Neu erstellte Applikationen werden hier gespeichert:</target>
 			</trans-unit>
-			<trans-unit id="application.new">
+			<trans-unit id="application.no_directory" resname="application.no_directory">
+				<source><![CDATA[No storage location for new applications could be found. Please adjust the TypoScript constant <code>module.tx_auth0.persistence.storagePid</code> or configure a valid location for website users in the extension configuration.]]></source>
+				<target><![CDATA[Es konnte kein Speicherort für neue Anwendungen gefunden werden. Bitte passen Sie die TypoScript-Konstante <code>module.tx_auth0.persistence.storagePid</code> an oder konfigurieren Sie einen gültigen Speicherort für Website-Benutzer in der Erweiterungskonfiguration.]]></target>
+			</trans-unit>
+			<trans-unit id="application.new" resname="application.new">
+				<source>Create new Application</source>
 				<target>Neue Applikation erstellen</target>
 			</trans-unit>
-			<trans-unit id="application.infobox.title">
+			<trans-unit id="application.infobox.title" resname="application.infobox.title">
+				<source>No Application Found</source>
 				<target>Keine Applikation gefunden</target>
 			</trans-unit>
-			<trans-unit id="application.no_directory">
-				<source><![CDATA[Es konnte kein Speicherort für neue Applikationen gefunden werden. Bitte pass die TypoScript Konstante  <code>module.tx_auth0.persistence.storagePid</code> an oder konfiguriere einen gültigen Speicherort für Webseitenbenutzer in der Extension Konfiguration.]]></source>
-			</trans-unit>
-			<trans-unit id="application.infobox.content">
+			<trans-unit id="application.infobox.content" resname="application.infobox.content">
+				<source>Start now and create your first Auth0 application.</source>
 				<target>Starte jetzt und erstelle deine erste Auth0 Applikation.</target>
 			</trans-unit>
-			<trans-unit id="application.ts.title">
+			<trans-unit id="application.ts.title" resname="application.ts.title">
+				<source>TypoScript included?</source>
 				<target>TypoScript eingebunden?</target>
 			</trans-unit>
-			<trans-unit id="application.ts.content">
+			<trans-unit id="application.ts.content" resname="application.ts.content">
+				<source>No TypoScript configuration found.</source>
 				<target>Keine TypoScript Konfiguration gefunden.</target>
 			</trans-unit>
-			<trans-unit id="application.ts.button">
+			<trans-unit id="application.ts.button" resname="application.ts.button">
+				<source>Go to template module</source>
 				<target>Zum Template Modul</target>
 			</trans-unit>
-
-			<trans-unit id="list.title">
+			<trans-unit id="list.title" resname="list.title">
+				<source>Auth0</source>
 				<target>Auth0</target>
 			</trans-unit>
-			<trans-unit id="list.card.mapping.title">
+			<trans-unit id="list.card.mapping.title" resname="list.card.mapping.title">
+				<source>Roles To Groups</source>
 				<target>Rollen zu Benutzergruppen</target>
 			</trans-unit>
-			<trans-unit id="list.card.mapping.subtitle">
+			<trans-unit id="list.card.mapping.subtitle" resname="list.card.mapping.subtitle">
+				<source>User Groups</source>
 				<target>Benutzergruppen</target>
 			</trans-unit>
-			<trans-unit id="list.card.mapping.text">
+			<trans-unit id="list.card.mapping.text" resname="list.card.mapping.text">
+				<source>Configure the mapping of Auth0 roles to TYPO3 user groups.</source>
 				<target>Konfiguriere, welche Auth0 Rollen welchen TYPO3 Benutzergruppen (Frontend und Backend) entsprechen.</target>
 			</trans-unit>
-			<trans-unit id="list.card.metadata.title">
+			<trans-unit id="list.card.metadata.title" resname="list.card.metadata.title">
+				<source>Property Mapping</source>
 				<target>Benutzereigenschaften</target>
 			</trans-unit>
-			<trans-unit id="list.card.metadata.subtitle">
+			<trans-unit id="list.card.metadata.subtitle" resname="list.card.metadata.subtitle">
+				<source>Users</source>
 				<target>Benutzer</target>
 			</trans-unit>
-			<trans-unit id="list.card.metadata.text">
+			<trans-unit id="list.card.metadata.text" resname="list.card.metadata.text">
+				<source>Configure the mapping of Auth0 data (and metadata) to TYPO3 user properties.</source>
 				<target>Konfiguriere, welche Auth0 Daten (und Metadata) welchen Eigenschaften eines TYPO3 Benutzers entsprechen.</target>
 			</trans-unit>
-			<trans-unit id="list.card.application.title">
+			<trans-unit id="list.card.application.title" resname="list.card.application.title">
+				<source>Auth0 Application List</source>
 				<target>Listenansicht von Applikationen</target>
 			</trans-unit>
-			<trans-unit id="list.card.application.subtitle">
+			<trans-unit id="list.card.application.subtitle" resname="list.card.application.subtitle">
+				<source>Database</source>
 				<target>Datenbank</target>
 			</trans-unit>
-			<trans-unit id="list.card.application.text">
+			<trans-unit id="list.card.application.text" resname="list.card.application.text">
+				<source>Show, add and configure Auth0 applications used by your TYPO3 instance.</source>
 				<target>Anzeigen, hinzufügen und bearbeiten von Auth0 Applikationen, die von deinem TYPO3 System genutzt werden.</target>
 			</trans-unit>
-			<trans-unit id="list.card.button">
+			<trans-unit id="list.card.button" resname="list.card.button">
+				<source>Configure</source>
 				<target>Konfigurieren</target>
 			</trans-unit>
-			<trans-unit id="list.card.documentation.title">
+			<trans-unit id="list.card.documentation.title" resname="list.card.documentation.title">
+				<source>Want to Read More?</source>
 				<target>Hast du noch Frage?</target>
 			</trans-unit>
-			<trans-unit id="list.card.documentation.subtitle">
+			<trans-unit id="list.card.documentation.subtitle" resname="list.card.documentation.subtitle">
+				<source>Documentation</source>
 				<target>Dokumentation</target>
 			</trans-unit>
-			<trans-unit id="list.card.documentation.text">
+			<trans-unit id="list.card.documentation.text" resname="list.card.documentation.text">
+				<source>A detailed documentation of this extension can be found on the TYPO3 documentation server.</source>
 				<target>Eine ausführliche Dokumentation dieser Extension findest du auf dem TYPO3 Dokumentations-Server.</target>
 			</trans-unit>
-			<trans-unit id="list.card.documentation.button">
+			<trans-unit id="list.card.documentation.button" resname="list.card.documentation.button">
+				<source>Read more</source>
 				<target>Zur Dokumentation</target>
 			</trans-unit>
-			<trans-unit id="list.card.issue.title">
+			<trans-unit id="list.card.issue.title" resname="list.card.issue.title">
+				<source>Found an Issue?</source>
 				<target>Fehler gefunden?</target>
 			</trans-unit>
-			<trans-unit id="list.card.issue.subtitle">
+			<trans-unit id="list.card.issue.subtitle" resname="list.card.issue.subtitle">
+				<source>Source Code</source>
 				<target>Quellcode</target>
 			</trans-unit>
-			<trans-unit id="list.card.issue.text">
+			<trans-unit id="list.card.issue.text" resname="list.card.issue.text">
+				<source>If you have found a bug or are missing a feature, you can take a look at our repository.</source>
 				<target>Du hast einen Fehler gefunden oder vermisst ein Feature? Wirf doch mal einen Blick ins Repository.</target>
 			</trans-unit>
-			<trans-unit id="list.card.issue.button">
+			<trans-unit id="list.card.issue.button" resname="list.card.issue.button">
+				<source>Find out more</source>
 				<target>Zum Repository</target>
 			</trans-unit>
-
-			<trans-unit id="properties.title">
+			<trans-unit id="properties.title" resname="properties.title">
+				<source>Property Mapping</source>
 				<target>Eigenschaften Mapping</target>
 			</trans-unit>
-			<trans-unit id="properties.title.root">
+			<trans-unit id="properties.title.root" resname="properties.title.root">
+				<source>Root Data</source>
 				<target>Hauptdaten</target>
 			</trans-unit>
-			<trans-unit id="properties.title.user">
+			<trans-unit id="properties.title.user" resname="properties.title.user">
+				<source>User Metadata</source>
 				<target>Benutzer Metadaten</target>
 			</trans-unit>
-			<trans-unit id="properties.title.app">
+			<trans-unit id="properties.title.app" resname="properties.title.app">
+				<source>Application Metadata</source>
 				<target>Applikations Metadaten</target>
 			</trans-unit>
-			<trans-unit id="properties.title.edit">
+			<trans-unit id="properties.title.edit" resname="properties.title.edit">
+				<source>Edit Property</source>
 				<target>Eigenschaft bearbeiten</target>
 			</trans-unit>
-			<trans-unit id="properties.title.add">
+			<trans-unit id="properties.title.add" resname="properties.title.add">
+				<source>Add Property</source>
 				<target>Eigenschaft hinzufügen</target>
 			</trans-unit>
-			<trans-unit id="properties.new">
+			<trans-unit id="properties.new" resname="properties.new">
+				<source>Create new</source>
 				<target>Neu erstellen</target>
 			</trans-unit>
-			<trans-unit id="properties.no-configuration">
+			<trans-unit id="properties.no-configuration" resname="properties.no-configuration">
+				<source>No configuration found.</source>
 				<target>Keine Konfiguration gefunden.</target>
 			</trans-unit>
-			<trans-unit id="properties.table.auth0">
+			<trans-unit id="properties.table.auth0" resname="properties.table.auth0">
+				<source>Auth0 Property</source>
 				<target>Auth0 Eigenschaft</target>
 			</trans-unit>
-			<trans-unit id="properties.table.typo3">
+			<trans-unit id="properties.table.typo3" resname="properties.table.typo3">
+				<source>TYPO3 Property</source>
 				<target>TYPO3 Eigenschaft</target>
 			</trans-unit>
-			<trans-unit id="properties.table.processing">
+			<trans-unit id="properties.table.processing" resname="properties.table.processing">
+				<source>Value Processing</source>
 				<target>Prozessierung</target>
 			</trans-unit>
-			<trans-unit id="properties.button.save">
+			<trans-unit id="properties.button.save" resname="properties.button.save">
+				<source>Save</source>
 				<target>Speichern</target>
 			</trans-unit>
-			<trans-unit id="properties.infobox.api.title">
+			<trans-unit id="properties.infobox.api.title" resname="properties.infobox.api.title">
+				<source>Availability of Auth0 User Data</source>
 				<target>Verfügbarkeit von Auth0-Benutzerdaten</target>
 			</trans-unit>
-			<trans-unit id="properties.infobox.api.content">
+			<trans-unit id="properties.infobox.api.content" resname="properties.infobox.api.content">
+				<source>Please note that not all data (especially the user and app meta data)  may be available if your application has disabled the use of the API.</source>
 				<target>Bitte beachte, dass möglicherweise nicht alle Benutzerdaten (insbesondere die User und App Metadaten) verfügbar sind, wenn die Anwendung die Verwendung der API deaktiviert hat.</target>
 			</trans-unit>
-
-			<trans-unit id="message.application.deleted.title">
+			<trans-unit id="message.application.deleted.title" resname="message.application.deleted.title">
+				<source>Application Removed!</source>
 				<target>Applikation gelöscht!</target>
 			</trans-unit>
-			<trans-unit id="message.application.deleted.text">
+			<trans-unit id="message.application.deleted.text" resname="message.application.deleted.text">
+				<source>The application has been removed successfully.</source>
 				<target>Die Auth0 Applikation wurde entfernt.</target>
 			</trans-unit>
-			<trans-unit id="message.property.created.title">
+			<trans-unit id="message.property.created.title" resname="message.property.created.title">
+				<source>Configuration Created!</source>
 				<target>Konfiguration erstellt!</target>
 			</trans-unit>
-			<trans-unit id="message.property.created.text">
+			<trans-unit id="message.property.created.text" resname="message.property.created.text">
+				<source>The configuration has been created successfully.</source>
 				<target>Die Konfiguration wurde erfolgreich erstellt.</target>
 			</trans-unit>
-			<trans-unit id="message.property.deleted.title">
+			<trans-unit id="message.property.deleted.title" resname="message.property.deleted.title">
+				<source>Configuration Removed!</source>
 				<target>Konfiguration gelöscht!</target>
 			</trans-unit>
-			<trans-unit id="message.property.deleted.text">
+			<trans-unit id="message.property.deleted.text" resname="message.property.deleted.text">
+				<source>The configuration has been removed successfully.</source>
 				<target>Die Konfiguration wurde erfolgreich gelöscht.</target>
 			</trans-unit>
-			<trans-unit id="message.property.updated.title">
+			<trans-unit id="message.property.updated.title" resname="message.property.updated.title">
+				<source>Configuration Updated!</source>
 				<target>Konfiguration aktualisiert!</target>
 			</trans-unit>
-			<trans-unit id="message.property.updated.text">
+			<trans-unit id="message.property.updated.text" resname="message.property.updated.text">
+				<source>The configuration has been updated successfully.</source>
 				<target>Die Konfiguration wurde erfolgreich aktualisiert.</target>
 			</trans-unit>
-			<trans-unit id="message.property.imported.title">
+			<trans-unit id="message.property.imported.title" resname="message.property.imported.title">
+				<source>TypoScript Imported!</source>
 				<target>TypoScript Einstellungen importiert!</target>
 			</trans-unit>
-			<trans-unit id="message.property.imported.text">
+			<trans-unit id="message.property.imported.text" resname="message.property.imported.text">
+				<source>The TypoScript has been imported successfully. You can now remove your TypoScript settings.</source>
 				<target>Die TypoScript Einstellungen wurden geladen und übertragen. Du kannst das TypoScript jetzt entfernen.</target>
 			</trans-unit>
-			<trans-unit id="message.role.updated.title">
+			<trans-unit id="message.role.updated.title" resname="message.role.updated.title">
+				<source>Configuration Updated!</source>
 				<target>Konfiguration aktualisiert!</target>
 			</trans-unit>
-			<trans-unit id="message.role.updated.text">
+			<trans-unit id="message.role.updated.text" resname="message.role.updated.text">
+				<source>The configuration has been updated successfully.</source>
 				<target>Die Konfiguration wurde erfolgreich aktualisiert.</target>
 			</trans-unit>
-			<trans-unit id="message.role.imported.title">
+			<trans-unit id="message.role.imported.title" resname="message.role.imported.title">
+				<source>TypoScript Imported!</source>
 				<target>TypoScript Einstellungen importiert!</target>
 			</trans-unit>
-			<trans-unit id="message.role.imported.text">
+			<trans-unit id="message.role.imported.text" resname="message.role.imported.text">
+				<source>The TypoScript has been imported successfully. You can now remove your TypoScript settings.</source>
 				<target>Die TypoScript Einstellungen wurden geladen und übertragen. Du kannst das TypoScript jetzt entfernen.</target>
 			</trans-unit>
-
-			<trans-unit id="menu.label.applications">
+			<trans-unit id="menu.label.applications" resname="menu.label.applications">
+				<source>Application List</source>
 				<target>Applikationen</target>
 			</trans-unit>
-			<trans-unit id="menu.label.roles">
+			<trans-unit id="menu.label.roles" resname="menu.label.roles">
+				<source>Role Mapping</source>
 				<target>Benutzergruppen</target>
 			</trans-unit>
-			<trans-unit id="menu.label.properties">
+			<trans-unit id="menu.label.properties" resname="menu.label.properties">
+				<source>Property Mapping</source>
 				<target>Benutzereigenschaften</target>
 			</trans-unit>
-			<trans-unit id="menu.button.overview">
+			<trans-unit id="menu.button.overview" resname="menu.button.overview">
+				<source>Back to overview</source>
 				<target>Zurück zur Übersicht</target>
 			</trans-unit>
-			<trans-unit id="menu.button.cancel">
+			<trans-unit id="menu.button.cancel" resname="menu.button.cancel">
+				<source>Back to list view</source>
 				<target>Zurück zur Listenansicht</target>
 			</trans-unit>
 		</body>

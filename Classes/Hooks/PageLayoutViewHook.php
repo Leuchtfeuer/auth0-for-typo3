@@ -11,7 +11,7 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Hooks;
+namespace Leuchtfeuer\Auth0\Hooks;
 
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Localization\LanguageService;
@@ -22,12 +22,12 @@ class PageLayoutViewHook
     /**
      * @var string
      */
-    protected $listType = '';
+    protected string $listType = '';
 
     /**
      * @var array
      */
-    protected $flexFormData = [];
+    protected array $flexFormData = [];
 
     public function getSummary(array $params): string
     {

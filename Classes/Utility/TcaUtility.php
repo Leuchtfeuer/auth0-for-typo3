@@ -9,9 +9,9 @@
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Utility;
+namespace Leuchtfeuer\Auth0\Utility;
 
-use Bitmotion\Auth0\Configuration\Auth0Configuration;
+use Leuchtfeuer\Auth0\Configuration\Auth0Configuration;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TcaUtility
@@ -45,7 +45,7 @@ class TcaUtility
                 if ($type === 'select') {
                     $columns[$name]['items'] = [];
                     foreach ($column['config']['items'] ?? [] as $item) {
-                        $columns[$name]['items'][$item[1]] = $GLOBALS['LANG']->sl($item[0]);
+                        $columns[$name]['items'][$item[1] ?? $item['value']] = $GLOBALS['LANG']->sl($item[0] ?? $item['label']);
                     }
                 }
             }

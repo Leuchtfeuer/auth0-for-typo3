@@ -11,9 +11,10 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Domain\Repository;
+namespace Leuchtfeuer\Auth0\Domain\Repository;
 
-use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -21,8 +22,8 @@ use TYPO3\CMS\Core\Database\Query\Expression\ExpressionBuilder;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
+use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Service\EnvironmentService;
 
 class UserRepository implements LoggerAwareInterface
 {
@@ -41,7 +42,7 @@ class UserRepository implements LoggerAwareInterface
     /**
      * @var string
      */
-    protected $tableName;
+    protected string $tableName;
 
     public function __construct(string $tableName)
     {
@@ -51,7 +52,7 @@ class UserRepository implements LoggerAwareInterface
     }
 
     /**
-     * Gets an user by given auth0 user ID.
+     * Gets a user by given auth0 user ID.
      */
     public function getUserByAuth0Id(string $auth0UserId): ?array
     {
@@ -65,7 +66,7 @@ class UserRepository implements LoggerAwareInterface
                 )
             );
         $this->logger->debug(sprintf('[%s] Executed SELECT query: %s', $this->tableName, $this->queryBuilder->getSQL()));
-        $user = $this->queryBuilder->execute()->fetch();
+        $user = $this->queryBuilder->execute()->fetchAssociative();
 
         return ($user !== false) ? $user : null;
     }
@@ -76,15 +77,13 @@ class UserRepository implements LoggerAwareInterface
      */
     public function removeRestrictions(): void
     {
-        $environmentService = GeneralUtility::makeInstance(EnvironmentService::class);
-        $emConfiguration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
+        $configuration = new EmAuth0Configuration();
 
-        if ($environmentService->isEnvironmentInFrontendMode()) {
-            $this->removeFrontendRestrictions($emConfiguration);
-        } elseif ($environmentService->isEnvironmentInBackendMode()) {
-            $this->removeBackendRestrictions($emConfiguration);
+        if (($GLOBALS['TYPO3_REQUEST'] ?? null) instanceof ServerRequestInterface
+            && ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()) {
+            $this->removeFrontendRestrictions($configuration);
         } else {
-            $this->logger->notice('Undefined environment');
+            $this->removeBackendRestrictions($configuration);
         }
     }
 

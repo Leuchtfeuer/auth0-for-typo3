@@ -11,16 +11,15 @@ declare(strict_types=1);
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Utility;
+namespace Leuchtfeuer\Auth0\Utility;
 
-use Bitmotion\Auth0\Api\Auth0;
-use Bitmotion\Auth0\Api\Management\UserApi;
-use Bitmotion\Auth0\Domain\Model\Auth0\Management\User;
-use Bitmotion\Auth0\Domain\Repository\ApplicationRepository;
-use Bitmotion\Auth0\Domain\Repository\UserRepository;
-use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Bitmotion\Auth0\Scope;
-use Bitmotion\Auth0\Utility\Database\UpdateUtility;
+use Auth0\SDK\Auth0;
+use Auth0\SDK\Utility\HttpResponse;
+use GuzzleHttp\Utils;
+use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
+use Leuchtfeuer\Auth0\Domain\Repository\UserRepository;
+use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Leuchtfeuer\Auth0\Utility\Database\UpdateUtility;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -35,11 +34,11 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    protected $extensionConfiguration;
+    protected EmAuth0Configuration $configuration;
 
     public function __construct()
     {
-        $this->extensionConfiguration = GeneralUtility::makeInstance(EmAuth0Configuration::class);
+        $this->configuration = new EmAuth0Configuration();
     }
 
     public function checkIfUserExists(string $tableName, string $auth0UserId): array
@@ -74,8 +73,6 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      */
     public function insertUser(string $tableName, $user): void
     {
-        $user = $user instanceof User ? $this->transformAuth0User($user) : $user;
-
         switch ($tableName) {
             case 'fe_users':
                 $this->insertFeUser($tableName, $user);
@@ -88,14 +85,12 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         }
     }
 
-    protected function transformAuth0User(User $user): array
+    public function enrichManagementUser(array $managementUser): array
     {
-        return [
-            'email' => $user->getEmail(),
-            'user_metadata' => $user->getUserMetadata(),
-            $this->extensionConfiguration->getUserIdentifier() => $user->getUserId(),
-        ];
+        $managementUser[$this->configuration->getUserIdentifier()] = $managementUser['user_id'];
+        return $managementUser;
     }
+
     /**
      * Inserts a new frontend user
      *
@@ -104,17 +99,17 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     public function insertFeUser(string $tableName, array $user): void
     {
         $values = $this->getTcaDefaults($tableName);
-        $userIdentifier = $this->extensionConfiguration->getUserIdentifier();
+        $userIdentifier = $this->configuration->getUserIdentifier();
 
         ArrayUtility::mergeRecursiveWithOverrule($values, [
-            'pid' => $this->extensionConfiguration->getUserStoragePage(),
+            'pid' => $this->configuration->getUserStoragePage(),
             'tstamp' => time(),
             'username' => $user['email'] ?? $user[$userIdentifier],
-            'password' => $this->getPassword(),
+            'password' => $this->getPassword('FE'),
             'email' => $user['email'] ?? '',
             'crdate' => time(),
             'auth0_user_id' => $user[$userIdentifier],
-            'auth0_metadata' => \GuzzleHttp\json_encode($user['user_metadata'] ?? ''),
+            'auth0_metadata' => Utils::jsonEncode($user['user_metadata'] ?? ''),
         ]);
 
         GeneralUtility::makeInstance(UserRepository::class, $tableName)->insertUser($values);
@@ -128,13 +123,13 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     public function insertBeUser(string $tableName, array $user): void
     {
         $values = $this->getTcaDefaults($tableName);
-        $userIdentifier = $this->extensionConfiguration->getUserIdentifier();
+        $userIdentifier = $this->configuration->getUserIdentifier();
 
         ArrayUtility::mergeRecursiveWithOverrule($values, [
             'pid' => 0,
             'tstamp' => time(),
             'username' => $user['email'] ?? $user[$userIdentifier],
-            'password' => $this->getPassword(),
+            'password' => $this->getPassword('BE'),
             'email' => $user['email'] ?? '',
             'crdate' => time(),
             'auth0_user_id' => $user[$userIdentifier],
@@ -160,9 +155,9 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     /**
      * @throws InvalidPasswordHashException
      */
-    protected function getPassword(): string
+    protected function getPassword(string $mode): string
     {
-        $saltFactory = GeneralUtility::makeInstance(PasswordHashFactory::class)->getDefaultHashInstance(TYPO3_MODE);
+        $saltFactory = GeneralUtility::makeInstance(PasswordHashFactory::class)->getDefaultHashInstance($mode);
         $password = GeneralUtility::makeInstance(Random::class)->generateRandomHexString(50);
 
         return $saltFactory->getHashedPassword($password);
@@ -172,13 +167,18 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     {
         try {
             $this->logger->notice('Try to update user.');
-            $user = $auth0->getUser();
+            if ($auth0->exchange()) {
+                $user = $auth0->getUser();
+            }
+
             $application = BackendUtility::getRecord(ApplicationRepository::TABLE_NAME, $application, 'api, uid');
 
-            if ((bool)$application['api'] === true) {
-                $apiUtility = GeneralUtility::makeInstance(ApiUtility::class, $application['uid']);
-                $userApi = $apiUtility->getApi(UserApi::class, Scope::USER_READ);
-                $user = $userApi->get($user[$this->extensionConfiguration->getUserIdentifier()]);
+            if ((bool)$application['api'] === true && $user) {
+                $response = $auth0->management()->users()->get($user[$this->configuration->getUserIdentifier()]);
+                if (HttpResponse::wasSuccessful($response)) {
+                    $userUtility = GeneralUtility::makeInstance(UserUtility::class);
+                    $user =  $userUtility->enrichManagementUser(HttpResponse::decodeContent($response));
+                }
             }
 
             // Update existing user on every login

@@ -9,26 +9,30 @@
  * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
  */
 
-namespace Bitmotion\Auth0\Controller;
+namespace Leuchtfeuer\Auth0\Controller;
 
-use Bitmotion\Auth0\Configuration\Auth0Configuration;
-use Bitmotion\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
-use Bitmotion\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
-use Bitmotion\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Bitmotion\Auth0\Factory\ConfigurationFactory;
+use Leuchtfeuer\Auth0\Configuration\Auth0Configuration;
+use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
+use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
+use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Leuchtfeuer\Auth0\Factory\ConfigurationFactory;
+use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
 class RoleController extends BackendController
 {
-    public function listAction(): void
+    public function listAction(): ResponseInterface
     {
+        $moduleTemplate = $this->initView();
         $this->view->assignMultiple([
             'frontendUserGroupMapping' => (new FrontendUserGroupRepository())->findAll(),
             'backendUserGroupMapping' => (new BackendUserGroupRepository())->findAll(),
             'extensionConfiguration' => new EmAuth0Configuration(),
             'yamlConfiguration' => GeneralUtility::makeInstance(Auth0Configuration::class)->load(),
         ]);
+        $moduleTemplate->setContent($this->view->render());
+
+        return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
     /**
@@ -37,14 +41,14 @@ class RoleController extends BackendController
      * @param string $adminRole
      * @param int $defaultBackendUserGroup
      *
-     * @throws StopActionException
+     * @return ResponseInterface
      */
     public function updateAction(
         string $key = 'roles',
         int $defaultFrontendUserGroup = 0,
         string $adminRole = '',
         int $defaultBackendUserGroup = 0
-    ): void {
+    ): ResponseInterface {
         $auth0Configuration = GeneralUtility::makeInstance(Auth0Configuration::class);
         $configuration = $auth0Configuration->load();
 
@@ -57,6 +61,7 @@ class RoleController extends BackendController
 
         $auth0Configuration->write($configuration);
         $this->addFlashMessage($this->getTranslation('message.role.updated.text'), $this->getTranslation('message.role.updated.title'));
-        $this->redirect('list');
+
+        return $this->redirect('list');
     }
 }
