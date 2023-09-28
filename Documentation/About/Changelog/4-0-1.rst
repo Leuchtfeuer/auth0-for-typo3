@@ -1,0 +1,24 @@
+.. include:: ../../Includes.txt
+
+==========================
+Version 4.0.1 - 2023/09/25
+==========================
+
+This release is a bug fix CallbackMiddleware.php tries to access the TSFE before its initialization.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v4.0.1>`__.
+
+Deprecated
+==========
+
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+   2023-09-25 [BUGFIX] Fix access the TSFE before its initialization (Commit a0a6d8f by Yassine Abid)
