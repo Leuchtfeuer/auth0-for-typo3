@@ -29,6 +29,7 @@ use Bitmotion\Auth0\Utility\TokenUtility;
 use Bitmotion\Auth0\Utility\UserUtility;
 use GuzzleHttp\Exception\GuzzleException;
 use JsonException;
+use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;
 use TYPO3\CMS\Core\Authentication\AuthenticationService as BasicAuthenticationService;
 use TYPO3\CMS\Core\Authentication\LoginType;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
@@ -67,6 +68,9 @@ class AuthenticationService extends BasicAuthenticationService
      */
     public function initAuth($mode, $loginData, $authInfo, $pObj): void
     {
+        // Set default values
+        $this->setDefaults($authInfo, $mode, $loginData, $pObj);
+
         if ($loginData['status'] !== LoginType::LOGIN) {
             return;
         }
@@ -86,9 +90,6 @@ class AuthenticationService extends BasicAuthenticationService
         }
 
         $this->auth0Authentication = true;
-
-        // Set default values
-        $this->setDefaults($authInfo, $mode, $loginData);
 
         if ($this->loginViaSession === true) {
             $this->login['status'] = 'login';
@@ -168,14 +169,17 @@ class AuthenticationService extends BasicAuthenticationService
         return (int)$dataSet->get('application');
     }
 
-    protected function setDefaults(array $authInfo, string $mode, array $loginData): void
+    protected function setDefaults(array $authInfo, string $mode, array $loginData, AbstractUserAuthentication $pObj): void
     {
         $authInfo['db_user']['check_pid_clause'] = false;
+        $loginData['responsible'] = false;
 
         $this->db_user = $authInfo['db_user'];
+        $this->db_groups = $authInfo['db_groups'];
         $this->authInfo = $authInfo;
         $this->mode = $mode;
         $this->login = $loginData;
+        $this->pObj = $pObj;
     }
 
     /**
