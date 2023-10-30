@@ -175,7 +175,6 @@ class AuthenticationService extends BasicAuthenticationService
         $loginData['responsible'] = false;
 
         $this->db_user = $authInfo['db_user'];
-        $this->db_groups = $authInfo['db_groups'];
         $this->authInfo = $authInfo;
         $this->mode = $mode;
         $this->login = $loginData;
