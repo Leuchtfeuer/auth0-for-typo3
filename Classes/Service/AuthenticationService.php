@@ -96,6 +96,9 @@ class AuthenticationService extends BasicAuthenticationService
      */
     public function initAuth($mode, $loginData, $authInfo, $pObj): void
     {
+        // Set default values
+        $this->setDefaults($authInfo, $mode, $loginData, $pObj);
+
         if ($this->isResponsible($authInfo['loginType']) === false) {
             $this->logger->debug('Auth0 authentication is not responsible for this request.');
             return;
@@ -105,9 +108,6 @@ class AuthenticationService extends BasicAuthenticationService
             $this->logger->debug('Initialization of Auth0 application failed.');
             return;
         }
-
-        // Set default values
-        $this->setDefaults($authInfo, $mode, $loginData, $pObj);
 
         if ($this->loginViaSession === true) {
             $this->login['status'] = 'login';
