@@ -76,10 +76,12 @@ if ($configuration->isEnableBackendLogin()) {
     ]
 );
 
-// Register backend login provider
-$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['backend']['loginProviders'][Auth0Provider::LOGIN_PROVIDER] = [
-    'provider' => Auth0Provider::class,
-    'sorting' => 25,
-    'iconIdentifier' => 'auth0LoginProvider',
-    'label' => 'LLL:EXT:auth0/Resources/Private/Language/locallang.xlf:backendLogin.switch.label'
-];
+if ($configuration->isEnableBackendLogin()) {
+    // Register backend login provider
+    $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['backend']['loginProviders'][Auth0Provider::LOGIN_PROVIDER] = [
+        'provider' => Auth0Provider::class,
+        'sorting' => 25,
+        'iconIdentifier' => 'auth0LoginProvider',
+        'label' => 'LLL:EXT:auth0/Resources/Private/Language/locallang.xlf:backendLogin.switch.label'
+    ];
+}
