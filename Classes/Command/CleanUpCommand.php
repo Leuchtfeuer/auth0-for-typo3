@@ -67,20 +67,20 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
      * @throws DBALException
      * @throws Exception
      */
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->output = $output;
 
         if (!$this->isInputValid($input)) {
             $output->writeln(sprintf('<error>Unknown method: %s</error>', $input->getArgument('method')));
 
-            return;
+            return Command::FAILURE;
         }
 
         if (!$this->isBackendLoginEnabled()) {
             $output->writeln('<error>Backend login is not enabled.</error>');
 
-            return;
+            return Command::FAILURE;
         }
 
         if ($this->setUsers()) {
@@ -94,6 +94,8 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
         } else {
             $output->writeln(sprintf('<info>No users removed for table %s.</info>', $this->tableNames['users']));
         }
+
+        return Command::SUCCESS;
     }
 
     protected function isInputValid(InputInterface $input): bool
