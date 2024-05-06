@@ -48,14 +48,20 @@ if ($configuration->isEnableFrontendLogin()) {
 }
 
 if ($configuration->isEnableBackendLogin()) {
+    // Register backend login provider
+    $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['backend']['loginProviders'][Auth0Provider::LOGIN_PROVIDER] = [
+        'provider' => Auth0Provider::class,
+        'sorting' => 25,
+        'iconIdentifier' => 'auth0LoginProvider',
+        'label' => 'LLL:EXT:auth0/Resources/Private/Language/locallang.xlf:backendLogin.switch.label'
+    ];
+
     // Register single log out hooks
     // TODO: Support following hooks for frontend request as well and move to ext_localconf.php file
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['logoff_pre_processing']['auth0']
         = \Leuchtfeuer\Auth0\Hooks\SingleSignOutHook::class . '->isResponsible';
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['logoff_post_processing']['auth0']
         = \Leuchtfeuer\Auth0\Hooks\SingleSignOutHook::class . '->performLogout';
-
-
 }
 
 // Register Backend Module
@@ -75,11 +81,3 @@ if ($configuration->isEnableBackendLogin()) {
         'labels' => 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf'
     ]
 );
-
-// Register backend login provider
-$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['backend']['loginProviders'][Auth0Provider::LOGIN_PROVIDER] = [
-    'provider' => Auth0Provider::class,
-    'sorting' => 25,
-    'iconIdentifier' => 'auth0LoginProvider',
-    'label' => 'LLL:EXT:auth0/Resources/Private/Language/locallang.xlf:backendLogin.switch.label'
-];
