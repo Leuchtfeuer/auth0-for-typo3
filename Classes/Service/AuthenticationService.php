@@ -346,7 +346,7 @@ class AuthenticationService extends BasicAuthenticationService
      */
     public function getUser()
     {
-        if ($this->login['status'] !== 'login' || $this->login['responsible'] === false || !isset($this->userInfo[$this->userIdentifier])) {
+        if (($this->login['status'] ?? '') !== 'login' || ($this->login['responsible'] ?? false) === false || !isset($this->userInfo[$this->userIdentifier])) {
             return false;
         }
 
@@ -378,7 +378,7 @@ class AuthenticationService extends BasicAuthenticationService
 
     public function authUser(array $user): int
     {
-        if ($this->login['responsible'] === false) {
+        if (($this->login['responsible'] ?? false) === false) {
             // Service is not responsible. Check other services.
             return 100;
         }
