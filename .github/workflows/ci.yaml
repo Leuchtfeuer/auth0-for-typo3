@@ -27,7 +27,7 @@ jobs:
   phpunit:
     needs: integration
     name: PHP ${{ matrix.php-version }} - T3 ${{ matrix.typo3-version }}
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
