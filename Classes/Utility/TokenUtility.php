@@ -158,7 +158,7 @@ class TokenUtility implements LoggerAwareInterface
     {
         if (!ModeUtility::isBackend()) {
             try {
-                if (!$GLOBALS['TSFE']) {
+                if (!isset($GLOBALS['TSFE'])) {
                     $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
                     return;
                 }
