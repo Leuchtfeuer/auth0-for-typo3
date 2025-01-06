@@ -18,3 +18,9 @@ services:
       - name: event.listener
         identifier: auth0AfterPackageActivationEvent
         event: TYPO3\CMS\Core\Package\Event\AfterPackageActivationEvent
+
+  Leuchtfeuer\Auth0\EventListener\BeforeUserLogoutEventListener:
+    tags:
+      - name: event.listener
+        identifier: auth0BeforePackageActivationEvent
+        event: Leuchtfeuer\Auth0\EventListener\BeforeUserLogoutEvent

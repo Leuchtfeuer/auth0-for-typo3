@@ -28,26 +28,28 @@
             "email": "y.abid@Leuchtfeuer.com",
             "homepage": "https://www.Leuchtfeuer.com",
             "role": "Developer"
+        },
+        {
+            "name": "Oliver Heins",
+            "email": "o.heins@leuchtfeuer.com",
+            "homepage": "https://www.Leuchtfeuer.com",
+            "role": "Developer"
         }
     ],
     "homepage": "https://www.Leuchtfeuer.com",
     "require": {
         "auth0/auth0-php": "^8.1",
-        "lcobucci/jwt": "^4.1",
-        "symfony/http-foundation": "^5.4 || ^6.2",
-        "symfony/property-access": "^4.4 || ^5.4 || ^6.2",
-        "symfony/property-info": "^5.4 || ^6.3",
-        "symfony/serializer": "^4.4 || ^5.4 || ^6.2",
-        "typo3/cms-backend": "^11.5.7 || ^12.4",
-        "typo3/cms-core": "^11.5.7 || ^12.4",
-        "typo3/cms-extbase": "^11.5.7 || ^12.4",
-        "typo3/cms-extensionmanager": "^11.5.7 || ^12.4",
-        "typo3/cms-fluid": "^11.5.7 || ^12.4",
-        "typo3/cms-frontend": "^11.5.7 || ^12.4"
-    },
-    "replace": {
-        "bitmotion/auth0": "self.version",
-        "typo3-ter/auth0": "self.version"
+        "lcobucci/jwt": "^5.1",
+        "symfony/http-foundation": "^6.2 || ^7.1.3",
+        "symfony/property-access": "^6.2 || ^7.1.4",
+        "symfony/property-info": "^6.3 || ^7.1",
+        "symfony/serializer": "^6.4 || ^7.0",
+        "typo3/cms-backend": "^13.4",
+        "typo3/cms-core": "^13.4",
+        "typo3/cms-extbase": "^13.4",
+        "typo3/cms-extensionmanager": "^13.4",
+        "typo3/cms-fluid": "^13.4",
+        "typo3/cms-frontend": "^13.4"
     },
     "suggest": {
         "typo3/cms-scheduler": "TYPO3 Scheduler"
@@ -65,7 +67,7 @@
         },
         "bin-dir": ".Build/bin",
         "platform": {
-            "php": "7.4"
+            "php": "8.2"
         },
         "vendor-dir": ".Build/vendor"
     },
@@ -83,7 +85,7 @@
         ]
     },
     "require-dev": {
-        "ssch/typo3-rector": "^1.3",
-        "friendsofphp/php-cs-fixer": "^3.25"
+        "ssch/typo3-rector": "*",
+        "friendsofphp/php-cs-fixer": "*"
     }
 }

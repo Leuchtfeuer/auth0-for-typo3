@@ -27,7 +27,7 @@ class ApplicationFactory
 
     public const SESSION_PREFIX_FRONTEND = 'FE';
 
-    protected ?Application $application;
+    protected ?Application $application = null;
 
     /**
      * @throws ConfigurationException

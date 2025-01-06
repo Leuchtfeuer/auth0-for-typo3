@@ -17,7 +17,7 @@ class ParametersUtility
 {
     public static function transformUrlParameters(?string $url): array
     {
-        if (empty($url)) {
+        if ($url === null || $url === '' || $url === '0') {
             return [];
         }
 

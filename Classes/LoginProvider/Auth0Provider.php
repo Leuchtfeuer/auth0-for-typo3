@@ -23,6 +23,7 @@ use Leuchtfeuer\Auth0\Factory\ApplicationFactory;
 use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
 use Leuchtfeuer\Auth0\Utility\ModeUtility;
 use Leuchtfeuer\Auth0\Utility\TokenUtility;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\Controller\LoginController;
@@ -53,7 +54,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     protected EmAuth0Configuration $configuration;
 
-    protected ?string $action;
+    protected ?string $action = null;
 
     protected array $frameworkConfiguration;
 
@@ -81,7 +82,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         $this->prepareView($view, $pageRenderer);
 
         // Throw error if there is no application
-        if (!$this->application) {
+        if (!$this->application instanceof \Leuchtfeuer\Auth0\Domain\Model\Application) {
             $view->assign('error', 'no_application');
             return;
         }
@@ -89,7 +90,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         // Try to get user info from session storage
         $this->userInfo = $this->getUserInfo();
 
-        $urlData = GeneralUtility::_GET('auth0') ?? [];
+        $urlData = $this->getRequest()->getQueryParams()['auth0'] ?? [];
         $this->action = $urlData['action'] ?? null;
 
         if ((empty($this->userInfo) && $this->action === self::ACTION_LOGIN) || $this->action === self::ACTION_LOGOUT) {
@@ -98,9 +99,9 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
         // Assign variables and Auth0 response to view
         $view->assignMultiple([
-            'auth0Error' => GeneralUtility::_GET('error'),
-            'auth0ErrorDescription' => GeneralUtility::_GET('error_description'),
-            'code' => GeneralUtility::_GET('code'),
+            'auth0Error' => $this->getRequest()->getQueryParams()['error'] ?? null,
+            'auth0ErrorDescription' => $this->getRequest()->getQueryParams()['error_description'] ?? null,
+            'code' => $this->getRequest()->getQueryParams()['code'] ?? null,
             'userInfo' => $this->userInfo,
         ]);
     }
@@ -109,10 +110,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     {
         try {
             $this->auth0 = ApplicationFactory::build($this->configuration->getBackendConnection());
-        } catch (\Exception $exception) {
-            $this->logger->critical($exception->getMessage());
-            return false;
-        } catch (GuzzleException $exception) {
+        } catch (\Exception|GuzzleException $exception) {
             $this->logger->critical($exception->getMessage());
             return false;
         }
@@ -146,7 +144,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         if (empty($userInfo)) {
             try {
                 $this->logger->notice('Try to get user via Auth0 API');
-                if ($this->auth0->exchange($this->getCallback(), GeneralUtility::_GET('code'), GeneralUtility::_GET('state'))) {
+                if ($this->auth0->exchange($this->getCallback(), $this->getRequest()->getQueryParams()['code'] ?? null, $this->getRequest()->getQueryParams()['state'] ?? null)) {
                     $userInfo = $this->auth0->getUser();
                 }
             } catch (\Exception $exception) {
@@ -218,5 +216,10 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         $templateName = ModeUtility::isTYPO3V12() ? 'BackendV12' : 'BackendV11';
 
         return 'LoginProvider/' . $templateName;
+    }
+
+    private function getRequest(): ServerRequestInterface
+    {
+        return $GLOBALS['TYPO3_REQUEST'];
     }
 }

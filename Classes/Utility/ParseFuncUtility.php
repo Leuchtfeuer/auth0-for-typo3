@@ -50,7 +50,7 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
     {
         switch ($processing) {
             case 'strtotime':
-                $value = strtotime($value);
+                $value = strtotime((string) $value);
                 break;
 
             case 'bool':
@@ -76,7 +76,7 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
         if (isset($user[$property])) {
             $value = $user[$property];
 
-            if (is_array($properties) && ($value instanceof \stdClass || (is_array($value) && !empty($value)))) {
+            if ($value instanceof \stdClass || (is_array($value) && $value !== [])) {
                 return $this->getAuth0ValueRecursive($value, $properties);
             }
         }

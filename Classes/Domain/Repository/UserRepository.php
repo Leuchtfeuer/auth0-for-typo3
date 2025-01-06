@@ -39,15 +39,9 @@ class UserRepository implements LoggerAwareInterface
      */
     protected $expressionBuilder;
 
-    /**
-     * @var string
-     */
-    protected string $tableName;
-
-    public function __construct(string $tableName)
+    public function __construct(protected string $tableName)
     {
-        $this->tableName = $tableName;
-        $this->queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($tableName);
+        $this->queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableName);
         $this->expressionBuilder = $this->queryBuilder->expr();
     }
 

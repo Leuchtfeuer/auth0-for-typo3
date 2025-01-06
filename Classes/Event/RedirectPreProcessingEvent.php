@@ -17,14 +17,8 @@ use Leuchtfeuer\Auth0\Service\RedirectService;
 
 final class RedirectPreProcessingEvent
 {
-    private $redirectUri;
-
-    private $redirectService;
-
-    public function __construct(string $redirectUri, RedirectService $redirectService)
+    public function __construct(private string $redirectUri, private readonly RedirectService $redirectService)
     {
-        $this->redirectUri = $redirectUri;
-        $this->redirectService = $redirectService;
     }
 
     public function getRedirectUri(): string

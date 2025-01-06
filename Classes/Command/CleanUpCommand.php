@@ -60,8 +60,6 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
     }
 
     /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
      * @throws ArgumentException
      * @throws NetworkException
      * @throws DBALException
@@ -194,9 +192,6 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
             )->execute();
     }
 
-    /**
-     * @return int
-     */
     protected function updateUsers(): int
     {
         $userCount = 0;
@@ -210,9 +205,7 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
                     $userCount++;
                 }
             }
-        } catch (\Exception $exception) {
-            $this->logger->critical($exception->getMessage());
-        } catch (GuzzleException $exception) {
+        } catch (\Exception|GuzzleException $exception) {
             $this->logger->critical($exception->getMessage());
         }
 

@@ -38,13 +38,13 @@ class TokenUtility implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    const KEY_TYPE_PRIVATE = 'private';
+    protected const KEY_TYPE_PRIVATE = 'private';
 
-    const KEY_TYPE_PUBLIC = 'public';
+    protected const KEY_TYPE_PUBLIC = 'public';
 
-    const ENVIRONMENT_FRONTEND = 'FE';
+    public const ENVIRONMENT_FRONTEND = 'FE';
 
-    const ENVIRONMENT_BACKEND = 'BE';
+    public const ENVIRONMENT_BACKEND = 'BE';
 
     protected EmAuth0Configuration $configuration;
 
@@ -54,7 +54,7 @@ class TokenUtility implements LoggerAwareInterface
 
     protected array $payload = [];
 
-    protected ?Token $token;
+    protected ?Token $token = null;
 
     protected bool $verified = false;
 
@@ -117,7 +117,7 @@ class TokenUtility implements LoggerAwareInterface
 
     public function verifyToken(string $token): bool
     {
-        if (empty($token)) {
+        if ($token === '' || $token === '0') {
             $this->logger->warning('Given token is empty.');
             return false;
         }
@@ -125,6 +125,7 @@ class TokenUtility implements LoggerAwareInterface
         try {
             $this->token = $this->config->parser()->parse($token);
         } catch (\Exception $exception) {
+            /** @extensionScannerIgnoreLine */
             $this->logger->error($exception->getMessage());
             $this->logger->warning('Could not parse token.');
             return false;
@@ -173,7 +174,7 @@ class TokenUtility implements LoggerAwareInterface
 
                 // Base of site configuration might be "/" so we have to retrieve the domain from the ENV
                 $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
-            } catch (\Exception $exception) {
+            } catch (\Exception) {
                 $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
             }
 

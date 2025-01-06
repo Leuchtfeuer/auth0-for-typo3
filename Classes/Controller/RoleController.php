@@ -24,25 +24,15 @@ class RoleController extends BackendController
     public function listAction(): ResponseInterface
     {
         $moduleTemplate = $this->initView();
-        $this->view->assignMultiple([
+        $moduleTemplate->assignMultiple([
             'frontendUserGroupMapping' => (new FrontendUserGroupRepository())->findAll(),
             'backendUserGroupMapping' => (new BackendUserGroupRepository())->findAll(),
             'extensionConfiguration' => new EmAuth0Configuration(),
             'yamlConfiguration' => GeneralUtility::makeInstance(Auth0Configuration::class)->load(),
         ]);
-        $moduleTemplate->setContent($this->view->render());
-
-        return $this->htmlResponse($moduleTemplate->renderContent());
+        return $moduleTemplate->renderResponse();
     }
 
-    /**
-     * @param string $key
-     * @param int $defaultFrontendUserGroup
-     * @param string $adminRole
-     * @param int $defaultBackendUserGroup
-     *
-     * @return ResponseInterface
-     */
     public function updateAction(
         string $key = 'roles',
         int $defaultFrontendUserGroup = 0,

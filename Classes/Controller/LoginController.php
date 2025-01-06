@@ -15,6 +15,7 @@ namespace Leuchtfeuer\Auth0\Controller;
 
 use Auth0\SDK\Auth0;
 use Auth0\SDK\Exception\ConfigurationException;
+use GuzzleHttp\Exception\GuzzleException;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\Factory\ApplicationFactory;
@@ -29,7 +30,6 @@ use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
 class LoginController extends ActionController implements LoggerAwareInterface
 {
@@ -39,23 +39,27 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
     protected string $errorDescription = '';
 
-    protected ?Auth0 $auth0;
+    protected ?Auth0 $auth0 = null;
 
     protected int $application = 0;
 
     protected EmAuth0Configuration $configuration;
 
+    /**
+     * @throws GuzzleException
+     * @throws ConfigurationException
+     */
     public function initializeAction(): void
     {
-        if (!empty(GeneralUtility::_GET('error'))) {
-            $this->error = htmlspecialchars((string)GeneralUtility::_GET('error'));
+        if (!empty($this->request->getQueryParams()['error'] ?? null)) {
+            $this->error = htmlspecialchars((string)$this->request->getQueryParams()['error']);
         }
 
-        if (!empty(GeneralUtility::_GET('error_description'))) {
-            $this->errorDescription = htmlspecialchars((string)GeneralUtility::_GET('error_description'));
+        if (!empty($this->request->getQueryParams()['error_description'] ?? null)) {
+            $this->errorDescription = htmlspecialchars((string)$this->request->getQueryParams()['error_description']);
         }
 
-        $this->application = (int)($this->settings['application'] ?? GeneralUtility::_GET('application'));
+        $this->application = (int)($this->settings['application'] ?? $this->request->getQueryParams()['application'] ?? null);
         $this->auth0 = ApplicationFactory::build($this->application, ApplicationFactory::SESSION_PREFIX_FRONTEND);
         $this->configuration = new EmAuth0Configuration();
     }
@@ -72,7 +76,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
         $this->view->assignMultiple([
             'userInfo' => $userInfo ?? [],
-            'referrer' => GeneralUtility::_GET('referrer') ?? GeneralUtility::_GET('return_url') ?? '',
+            'referrer' => $this->request->getQueryParams()['referrer'] ?? $this->request->getQueryParams()['return_url'] ?? '',
             'auth0Error' => $this->error,
             'auth0ErrorDescription' => $this->errorDescription,
         ]);
@@ -80,19 +84,18 @@ class LoginController extends ActionController implements LoggerAwareInterface
     }
 
     /**
-     * @param string|null $rawAdditionalAuthorizeParameters
      * @throws AspectNotFoundException
-     * @throws StopActionException
      * @throws ConfigurationException
      */
     public function loginAction(?string $rawAdditionalAuthorizeParameters = null): void
     {
+        /** @var Context $context */
         $context = GeneralUtility::makeInstance(Context::class);
         $userInfo = $this->auth0->configuration()->getSessionStorage()->get('user');
 
         // Log in user to auth0 when there is neither a TYPO3 frontend user nor an Auth0 user
         if (!$context->getPropertyFromAspect('frontend.user', 'isLoggedIn') || empty($userInfo)) {
-            if (!empty($rawAdditionalAuthorizeParameters)) {
+            if ($rawAdditionalAuthorizeParameters !== null && $rawAdditionalAuthorizeParameters !== '' && $rawAdditionalAuthorizeParameters !== '0') {
                 $additionalAuthorizeParameters = ParametersUtility::transformUrlParameters($rawAdditionalAuthorizeParameters);
             } else {
                 $additionalAuthorizeParameters = $this->settings['frontend']['login']['additionalAuthorizeParameters'] ?? [];
@@ -109,7 +112,6 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
     /**
      * @throws ConfigurationException
-     * @throws StopActionException
      */
     public function logoutAction(): void
     {
@@ -120,7 +122,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
             $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
             $routingUtility->addArgument('logintype', 'logout');
 
-            if (strpos($this->settings['redirectMode'], 'logout') !== false && (bool)$this->settings['redirectDisable'] === false) {
+            if (str_contains((string) $this->settings['redirectMode'], 'logout') && (bool)$this->settings['redirectDisable'] === false) {
                 $routingUtility->addArgument('referrer', $this->addLogoutRedirect());
             }
             $this->redirectToUri($routingUtility->getUri());
@@ -137,8 +139,8 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
     protected function getCallback(string $loginType = 'login'): string
     {
-        $uri = $GLOBALS['TYPO3_REQUEST']->getUri();
-        $referrer = $GLOBALS['TYPO3_REQUEST']->getQueryParams()['referrer'] ?? sprintf('%s://%s%s', $uri->getScheme(), $uri->getHost(), $uri->getPath());
+        $uri = $this->request->getUri();
+        $referrer = $this->request->getQueryParams()['referrer'] ?? sprintf('%s://%s%s', $uri->getScheme(), $uri->getHost(), $uri->getPath());
 
         //TODO: Check this functionality again. Auth0 documentation states that they remove everything anchor related to maintain OAuth2 specification
         if ($this->settings['referrerAnchor']) {

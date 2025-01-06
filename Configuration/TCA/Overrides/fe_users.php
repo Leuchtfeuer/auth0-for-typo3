@@ -2,7 +2,7 @@
 declare(strict_types = 1);
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-defined('TYPO3') or die();
+defined('TYPO3') || die();
 
 ExtensionManagementUtility::addTCAcolumns(
     'fe_users',
@@ -47,7 +47,7 @@ $auth0Showitem = <<<TCA
 TCA;
 
 foreach ($GLOBALS['TCA']['fe_users']['types'] ?? [] as $type => $_) {
-    $showitem = trim($GLOBALS['TCA']['fe_users']['types'][$type]['showitem']);
+    $showitem = trim((string) $GLOBALS['TCA']['fe_users']['types'][$type]['showitem']);
     $showitem = sprintf('%s,%s', rtrim($showitem, ','), $auth0Showitem);
     $GLOBALS['TCA']['fe_users']['types'][$type]['showitem'] = $showitem;
 }

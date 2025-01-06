@@ -29,6 +29,7 @@ use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
 use Leuchtfeuer\Auth0\Utility\Database\UpdateUtility;
 use Leuchtfeuer\Auth0\Utility\TokenUtility;
 use Leuchtfeuer\Auth0\Utility\UserUtility;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;
 use TYPO3\CMS\Core\Authentication\AuthenticationService as BasicAuthenticationService;
 use TYPO3\CMS\Core\Authentication\LoginType;
@@ -48,10 +49,7 @@ class AuthenticationService extends BasicAuthenticationService
 
     protected string $tableName = 'fe_users';
 
-    /**
-     * @var Auth0
-     */
-    protected $auth0;
+    protected Auth0 $auth0;
 
     protected bool $loginViaSession = false;
 
@@ -91,7 +89,7 @@ class AuthenticationService extends BasicAuthenticationService
 
         $this->auth0Authentication = true;
 
-        if ($this->loginViaSession === true) {
+        if ($this->loginViaSession) {
             $this->login['status'] = 'login';
             $this->handleLogin();
         } elseif ($this->initializeAuth0Connection()) {
@@ -101,13 +99,14 @@ class AuthenticationService extends BasicAuthenticationService
 
     private function isAuth0LoginProvider(string $loginType): bool
     {
-        return $loginType === self::BACKEND_AUTHENTICATION && (int)GeneralUtility::_GP('loginProvider') === Auth0Provider::LOGIN_PROVIDER;
+        $loginProvider = (int)($this->getRequest()->getQueryParams()['loginProvider'] ?? $this->getRequest()->getQueryParams()['loginProvider'] ?? null);
+        return $loginType === self::BACKEND_AUTHENTICATION && $loginProvider === Auth0Provider::LOGIN_PROVIDER;
     }
 
     private function hasAuth0Error(): bool
     {
         $validErrorCodes = (new \ReflectionClass(ErrorCode::class))->getConstants();
-        $auth0ErrorCode = GeneralUtility::_GET('error') ?? '';
+        $auth0ErrorCode = $this->getRequest()->getQueryParams()['error'] ?? '';
         if ($auth0ErrorCode && in_array($auth0ErrorCode, $validErrorCodes)) {
             $this->logger->notice('Access denied. Skip.');
             return true;
@@ -134,10 +133,12 @@ class AuthenticationService extends BasicAuthenticationService
                 break;
 
             default:
+                /** @extensionScannerIgnoreLine */
                 $this->logger->error('Environment is neither in frontend nor in backend mode.');
         }
 
         if ($this->application === 0 && $this->initSessionStore($loginType) === false) {
+            /** @extensionScannerIgnoreLine */
             $this->logger->error('No Auth0 application UID given.');
 
             return false;
@@ -162,7 +163,7 @@ class AuthenticationService extends BasicAuthenticationService
 
         try {
             $dataSet = $tokenUtility->getToken()->claims();
-        } catch (TokenException $exception) {
+        } catch (TokenException) {
             return 0;
         }
 
@@ -189,30 +190,6 @@ class AuthenticationService extends BasicAuthenticationService
     {
         echo 'do not hit';
         die();
-        //        $session = (new SessionFactory())->getSessionStoreForApplication(0, $loginType);
-        //        $userInfo = $session->getUserInfo();
-
-        // TODO: Check if context needs to be set
-        $userInfo = $this->auth0->configuration()->getSessionStorage()->get('user');
-
-        if (!empty($userInfo[$this->userIdentifier])) {
-            $this->logger->debug('Try to login user via Auth0 session');
-            try {
-                $this->userInfo = $userInfo;
-                $this->setApplicationByUser($userInfo[$this->userIdentifier]);
-                $this->getAuth0User();
-                $this->loginViaSession = true;
-                var_dump('login via session hit');
-                die();
-                return true;
-            } catch (\Exception $exception) {
-                $this->logger->debug('Could not login user via Auth0 session');
-                $this->userInfo = [];
-                $session->deleteUserInfo();
-            }
-        }
-
-        return false;
     }
 
     protected function setApplicationByUser(string $auth0UserId): void
@@ -222,7 +199,7 @@ class AuthenticationService extends BasicAuthenticationService
             ->select('auth0_last_application')
             ->from($this->tableName)
             ->where($queryBuilder->expr()->eq('auth0_user_id', $queryBuilder->createNamedParameter($auth0UserId)))
-            ->execute()
+            ->executeQuery()
             ->fetchOne();
 
         $this->logger->debug(sprintf('Found application (ID: %s) for active Auth0 session.', $application));
@@ -235,18 +212,11 @@ class AuthenticationService extends BasicAuthenticationService
     protected function handleLogin(): void
     {
         if ($this->auth0Authentication) {
-            switch ($this->mode) {
-                case 'getUserFE':
-                case 'getUserBE':
-                    $this->insertOrUpdateUser();
-                    break;
-                case 'authUserFE':
-                case 'authUserBE':
-                    $this->logger->debug(sprintf('Skip auth mode "%s".', $this->mode));
-                    break;
-                default:
-                    $this->logger->notice(sprintf('Undefined mode "%s". Skip.', $this->mode));
-            }
+            match ($this->mode) {
+                'getUserFE', 'getUserBE' => $this->insertOrUpdateUser(),
+                'authUserFE', 'authUserBE' => $this->logger->debug(sprintf('Skip auth mode "%s".', $this->mode)),
+                default => $this->logger->notice(sprintf('Undefined mode "%s". Skip.', $this->mode)),
+            };
         }
     }
 
@@ -275,7 +245,7 @@ class AuthenticationService extends BasicAuthenticationService
         $this->user = $userUtility->checkIfUserExists($this->tableName, $this->userInfo[$this->userIdentifier]);
 
         // Insert a new user into database
-        if (empty($this->user)) {
+        if ($this->user === []) {
             $this->logger->notice('Insert new user.');
             $userUtility->insertUser($this->tableName, $this->userInfo);
         }
@@ -332,7 +302,7 @@ class AuthenticationService extends BasicAuthenticationService
             // Delete persistent Auth0 user data
             try {
                 $this->auth0->clear();
-            } catch (\Exception $exception) {
+            } catch (\Exception) {
                 // ignore this...
             }
 
@@ -369,7 +339,7 @@ class AuthenticationService extends BasicAuthenticationService
         //        }
 
         // Skip when there is an Auth0 session but the corresponding TYPO3 user has no user group assigned.
-        if (empty($user['usergroup']) && $this->loginViaSession === true) {
+        if (empty($user['usergroup']) && $this->loginViaSession) {
             $this->logger->warning('Could not login user via session as it has no group assigned.');
 
             // TODO: Pass error message for clarification
@@ -381,5 +351,10 @@ class AuthenticationService extends BasicAuthenticationService
         // Success
         $this->logger->notice(sprintf('Auth0 User %s (UID: %s) successfully logged in.', $user['auth0_user_id'], $user['uid']));
         return 200;
+    }
+
+    public function getRequest(): ServerRequestInterface
+    {
+        return $GLOBALS['TYPO3_REQUEST'];
     }
 }

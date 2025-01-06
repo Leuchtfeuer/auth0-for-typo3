@@ -29,19 +29,13 @@ class UpdateUtility implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    protected string $tableName = '';
-
     protected EmAuth0Configuration $configuration;
-
-    protected $user = [];
 
     protected $yamlConfiguration = [];
 
-    public function __construct(string $tableName, array $user)
+    public function __construct(protected string $tableName, protected array $user)
     {
-        $this->tableName = $tableName;
         $this->configuration = new EmAuth0Configuration();
-        $this->user = $user;
         $this->yamlConfiguration = GeneralUtility::makeInstance(Auth0Configuration::class)->load();
     }
 
@@ -51,6 +45,7 @@ class UpdateUtility implements LoggerAwareInterface
         $this->addDefaultGroup($groupMapping);
 
         if (empty($groupMapping)) {
+            /** @extensionScannerIgnoreLine */
             $this->logger->error(sprintf('Cannot update user groups: No role mapping for %s found', $this->tableName));
 
             return;
@@ -75,6 +70,7 @@ class UpdateUtility implements LoggerAwareInterface
         $mappingConfiguration = $this->yamlConfiguration['properties'][$this->tableName] ?? null;
 
         if ($mappingConfiguration === null) {
+            /** @extensionScannerIgnoreLine */
             $this->logger->error(sprintf('Cannot update user: No mapping configuration for %s found', $this->tableName));
 
             return;
@@ -91,7 +87,7 @@ class UpdateUtility implements LoggerAwareInterface
         if ($userGroupRepository instanceof AbstractUserGroupRepository) {
             foreach ($userGroupRepository->findAll() as $userGroup) {
                 if (!empty($userGroup['auth0_user_group'])) {
-                    $groupMapping[$userGroup[AbstractUserGroupRepository::USER_GROUP_FIELD]] = $groupMapping[$userGroup[AbstractUserGroupRepository::USER_GROUP_FIELD]] ?? [];
+                    $groupMapping[$userGroup[AbstractUserGroupRepository::USER_GROUP_FIELD]] ??= [];
                     $groupMapping[$userGroup[AbstractUserGroupRepository::USER_GROUP_FIELD]][] = $userGroup['uid'];
                 }
             }
@@ -102,15 +98,11 @@ class UpdateUtility implements LoggerAwareInterface
 
     protected function getUserGroupRepository(): ?AbstractUserGroupRepository
     {
-        switch ($this->tableName) {
-            case 'fe_users':
-                return new FrontendUserGroupRepository();
-
-            case 'be_users':
-                return new BackendUserGroupRepository();
-        }
-
-        return null;
+        return match ($this->tableName) {
+            'fe_users' => new FrontendUserGroupRepository(),
+            'be_users' => new BackendUserGroupRepository(),
+            default => null,
+        };
     }
 
     protected function addDefaultGroup(array &$groupMapping): void
@@ -163,7 +155,7 @@ class UpdateUtility implements LoggerAwareInterface
         $groupsToAssign = array_unique($groupsToAssign);
 
         // Update usergroup in database
-        if (!empty($groupsToAssign)) {
+        if ($groupsToAssign !== []) {
             $updates['usergroup'] = implode(',', $groupsToAssign);
         }
 

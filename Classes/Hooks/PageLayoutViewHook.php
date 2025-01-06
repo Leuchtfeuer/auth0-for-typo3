@@ -19,14 +19,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class PageLayoutViewHook
 {
-    /**
-     * @var string
-     */
     protected string $listType = '';
 
-    /**
-     * @var array
-     */
     protected array $flexFormData = [];
 
     public function getSummary(array $params): string
@@ -34,10 +28,10 @@ class PageLayoutViewHook
         $this->listType = $params['row']['list_type'];
         $this->flexFormData = GeneralUtility::xml2array($params['row']['pi_flexform']);
 
-        $header = '<p><strong>' . 'Auth0: ' . $this->getLanguageService()->sL('LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:plugin.loginForm.title') . '</strong></p>';
+        $header = '<p><strong>Auth0: ' . $this->getLanguageService()->sL('LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:plugin.loginForm.title') . '</strong></p>';
         $content = '';
 
-        if (!empty($this->flexFormData)) {
+        if ($this->flexFormData !== '' && $this->flexFormData !== '0' && $this->flexFormData !== []) {
             $content = sprintf(
                 '<strong>%s</strong><span style="padding-left: 15px">%s</span><br/>',
                 $this->getLanguageService()->sL('LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_application'),
@@ -68,7 +62,7 @@ class PageLayoutViewHook
     {
         $applicationUid = $this->getFieldFromFlexForm('settings.application');
 
-        if (empty($applicationUid)) {
+        if ($applicationUid === '' || $applicationUid === '0') {
             return 'Not defined';
         }
 

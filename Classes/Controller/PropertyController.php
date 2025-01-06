@@ -18,7 +18,6 @@ use Leuchtfeuer\Auth0\Utility\TcaUtility;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Http\ForwardResponse;
-use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
 class PropertyController extends BackendController
 {
@@ -26,34 +25,27 @@ class PropertyController extends BackendController
     {
         $tcaUtility = new TcaUtility();
         $moduleTemplate = $this->initView();
-        $this->view->assignMultiple([
+        $moduleTemplate->assignMultiple([
             'frontendUserColumns' => $tcaUtility->getColumnsFromTable('fe_users'),
             'backendUserColumns' => $tcaUtility->getColumnsFromTable('be_users'),
             'extensionConfiguration' => new EmAuth0Configuration(),
             'yamlConfiguration' => GeneralUtility::makeInstance(Auth0Configuration::class)->load(),
         ]);
-        $moduleTemplate->setContent($this->view->render());
-
-        return $this->htmlResponse($moduleTemplate->renderContent());
+        return $moduleTemplate->renderResponse();
     }
 
     public function newAction(string $table, string $type): ResponseInterface
     {
         $moduleTemplate = $this->initView();
         $this->addButton('menu.button.cancel', 'list', 'Property', 'actions-close', $moduleTemplate);
-        $this->view->assignMultiple([
+        $moduleTemplate->assignMultiple([
             'table' => $table,
             'type' => $type,
             'properties' => (new TcaUtility())->getUnusedColumnsFromTable($table),
         ]);
-        $moduleTemplate->setContent($this->view->render());
-
-        return $this->htmlResponse($moduleTemplate->renderContent());
+        return $moduleTemplate->renderResponse();
     }
 
-    /**
-     * @throws StopActionException
-     */
     public function createAction(array $property, string $table, string $type): ResponseInterface
     {
         if (empty($property['databaseField']) || empty($property['auth0Property'])) {
@@ -71,9 +63,6 @@ class PropertyController extends BackendController
         return $this->redirect('list');
     }
 
-    /**
-     * @throws StopActionException
-     */
     public function deleteAction(array $property, string $table, string $type): ResponseInterface
     {
         if ((bool)$property['readOnly'] === false) {
@@ -99,20 +88,15 @@ class PropertyController extends BackendController
     {
         $moduleTemplate = $this->initView();
         $this->addButton('menu.button.cancel', 'list', 'Property', 'actions-close', $moduleTemplate);
-        $this->view->assignMultiple([
+        $moduleTemplate->assignMultiple([
             'property' => $property,
             'table' => $table,
             'type' => $type,
             'properties' => (new TcaUtility())->getUnusedColumnsFromTable($table, $property['databaseField']),
         ]);
-        $moduleTemplate->setContent($this->view->render());
-
-        return $this->htmlResponse($moduleTemplate->renderContent());
+        return $moduleTemplate->renderResponse();
     }
 
-    /**
-     * @throws StopActionException
-     */
     public function updateAction(array $property, string $table, string $type): ResponseInterface
     {
         $auth0Configuration = GeneralUtility::makeInstance(Auth0Configuration::class);

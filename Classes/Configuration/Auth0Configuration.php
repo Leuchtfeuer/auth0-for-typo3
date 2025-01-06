@@ -21,19 +21,19 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class Auth0Configuration implements SingletonInterface
 {
-    const CONFIG_FILE_NAME = 'config.yaml';
+    protected const CONFIG_FILE_NAME = 'config.yaml';
 
-    const CONFIG_FOLDER_NAME = 'auth0';
+    protected const CONFIG_FOLDER_NAME = 'auth0';
 
-    const CONFIG_TYPE_ROOT = 'root';
+    public const CONFIG_TYPE_ROOT = 'root';
 
-    const CONFIG_TYPE_USER = 'user_metadata';
+    public const CONFIG_TYPE_USER = 'user_metadata';
 
-    const CONFIG_TYPE_APP = 'app_metadata';
+    public const CONFIG_TYPE_APP = 'app_metadata';
 
-    protected $configPath;
+    protected string $configPath;
 
-    protected $filePath;
+    protected string $filePath;
 
     public function __construct(string $configPath = null)
     {
@@ -47,7 +47,7 @@ class Auth0Configuration implements SingletonInterface
 
         try {
             return $loader->load(GeneralUtility::fixWindowsFilePath($this->filePath), YamlFileLoader::PROCESS_IMPORTS);
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             return $this->buildDefaultConfiguration();
         }
     }
@@ -172,12 +172,12 @@ class Auth0Configuration implements SingletonInterface
     {
         $removed = [];
 
-        foreach ($currentConfiguration as $key => $value) {
+        foreach (array_keys($currentConfiguration) as $key) {
             if (!isset($newConfiguration[$key])) {
                 $removed[$key] = '__UNSET';
             } elseif (isset($currentConfiguration[$key]) && is_array($currentConfiguration[$key]) && is_array($newConfiguration[$key])) {
                 $removedInRecursion = $this->findRemoved($currentConfiguration[$key], $newConfiguration[$key]);
-                if (!empty($removedInRecursion)) {
+                if ($removedInRecursion !== []) {
                     $removed[$key] = $removedInRecursion;
                 }
             }

@@ -9,7 +9,7 @@ defined('TYPO3') || die('');
 
 
 // Load libraries when TYPO3 is not in composer mode
-if (\TYPO3\CMS\Core\Core\Environment::isComposerMode() !== true) {
+if (!\TYPO3\CMS\Core\Core\Environment::isComposerMode()) {
     require ExtensionManagementUtility::extPath('auth0') . 'Libraries/vendor/autoload.php';
 }
 
@@ -36,7 +36,7 @@ if ($configuration->isEnableBackendLogin()) {
     $subtypes[] = 'authUserBE';
 }
 
-if (!empty($subtypes)) {
+if ($subtypes !== []) {
     // Get priority for Auth0 Authentication Service
     $highestPriority = 0;
 

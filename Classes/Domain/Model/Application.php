@@ -70,11 +70,13 @@ class Application extends AbstractEntity
 
     public function getClientId(): string
     {
+        /** @extensionScannerIgnoreLine */
         return $this->id;
     }
 
     public function setId(string $id): self
     {
+        /** @extensionScannerIgnoreLine */
         $this->id = $id;
 
         return $this;

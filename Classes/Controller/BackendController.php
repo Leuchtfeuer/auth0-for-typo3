@@ -13,6 +13,7 @@ namespace Leuchtfeuer\Auth0\Controller;
 
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
@@ -20,37 +21,25 @@ use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Imaging\IconSize;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 
 class BackendController extends ActionController
 {
-    protected ApplicationRepository $applicationRepository;
-    protected ModuleTemplateFactory $moduleTemplateFactory;
-    protected IconFactory $iconFactory;
-    protected BackendUriBuilder $backendUriBuilder;
-
     public function __construct(
-        ApplicationRepository $applicationRepository,
-        ModuleTemplateFactory $moduleTemplateFactory,
-        IconFactory $iconFactory,
-        UriBuilder $uriBuilder,
-        BackendUriBuilder $backendUriBuilder
-    ) {
-        $this->applicationRepository = $applicationRepository;
-        $this->moduleTemplateFactory = $moduleTemplateFactory;
-        $this->iconFactory = $iconFactory;
-        $this->uriBuilder = $uriBuilder;
-        $this->backendUriBuilder = $backendUriBuilder;
-    }
+        protected ApplicationRepository $applicationRepository,
+        protected ModuleTemplateFactory $moduleTemplateFactory,
+        protected IconFactory $iconFactory,
+        protected UriBuilder $uriBuilder,
+        protected BackendUriBuilder $backendUriBuilder
+    ) {}
 
     public function listAction(): ResponseInterface
     {
-        $moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-        // Just an empty view
-        $moduleTemplate->setContent($this->view->render());
-        return $this->htmlResponse($moduleTemplate->renderContent());
+        $moduleTemplate = $this->initView();
+        return $moduleTemplate->renderResponse();
     }
 
     public function initView(): ModuleTemplate
@@ -110,7 +99,7 @@ class BackendController extends ActionController
         $listButton = $buttonBar->makeLinkButton()
             ->setTitle($this->getTranslation('menu.button.overview'))
             ->setHref($this->getUriBuilder()->reset()->uriFor('list', [], 'Backend'))
-            ->setIcon($this->iconFactory->getIcon('actions-viewmode-tiles', Icon::SIZE_SMALL));
+            ->setIcon($this->iconFactory->getIcon('actions-viewmode-tiles', IconSize::SMALL));
         $buttonBar->addButton($listButton);
     }
 
@@ -121,7 +110,7 @@ class BackendController extends ActionController
         $linkButton = $buttonBar->makeLinkButton()
             ->setTitle($this->getTranslation($label))
             ->setHref($this->getUriBuilder()->reset()->uriFor($actionName, [], $controllerName))
-            ->setIcon($this->iconFactory->getIcon($icon, Icon::SIZE_SMALL));
+            ->setIcon($this->iconFactory->getIcon($icon, IconSize::SMALL));
 
         $buttonBar->addButton($linkButton, ButtonBar::BUTTON_POSITION_RIGHT);
     }

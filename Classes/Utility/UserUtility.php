@@ -73,16 +73,12 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      */
     public function insertUser(string $tableName, $user): void
     {
-        switch ($tableName) {
-            case 'fe_users':
-                $this->insertFeUser($tableName, $user);
-                break;
-            case 'be_users':
-                $this->insertBeUser($tableName, $user);
-                break;
-            default:
-                $this->logger->error(sprintf('"%s" is not a valid table name.', $tableName));
-        }
+        match ($tableName) {
+            'fe_users' => $this->insertFeUser($tableName, $user),
+            'be_users' => $this->insertBeUser($tableName, $user),
+            /** @extensionScannerIgnoreLine */
+            default => $this->logger->error(sprintf('"%s" is not a valid table name.', $tableName)),
+        };
     }
 
     public function enrichManagementUser(array $managementUser): array
@@ -173,7 +169,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
 
             $application = BackendUtility::getRecord(ApplicationRepository::TABLE_NAME, $application, 'api, uid');
 
-            if ((bool)$application['api'] === true && $user) {
+            if ((bool)$application['api'] && $user) {
                 $response = $auth0->management()->users()->get($user[$this->configuration->getUserIdentifier()]);
                 if (HttpResponse::wasSuccessful($response)) {
                     $userUtility = GeneralUtility::makeInstance(UserUtility::class);

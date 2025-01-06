@@ -13,19 +13,26 @@ declare(strict_types=1);
 
 namespace Leuchtfeuer\Auth0\Service;
 
+use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Leuchtfeuer\Auth0\Event\RedirectPreProcessingEvent;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\FrontendRestrictionContainer;
+use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Log\Logger;
 use TYPO3\CMS\Core\Log\LogManager;
 use TYPO3\CMS\Core\Site\SiteFinder;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Utility\HttpUtility;
 use TYPO3\CMS\Felogin\Controller\FrontendLoginController;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 /**
  * @see FrontendLoginController
@@ -34,17 +41,10 @@ class RedirectService implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /**
-     * @var array
-     */
-    protected array $settings = [];
-
-    public function __construct(array $redirectSettings)
+    public function __construct(protected array $settings)
     {
-        $this->settings = $redirectSettings;
-
         if (!$this->logger instanceof Logger) {
-            $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(__CLASS__);
+            $this->logger = GeneralUtility::makeInstance(LogManager::class)->getLogger(self::class);
         }
     }
 
@@ -54,7 +54,7 @@ class RedirectService implements LoggerAwareInterface
             $this->logger->notice('Try to redirect user.');
             $redirectUris = $this->getRedirectUri($allowedMethods);
 
-            if (!empty($redirectUris)) {
+            if ($redirectUris !== []) {
                 $redirectUri = $this->addAdditionalParamsToRedirectUri($this->getUri($redirectUris), $additionalParameters);
                 $redirectUri = $this->getEventDispatcher()->dispatch(new RedirectPreProcessingEvent($redirectUri, $this))->getRedirectUri();
 
@@ -86,10 +86,10 @@ class RedirectService implements LoggerAwareInterface
                     switch ($redirMethod) {
                         case 'groupLogin':
                             // taken from dkd_redirect_at_login written by Ingmar Schlecht; database-field changed
-                            $groupData = $GLOBALS['TSFE']->fe_user->groupData;
+                            $groupData = $this->getRequest()->getAttribute('frontend.user')?->groupData;
                             if (!empty($groupData['uid'])) {
                                 // take the first group with a redirect page
-                                $userGroupTable = $GLOBALS['TSFE']->fe_user->usergroup_table;
+                                $userGroupTable = $this->getRequest()->getAttribute('frontend.user')->usergroup_table;
                                 $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($userGroupTable);
                                 $queryBuilder->getRestrictions()->removeAll();
                                 $row = $queryBuilder
@@ -104,11 +104,11 @@ class RedirectService implements LoggerAwareInterface
                                             'uid',
                                             $queryBuilder->createNamedParameter(
                                                 $groupData['uid'],
-                                                Connection::PARAM_INT_ARRAY
+                                                ArrayParameterType::INTEGER
                                             )
                                         )
                                     )
-                                    ->execute()
+                                    ->executeQuery()
                                     ->fetchAssociative();
                                 if ($row) {
                                     $redirect_url[] = $this->pi_getPageLink($row['felogin_redirectPid']);
@@ -117,7 +117,7 @@ class RedirectService implements LoggerAwareInterface
                             break;
 
                         case 'userLogin':
-                            $userTable = $GLOBALS['TSFE']->fe_user->user_table;
+                            $userTable = $this->getRequest()->getAttribute('frontend.user')->user_table;
                             $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($userTable);
                             $queryBuilder->getRestrictions()->removeAll();
                             $row = $queryBuilder
@@ -129,14 +129,14 @@ class RedirectService implements LoggerAwareInterface
                                         $queryBuilder->createNamedParameter('')
                                     ),
                                     $queryBuilder->expr()->eq(
-                                        $GLOBALS['TSFE']->fe_user->userid_column,
+                                        $this->getRequest()->getAttribute('frontend.user')->userid_column,
                                         $queryBuilder->createNamedParameter(
-                                            $GLOBALS['TSFE']->fe_user->user['uid'],
-                                            \PDO::PARAM_INT
+                                            $this->getRequest()->getAttribute('frontend.user')->user['uid'],
+                                            ParameterType::INTEGER
                                         )
                                     )
                                 )
-                                ->execute()
+                                ->executeQuery()
                                 ->fetchAssociative();
 
                             if ($row) {
@@ -151,7 +151,7 @@ class RedirectService implements LoggerAwareInterface
                             break;
 
                         case 'referrer':
-                            $redirect_url[] = $this->validateRedirectUrl(GeneralUtility::_GP('referrer'));
+                            $redirect_url[] = $this->validateRedirectUrl((string)($this->getRequest()->getQueryParams()['referrer'] ?? $this->getRequest()->getParsedBody()['referrer'] ?? null));
                             break;
 
                         case 'loginError':
@@ -167,7 +167,8 @@ class RedirectService implements LoggerAwareInterface
                             break;
 
                         case 'getpost':
-                            $gpParameters = GeneralUtility::_GPmerged('tx_auth0_loginform');
+                            $gpParameters = $this->getRequest()->getQueryParams()['tx_auth0_loginform'];
+                            ArrayUtility::mergeRecursiveWithOverrule($gpParameters, $this->getRequest()->getParsedBody()['tx_auth0_loginform']);
                             if (isset($gpParameters['redirect']) && !(empty($gpParameters['redirect']))) {
                                 $redirect_url[] = $gpParameters['redirect'];
                             }
@@ -178,20 +179,16 @@ class RedirectService implements LoggerAwareInterface
         }
 
         // Remove empty values, but keep "0" as value (that's why "strlen" is used as second parameter)
-        if (!empty($redirect_url)) {
+        if ($redirect_url !== []) {
             return array_filter($redirect_url, 'strlen');
         }
 
         return [];
     }
 
-    /**
-     * @param array $redirectUris
-     * @return string
-     */
     public function getUri(array $redirectUris): string
     {
-        return ((bool)$this->settings['redirectFirstMethod']) ? array_shift($redirectUris) : array_pop($redirectUris);
+        return $this->settings['redirectFirstMethod'] ? array_shift($redirectUris) : array_pop($redirectUris);
     }
 
     public function setRedirectDisable(bool $value): void
@@ -206,7 +203,7 @@ class RedirectService implements LoggerAwareInterface
 
     protected function addAdditionalParamsToRedirectUri(string $uri, array $additionalParams): string
     {
-        if (!empty($additionalParams)) {
+        if ($additionalParams !== []) {
             $uri .= '?';
         }
 
@@ -219,28 +216,41 @@ class RedirectService implements LoggerAwareInterface
 
     /**
      * @param $id
-     * @param string $target
-     * @param array $urlParameters
-     * @return string
+     * @throws SiteNotFoundException
      */
-    protected function pi_getPageLink($id, string $target = '', array $urlParameters = [])
+    protected function pi_getPageLink($id, string $target = '', array $urlParameters = []): string
     {
-        if ($GLOBALS['TSFE']->cObj instanceof ContentObjectRenderer) {
-            return $GLOBALS['TSFE']->cObj->getTypoLink_URL($id, $urlParameters, $target);
+        $cObj = $this->getRequest()->getAttribute('currentContentObject');
+        if ($cObj instanceof ContentObjectRenderer) {
+            return $this->getTypoLinkUrlFromCObj($cObj, $id, $target, $urlParameters);
         }
 
-        return (string)GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId($id)->getRouter()->generateUri($id);
+        return (string)GeneralUtility::makeInstance(SiteFinder::class)
+            ->getSiteByPageId($id)->getRouter()->generateUri($id);
+    }
+
+    protected function getTypoLinkUrlFromCObj(ContentObjectRenderer $cObj, $id, string $target, array $urlParameters): string
+    {
+        $conf = [];
+        $conf['parameter'] = $id;
+        if ($target) {
+            $conf['target'] = $target;
+            $conf['extTarget'] = $target;
+            $conf['fileTarget'] = $target;
+        }
+        if (!empty($urlParameters)) {
+            $conf['additionalParams'] .= HttpUtility::buildQueryString($urlParameters, '&');
+        }
+        return $cObj->typoLink_URL($conf);
     }
 
     /**
      * Returns a valid and XSS cleaned url for redirect, checked against configuration "allowedRedirectHosts"
      *
-     * @param string $url
      * @return string cleaned referrer or empty string if not valid
      */
-    protected function validateRedirectUrl($url): string
+    protected function validateRedirectUrl(string $url): string
     {
-        $url = (string)$url;
         if ($url === '') {
             return '';
         }
@@ -257,11 +267,8 @@ class RedirectService implements LoggerAwareInterface
     /**
      * Determines whether the URL is relative to the
      * current TYPO3 installation.
-     *
-     * @param string $url URL which needs to be checked
-     * @return bool Whether the URL is considered to be relative
      */
-    protected function isRelativeUrl($url)
+    protected function isRelativeUrl(string $url): bool
     {
         $parsedUrl = @parse_url($url);
         if ($parsedUrl !== false && !isset($parsedUrl['scheme']) && !isset($parsedUrl['host'])) {
@@ -276,16 +283,15 @@ class RedirectService implements LoggerAwareInterface
      * Determines whether the URL is on the current host and belongs to the
      * current TYPO3 installation. The scheme part is ignored in the comparison.
      *
-     * @param string $url URL to be checked
      * @return bool Whether the URL belongs to the current TYPO3 installation
      */
-    protected function isInCurrentDomain($url)
+    protected function isInCurrentDomain(string $url): bool
     {
         $urlWithoutSchema = preg_replace('#^https?://#', '', $url);
         $siteUrlWithoutSchema = preg_replace('#^https?://#', '', GeneralUtility::getIndpEnv('TYPO3_SITE_URL'));
 
         return \str_starts_with($urlWithoutSchema . '/', GeneralUtility::getIndpEnv('HTTP_HOST') . '/')
-            && \str_starts_with($urlWithoutSchema, $siteUrlWithoutSchema);
+            && \str_starts_with((string) $urlWithoutSchema, $siteUrlWithoutSchema);
     }
 
     /**
@@ -308,13 +314,13 @@ class RedirectService implements LoggerAwareInterface
                 $queryBuilder->setRestrictions(GeneralUtility::makeInstance(FrontendRestrictionContainer::class));
                 $localDomains = $queryBuilder->select('domainName')
                     ->from('sys_domain')
-                    ->execute()
+                    ->executeQuery()
                     ->fetchAllAssociative();
 
                 if (is_array($localDomains)) {
                     foreach ($localDomains as $localDomain) {
                         // strip trailing slashes (if given)
-                        $domainName = rtrim($localDomain['domainName'], '/');
+                        $domainName = rtrim((string) $localDomain['domainName'], '/');
                         if (\str_starts_with($host . $path . '/', $domainName . '/')) {
                             return true;
                         }
@@ -329,5 +335,10 @@ class RedirectService implements LoggerAwareInterface
     protected function getEventDispatcher(): EventDispatcherInterface
     {
         return GeneralUtility::getContainer()->get(EventDispatcherInterface::class);
+    }
+
+    protected function getRequest(): ServerRequestInterface
+    {
+        return $GLOBALS['TYPO3_REQUEST'];
     }
 }

@@ -15,36 +15,27 @@ use Leuchtfeuer\Auth0\Domain\Model\Application;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\Utility\ModeUtility;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Http\ServerRequestFactory;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
 class ApplicationController extends BackendController
 {
-    /**
-     * @throws RouteNotFoundException
-     */
     public function listAction(): ResponseInterface
     {
         $moduleTemplate = $this->initView();
         $pid = $this->getStoragePage();
-        $this->view->assignMultiple([
+        $moduleTemplate->assignMultiple([
             'applications' => $this->applicationRepository->findAll(),
             'pid' => $pid,
             'directory' => BackendUtility::getRecord('pages', $pid),
         ]);
-        if (!ModeUtility::isTYPO3V12()) {
-            $this->view->assign('returnUrl', $this->getModuleUrl(false));
-        }
-        $moduleTemplate->setContent($this->view->render());
-
-        return $this->htmlResponse($moduleTemplate->renderContent());
+        return $moduleTemplate->renderResponse();
     }
 
-    /**
-     * @throws StopActionException
-     */
     public function deleteAction(Application $application): ResponseInterface
     {
         $this->applicationRepository->remove($application);

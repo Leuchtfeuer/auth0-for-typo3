@@ -16,6 +16,7 @@ namespace Leuchtfeuer\Auth0\Middleware;
 use Auth0\SDK\Exception\ArgumentException;
 use Auth0\SDK\Exception\ConfigurationException;
 use Auth0\SDK\Exception\NetworkException;
+use Auth0\SDK\Exception\StateException;
 use Auth0\SDK\Utility\HttpResponse;
 use GuzzleHttp\Exception\GuzzleException;
 use Lcobucci\JWT\Token\DataSet;
@@ -56,20 +57,20 @@ class CallbackMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (strpos($request->getUri()->getPath(), self::PATH) === false) {
+        if (!str_contains($request->getUri()->getPath(), self::PATH)) {
             // Middleware is not responsible for given request
             return $handler->handle($request);
         }
 
         $tokenUtility = GeneralUtility::makeInstance(TokenUtility::class);
 
-        if (!$tokenUtility->verifyToken((string)GeneralUtility::_GET(self::TOKEN_PARAMETER))) {
+        if (!$tokenUtility->verifyToken((string)($request->getQueryParams()[self::TOKEN_PARAMETER] ?? null))) {
             return new Response('php://temp', 400);
         }
 
         try {
             $dataSet = $tokenUtility->getToken()->claims();
-        } catch (TokenException $exception) {
+        } catch (TokenException) {
             return new Response('php://temp', 400);
         }
 
@@ -96,11 +97,11 @@ class CallbackMiddleware implements MiddlewareInterface
         );
 
         // Add error parameters to backend uri if exists
-        if (!empty(GeneralUtility::_GET('error')) && !empty(GeneralUtility::_GET('error_description'))) {
+        if (!empty($request->getQueryParams()['error'] ?? null) && !empty($request->getQueryParams()['error_description'] ?? null)) {
             $redirectUri .= sprintf(
                 '&error=%s&error_description=%',
-                GeneralUtility::_GET('error'),
-                GeneralUtility::_GET('error_description')
+                $request->getQueryParams()['error'],
+                $request->getQueryParams()['error_description']
             );
         }
 
@@ -108,27 +109,33 @@ class CallbackMiddleware implements MiddlewareInterface
     }
 
     /**
+     * @param ServerRequestInterface $request
+     * @param DataSet $tokenDataSet
+     * @return RedirectResponse
+     * @throws ArgumentException
+     * @throws ConfigurationException
+     * @throws GuzzleException
      * @throws NetworkException
      * @throws UnknownErrorCodeException
-     * @throws ArgumentException
+     * @throws StateException
      */
     protected function handleFrontendCallback(ServerRequestInterface $request, DataSet $tokenDataSet): RedirectResponse
     {
-        $errorCode = (string)GeneralUtility::_GET('error');
+        $errorCode = (string)($request->getQueryParams()['error'] ?? null);
 
-        if (!empty($errorCode)) {
-            return $this->enrichReferrerByErrorCode($errorCode, $tokenDataSet);
+        if ($errorCode !== '' && $errorCode !== '0') {
+            return $this->enrichReferrerByErrorCode($request, $errorCode, $tokenDataSet);
         }
 
         if ($this->isUserLoggedIn($request)) {
-            $loginType = GeneralUtility::_GET('logintype');
+            $loginType = $request->getQueryParams()['logintype'] ?? '';
             $application = $tokenDataSet->get('application');
             $auth0 = ApplicationFactory::build($application, ApplicationFactory::SESSION_PREFIX_FRONTEND);
-            $auth0->exchange(null, GeneralUtility::_GET('code'), GeneralUtility::_GET('state'));
+            $auth0->exchange(null, $request->getQueryParams()['code'] ?? null, $request->getQueryParams()['state'] ?? null);
             $userInfo = $auth0->getUser();
 
             // Redirect when user just logged in (and update him)
-            if ($loginType === 'login' && !empty($userInfo)) {
+            if ($loginType === 'login' && ($userInfo !== null && $userInfo !== [])) {
                 $this->updateTypo3User($application, $userInfo);
 
                 if ((bool)$tokenDataSet->get('redirectDisable') === false) {
@@ -150,7 +157,7 @@ class CallbackMiddleware implements MiddlewareInterface
     /**
      * @throws UnknownErrorCodeException
      */
-    protected function enrichReferrerByErrorCode(string $errorCode, DataSet $tokenDataSet): RedirectResponse
+    protected function enrichReferrerByErrorCode(ServerRequestInterface $request, string $errorCode, DataSet $tokenDataSet): RedirectResponse
     {
         if (in_array($errorCode, (new \ReflectionClass(ErrorCode::class))->getConstants())) {
             $referrer = new Uri($tokenDataSet->get('referrer'));
@@ -158,10 +165,10 @@ class CallbackMiddleware implements MiddlewareInterface
             $errorQuery = sprintf(
                 'error=%s&error_description=%s',
                 $errorCode,
-                GeneralUtility::_GET('error_description')
+                $request->getQueryParams()['error_description'] ?? ''
             );
 
-            $query = $referrer->getQuery() . (!empty($referrer->getQuery()) ? '&' : '') . $errorQuery;
+            $query = $referrer->getQuery() . (in_array($referrer->getQuery(), ['', '0'], true) ? '' : '&') . $errorQuery;
 
             return new RedirectResponse($referrer->withQuery($query));
         }
@@ -177,7 +184,7 @@ class CallbackMiddleware implements MiddlewareInterface
             $context = GeneralUtility::makeInstance(Context::class);
 
             return (bool)$context->getPropertyFromAspect('frontend.user', 'isLoggedIn');
-        } catch (\Exception $exception) {
+        } catch (\Exception) {
             return false;
         }
     }
@@ -193,7 +200,7 @@ class CallbackMiddleware implements MiddlewareInterface
         // Get application record
         $application = BackendUtility::getRecord(ApplicationRepository::TABLE_NAME, $applicationId, 'api, uid');
 
-        if ((bool)$application['api'] === true) {
+        if ((bool)$application['api']) {
             $auth0 = ApplicationFactory::build($applicationId);
             $response = $auth0->management()->users()->get($user[GeneralUtility::makeInstance(EmAuth0Configuration::class)->getUserIdentifier()]);
             if (HttpResponse::wasSuccessful($response)) {
