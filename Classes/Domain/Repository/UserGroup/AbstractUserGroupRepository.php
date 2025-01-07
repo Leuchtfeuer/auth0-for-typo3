@@ -19,9 +19,9 @@ abstract class AbstractUserGroupRepository
 {
     public const USER_GROUP_FIELD = 'auth0_user_group';
 
-    protected $tableName;
+    protected string $tableName;
 
-    public function __construct()
+    public function __construct(protected readonly ConnectionPool $connectionPool)
     {
         $this->setTableName();
     }
@@ -30,11 +30,15 @@ abstract class AbstractUserGroupRepository
 
     protected function getQueryBuilder(): QueryBuilder
     {
-        return GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableName);
+        return $this->connectionPool->getQueryBuilderForTable($this->tableName);
     }
 
     public function findAll(): array
     {
-        return $this->getQueryBuilder()->select('*')->from($this->tableName)->execute()->fetchAll();
+        return $this->getQueryBuilder()
+            ->select('*')
+            ->from($this->tableName)
+            ->executeQuery()
+            ->fetchAllAssociative();
     }
 }

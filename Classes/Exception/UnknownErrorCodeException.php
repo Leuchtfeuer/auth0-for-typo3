@@ -13,6 +13,4 @@ declare(strict_types=1);
 
 namespace Leuchtfeuer\Auth0\Exception;
 
-class UnknownErrorCodeException extends \Exception
-{
-}
+class UnknownErrorCodeException extends \Exception {}

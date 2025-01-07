@@ -20,6 +20,7 @@ use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use Leuchtfeuer\Auth0\Domain\Repository\UserRepository;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\Utility\Database\UpdateUtility;
+use Leuchtfeuer\Auth0\Utility\Database\UpdateUtilityFactory;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -169,16 +170,17 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
 
             $application = BackendUtility::getRecord(ApplicationRepository::TABLE_NAME, $application, 'api, uid');
 
-            if ((bool)$application['api'] && $user) {
+            if ($application['api'] && $user) {
                 $response = $auth0->management()->users()->get($user[$this->configuration->getUserIdentifier()]);
                 if (HttpResponse::wasSuccessful($response)) {
                     $userUtility = GeneralUtility::makeInstance(UserUtility::class);
-                    $user =  $userUtility->enrichManagementUser(HttpResponse::decodeContent($response));
+                    $user = $userUtility->enrichManagementUser(HttpResponse::decodeContent($response));
                 }
             }
 
             // Update existing user on every login
-            $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, 'fe_users', $user);
+            $factory = GeneralUtility::makeInstance(UpdateUtilityFactory::class);
+            $updateUtility = $factory->create( 'fe_users', $user);
             $updateUtility->updateUser();
             $updateUtility->updateGroups();
         } catch (\Exception $exception) {

@@ -16,7 +16,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TcaUtility
 {
-    const EXCLUDE_LIST = [
+    private const EXCLUDE_LIST = [
         'password' => 1,
         'usergroup' => 1,
         'felogin_forgotHash' => 1,

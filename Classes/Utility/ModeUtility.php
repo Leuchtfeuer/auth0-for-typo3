@@ -27,7 +27,7 @@ class ModeUtility
             $mode = self::getModeFromRequest();
         }
 
-        return $mode && $mode === self::BACKEND_MODE;
+        return $mode === self::BACKEND_MODE;
     }
 
     public static function getModeFromRequest(): string
@@ -40,6 +40,10 @@ class ModeUtility
 
     public static function isTYPO3V12(): bool
     {
-        return version_compare(GeneralUtility::makeInstance(Typo3Version::class)->getVersion(), '12.0', '>=');
+        return version_compare(
+            GeneralUtility::makeInstance(Typo3Version::class)->getVersion(),
+            '12.0',
+            '>='
+        );
     }
 }

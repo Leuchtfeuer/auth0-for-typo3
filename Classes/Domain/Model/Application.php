@@ -20,30 +20,15 @@ class Application extends AbstractEntity
     public const ALG_HS256 = 'HS256';
     public const ALG_RS256 = 'RS256';
 
-    /**
-     * @var string
-     */
-    protected $title = '';
+    protected string $title = '';
 
-    /**
-     * @var string
-     */
-    protected $id = '';
+    protected string $id = '';
 
-    /**
-     * @var string
-     */
-    protected $secret = '';
+    protected string $secret = '';
 
-    /**
-     * @var string
-     */
-    protected $domain = '';
+    protected string $domain = '';
 
-    /**
-     * @var string
-     */
-    protected $audience = '';
+    protected string $audience = '';
 
     protected bool $singleLogOut = false;
 
@@ -51,10 +36,7 @@ class Application extends AbstractEntity
 
     protected string $signatureAlgorithm = self::ALG_RS256;
 
-    /**
-     * @var bool
-     */
-    protected $customDomain = false;
+    protected bool $customDomain = false;
 
     public function getTitle(): string
     {

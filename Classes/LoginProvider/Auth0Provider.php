@@ -31,10 +31,12 @@ use TYPO3\CMS\Backend\LoginProvider\LoginProviderInterface;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\View\ViewInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Configuration\Exception\InvalidConfigurationTypeException;
 use TYPO3\CMS\Fluid\View\StandaloneView;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\View\AbstractTemplateView as FluidStandaloneAbstractTemplateView;
 
 class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, SingletonInterface
 {
@@ -58,33 +60,46 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     protected array $frameworkConfiguration;
 
-    /**
-     * @throws InvalidConfigurationTypeException
-     */
-    public function __construct(ConfigurationManager $configurationManager)
+    protected RenderingContextInterface $renderingContext;
+
+    public function __construct(
+        protected readonly ApplicationRepository $applicationRepository,
+        protected readonly PageRenderer $pageRenderer,
+        protected readonly ConfigurationManager $configurationManager
+    ) {}
+
+    protected function initialize(): void
     {
         $this->configuration = new EmAuth0Configuration();
-        $this->application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($this->configuration->getBackendConnection());
-        $this->frameworkConfiguration = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK, 'auth0');
+        $this->application = $this->applicationRepository->findByUid($this->configuration->getBackendConnection());
+        $this->frameworkConfiguration = $this->configurationManager->getConfiguration(
+            ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
+            'auth0'
+        );
     }
 
-    public function render(StandaloneView $view, PageRenderer $pageRenderer, LoginController $loginController): void
+    /**
+     * @throws ConfigurationException
+     */
+    public function modifyView(ServerRequestInterface $request, ViewInterface $view): string
     {
+        $this->initialize();
+
         $this->logger->notice('Auth0 login is used.');
+        $this->renderingContext = $this->getRenderingContext($view);
 
         // Figure out whether TypoScript is loaded
         if (!$this->isTypoScriptLoaded()) {
             // In this case we need a default template
-            $this->getDefaultView($view, $pageRenderer);
-            return;
+            return $this->getDefaultView($view);
         }
 
-        $this->prepareView($view, $pageRenderer);
+        $templateName = $this->prepareView($view);
 
         // Throw error if there is no application
         if (!$this->application instanceof \Leuchtfeuer\Auth0\Domain\Model\Application) {
             $view->assign('error', 'no_application');
-            return;
+            return $templateName;
         }
 
         // Try to get user info from session storage
@@ -104,6 +119,8 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
             'code' => $this->getRequest()->getQueryParams()['code'] ?? null,
             'userInfo' => $this->userInfo,
         ]);
+
+        return $templateName;
     }
 
     protected function setAuth0(): bool
@@ -137,15 +154,18 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         );
     }
 
-    protected function getUserInfo()
+    /**
+     * @return array<mixed>
+     */
+    protected function getUserInfo(): array
     {
         $this->setAuth0();
-        $userInfo = $this->auth0->configuration()->getSessionStorage()->get('user');
-        if (empty($userInfo)) {
+        $userInfo = $this->auth0->configuration()->getSessionStorage()->get('user') ?? [];
+        if (!is_array($userInfo) || empty($userInfo)) {
             try {
                 $this->logger->notice('Try to get user via Auth0 API');
                 if ($this->auth0->exchange($this->getCallback(), $this->getRequest()->getQueryParams()['code'] ?? null, $this->getRequest()->getQueryParams()['state'] ?? null)) {
-                    $userInfo = $this->auth0->getUser();
+                    $userInfo = $this->auth0->getUser() ?? [];
                 }
             } catch (\Exception $exception) {
                 $this->logger->critical($exception->getMessage());
@@ -169,31 +189,39 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
             // Login user to Auth0
             $this->logger->notice('Handle backend login.');
             header('Location: ' . $this->auth0->login($this->getCallback()));
+            exit;
         }
     }
 
     protected function isTypoScriptLoaded(): bool
     {
+        /** @extensionScannerIgnoreLine */
         return isset($this->frameworkConfiguration['settings']['stylesheet']);
     }
 
-    protected function prepareView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
+    protected function prepareView(ViewInterface $view): string
     {
-        $standaloneView->setTemplate($this->getTemplateName());
-        $standaloneView->setLayoutRootPaths($this->frameworkConfiguration['view']['layoutRootPaths']);
-        $standaloneView->setTemplateRootPaths($this->frameworkConfiguration['view']['templateRootPaths']);
+        /** @extensionScannerIgnoreLine */
+        $this->pageRenderer->addCssFile($this->frameworkConfiguration['settings']['stylesheet']);
 
-        $pageRenderer->addCssFile($this->frameworkConfiguration['settings']['stylesheet']);
+        $templatePaths = $this->renderingContext->getTemplatePaths();
+        $templatePaths->setLayoutRootPaths($this->frameworkConfiguration['view']['layoutRootPaths']);
+        $templatePaths->setTemplateRootPaths($this->frameworkConfiguration['view']['templateRootPaths']);
+
+        return $this->getTemplateName();
     }
 
-    protected function getDefaultView(StandaloneView &$standaloneView, PageRenderer &$pageRenderer): void
+    protected function getDefaultView(ViewInterface $view): string
     {
-        $standaloneView->setLayoutRootPaths(['EXT:auth0/Resources/Private/Layouts/']);
-        $standaloneView->setTemplatePathAndFilename(
-            GeneralUtility::getFileAbsFileName('EXT:auth0/Resources/Private/Templates/' . $this->getTemplateName() . '.html')
-        );
-        $standaloneView->assign('error', 'no_typoscript');
-        $pageRenderer->addCssFile('EXT:auth0/Resources/Public/Styles/backend.css');
+        $this->pageRenderer->addCssFile('EXT:auth0/Resources/Public/Styles/backend.css');
+
+        $templatePaths = $this->renderingContext->getTemplatePaths();
+        $templatePaths->setLayoutRootPaths(['EXT:auth0/Resources/Private/Layouts/']);
+        $templatePaths->setTemplateRootPaths(['EXT:auth0/Resources/Private/Templates/']);
+
+        $view->assign('error', 'no_typoscript');
+
+        return $this->getTemplateName();
     }
 
     /**
@@ -211,6 +239,14 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         exit();
     }
 
+    protected function getRenderingContext(ViewInterface $view): RenderingContextInterface
+    {
+        if ($view instanceof FluidStandaloneAbstractTemplateView) {
+            return $view->getRenderingContext();
+        }
+        throw new \RuntimeException('view must be an instance of ext:fluid \TYPO3Fluid\Fluid\View\AbstractTemplateView', 1721889095);
+    }
+
     private function getTemplateName(): string
     {
         $templateName = ModeUtility::isTYPO3V12() ? 'BackendV12' : 'BackendV11';
@@ -221,5 +257,14 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     private function getRequest(): ServerRequestInterface
     {
         return $GLOBALS['TYPO3_REQUEST'];
+    }
+
+    /**
+     * @deprecated
+     * @extensionScannerIgnoreLine
+     */
+    public function render(StandaloneView $view, PageRenderer $pageRenderer, LoginController $loginController): void
+    {
+        throw new \RuntimeException('Should not be called in TYPO3v13');
     }
 }

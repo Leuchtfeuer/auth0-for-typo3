@@ -13,8 +13,10 @@ declare(strict_types=1);
 
 namespace Leuchtfeuer\Auth0\Utility;
 
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 
@@ -22,7 +24,7 @@ class RoutingUtility implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    protected int $targetPage = 0;
+    protected ?int $targetPage = null;
 
     protected int $targetPageType = 0;
 
@@ -32,26 +34,27 @@ class RoutingUtility implements LoggerAwareInterface
 
     protected bool $buildFrontendUri = true;
 
-    public function __construct()
-    {
-        $this->targetPage = (int)$GLOBALS['TSFE']->id;
+    public function __construct(
+        protected readonly ServerRequestInterface $request,
+        protected readonly UriBuilder $uriBuilder
+    ) {
+        /** @var PageArguments $pageArguments */
+        $pageArguments = $this->request->getAttribute('routing');
+        $this->targetPage = $pageArguments->getPageId();
     }
 
     public function getUri(): string
     {
-        $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-        $uriBuilder
+        $this->uriBuilder
             ->reset()
             ->setTargetPageUid($this->targetPage)
             ->setTargetPageType($this->targetPageType)
             ->setArguments($this->arguments);
 
-        if ($this->createAbsoluteUri) {
-            $uriBuilder->setCreateAbsoluteUri($this->createAbsoluteUri);
-        }
+        $this->uriBuilder->setCreateAbsoluteUri($this->createAbsoluteUri);
 
         if ($this->buildFrontendUri) {
-            $uri = $uriBuilder->buildFrontendUri();
+            $uri = $this->uriBuilder->buildFrontendUri();
             $this->logger->notice(sprintf('Set URI to: %s', $uri));
 
             // Base of site configuration might be "/" so we have to prepend the domain

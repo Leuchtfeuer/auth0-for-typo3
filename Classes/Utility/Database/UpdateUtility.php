@@ -33,10 +33,15 @@ class UpdateUtility implements LoggerAwareInterface
 
     protected $yamlConfiguration = [];
 
-    public function __construct(protected string $tableName, protected array $user)
-    {
+    public function __construct(
+        protected string $tableName,
+        protected array $user,
+        protected readonly Auth0Configuration $auth0Configuration,
+        protected readonly BackendUserGroupRepository $backendUserGroupRepository,
+        protected readonly FrontendUserGroupRepository $frontendUserGroupRepository,
+    ) {
         $this->configuration = new EmAuth0Configuration();
-        $this->yamlConfiguration = GeneralUtility::makeInstance(Auth0Configuration::class)->load();
+        $this->yamlConfiguration = $this->auth0Configuration->load();
     }
 
     public function updateGroups(): void
@@ -99,8 +104,8 @@ class UpdateUtility implements LoggerAwareInterface
     protected function getUserGroupRepository(): ?AbstractUserGroupRepository
     {
         return match ($this->tableName) {
-            'fe_users' => new FrontendUserGroupRepository(),
-            'be_users' => new BackendUserGroupRepository(),
+            'fe_users' => $this->frontendUserGroupRepository,
+            'be_users' => $this->backendUserGroupRepository,
             default => null,
         };
     }

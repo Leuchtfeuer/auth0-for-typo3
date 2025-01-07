@@ -13,14 +13,9 @@ namespace Leuchtfeuer\Auth0\Controller;
 
 use Leuchtfeuer\Auth0\Domain\Model\Application;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Leuchtfeuer\Auth0\Utility\ModeUtility;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
-use TYPO3\CMS\Core\Http\ServerRequestFactory;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
-use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
 class ApplicationController extends BackendController
 {
@@ -39,14 +34,19 @@ class ApplicationController extends BackendController
     public function deleteAction(Application $application): ResponseInterface
     {
         $this->applicationRepository->remove($application);
-        $this->addFlashMessage($this->getTranslation('message.application.deleted.text'), $this->getTranslation('message.application.deleted.title'));
+        $this->addFlashMessage(
+            $this->getTranslation('message.application.deleted.text'),
+            $this->getTranslation('message.application.deleted.title')
+        );
 
         return $this->redirect('list');
     }
 
     protected function getStoragePage(): int
     {
-        $configuration = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK, 'auth0');
+        $configuration = $this->configurationManager->getConfiguration(
+            ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK, 'auth0'
+        );
         $storagePage = (int)($configuration['persistence']['storagePid'] ?? 0);
 
         if ($this->pageExists($storagePage)) {

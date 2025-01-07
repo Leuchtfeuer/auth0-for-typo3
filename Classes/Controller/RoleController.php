@@ -11,13 +11,11 @@
 
 namespace Leuchtfeuer\Auth0\Controller;
 
-use Leuchtfeuer\Auth0\Configuration\Auth0Configuration;
 use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
 use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\Factory\ConfigurationFactory;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class RoleController extends BackendController
 {
@@ -26,9 +24,9 @@ class RoleController extends BackendController
         $moduleTemplate = $this->initView();
         $moduleTemplate->assignMultiple([
             'frontendUserGroupMapping' => (new FrontendUserGroupRepository())->findAll(),
-            'backendUserGroupMapping' => (new BackendUserGroupRepository())->findAll(),
+            'backendUserGroupMapping' => $this->backendUserGroupRepository->findAll(),
             'extensionConfiguration' => new EmAuth0Configuration(),
-            'yamlConfiguration' => GeneralUtility::makeInstance(Auth0Configuration::class)->load(),
+            'yamlConfiguration' => $this->auth0Configuration->load(),
         ]);
         return $moduleTemplate->renderResponse();
     }
@@ -39,8 +37,7 @@ class RoleController extends BackendController
         string $adminRole = '',
         int $defaultBackendUserGroup = 0
     ): ResponseInterface {
-        $auth0Configuration = GeneralUtility::makeInstance(Auth0Configuration::class);
-        $configuration = $auth0Configuration->load();
+        $configuration = $this->auth0Configuration->load();
 
         $configuration['roles'] = (new ConfigurationFactory())->buildRoles(
             $key,
@@ -49,7 +46,7 @@ class RoleController extends BackendController
             $defaultBackendUserGroup
         );
 
-        $auth0Configuration->write($configuration);
+        $this->auth0Configuration->write($configuration);
         $this->addFlashMessage($this->getTranslation('message.role.updated.text'), $this->getTranslation('message.role.updated.title'));
 
         return $this->redirect('list');

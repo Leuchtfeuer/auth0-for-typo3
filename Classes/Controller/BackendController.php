@@ -11,29 +11,31 @@
 
 namespace Leuchtfeuer\Auth0\Controller;
 
+use Leuchtfeuer\Auth0\Configuration\Auth0Configuration;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
+use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
+use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
-use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Imaging\IconSize;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 
 class BackendController extends ActionController
 {
     public function __construct(
-        protected ApplicationRepository $applicationRepository,
-        protected ModuleTemplateFactory $moduleTemplateFactory,
-        protected IconFactory $iconFactory,
-        protected UriBuilder $uriBuilder,
-        protected BackendUriBuilder $backendUriBuilder
+        protected readonly ApplicationRepository $applicationRepository,
+        protected readonly Auth0Configuration $auth0Configuration,
+        protected readonly BackendUserGroupRepository $backendUserGroupRepository,
+        protected readonly FrontendUserGroupRepository $frontendUserGroupRepository,
+        protected readonly ModuleTemplateFactory $moduleTemplateFactory,
+        protected readonly IconFactory $iconFactory,
+        protected readonly BackendUriBuilder $backendUriBuilder
     ) {}
 
     public function listAction(): ResponseInterface
@@ -80,7 +82,7 @@ class BackendController extends ActionController
                 $menu->makeMenuItem()
                     ->setTitle($this->getTranslation($action['label']))
                     ->setHref(
-                        $this->getUriBuilder()->reset()->uriFor(
+                        $this->uriBuilder->reset()->uriFor(
                             $action['action'],
                             [],
                             $action['controller']
@@ -98,18 +100,23 @@ class BackendController extends ActionController
 
         $listButton = $buttonBar->makeLinkButton()
             ->setTitle($this->getTranslation('menu.button.overview'))
-            ->setHref($this->getUriBuilder()->reset()->uriFor('list', [], 'Backend'))
+            ->setHref($this->uriBuilder->reset()->uriFor('list', [], 'Backend'))
             ->setIcon($this->iconFactory->getIcon('actions-viewmode-tiles', IconSize::SMALL));
         $buttonBar->addButton($listButton);
     }
 
-    protected function addButton(string $label, string $actionName, string $controllerName, string $icon, ModuleTemplate $moduleTemplate): void
-    {
+    protected function addButton(
+        string $label,
+        string $actionName,
+        string $controllerName,
+        string $icon,
+        ModuleTemplate $moduleTemplate
+    ): void {
         $buttonBar = $moduleTemplate->getDocHeaderComponent()->getButtonBar();
 
         $linkButton = $buttonBar->makeLinkButton()
             ->setTitle($this->getTranslation($label))
-            ->setHref($this->getUriBuilder()->reset()->uriFor($actionName, [], $controllerName))
+            ->setHref($this->uriBuilder->reset()->uriFor($actionName, [], $controllerName))
             ->setIcon($this->iconFactory->getIcon($icon, IconSize::SMALL));
 
         $buttonBar->addButton($linkButton, ButtonBar::BUTTON_POSITION_RIGHT);
@@ -130,13 +137,6 @@ class BackendController extends ActionController
         $uri = $this->backendUriBuilder->buildUriFromRoute('tools_Auth0Auth0', $parameters, $referenceType);
 
         return $encoded ? rawurlencode($uri) : $uri;
-    }
-
-    protected function getUriBuilder(): UriBuilder
-    {
-        $this->uriBuilder->setRequest($this->request);
-
-        return $this->uriBuilder;
     }
 
     protected function getTranslation($key): string

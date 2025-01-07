@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Leuchtfeuer\Auth0\Domain\Repository;
 
+use Doctrine\DBAL\ParameterType;
 use Leuchtfeuer\Auth0\Domain\Model\Application;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -21,10 +22,12 @@ class ApplicationRepository
 {
     const TABLE_NAME = 'tx_auth0_domain_model_application';
 
+    public function __construct(protected readonly ConnectionPool $connectionPool)
+    {}
+
     public function findByUid(int $uid): ?Application
     {
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
-            ->getQueryBuilderForTable(self::TABLE_NAME);
+        $queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE_NAME);
         $applicationArray = $queryBuilder
             ->select('*')
             ->from(self::TABLE_NAME)
@@ -32,7 +35,8 @@ class ApplicationRepository
                 $queryBuilder->expr()->eq('uid', $uid)
             )
             ->setMaxResults(1)
-            ->executeQuery()->fetchAllAssociative() ?? [];
+            ->executeQuery()
+            ->fetchAllAssociative() ?? [];
 
         if (empty($applicationArray)) {
             return null;
@@ -43,20 +47,22 @@ class ApplicationRepository
 
     public function findAll(): array
     {
-        return GeneralUtility::makeInstance(ConnectionPool::class)
+        return $this->connectionPool
             ->getQueryBuilderForTable(self::TABLE_NAME)
             ->select('*')
             ->from(self::TABLE_NAME)
-            ->execute()
+            ->executeQuery()
             ->fetchAllAssociative();
     }
 
     public function remove(Application $application): void
     {
-        $qb = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(self::TABLE_NAME);
+        $qb = $this->connectionPool->getQueryBuilderForTable(self::TABLE_NAME);
 
-        $qb->delete(self::TABLE_NAME)->where(
-            $qb->expr()->eq('uid', $qb->createNamedParameter($application->getUid(), \PDO::PARAM_INT))
-        )->execute();
+        $qb->delete(self::TABLE_NAME)
+            ->where(
+                $qb->expr()->eq('uid', $qb->createNamedParameter($application->getUid(), ParameterType::INTEGER))
+            )
+            ->executeStatement();
     }
 }

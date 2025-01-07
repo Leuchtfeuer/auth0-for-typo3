@@ -20,7 +20,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\FrontendRestrictionContainer;
 use TYPO3\CMS\Core\Exception\SiteNotFoundException;
@@ -30,13 +29,8 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
-use TYPO3\CMS\Felogin\Controller\FrontendLoginController;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
-use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
-/**
- * @see FrontendLoginController
- */
 class RedirectService implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
@@ -56,7 +50,9 @@ class RedirectService implements LoggerAwareInterface
 
             if ($redirectUris !== []) {
                 $redirectUri = $this->addAdditionalParamsToRedirectUri($this->getUri($redirectUris), $additionalParameters);
-                $redirectUri = $this->getEventDispatcher()->dispatch(new RedirectPreProcessingEvent($redirectUri, $this))->getRedirectUri();
+                $redirectUri = $this->getEventDispatcher()
+                    ->dispatch(new RedirectPreProcessingEvent($redirectUri, $this))
+                    ->getRedirectUri();
 
                 $this->logger->notice(sprintf('Redirect to: %s', $redirectUri));
                 header('Location: ' . $redirectUri, false, 307);
@@ -80,10 +76,10 @@ class RedirectService implements LoggerAwareInterface
 
         if ($this->settings['redirectMode']) {
             $redirectMethods = GeneralUtility::trimExplode(',', $this->settings['redirectMode'], true);
-            foreach ($redirectMethods as $redirMethod) {
-                if (in_array($redirMethod, $allowedRedirects)) {
+            foreach ($redirectMethods as $redirectMethod) {
+                if (in_array($redirectMethod, $allowedRedirects)) {
                     // Logintype is needed because the login-page wouldn't be accessible anymore after a login (would always redirect)
-                    switch ($redirMethod) {
+                    switch ($redirectMethod) {
                         case 'groupLogin':
                             // taken from dkd_redirect_at_login written by Ingmar Schlecht; database-field changed
                             $groupData = $this->getRequest()->getAttribute('frontend.user')?->groupData;

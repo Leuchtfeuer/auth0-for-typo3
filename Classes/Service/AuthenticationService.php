@@ -17,7 +17,6 @@ use Auth0\SDK\Auth0;
 use Auth0\SDK\Exception\ArgumentException;
 use Auth0\SDK\Exception\NetworkException;
 use Auth0\SDK\Utility\HttpResponse;
-
 use GuzzleHttp\Exception\GuzzleException;
 use JsonException;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
@@ -26,7 +25,7 @@ use Leuchtfeuer\Auth0\Exception\TokenException;
 use Leuchtfeuer\Auth0\Factory\ApplicationFactory;
 use Leuchtfeuer\Auth0\LoginProvider\Auth0Provider;
 use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
-use Leuchtfeuer\Auth0\Utility\Database\UpdateUtility;
+use Leuchtfeuer\Auth0\Utility\Database\UpdateUtilityFactory;
 use Leuchtfeuer\Auth0\Utility\TokenUtility;
 use Leuchtfeuer\Auth0\Utility\UserUtility;
 use Psr\Http\Message\ServerRequestInterface;
@@ -58,6 +57,13 @@ class AuthenticationService extends BasicAuthenticationService
     protected string $userIdentifier = '';
 
     private bool $auth0Authentication = false;
+
+    public function __construct(
+        protected readonly ConnectionPool $connectionPool,
+        protected readonly TokenUtility $tokenUtility,
+        protected readonly UpdateUtilityFactory $updateUtilityFactory,
+        protected readonly UserUtility $userUtility,
+    ) {}
 
     /**
      * @inheritDoc
@@ -149,20 +155,19 @@ class AuthenticationService extends BasicAuthenticationService
 
     protected function retrieveApplicationFromUrlQuery(): int
     {
-        $application = (int)GeneralUtility::_GET('application');
+        $application = (int)($this->getRequest()->getQueryParams()['application'] ?? 0);
 
         if ($application !== 0) {
             return $application;
         }
 
-        $tokenUtility = GeneralUtility::makeInstance(TokenUtility::class);
-
-        if (!$tokenUtility->verifyToken((string)GeneralUtility::_GET(CallbackMiddleware::TOKEN_PARAMETER))) {
+        $tokenParameter = (string)($this->getRequest()->getQueryParams()[CallbackMiddleware::TOKEN_PARAMETER] ?? '');
+        if (!$this->tokenUtility->verifyToken($tokenParameter)) {
             return 0;
         }
 
         try {
-            $dataSet = $tokenUtility->getToken()->claims();
+            $dataSet = $this->tokenUtility->getToken()->claims();
         } catch (TokenException) {
             return 0;
         }
@@ -194,7 +199,7 @@ class AuthenticationService extends BasicAuthenticationService
 
     protected function setApplicationByUser(string $auth0UserId): void
     {
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableName);
+        $queryBuilder = $this->connectionPool->getQueryBuilderForTable($this->tableName);
         $application = $queryBuilder
             ->select('auth0_last_application')
             ->from($this->tableName)
@@ -223,9 +228,8 @@ class AuthenticationService extends BasicAuthenticationService
     protected function getAuth0User(): bool
     {
         try {
-            $userUtility = GeneralUtility::makeInstance(UserUtility::class);
             $managementUser = HttpResponse::decodeContent($this->auth0->management()->users()->get($this->userInfo[$this->userIdentifier]));
-            $this->userInfo = $userUtility->enrichManagementUser($managementUser);
+            $this->userInfo = $this->userUtility->enrichManagementUser($managementUser);
         } catch (ArgumentException|NetworkException|JsonException $e) {
             $this->logger->error($e->getMessage());
             return false;
@@ -241,15 +245,14 @@ class AuthenticationService extends BasicAuthenticationService
      */
     protected function insertOrUpdateUser(): void
     {
-        $userUtility = GeneralUtility::makeInstance(UserUtility::class);
-        $this->user = $userUtility->checkIfUserExists($this->tableName, $this->userInfo[$this->userIdentifier]);
+        $this->user = $this->userUtility->checkIfUserExists($this->tableName, $this->userInfo[$this->userIdentifier]);
 
         // Insert a new user into database
         if ($this->user === []) {
             $this->logger->notice('Insert new user.');
-            $userUtility->insertUser($this->tableName, $this->userInfo);
+            $this->userUtility->insertUser($this->tableName, $this->userInfo);
         }
-        $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, $this->tableName, $this->userInfo);
+        $updateUtility = $this->updateUtilityFactory->create($this->tableName, $this->userInfo);
         $updateUtility->updateGroups();
 
         // Update existing user on every login when we are in BE context (since TypoScript is loaded).
@@ -257,7 +260,7 @@ class AuthenticationService extends BasicAuthenticationService
             $updateUtility->updateUser();
         } else {
             // Update last used application (no TypoScript loaded in Frontend Requests)
-            $userUtility->setLastUsedApplication($this->userInfo[$this->userIdentifier], $this->application);
+            $this->userUtility->setLastUsedApplication($this->userInfo[$this->userIdentifier], $this->application);
         }
     }
 

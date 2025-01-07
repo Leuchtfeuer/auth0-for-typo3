@@ -45,6 +45,12 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
     protected EmAuth0Configuration $configuration;
 
+    public function __construct(
+        protected readonly ApplicationRepository $applicationRepository,
+        protected readonly Context $context,
+        protected readonly TokenUtility $tokenUtility,
+    ) {}
+
     /**
      * @throws GuzzleException
      * @throws ConfigurationException
@@ -69,7 +75,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
      */
     public function formAction(): ResponseInterface
     {
-        if (GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
+        if ($this->context->getPropertyFromAspect('frontend.user', 'isLoggedIn')) {
             // Get Auth0 user from session storage
             $userInfo = $this->auth0->configuration()->getSessionStorage()->get('user');
         }
@@ -89,12 +95,10 @@ class LoginController extends ActionController implements LoggerAwareInterface
      */
     public function loginAction(?string $rawAdditionalAuthorizeParameters = null): void
     {
-        /** @var Context $context */
-        $context = GeneralUtility::makeInstance(Context::class);
         $userInfo = $this->auth0->configuration()->getSessionStorage()->get('user');
 
         // Log in user to auth0 when there is neither a TYPO3 frontend user nor an Auth0 user
-        if (!$context->getPropertyFromAspect('frontend.user', 'isLoggedIn') || empty($userInfo)) {
+        if (!$this->context->getPropertyFromAspect('frontend.user', 'isLoggedIn') || empty($userInfo)) {
             if ($rawAdditionalAuthorizeParameters !== null && $rawAdditionalAuthorizeParameters !== '' && $rawAdditionalAuthorizeParameters !== '0') {
                 $additionalAuthorizeParameters = ParametersUtility::transformUrlParameters($rawAdditionalAuthorizeParameters);
             } else {
@@ -115,11 +119,11 @@ class LoginController extends ActionController implements LoggerAwareInterface
      */
     public function logoutAction(): void
     {
-        $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($this->application);
+        $application = $this->applicationRepository->findByUid($this->application);
         $singleLogOut = isset($this->settings['softLogout']) ? !(bool)$this->settings['softLogout'] : $application->isSingleLogOut();
 
         if ($singleLogOut === false) {
-            $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
+            $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class, $this->request, $this->uriBuilder);
             $routingUtility->addArgument('logintype', 'logout');
 
             if (str_contains((string) $this->settings['redirectMode'], 'logout') && (bool)$this->settings['redirectDisable'] === false) {
@@ -147,29 +151,28 @@ class LoginController extends ActionController implements LoggerAwareInterface
             $referrer .= '#' . $this->settings['referrerAnchor'];
         }
 
-        $tokenUtility = GeneralUtility::makeInstance(TokenUtility::class);
-        $tokenUtility->withPayload('application', $this->application);
-        $tokenUtility->withPayload('referrer', $referrer);
-        $tokenUtility->withPayload('redirectMode', $this->settings['redirectMode']);
-        $tokenUtility->withPayload('redirectFirstMethod', $this->settings['redirectFirstMethod']);
-        $tokenUtility->withPayload('redirectPageLogin', $this->settings['redirectPageLogin']);
-        $tokenUtility->withPayload('redirectPageLoginError', $this->settings['redirectPageLoginError']);
-        $tokenUtility->withPayload('redirectPageLogout', $this->settings['redirectPageLogout']);
-        $tokenUtility->withPayload('redirectDisable', $this->settings['redirectDisable']);
+        $this->tokenUtility->withPayload('application', $this->application);
+        $this->tokenUtility->withPayload('referrer', $referrer);
+        $this->tokenUtility->withPayload('redirectMode', $this->settings['redirectMode']);
+        $this->tokenUtility->withPayload('redirectFirstMethod', $this->settings['redirectFirstMethod']);
+        $this->tokenUtility->withPayload('redirectPageLogin', $this->settings['redirectPageLogin']);
+        $this->tokenUtility->withPayload('redirectPageLoginError', $this->settings['redirectPageLoginError']);
+        $this->tokenUtility->withPayload('redirectPageLogout', $this->settings['redirectPageLogout']);
+        $this->tokenUtility->withPayload('redirectDisable', $this->settings['redirectDisable']);
 
         return sprintf(
             '%s%s?logintype=%s&%s=%s',
-            $tokenUtility->getIssuer(),
+            $this->tokenUtility->getIssuer(),
             CallbackMiddleware::PATH,
             $loginType,
             CallbackMiddleware::TOKEN_PARAMETER,
-            $tokenUtility->buildToken()->toString()
+            $this->tokenUtility->buildToken()->toString()
         );
     }
 
     protected function addLogoutRedirect(): string
     {
-        $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
+        $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class, $this->request, $this->uriBuilder);
 
         if (!empty($this->settings['redirectPageLogout'])) {
             $routingUtility->setTargetPage((int)$this->settings['redirectPageLogout']);

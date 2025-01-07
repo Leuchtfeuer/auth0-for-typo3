@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Leuchtfeuer\Auth0\Domain\Repository;
 
+use Doctrine\DBAL\ParameterType;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerAwareInterface;
@@ -23,25 +24,23 @@ use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Http\ApplicationType;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class UserRepository implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /**
-     * @var QueryBuilder
-     */
-    protected $queryBuilder;
+    protected readonly QueryBuilder $queryBuilder;
 
     /**
      * @var ExpressionBuilder
      */
-    protected $expressionBuilder;
+    protected readonly ExpressionBuilder $expressionBuilder;
 
-    public function __construct(protected string $tableName)
-    {
-        $this->queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableName);
+    public function __construct(
+        protected readonly ConnectionPool $connectionPool,
+        protected readonly string $tableName
+    ) {
+        $this->queryBuilder = $this->connectionPool->getQueryBuilderForTable($this->tableName);
         $this->expressionBuilder = $this->queryBuilder->expr();
     }
 
@@ -59,8 +58,16 @@ class UserRepository implements LoggerAwareInterface
                     $this->queryBuilder->createNamedParameter($auth0UserId)
                 )
             );
-        $this->logger->debug(sprintf('[%s] Executed SELECT query: %s', $this->tableName, $this->queryBuilder->getSQL()));
-        $user = $this->queryBuilder->execute()->fetchAssociative();
+        $this->logger->debug(
+            sprintf(
+                '[%s] Executed SELECT query: %s',
+                $this->tableName,
+                $this->queryBuilder->getSQL()
+            )
+        );
+        $user = $this->queryBuilder
+            ->executeQuery()
+            ->fetchAssociative();
 
         return ($user !== false) ? $user : null;
     }
@@ -73,8 +80,8 @@ class UserRepository implements LoggerAwareInterface
     {
         $configuration = new EmAuth0Configuration();
 
-        if (($GLOBALS['TYPO3_REQUEST'] ?? null) instanceof ServerRequestInterface
-            && ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()) {
+        $request = $GLOBALS['TYPO3_REQUEST'] ?? null;
+        if ($request instanceof ServerRequestInterface && ApplicationType::fromRequest($request)->isFrontend()) {
             $this->removeFrontendRestrictions($configuration);
         } else {
             $this->removeBackendRestrictions($configuration);
@@ -122,7 +129,7 @@ class UserRepository implements LoggerAwareInterface
         $this->queryBuilder->andWhere(
             $this->expressionBuilder->eq(
                 'deleted',
-                $this->queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
+                $this->queryBuilder->createNamedParameter(0, ParameterType::INTEGER)
             )
         );
     }
@@ -136,7 +143,7 @@ class UserRepository implements LoggerAwareInterface
         $this->queryBuilder->andWhere(
             $this->expressionBuilder->eq(
                 'disable',
-                $this->queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
+                $this->queryBuilder->createNamedParameter(0, ParameterType::INTEGER)
             )
         );
     }
@@ -164,7 +171,10 @@ class UserRepository implements LoggerAwareInterface
     {
         $this->resolveSets($sets);
         $this->queryBuilder->where(
-            $this->expressionBuilder->eq('uid', $this->queryBuilder->createNamedParameter($uid, \PDO::PARAM_INT))
+            $this->expressionBuilder->eq(
+                'uid',
+                $this->queryBuilder->createNamedParameter($uid, ParameterType::INTEGER)
+            )
         );
         $this->updateUser();
     }
@@ -187,7 +197,13 @@ class UserRepository implements LoggerAwareInterface
     protected function resolveSets(array $sets): void
     {
         foreach ($sets as $key => $value) {
-            $this->logger->debug(sprintf('Set property "%s" to: "%s"', $key, $value));
+            $this->logger->debug(
+                sprintf(
+                    'Set property "%s" to: "%s"',
+                    $key,
+                    $value
+                )
+            );
             $this->queryBuilder->set($key, $value);
         }
     }
@@ -198,8 +214,14 @@ class UserRepository implements LoggerAwareInterface
     protected function updateUser(): void
     {
         $this->queryBuilder->update($this->tableName);
-        $this->logger->debug(sprintf('[%s] Executed UPDATE query: %s', $this->tableName, $this->queryBuilder->getSQL()));
-        $this->queryBuilder->execute();
+        $this->logger->debug(
+            sprintf(
+                '[%s] Executed UPDATE query: %s',
+                $this->tableName,
+                $this->queryBuilder->getSQL()
+            )
+        );
+        $this->queryBuilder->executeStatement();
     }
 
     /**
@@ -208,7 +230,13 @@ class UserRepository implements LoggerAwareInterface
     public function insertUser(array $values): void
     {
         $this->queryBuilder->insert($this->tableName)->values($values);
-        $this->logger->debug(sprintf('[%s] Executed INSERT query: %s', $this->tableName, $this->queryBuilder->getSQL()));
-        $this->queryBuilder->execute();
+        $this->logger->debug(
+            sprintf(
+                '[%s] Executed INSERT query: %s',
+                $this->tableName,
+                $this->queryBuilder->getSQL()
+            )
+        );
+        $this->queryBuilder->executeStatement();
     }
 }

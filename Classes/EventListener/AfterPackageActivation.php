@@ -19,23 +19,22 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class AfterPackageActivation
 {
-    protected $excludedParameters = [
+    protected array $excludedParameters = [
         'code',
         'state',
         'error_description',
         'error',
     ];
 
-    public function __invoke(AfterPackageActivationEvent $event)
+    public function __construct(protected readonly ConfigurationManager $configurationManager) {}
+
+    public function __invoke(AfterPackageActivationEvent $event): void
     {
         if ($event->getPackageKey() === 'auth0') {
-            $path = ['FE', 'cacheHash', 'excludedParameters'];
-            $configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
-            $excludeParameters = $configurationManager->getConfigurationValueByPath($path);
-
+            $path = 'FE/cacheHash/excludedParameters';
+            $excludeParameters = $this->configurationManager->getConfigurationValueByPath($path);
             $this->setValues($excludeParameters);
-
-            $configurationManager->setLocalConfigurationValueByPath($path, $excludeParameters);
+            $this->configurationManager->setLocalConfigurationValueByPath($path, $excludeParameters);
         }
     }
 

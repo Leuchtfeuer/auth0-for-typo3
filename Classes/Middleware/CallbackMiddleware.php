@@ -50,6 +50,12 @@ class CallbackMiddleware implements MiddlewareInterface
 
     const BACKEND_URI = '%s/typo3/?loginProvider=%d&code=%s&state=%s';
 
+    public function __construct(
+        protected readonly UpdateUtility $updateUtility,
+        protected readonly UserUtility $userUtility,
+        protected readonly TokenUtility $tokenUtility,
+    ) {}
+
     /**
      * @throws NetworkException
      * @throws UnknownErrorCodeException
@@ -62,27 +68,27 @@ class CallbackMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        $tokenUtility = GeneralUtility::makeInstance(TokenUtility::class);
-
-        if (!$tokenUtility->verifyToken((string)($request->getQueryParams()[self::TOKEN_PARAMETER] ?? null))) {
+        if (!$this->tokenUtility->verifyToken((string)($request->getQueryParams()[self::TOKEN_PARAMETER] ?? null))) {
             return new Response('php://temp', 400);
         }
 
         try {
-            $dataSet = $tokenUtility->getToken()->claims();
+            $dataSet = $this->tokenUtility->getToken()->claims();
         } catch (TokenException) {
             return new Response('php://temp', 400);
         }
 
         if ($dataSet->get('environment') === TokenUtility::ENVIRONMENT_BACKEND) {
-            return $this->handleBackendCallback($request, $tokenUtility, $dataSet);
+            return $this->handleBackendCallback($request, $dataSet);
         }
         // Perform frontend callback as environment can only be 'BE' or 'FE'
         return $this->handleFrontendCallback($request, $dataSet);
     }
 
-    protected function handleBackendCallback(ServerRequestInterface $request, TokenUtility $tokenUtility, DataSet $dataSet): RedirectResponse
-    {
+    protected function handleBackendCallback(
+        ServerRequestInterface $request,
+        DataSet $dataSet
+    ): RedirectResponse {
         if ($dataSet->get('redirectUri') !== null) {
             return new RedirectResponse($dataSet->get('redirectUri'), 302);
         }
@@ -90,7 +96,7 @@ class CallbackMiddleware implements MiddlewareInterface
         $queryParams = $request->getQueryParams();
         $redirectUri = sprintf(
             self::BACKEND_URI,
-            $tokenUtility->getIssuer(),
+            $this->tokenUtility->getIssuer(),
             Auth0Provider::LOGIN_PROVIDER,
             $queryParams['code'],
             $queryParams['state']
@@ -200,19 +206,17 @@ class CallbackMiddleware implements MiddlewareInterface
         // Get application record
         $application = BackendUtility::getRecord(ApplicationRepository::TABLE_NAME, $applicationId, 'api, uid');
 
-        if ((bool)$application['api']) {
+        if ($application['api']) {
             $auth0 = ApplicationFactory::build($applicationId);
             $response = $auth0->management()->users()->get($user[GeneralUtility::makeInstance(EmAuth0Configuration::class)->getUserIdentifier()]);
             if (HttpResponse::wasSuccessful($response)) {
-                $userUtility = GeneralUtility::makeInstance(UserUtility::class);
-                $user =  $userUtility->enrichManagementUser(HttpResponse::decodeContent($response));
+                $this->userUtility->enrichManagementUser(HttpResponse::decodeContent($response));
             }
         }
 
         // Update user
-        $updateUtility = GeneralUtility::makeInstance(UpdateUtility::class, 'fe_users', $user);
-        $updateUtility->updateUser();
-        $updateUtility->updateGroups();
+        $this->updateUtility->updateUser();
+        $this->updateUtility->updateGroups();
     }
 
     protected function performRedirectFromPluginConfiguration(DataSet $tokenDataSet, array $allowedMethods): void

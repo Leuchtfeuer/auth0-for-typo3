@@ -22,31 +22,31 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class EmAuth0Configuration implements SingletonInterface
 {
-    protected $enableBackendLogin = false;
+    protected bool $enableBackendLogin = false;
 
-    protected $backendConnection = 0;
+    protected int $backendConnection = 0;
 
-    protected $userStoragePage = 0;
+    protected int $userStoragePage = 0;
 
-    protected $reactivateDisabledBackendUsers = false;
+    protected bool $reactivateDisabledBackendUsers = false;
 
-    protected $reactivateDeletedBackendUsers = false;
+    protected bool $reactivateDeletedBackendUsers = false;
 
-    protected $reactivateDisabledFrontendUsers = true;
+    protected bool $reactivateDisabledFrontendUsers = true;
 
-    protected $reactivateDeletedFrontendUsers = true;
+    protected bool $reactivateDeletedFrontendUsers = true;
 
-    protected $softLogout = false;
+    protected bool $softLogout = false;
 
-    protected $additionalAuthorizeParameters = '';
+    protected string $additionalAuthorizeParameters = '';
 
-    protected $enableFrontendLogin = true;
+    protected bool $enableFrontendLogin = true;
 
-    protected $privateKeyFile = '';
+    protected string $privateKeyFile = '';
 
-    protected $publicKeyFile = '';
+    protected string $publicKeyFile = '';
 
-    protected $userIdentifier = 'sub';
+    protected string $userIdentifier = 'sub';
 
     /**
      * @throws ExtensionConfigurationExtensionNotConfiguredException
@@ -72,42 +72,42 @@ class EmAuth0Configuration implements SingletonInterface
 
     public function isEnableBackendLogin(): bool
     {
-        return (bool)$this->enableBackendLogin;
+        return $this->enableBackendLogin;
     }
 
     public function getBackendConnection(): int
     {
-        return (int)$this->backendConnection;
+        return $this->backendConnection;
     }
 
     public function getUserStoragePage(): int
     {
-        return (int)$this->userStoragePage;
+        return $this->userStoragePage;
     }
 
     public function isReactivateDisabledBackendUsers(): bool
     {
-        return (bool)$this->reactivateDisabledBackendUsers;
+        return $this->reactivateDisabledBackendUsers;
     }
 
     public function isReactivateDeletedBackendUsers(): bool
     {
-        return (bool)$this->reactivateDeletedBackendUsers;
+        return $this->reactivateDeletedBackendUsers;
     }
 
     public function isReactivateDisabledFrontendUsers(): bool
     {
-        return (bool)$this->reactivateDisabledFrontendUsers;
+        return $this->reactivateDisabledFrontendUsers;
     }
 
     public function isReactivateDeletedFrontendUsers(): bool
     {
-        return (bool)$this->reactivateDeletedFrontendUsers;
+        return $this->reactivateDeletedFrontendUsers;
     }
 
     public function isSoftLogout(): bool
     {
-        return (bool)$this->softLogout;
+        return $this->softLogout;
     }
 
     public function getAdditionalAuthorizeParameters(): array
@@ -117,7 +117,7 @@ class EmAuth0Configuration implements SingletonInterface
 
     public function isEnableFrontendLogin(): bool
     {
-        return (bool)$this->enableFrontendLogin;
+        return $this->enableFrontendLogin;
     }
 
     public function getPrivateKeyFile(): string
