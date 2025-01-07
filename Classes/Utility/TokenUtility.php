@@ -170,18 +170,9 @@ class TokenUtility implements LoggerAwareInterface
                 }
                 $base = GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId($pageId)->getBase();
 
-                if ($base->getScheme() !== null) {
-                    $this->issuer = sprintf('%s://%s', $base->getScheme(), $base->getHost());
-                    return;
-                }
-
-                // Base of site configuration might be "/" so we have to retrieve the domain from the ENV
-                $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
-            } catch (\Exception) {
-                $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
-            }
-
-            return;
+                $this->issuer = sprintf('%s://%s', $base->getScheme(), $base->getHost());
+                return;
+            } catch (\Exception) {}
         }
 
         $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');

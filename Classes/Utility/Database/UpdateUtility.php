@@ -132,7 +132,7 @@ class UpdateUtility implements LoggerAwareInterface
     protected function mapRoles(array $groupMapping, array &$groupsToAssign, bool &$isBeAdmin, bool &$shouldUpdate): void
     {
         $rolesKey = $this->yamlConfiguration['roles']['key'] ?? 'roles';
-        $roles = (array)$this->user['app_metadata'][$rolesKey] ?? [];
+        $roles = (array)($this->user['app_metadata'][$rolesKey] ?? []);
 
         foreach ($roles as $role) {
             if (isset($groupMapping[$role])) {

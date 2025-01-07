@@ -36,7 +36,7 @@ class ApplicationRepository
             )
             ->setMaxResults(1)
             ->executeQuery()
-            ->fetchAllAssociative() ?? [];
+            ->fetchAllAssociative();
 
         if (empty($applicationArray)) {
             return null;
