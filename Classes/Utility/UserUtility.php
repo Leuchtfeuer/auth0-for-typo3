@@ -164,13 +164,17 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     {
         try {
             $this->logger->notice('Try to update user.');
+            $user = null;
             if ($auth0->exchange()) {
                 $user = $auth0->getUser();
+            }
+            if ($user === null || $user === []) {
+                throw new \RuntimeException('No user found', 1736262801);
             }
 
             $application = BackendUtility::getRecord(ApplicationRepository::TABLE_NAME, $application, 'api, uid');
 
-            if ($application['api'] && $user) {
+            if ($application['api']) {
                 $response = $auth0->management()->users()->get($user[$this->configuration->getUserIdentifier()]);
                 if (HttpResponse::wasSuccessful($response)) {
                     $userUtility = GeneralUtility::makeInstance(UserUtility::class);
