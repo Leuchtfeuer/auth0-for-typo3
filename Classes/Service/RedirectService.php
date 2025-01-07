@@ -235,7 +235,7 @@ class RedirectService implements LoggerAwareInterface
             $conf['fileTarget'] = $target;
         }
         if (!empty($urlParameters)) {
-            $conf['additionalParams'] .= HttpUtility::buildQueryString($urlParameters, '&');
+            $conf['additionalParams'] = HttpUtility::buildQueryString($urlParameters, '&');
         }
         return $cObj->typoLink_URL($conf);
     }

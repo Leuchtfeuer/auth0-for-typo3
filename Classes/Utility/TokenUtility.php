@@ -22,6 +22,7 @@ use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
 use Lcobucci\JWT\Token\Plain;
+use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
 use Lcobucci\JWT\Validation\Constraint\PermittedFor;
@@ -33,6 +34,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\Page\PageInformation;
 
 class TokenUtility implements LoggerAwareInterface
 {
@@ -84,7 +86,7 @@ class TokenUtility implements LoggerAwareInterface
         return $contraints;
     }
 
-    public function buildToken(): Plain
+    public function buildToken(): UnencryptedToken
     {
         $builder = $this->config->builder();
         $builder->issuedBy($this->getIssuer());
@@ -142,7 +144,7 @@ class TokenUtility implements LoggerAwareInterface
     /**
      * @throws TokenException
      */
-    public function getToken(): ?Token
+    public function getToken(): Token|UnencryptedToken|null
     {
         if (!$this->token instanceof Token) {
             throw new TokenException('No token defined.', 1585905908);
@@ -159,12 +161,13 @@ class TokenUtility implements LoggerAwareInterface
     {
         if (!ModeUtility::isBackend()) {
             try {
-                if (!isset($GLOBALS['TSFE'])) {
+                /** @var PageInformation|null $pageInformation */
+                $pageInformation = $GLOBALS['TYPO3_REQUEST']?->getAttribute('frontend.page.information');
+                $pageId = $pageInformation?->getId();
+                if (!isset($pageId)) {
                     $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
                     return;
                 }
-
-                $pageId = (int)$GLOBALS['TSFE']->id;
                 $base = GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId($pageId)->getBase();
 
                 if ($base->getScheme() !== null) {
