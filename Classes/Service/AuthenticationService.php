@@ -19,6 +19,7 @@ use Auth0\SDK\Exception\NetworkException;
 use Auth0\SDK\Utility\HttpResponse;
 use GuzzleHttp\Exception\GuzzleException;
 use JsonException;
+use Lcobucci\JWT\UnencryptedToken;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\ErrorCode;
 use Leuchtfeuer\Auth0\Exception\TokenException;
@@ -167,7 +168,11 @@ class AuthenticationService extends BasicAuthenticationService
         }
 
         try {
-            $dataSet = $this->tokenUtility->getToken()->claims();
+            $token = $this->tokenUtility->getToken();
+            if (!$token instanceof UnencryptedToken) {
+                throw new TokenException();
+            }
+            $dataSet = $token->claims();
         } catch (TokenException) {
             return 0;
         }

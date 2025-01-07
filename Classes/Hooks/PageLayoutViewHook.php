@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Leuchtfeuer\Auth0\Hooks;
 
+use Doctrine\DBAL\ParameterType;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Localization\LanguageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -66,7 +67,8 @@ class PageLayoutViewHook
             return 'Not defined';
         }
 
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_auth0_domain_model_application');
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable('tx_auth0_domain_model_application');
 
         return (string)$queryBuilder
             ->select('title')
@@ -74,10 +76,10 @@ class PageLayoutViewHook
             ->where(
                 $queryBuilder->expr()->eq(
                     'uid',
-                    $queryBuilder->createNamedParameter($applicationUid, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($applicationUid, ParameterType::INTEGER)
                 )
-            )->execute()
-            ->fetchColumn();
+            )->executeQuery()
+            ->fetchOne();
     }
 
     protected function getFieldFromFlexForm(string $key, string $sheet = 'sDEF'): string

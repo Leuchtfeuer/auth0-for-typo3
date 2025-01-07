@@ -20,6 +20,7 @@ use Auth0\SDK\Exception\StateException;
 use Auth0\SDK\Utility\HttpResponse;
 use GuzzleHttp\Exception\GuzzleException;
 use Lcobucci\JWT\Token\DataSet;
+use Lcobucci\JWT\UnencryptedToken;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\ErrorCode;
@@ -41,6 +42,7 @@ use TYPO3\CMS\Core\Http\RedirectResponse;
 use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Http\Uri;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 
 class CallbackMiddleware implements MiddlewareInterface
 {
@@ -57,9 +59,12 @@ class CallbackMiddleware implements MiddlewareInterface
     ) {}
 
     /**
-     * @throws NetworkException
-     * @throws UnknownErrorCodeException
      * @throws ArgumentException
+     * @throws ConfigurationException
+     * @throws GuzzleException
+     * @throws NetworkException
+     * @throws StateException
+     * @throws UnknownErrorCodeException
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -73,7 +78,11 @@ class CallbackMiddleware implements MiddlewareInterface
         }
 
         try {
-            $dataSet = $this->tokenUtility->getToken()->claims();
+            $token = $this->tokenUtility->getToken();
+            if (!$token instanceof UnencryptedToken) {
+                throw new TokenException();
+            }
+            $dataSet = $token->claims();
         } catch (TokenException) {
             return new Response('php://temp', 400);
         }
@@ -186,7 +195,9 @@ class CallbackMiddleware implements MiddlewareInterface
     {
         try {
             // This is necessary as group data is not fetched to this time
-            $request->getAttribute('frontend.user')->fetchGroupData();
+            /** @var FrontendUserAuthentication $frontendUserAuthentication */
+            $frontendUserAuthentication = $request->getAttribute('frontend.user');
+            $frontendUserAuthentication->fetchGroupData($request);
             $context = GeneralUtility::makeInstance(Context::class);
 
             return (bool)$context->getPropertyFromAspect('frontend.user', 'isLoggedIn');
@@ -200,6 +211,7 @@ class CallbackMiddleware implements MiddlewareInterface
      * @throws NetworkException
      * @throws ConfigurationException
      * @throws GuzzleException
+     * @throws \JsonException
      */
     protected function updateTypo3User(int $applicationId, array $user): void
     {
