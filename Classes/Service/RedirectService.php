@@ -176,7 +176,7 @@ class RedirectService implements LoggerAwareInterface
 
         // Remove empty values, but keep "0" as value (that's why "strlen" is used as second parameter)
         if ($redirect_url !== []) {
-            return array_filter($redirect_url, 'strlen');
+            return array_filter($redirect_url, fn($var) => (bool)strlen($var));
         }
 
         return [];

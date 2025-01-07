@@ -10,6 +10,6 @@ class UserRepositoryFactory
 
     public function create(string $tableName): UserRepository
     {
-        return new UserRepository($tableName, $this->connectionPool);
+        return new UserRepository($this->connectionPool, $tableName);
     }
 }
