@@ -87,7 +87,7 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
         $userCount = $this->updateUsers();
 
         if ($userCount > 0) {
-            $output->writeln(sprintf('<info>Removed %i users from %s</info>', $userCount, $this->tableNames['users']));
+            $output->writeln(sprintf('<info>Removed %d users from %s</info>', $userCount, $this->tableNames['users']));
         } else {
             $output->writeln(sprintf('<info>No users removed for table %s.</info>', $this->tableNames['users']));
         }

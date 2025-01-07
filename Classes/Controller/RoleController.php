@@ -11,8 +11,6 @@
 
 namespace Leuchtfeuer\Auth0\Controller;
 
-use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
-use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\Factory\ConfigurationFactory;
 use Psr\Http\Message\ResponseInterface;
@@ -23,7 +21,7 @@ class RoleController extends BackendController
     {
         $moduleTemplate = $this->initView();
         $moduleTemplate->assignMultiple([
-            'frontendUserGroupMapping' => (new FrontendUserGroupRepository())->findAll(),
+            'frontendUserGroupMapping' => $this->frontendUserGroupRepository->findAll(),
             'backendUserGroupMapping' => $this->backendUserGroupRepository->findAll(),
             'extensionConfiguration' => new EmAuth0Configuration(),
             'yamlConfiguration' => $this->auth0Configuration->load(),

@@ -105,7 +105,7 @@ class CallbackMiddleware implements MiddlewareInterface
         // Add error parameters to backend uri if exists
         if (!empty($request->getQueryParams()['error'] ?? null) && !empty($request->getQueryParams()['error_description'] ?? null)) {
             $redirectUri .= sprintf(
-                '&error=%s&error_description=%',
+                '&error=%s&error_description=%s',
                 $request->getQueryParams()['error'],
                 $request->getQueryParams()['error_description']
             );
