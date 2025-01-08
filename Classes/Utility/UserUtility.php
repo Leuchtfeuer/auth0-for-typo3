@@ -58,7 +58,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      */
     protected function findUserWithoutRestrictions(string $tableName, string $auth0UserId): array
     {
-        $this->logger->notice('Try to find user without restrictions.');
+        $this->logger?->notice('Try to find user without restrictions.');
         $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
         $userRepository->removeRestrictions();
         $userRepository->setOrdering('uid', 'DESC');
@@ -69,7 +69,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
             $userRepository->updateUserByUid(['disable' => 0, 'deleted' => 0], (int)$user['uid']);
 
-            $this->logger->notice(sprintf('Reactivated user with ID %s.', $user['uid']));
+            $this->logger?->notice(sprintf('Reactivated user with ID %s.', $user['uid']));
         }
 
         return $user ?? [];
@@ -85,7 +85,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             'fe_users' => $this->insertFeUser($tableName, $user),
             'be_users' => $this->insertBeUser($tableName, $user),
             /** @extensionScannerIgnoreLine */
-            default => $this->logger->error(sprintf('"%s" is not a valid table name.', $tableName)),
+            default => $this->logger?->error(sprintf('"%s" is not a valid table name.', $tableName)),
         };
     }
 
@@ -168,7 +168,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     /**
      * @throws InvalidPasswordHashException
      */
-    protected function getPassword(string $mode): string
+    protected function getPassword(string $mode): ?string
     {
         $saltFactory = GeneralUtility::makeInstance(PasswordHashFactory::class)->getDefaultHashInstance($mode);
         $password = GeneralUtility::makeInstance(Random::class)->generateRandomHexString(50);
@@ -179,7 +179,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     public function updateUser(Auth0 $auth0, int $application): void
     {
         try {
-            $this->logger->notice('Try to update user.');
+            $this->logger?->notice('Try to update user.');
             $user = null;
             if ($auth0->exchange()) {
                 $user = $auth0->getUser();
@@ -190,7 +190,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
 
             $application = BackendUtility::getRecord(ApplicationRepository::TABLE_NAME, $application, 'api, uid');
 
-            if ($application['api']) {
+            if ($application['api'] ?? false) {
                 $response = $auth0->management()->users()->get($user[$this->configuration->getUserIdentifier()]);
                 if (HttpResponse::wasSuccessful($response)) {
                     $userUtility = GeneralUtility::makeInstance(UserUtility::class);
@@ -204,7 +204,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             $updateUtility->updateUser();
             $updateUtility->updateGroups();
         } catch (\Exception $exception) {
-            $this->logger->warning(
+            $this->logger?->warning(
                 sprintf(
                     'Updating user failed with following message: %s (%s)',
                     $exception->getMessage(),

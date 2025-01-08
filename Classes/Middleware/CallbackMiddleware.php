@@ -221,7 +221,7 @@ class CallbackMiddleware implements MiddlewareInterface
         // Get application record
         $application = BackendUtility::getRecord(ApplicationRepository::TABLE_NAME, $applicationId, 'api, uid');
 
-        if ($application['api']) {
+        if ($application['api'] ?? false) {
             $auth0 = ApplicationFactory::build($applicationId);
             $response = $auth0->management()->users()->get($user[GeneralUtility::makeInstance(EmAuth0Configuration::class)->getUserIdentifier()]);
             if (HttpResponse::wasSuccessful($response)) {

@@ -30,6 +30,7 @@ use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\HttpUtility;
+use TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 class RedirectService implements LoggerAwareInterface
@@ -55,7 +56,7 @@ class RedirectService implements LoggerAwareInterface
     public function handleRedirect(array $allowedMethods, array $additionalParameters = []): void
     {
         if ((bool)$this->settings['redirectDisable'] === false && !empty($this->settings['redirectMode'])) {
-            $this->logger->notice('Try to redirect user.');
+            $this->logger?->notice('Try to redirect user.');
             $redirectUris = $this->getRedirectUri($allowedMethods);
 
             if ($redirectUris !== []) {
@@ -64,12 +65,12 @@ class RedirectService implements LoggerAwareInterface
                     ->dispatch(new RedirectPreProcessingEvent($redirectUri, $this))
                     ->getRedirectUri();
 
-                $this->logger->notice(sprintf('Redirect to: %s', $redirectUri));
+                $this->logger?->notice(sprintf('Redirect to: %s', $redirectUri));
                 header('Location: ' . $redirectUri, false, 307);
                 die;
             }
 
-            $this->logger->warning('Redirect failed.');
+            $this->logger?->warning('Redirect failed.');
         }
     }
 
@@ -100,11 +101,13 @@ class RedirectService implements LoggerAwareInterface
                     // Logintype is needed because the login-page wouldn't be accessible anymore after a login (would always redirect)
                     switch ($redirectMethod) {
                         case 'groupLogin':
+                            /** @var FrontendUserAuthentication $frontendUser */
+                            $frontendUser = $this->getRequest()->getAttribute('frontend.user');
                             // taken from dkd_redirect_at_login written by Ingmar Schlecht; database-field changed
-                            $groupData = $this->getRequest()->getAttribute('frontend.user')?->groupData;
+                            $groupData = $frontendUser->groupData;
                             if (!empty($groupData['uid'])) {
                                 // take the first group with a redirect page
-                                $userGroupTable = $this->getRequest()->getAttribute('frontend.user')->usergroup_table;
+                                $userGroupTable = $frontendUser->usergroup_table;
                                 $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($userGroupTable);
                                 $queryBuilder->getRestrictions()->removeAll();
                                 $row = $queryBuilder
@@ -132,7 +135,9 @@ class RedirectService implements LoggerAwareInterface
                             break;
 
                         case 'userLogin':
-                            $userTable = $this->getRequest()->getAttribute('frontend.user')->user_table;
+                            /** @var FrontendUserAuthentication $frontendUser */
+                            $frontendUser = $this->getRequest()->getAttribute('frontend.user');
+                            $userTable = $frontendUser->user_table;
                             $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($userTable);
                             $queryBuilder->getRestrictions()->removeAll();
                             $row = $queryBuilder
@@ -144,9 +149,9 @@ class RedirectService implements LoggerAwareInterface
                                         $queryBuilder->createNamedParameter('')
                                     ),
                                     $queryBuilder->expr()->eq(
-                                        $this->getRequest()->getAttribute('frontend.user')->userid_column,
+                                        $frontendUser->userid_column,
                                         $queryBuilder->createNamedParameter(
-                                            $this->getRequest()->getAttribute('frontend.user')->user['uid'],
+                                            $frontendUser->getUserId(),
                                             ParameterType::INTEGER
                                         )
                                     )
@@ -211,7 +216,7 @@ class RedirectService implements LoggerAwareInterface
      */
     public function getUri(array $redirectUris): string
     {
-        return $this->settings['redirectFirstMethod'] ? array_shift($redirectUris) : array_pop($redirectUris);
+        return ($this->settings['redirectFirstMethod'] ? array_shift($redirectUris) : array_pop($redirectUris)) ?? '';
     }
 
     public function setRedirectDisable(bool $value): void
@@ -288,7 +293,7 @@ class RedirectService implements LoggerAwareInterface
             return $url;
         }
         // URL is not allowed
-        $this->logger->warning('Url "' . $url . '"" for redirect was not accepted!');
+        $this->logger?->warning('Url "' . $url . '"" for redirect was not accepted!');
 
         return '';
     }
@@ -321,9 +326,12 @@ class RedirectService implements LoggerAwareInterface
     {
         $urlWithoutSchema = preg_replace('#^https?://#', '', $url);
         $siteUrlWithoutSchema = preg_replace('#^https?://#', '', GeneralUtility::getIndpEnv('TYPO3_SITE_URL'));
+        if ($siteUrlWithoutSchema === null) {
+            return false;
+        }
 
         return \str_starts_with($urlWithoutSchema . '/', GeneralUtility::getIndpEnv('HTTP_HOST') . '/')
-            && \str_starts_with((string) $urlWithoutSchema, $siteUrlWithoutSchema);
+            && \str_starts_with((string)$urlWithoutSchema, $siteUrlWithoutSchema);
     }
 
     /**

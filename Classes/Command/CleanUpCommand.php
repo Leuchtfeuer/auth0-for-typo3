@@ -218,7 +218,7 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
                 }
             }
         } catch (\Exception|GuzzleException $exception) {
-            $this->logger->critical($exception->getMessage());
+            $this->logger?->critical($exception->getMessage());
         }
 
         return $userCount;

@@ -138,7 +138,7 @@ class TokenUtility implements LoggerAwareInterface
     public function verifyToken(string $token): bool
     {
         if ($token === '' || $token === '0') {
-            $this->logger->warning('Given token is empty.');
+            $this->logger?->warning('Given token is empty.');
             return false;
         }
 
@@ -146,13 +146,13 @@ class TokenUtility implements LoggerAwareInterface
             $this->token = $this->config->parser()->parse($token);
         } catch (\Exception $exception) {
             /** @extensionScannerIgnoreLine */
-            $this->logger->error($exception->getMessage());
-            $this->logger->warning('Could not parse token.');
+            $this->logger?->error($exception->getMessage());
+            $this->logger?->warning('Could not parse token.');
             return false;
         }
 
         if (!$this->config->validator()->validate($this->token, ...$this->config->validationConstraints())) {
-            $this->logger->warning('Token validation failed.');
+            $this->logger?->warning('Token validation failed.');
             return false;
         }
         $this->verified = true;
@@ -215,7 +215,7 @@ class TokenUtility implements LoggerAwareInterface
                 return InMemory::plainText($this->configuration->getPublicKeyFile());
             }
 
-            $this->logger->warning(sprintf('Type %s is not allowed. Using encryption key.', $type));
+            $this->logger?->warning(sprintf('Type %s is not allowed. Using encryption key.', $type));
         }
 
         return InMemory::plainText($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);

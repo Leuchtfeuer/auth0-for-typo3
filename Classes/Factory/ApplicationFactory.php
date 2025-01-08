@@ -37,6 +37,9 @@ class ApplicationFactory
     {
         $scope = ['openid', 'profile', 'read:current_user'];
         $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationId);
+        if ($application === null) {
+            throw new \RuntimeException('Application not found: ' . $applicationId);
+        }
 
         // Management API should be used
         if ($application->hasApi()) {

@@ -50,7 +50,7 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
                 break;
 
             default:
-                $this->logger->warning(sprintf('Invalid configuration type "%s"', $configurationType));
+                $this->logger?->warning(sprintf('Invalid configuration type "%s"', $configurationType));
         }
 
         return $value ?? self::NO_AUTH0_VALUE;
@@ -73,7 +73,7 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
                 break;
 
             default:
-                $this->logger->notice(sprintf('"%s" is not a valid processing function', $processing));
+                $this->logger?->notice(sprintf('"%s" is not a valid processing function', $processing));
         }
 
         return $value;

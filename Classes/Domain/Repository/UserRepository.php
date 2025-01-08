@@ -62,7 +62,7 @@ class UserRepository implements LoggerAwareInterface
                     $this->queryBuilder->createNamedParameter($auth0UserId)
                 )
             );
-        $this->logger->debug(
+        $this->logger?->debug(
             sprintf(
                 '[%s] Executed SELECT query: %s',
                 $this->tableName,
@@ -115,13 +115,13 @@ class UserRepository implements LoggerAwareInterface
     protected function removeHiddenRestriction(): void
     {
         $this->queryBuilder->getRestrictions()->removeByType(HiddenRestriction::class);
-        $this->logger->debug('Removed HiddenRestriction.');
+        $this->logger?->debug('Removed HiddenRestriction.');
     }
 
     protected function removeDeletedRestriction(): void
     {
         $this->queryBuilder->getRestrictions()->removeByType(DeletedRestriction::class);
-        $this->logger->debug('Removed DeletedRestriction.');
+        $this->logger?->debug('Removed DeletedRestriction.');
     }
 
     /**
@@ -207,7 +207,7 @@ class UserRepository implements LoggerAwareInterface
     protected function resolveSets(array $sets): void
     {
         foreach ($sets as $key => $value) {
-            $this->logger->debug(
+            $this->logger?->debug(
                 sprintf(
                     'Set property "%s" to: "%s"',
                     $key,
@@ -224,7 +224,7 @@ class UserRepository implements LoggerAwareInterface
     protected function updateUser(): void
     {
         $this->queryBuilder->update($this->tableName);
-        $this->logger->debug(
+        $this->logger?->debug(
             sprintf(
                 '[%s] Executed UPDATE query: %s',
                 $this->tableName,
@@ -242,7 +242,7 @@ class UserRepository implements LoggerAwareInterface
     public function insertUser(array $values): void
     {
         $this->queryBuilder->insert($this->tableName)->values($values);
-        $this->logger->debug(
+        $this->logger?->debug(
             sprintf(
                 '[%s] Executed INSERT query: %s',
                 $this->tableName,

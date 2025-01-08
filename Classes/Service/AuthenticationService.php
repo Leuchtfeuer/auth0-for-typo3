@@ -90,7 +90,7 @@ class AuthenticationService extends BasicAuthenticationService
         }
 
         if (!$this->isAuth0LoginProvider($authInfo['loginType'])) {
-            $this->logger->debug('Auth0 authentication is not responsible for this request.');
+            $this->logger?->debug('Auth0 authentication is not responsible for this request.');
             return;
         }
 
@@ -99,7 +99,7 @@ class AuthenticationService extends BasicAuthenticationService
         }
 
         if ($this->initApplication($authInfo['loginType']) === false) {
-            $this->logger->debug('Initialization of Auth0 application failed.');
+            $this->logger?->debug('Initialization of Auth0 application failed.');
             return;
         }
 
@@ -124,7 +124,7 @@ class AuthenticationService extends BasicAuthenticationService
         $validErrorCodes = (new \ReflectionClass(ErrorCode::class))->getConstants();
         $auth0ErrorCode = $this->getRequest()->getQueryParams()['error'] ?? '';
         if ($auth0ErrorCode && in_array($auth0ErrorCode, $validErrorCodes)) {
-            $this->logger->notice('Access denied. Skip.');
+            $this->logger?->notice('Access denied. Skip.');
             return true;
         }
         return false;
@@ -137,25 +137,25 @@ class AuthenticationService extends BasicAuthenticationService
 
         switch ($loginType) {
             case self::FRONTEND_AUTHENTICATION:
-                $this->logger->info('Handle frontend login.');
+                $this->logger?->info('Handle frontend login.');
                 $this->application = $this->retrieveApplicationFromUrlQuery();
                 $this->tableName = 'fe_users';
                 break;
 
             case self::BACKEND_AUTHENTICATION:
-                $this->logger->info('Handle backend login.');
+                $this->logger?->info('Handle backend login.');
                 $this->application = $configuration->getBackendConnection();
                 $this->tableName = 'be_users';
                 break;
 
             default:
                 /** @extensionScannerIgnoreLine */
-                $this->logger->error('Environment is neither in frontend nor in backend mode.');
+                $this->logger?->error('Environment is neither in frontend nor in backend mode.');
         }
 
         if ($this->application === 0 && $this->initSessionStore($loginType) === false) {
             /** @extensionScannerIgnoreLine */
-            $this->logger->error('No Auth0 application UID given.');
+            $this->logger?->error('No Auth0 application UID given.');
 
             return false;
         }
@@ -225,7 +225,7 @@ class AuthenticationService extends BasicAuthenticationService
             ->executeQuery()
             ->fetchOne();
 
-        $this->logger->debug(sprintf('Found application (ID: %s) for active Auth0 session.', $application));
+        $this->logger?->debug(sprintf('Found application (ID: %s) for active Auth0 session.', $application));
         $this->application = (int)$application;
     }
 
@@ -237,8 +237,8 @@ class AuthenticationService extends BasicAuthenticationService
         if ($this->auth0Authentication) {
             match ($this->mode) {
                 'getUserFE', 'getUserBE' => $this->insertOrUpdateUser(),
-                'authUserFE', 'authUserBE' => $this->logger->debug(sprintf('Skip auth mode "%s".', $this->mode)),
-                default => $this->logger->notice(sprintf('Undefined mode "%s". Skip.', $this->mode)),
+                'authUserFE', 'authUserBE' => $this->logger?->debug(sprintf('Skip auth mode "%s".', $this->mode)),
+                default => $this->logger?->notice(sprintf('Undefined mode "%s". Skip.', $this->mode)),
             };
         }
     }
@@ -249,7 +249,7 @@ class AuthenticationService extends BasicAuthenticationService
             $managementUser = HttpResponse::decodeContent($this->auth0->management()->users()->get($this->userInfo[$this->userIdentifier]));
             $this->userInfo = $this->userUtility->enrichManagementUser($managementUser);
         } catch (ArgumentException|NetworkException|JsonException $e) {
-            $this->logger->error($e->getMessage());
+            $this->logger?->error($e->getMessage());
             return false;
         }
 
@@ -267,7 +267,7 @@ class AuthenticationService extends BasicAuthenticationService
 
         // Insert a new user into database
         if ($this->user === []) {
-            $this->logger->notice('Insert new user.');
+            $this->logger?->notice('Insert new user.');
             $this->userUtility->insertUser($this->tableName, $this->userInfo);
         }
         $updateUtility = $this->updateUtilityFactory->create($this->tableName, $this->userInfo);
@@ -296,13 +296,13 @@ class AuthenticationService extends BasicAuthenticationService
                 return false;
             }
             $this->auth0Authentication = true;
-            $this->logger->notice(sprintf('Found user with Auth0 identifier "%s".', $this->userInfo[$this->userIdentifier]));
+            $this->logger?->notice(sprintf('Found user with Auth0 identifier "%s".', $this->userInfo[$this->userIdentifier]));
 
             return true;
         } catch (\Exception $exception) {
-            $this->logger->emergency(sprintf('Error %s: %s', $exception->getCode(), $exception->getMessage()));
+            $this->logger?->emergency(sprintf('Error %s: %s', $exception->getCode(), $exception->getMessage()));
         } catch (GuzzleException $e) {
-            $this->logger->error($e->getMessage());
+            $this->logger?->error($e->getMessage());
         }
 
         return false;
@@ -328,7 +328,7 @@ class AuthenticationService extends BasicAuthenticationService
             }
 
             $this->writelog(255, 3, 3, 2, 'Login-attempt from ###IP###, username \'%s\' not found!!', [$this->login['uname']]);
-            $this->logger->info(
+            $this->logger?->info(
                 sprintf('Login-attempt from username "%s" not found!', $this->login['uname']),
                 [
                     'REMOTE_ADDR' => $this->authInfo['REMOTE_ADDR'],
@@ -354,14 +354,14 @@ class AuthenticationService extends BasicAuthenticationService
         //        // Do not login if email address is not verified (only available if API is enabled)
         //        // TODO:: Support this even API is disabled
         //        if ($this->auth0User !== null && !$this->auth0User->isEmailVerified()) {
-        //            $this->logger->warning('Email not verified. Do not login user.');
+        //            $this->logger?->warning('Email not verified. Do not login user.');
         //            // Responsible, authentication failed, do NOT check other services
         //            return 0;
         //        }
 
         // Skip when there is an Auth0 session but the corresponding TYPO3 user has no user group assigned.
         if (empty($user['usergroup']) && $this->loginViaSession) {
-            $this->logger->warning('Could not login user via session as it has no group assigned.');
+            $this->logger?->warning('Could not login user via session as it has no group assigned.');
 
             // TODO: Pass error message for clarification
             $this->auth0->logout(GeneralUtility::getIndpEnv('TYPO3_SITE_URL') . 'typo3/logout');
@@ -370,7 +370,7 @@ class AuthenticationService extends BasicAuthenticationService
         }
 
         // Success
-        $this->logger->notice(sprintf('Auth0 User %s (UID: %s) successfully logged in.', $user['auth0_user_id'], $user['uid']));
+        $this->logger?->notice(sprintf('Auth0 User %s (UID: %s) successfully logged in.', $user['auth0_user_id'], $user['uid']));
         return 200;
     }
 

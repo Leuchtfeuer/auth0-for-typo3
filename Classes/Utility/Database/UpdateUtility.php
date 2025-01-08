@@ -57,7 +57,7 @@ class UpdateUtility implements LoggerAwareInterface
 
         if (empty($groupMapping)) {
             /** @extensionScannerIgnoreLine */
-            $this->logger->error(sprintf('Cannot update user groups: No role mapping for %s found', $this->tableName));
+            $this->logger?->error(sprintf('Cannot update user groups: No role mapping for %s found', $this->tableName));
 
             return;
         }
@@ -71,7 +71,7 @@ class UpdateUtility implements LoggerAwareInterface
 
         // Update user only if necessary
         if ($shouldUpdate === true) {
-            $this->logger->notice('Update user groups.');
+            $this->logger?->notice('Update user groups.');
             $this->performGroupUpdate($groupsToAssign, $isBackendAdmin);
         }
     }
@@ -82,7 +82,7 @@ class UpdateUtility implements LoggerAwareInterface
 
         if ($mappingConfiguration === null) {
             /** @extensionScannerIgnoreLine */
-            $this->logger->error(sprintf('Cannot update user: No mapping configuration for %s found', $this->tableName));
+            $this->logger?->error(sprintf('Cannot update user: No mapping configuration for %s found', $this->tableName));
 
             return;
         }
@@ -152,14 +152,14 @@ class UpdateUtility implements LoggerAwareInterface
 
         foreach ($roles as $role) {
             if (isset($groupMapping[$role])) {
-                $this->logger->notice(sprintf('Assign group "%s" to user.', $groupMapping[$role]));
+                $this->logger?->notice(sprintf('Assign group "%s" to user.', $groupMapping[$role]));
                 $groupsToAssign = array_merge($groupsToAssign, $groupMapping[$role]);
                 $shouldUpdate = true;
             } elseif (!empty($this->yamlConfiguration['roles']['beAdmin']) && $role === $this->yamlConfiguration['roles']['beAdmin']) {
                 $isBeAdmin = true;
                 $shouldUpdate = true;
             } else {
-                $this->logger->warning(sprintf('No mapping for Auth0 role "%s" found.', $role));
+                $this->logger?->warning(sprintf('No mapping for Auth0 role "%s" found.', $role));
             }
         }
 
@@ -199,7 +199,7 @@ class UpdateUtility implements LoggerAwareInterface
      */
     protected function performUserUpdate(array $mappingConfiguration, bool $reactivateUser): void
     {
-        $this->logger->debug(
+        $this->logger?->debug(
             sprintf(
                 '%s: Prepare update for Auth0 user "%s"',
                 $this->tableName,
@@ -235,7 +235,7 @@ class UpdateUtility implements LoggerAwareInterface
             $reactivateDeleted = $this->configuration->isReactivateDeletedBackendUsers();
             $reactivateDisabled = $this->configuration->isReactivateDisabledBackendUsers();
         } else {
-            $this->logger->notice('Undefined environment');
+            $this->logger?->notice('Undefined environment');
         }
 
         if ($reactivateDeleted === false) {

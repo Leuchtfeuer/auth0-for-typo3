@@ -91,7 +91,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     {
         $this->initialize();
 
-        $this->logger->notice('Auth0 login is used.');
+        $this->logger?->notice('Auth0 login is used.');
         $this->renderingContext = $this->getRenderingContext($view);
 
         // Figure out whether TypoScript is loaded
@@ -134,7 +134,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         try {
             $this->auth0 = ApplicationFactory::build($this->configuration->getBackendConnection());
         } catch (\Exception|GuzzleException $exception) {
-            $this->logger->critical($exception->getMessage());
+            $this->logger?->critical($exception->getMessage());
             return false;
         }
 
@@ -166,15 +166,15 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     protected function getUserInfo(): array
     {
         $this->setAuth0();
-        $userInfo = $this->auth0->configuration()->getSessionStorage()->get('user') ?? [];
+        $userInfo = $this->auth0->configuration()->getSessionStorage()?->get('user') ?? [];
         if (!is_array($userInfo) || empty($userInfo)) {
             try {
-                $this->logger->notice('Try to get user via Auth0 API');
+                $this->logger?->notice('Try to get user via Auth0 API');
                 if ($this->auth0->exchange($this->getCallback(), $this->getRequest()->getQueryParams()['code'] ?? null, $this->getRequest()->getQueryParams()['state'] ?? null)) {
                     $userInfo = $this->auth0->getUser() ?? [];
                 }
             } catch (\Exception $exception) {
-                $this->logger->critical($exception->getMessage());
+                $this->logger?->critical($exception->getMessage());
                 $this->auth0->clear();
             }
         }
@@ -189,11 +189,11 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     {
         if ($this->action === self::ACTION_LOGOUT) {
             // Logout user from Auth0
-            $this->logger->notice('Logout user.');
+            $this->logger?->notice('Logout user.');
             $this->logoutFromAuth0();
         } elseif ($this->action === self::ACTION_LOGIN) {
             // Login user to Auth0
-            $this->logger->notice('Handle backend login.');
+            $this->logger?->notice('Handle backend login.');
             header('Location: ' . $this->auth0->login($this->getCallback()));
             exit;
         }
@@ -236,7 +236,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     protected function logoutFromAuth0(): void
     {
         $redirectUri = GeneralUtility::getIndpEnv('TYPO3_SITE_URL') . 'typo3/logout';
-        if ($this->application->isSingleLogOut() && $this->configuration->isSoftLogout()) {
+        if ($this->application?->isSingleLogOut() && $this->configuration->isSoftLogout()) {
             $this->auth0->clear();
             header('Location: ' . $redirectUri);
         } else {

@@ -48,6 +48,9 @@ class RoutingUtility implements LoggerAwareInterface
 
     public function getUri(): string
     {
+        if ($this->targetPage === null) {
+            return '';
+        }
         $this->uriBuilder
             ->reset()
             ->setTargetPageUid($this->targetPage)
@@ -58,7 +61,7 @@ class RoutingUtility implements LoggerAwareInterface
 
         if ($this->buildFrontendUri) {
             $uri = $this->uriBuilder->buildFrontendUri();
-            $this->logger->notice(sprintf('Set URI to: %s', $uri));
+            $this->logger?->notice(sprintf('Set URI to: %s', $uri));
 
             // Base of site configuration might be "/" so we have to prepend the domain
             if (str_starts_with($uri, '/')) {
@@ -73,7 +76,7 @@ class RoutingUtility implements LoggerAwareInterface
 
     public function setTargetPage(int $targetPage): self
     {
-        $this->logger->debug(sprintf('[URI] Set target page to "%s"', $targetPage));
+        $this->logger?->debug(sprintf('[URI] Set target page to "%s"', $targetPage));
         $this->targetPage = $targetPage;
 
         return $this;
@@ -81,7 +84,7 @@ class RoutingUtility implements LoggerAwareInterface
 
     public function setTargetPageType(int $targetPageType): void
     {
-        $this->logger->debug(sprintf('[URI] Set target page type to "%s"', $targetPageType));
+        $this->logger?->debug(sprintf('[URI] Set target page type to "%s"', $targetPageType));
         $this->targetPageType = $targetPageType;
     }
 
@@ -97,7 +100,7 @@ class RoutingUtility implements LoggerAwareInterface
      */
     public function setArguments(array $arguments): self
     {
-        $this->logger->debug('[URI] Set arguments', $arguments);
+        $this->logger?->debug('[URI] Set arguments', $arguments);
         $this->arguments = $arguments;
 
         return $this;
