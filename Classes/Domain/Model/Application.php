@@ -116,7 +116,11 @@ class Application extends AbstractEntity
 
     public function getApiBasePath(): string
     {
-        return sprintf('/%s/', trim(parse_url($this->getAudience(true), PHP_URL_PATH), '/'));
+        $path = parse_url($this->getAudience(true), PHP_URL_PATH);
+        if (!is_string($path)) {
+            throw new \RuntimeException('Audience path must be a string');
+        }
+        return sprintf('/%s/', trim($path, '/'));
     }
 
     public function isSingleLogOut(): bool

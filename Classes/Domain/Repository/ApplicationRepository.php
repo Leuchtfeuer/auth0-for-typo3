@@ -29,6 +29,7 @@ class ApplicationRepository
     public function findByUid(int $uid): ?Application
     {
         $queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE_NAME);
+        /** @var array<array{title: string, id: string, secret: string, domain: string, audience: string, single_log_out: bool, signature_algorithm: string|null, api: bool}> $applicationArray */
         $applicationArray = $queryBuilder
             ->select('*')
             ->from(self::TABLE_NAME)

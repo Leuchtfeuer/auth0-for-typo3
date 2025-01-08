@@ -33,12 +33,16 @@ class PageLayoutViewHook
     public function getSummary(array $params): string
     {
         $this->listType = $params['row']['list_type'];
-        $this->flexFormData = GeneralUtility::xml2array($params['row']['pi_flexform']);
+        $flexFormData = GeneralUtility::xml2array($params['row']['pi_flexform'] ?? []);
+        if (!is_array($flexFormData)) {
+            throw new \RuntimeException('Invalid flex form data type: string');
+        }
+        $this->flexFormData = $flexFormData;
 
         $header = '<p><strong>Auth0: ' . $this->getLanguageService()->sL('LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:plugin.loginForm.title') . '</strong></p>';
         $content = '';
 
-        if ($this->flexFormData !== '' && $this->flexFormData !== '0' && $this->flexFormData !== []) {
+        if ($this->flexFormData !== []) {
             $content = sprintf(
                 '<strong>%s</strong><span style="padding-left: 15px">%s</span><br/>',
                 $this->getLanguageService()->sL('LLL:EXT:auth0/Resources/Private/Language/Database.xlf:tx_auth0_domain_model_application'),

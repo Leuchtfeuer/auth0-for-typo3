@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Leuchtfeuer\Auth0\Command;
 
+use Auth0\SDK\Utility\HttpResponse;
 use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\ParameterType;
 use GuzzleHttp\Exception\GuzzleException;
@@ -200,16 +201,16 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
             ->executeStatement();
     }
 
-    /**
-     * @throws DBALException
-     */
     protected function updateUsers(): int
     {
         $userCount = 0;
         try {
             $auth0 = ApplicationFactory::build($this->configuration->getBackendConnection());
             foreach ($this->users as $user) {
-                $auth0User = $auth0->management()->users()->get($user['auth0_user_id']);
+                $auth0UserResponse = $auth0->management()->users()->get($user['auth0_user_id']);
+                /* TODO: $auth0UserResponse is not an array but ResponseInterface. See https://github.com/auth0/auth0-PHP/blob/8.13.0/docs/Management.md#users . Not sure, if the following solution works. */
+                /** @var array<string, mixed> $auth0User */
+                $auth0User = HttpResponse::decodeContent($auth0UserResponse);
                 if (isset($auth0User['statusCode']) && $auth0User['statusCode'] === 404) {
                     $this->handleUser($user);
                     $this->clearSessionData($user);

@@ -126,11 +126,17 @@ class EmAuth0Configuration implements SingletonInterface
         return $this->enableFrontendLogin;
     }
 
+    /**
+     * @return non-empty-string
+     */
     public function getPrivateKeyFile(): string
     {
         return 'file://' . $this->privateKeyFile;
     }
 
+    /**
+     * @return non-empty-string
+     */
     public function getPublicKeyFile(): string
     {
         return 'file://' . $this->publicKeyFile;

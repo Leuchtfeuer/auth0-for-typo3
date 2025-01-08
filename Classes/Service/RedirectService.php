@@ -166,7 +166,9 @@ class RedirectService implements LoggerAwareInterface
                             break;
 
                         case 'referrer':
-                            $redirect_url[] = $this->validateRedirectUrl((string)($this->getRequest()->getQueryParams()['referrer'] ?? $this->getRequest()->getParsedBody()['referrer'] ?? null));
+                            $parsedBody = $this->getRequest()->getParsedBody();
+                            $referrerFromPost = is_array($parsedBody) || (is_object($parsedBody) && $parsedBody instanceof \ArrayAccess) ? $parsedBody['referrer'] ?? null : null;
+                            $redirect_url[] = $this->validateRedirectUrl((string)($this->getRequest()->getQueryParams()['referrer'] ?? $referrerFromPost));
                             break;
 
                         case 'loginError':
@@ -183,7 +185,9 @@ class RedirectService implements LoggerAwareInterface
 
                         case 'getpost':
                             $gpParameters = $this->getRequest()->getQueryParams()['tx_auth0_loginform'];
-                            ArrayUtility::mergeRecursiveWithOverrule($gpParameters, $this->getRequest()->getParsedBody()['tx_auth0_loginform']);
+                            $parsedBody = $this->getRequest()->getParsedBody();
+                            $loginForm = is_array($parsedBody) || (is_object($parsedBody) && $parsedBody instanceof \ArrayAccess) ? $parsedBody['tx_auth0_loginform'] ?? null : null;
+                            ArrayUtility::mergeRecursiveWithOverrule($gpParameters, $loginForm);
                             if (isset($gpParameters['redirect']) && !(empty($gpParameters['redirect']))) {
                                 $redirect_url[] = $gpParameters['redirect'];
                             }
@@ -296,6 +300,9 @@ class RedirectService implements LoggerAwareInterface
     protected function isRelativeUrl(string $url): bool
     {
         $parsedUrl = @parse_url($url);
+        if ($parsedUrl === false || !isset($parsedUrl['path'])) {
+            return false;
+        }
         if ($parsedUrl !== false && !isset($parsedUrl['scheme']) && !isset($parsedUrl['host'])) {
             // If the relative URL starts with a slash, we need to check if it's within the current site path
             return $parsedUrl['path'][0] !== '/' || \str_starts_with($parsedUrl['path'], GeneralUtility::getIndpEnv('TYPO3_SITE_PATH'));
@@ -330,6 +337,9 @@ class RedirectService implements LoggerAwareInterface
     {
         if (GeneralUtility::isValidUrl($url)) {
             $parsedUrl = parse_url($url);
+            if (!isset($parsedUrl['scheme']) || !isset($parsedUrl['host']) || !isset($parsedUrl['path'])) {
+                return false;
+            }
             if ($parsedUrl['scheme'] === 'http' || $parsedUrl['scheme'] === 'https') {
                 $host = $parsedUrl['host'];
                 // Removes the last path segment and slash sequences like /// (if given):

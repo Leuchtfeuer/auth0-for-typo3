@@ -83,7 +83,12 @@ class TokenUtility implements LoggerAwareInterface
      */
     private function getConstraints(): array
     {
-        $contraints[] = new IssuedBy($this->getIssuer());
+        $issuer = $this->getIssuer();
+        if ($issuer === '') {
+            throw new \RuntimeException('Issuer must not be empty');
+        }
+
+        $contraints[] = new IssuedBy($issuer);
         $contraints[] = new PermittedFor(CallbackMiddleware::PATH);
         $contraints[] = new SignedWith($this->getSigner(), $this->getKey(self::KEY_TYPE_PUBLIC));
         return $contraints;
@@ -91,15 +96,22 @@ class TokenUtility implements LoggerAwareInterface
 
     public function buildToken(): UnencryptedToken
     {
+        $issuer = $this->getIssuer();
+        if ($issuer === '') {
+            throw new \RuntimeException('Issuer must not be empty');
+        }
+
         $builder = $this->config->builder();
-        $builder->issuedBy($this->getIssuer());
+        $builder->issuedBy($issuer);
         $builder->permittedFor(CallbackMiddleware::PATH);
         $builder->issuedAt($this->time);
         $builder->canOnlyBeUsedAfter($this->time);
         $builder->expiresAt($this->time->modify('+1 hour'));
 
         foreach ($this->payload as $key => $value) {
-            $builder->withClaim($key, $value);
+            if (is_string($key) && $key !== '') {
+                $builder->withClaim($key, $value);
+            }
         }
 
         return $builder->getToken($this->getSigner(), $this->getKey(self::KEY_TYPE_PRIVATE));

@@ -91,7 +91,7 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
             $value = $user[$property];
 
             if ($value instanceof \stdClass || (is_array($value) && $value !== [])) {
-                return $this->getAuth0ValueRecursive($value, $properties);
+                return $this->getAuth0ValueRecursive((array)$value, $properties);
             }
         }
 
