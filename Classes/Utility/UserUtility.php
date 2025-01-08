@@ -42,6 +42,9 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         $this->configuration = new EmAuth0Configuration();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function checkIfUserExists(string $tableName, string $auth0UserId): array
     {
         $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
@@ -50,6 +53,9 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         return $user ?? $this->findUserWithoutRestrictions($tableName, $auth0UserId);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function findUserWithoutRestrictions(string $tableName, string $auth0UserId): array
     {
         $this->logger->notice('Try to find user without restrictions.');
@@ -70,9 +76,10 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     }
 
     /**
+     * @param array<string, mixed> $user
      * @throws InvalidPasswordHashException
      */
-    public function insertUser(string $tableName, $user): void
+    public function insertUser(string $tableName, array $user): void
     {
         match ($tableName) {
             'fe_users' => $this->insertFeUser($tableName, $user),
@@ -82,6 +89,10 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         };
     }
 
+    /**
+     * @param array<string, mixed> $managementUser
+     * @return array<string, mixed>
+     */
     public function enrichManagementUser(array $managementUser): array
     {
         $managementUser[$this->configuration->getUserIdentifier()] = $managementUser['user_id'];
@@ -91,6 +102,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     /**
      * Inserts a new frontend user
      *
+     * @param array<string, mixed> $user
      * @throws InvalidPasswordHashException
      */
     public function insertFeUser(string $tableName, array $user): void
@@ -115,6 +127,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     /**
      * Inserts a new backend user
      *
+     * @param array<string, mixed> $user
      * @throws InvalidPasswordHashException
      */
     public function insertBeUser(string $tableName, array $user): void
@@ -135,6 +148,9 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         GeneralUtility::makeInstance(UserRepository::class, $tableName)->insertUser($values);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getTcaDefaults(string $tableName): array
     {
         $defaults = [];

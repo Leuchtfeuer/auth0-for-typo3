@@ -54,6 +54,9 @@ class TokenUtility implements LoggerAwareInterface
 
     protected string $issuer = '';
 
+    /**
+     * @var array<mixed>
+     */
     protected array $payload = [];
 
     protected ?Token $token = null;
@@ -107,12 +110,15 @@ class TokenUtility implements LoggerAwareInterface
         return $this->issuer;
     }
 
+    /**
+     * @param array<mixed> $payload
+     */
     public function setPayload(array $payload): void
     {
         $this->payload = $payload;
     }
 
-    public function withPayload(string $key, $value): void
+    public function withPayload(string $key, mixed $value): void
     {
         $this->payload[$key] = $value;
     }

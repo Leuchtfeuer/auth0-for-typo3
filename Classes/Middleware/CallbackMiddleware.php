@@ -18,6 +18,7 @@ use Auth0\SDK\Exception\ConfigurationException;
 use Auth0\SDK\Exception\NetworkException;
 use Auth0\SDK\Exception\StateException;
 use Auth0\SDK\Utility\HttpResponse;
+use Doctrine\DBAL\Exception as DBALException;
 use GuzzleHttp\Exception\GuzzleException;
 use Lcobucci\JWT\Token\DataSet;
 use Lcobucci\JWT\UnencryptedToken;
@@ -38,6 +39,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Exception\SiteNotFoundException;
 use TYPO3\CMS\Core\Http\RedirectResponse;
 use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Http\Uri;
@@ -207,6 +209,7 @@ class CallbackMiddleware implements MiddlewareInterface
     }
 
     /**
+     * @param array<string, mixed> $user
      * @throws ArgumentException
      * @throws NetworkException
      * @throws ConfigurationException
@@ -231,6 +234,11 @@ class CallbackMiddleware implements MiddlewareInterface
         $this->updateUtility->updateGroups();
     }
 
+    /**
+     * @param array<string> $allowedMethods
+     * @throws DBALException
+     * @throws SiteNotFoundException
+     */
     protected function performRedirectFromPluginConfiguration(DataSet $tokenDataSet, array $allowedMethods): void
     {
         $redirectService = new RedirectService([

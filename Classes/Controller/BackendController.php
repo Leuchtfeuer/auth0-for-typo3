@@ -139,7 +139,7 @@ class BackendController extends ActionController
         return $encoded ? rawurlencode($uri) : $uri;
     }
 
-    protected function getTranslation($key): string
+    protected function getTranslation(string $key): string
     {
         return $this->getLanguageService()->sL('LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:' . $key);
     }

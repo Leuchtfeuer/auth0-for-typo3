@@ -50,6 +50,9 @@ class PropertyController extends BackendController
         return $moduleTemplate->renderResponse();
     }
 
+    /**
+     * @param array<mixed> $property
+     */
     public function createAction(array $property, string $table, string $type): ResponseInterface
     {
         if (empty($property['databaseField']) || empty($property['auth0Property'])) {
@@ -66,6 +69,9 @@ class PropertyController extends BackendController
         return $this->redirect('list');
     }
 
+    /**
+     * @param array<mixed> $property
+     */
     public function deleteAction(array $property, string $table, string $type): ResponseInterface
     {
         if ((bool)$property['readOnly'] === false) {
@@ -86,6 +92,9 @@ class PropertyController extends BackendController
         return $this->redirect('list');
     }
 
+    /**
+     * @param array<mixed> $property
+     */
     public function editAction(array $property, string $table, string $type): ResponseInterface
     {
         $moduleTemplate = $this->initView();
@@ -105,6 +114,9 @@ class PropertyController extends BackendController
         return $moduleTemplate->renderResponse();
     }
 
+    /**
+     * @param array<mixed> $property
+     */
     public function updateAction(array $property, string $table, string $type): ResponseInterface
     {
         $configuration = $this->auth0Configuration->load();

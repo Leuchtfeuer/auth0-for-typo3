@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Leuchtfeuer\Auth0\Domain\Repository;
 
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\ParameterType;
 use Leuchtfeuer\Auth0\Domain\Model\Application;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -45,6 +46,10 @@ class ApplicationRepository
         return Application::fromArray($applicationArray[0]);
     }
 
+    /**
+     * @return array<array<string,mixed>>
+     * @throws DBALException
+     */
     public function findAll(): array
     {
         return $this->connectionPool

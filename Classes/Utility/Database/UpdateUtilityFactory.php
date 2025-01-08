@@ -14,6 +14,9 @@ class UpdateUtilityFactory
         protected readonly FrontendUserGroupRepository $frontendUserGroupRepository,
     ) {}
 
+    /**
+     * @param array<string, mixed> $user
+     */
     public function create(string $tableName, array $user): UpdateUtility
     {
         return new UpdateUtility(

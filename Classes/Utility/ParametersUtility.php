@@ -15,6 +15,9 @@ namespace Leuchtfeuer\Auth0\Utility;
 
 class ParametersUtility
 {
+    /**
+     * @return array<string, string>
+     */
     public static function transformUrlParameters(?string $url): array
     {
         if ($url === null || $url === '' || $url === '0') {

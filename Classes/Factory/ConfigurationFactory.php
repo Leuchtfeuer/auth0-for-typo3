@@ -13,6 +13,9 @@ namespace Leuchtfeuer\Auth0\Factory;
 
 class ConfigurationFactory
 {
+    /**
+     * @return array{auth0Property: string, databaseField: string, readOnly: false, processing: string}
+     */
     public function buildProperty(string $auth0Property, string $databaseField, string $processing = 'null'): array
     {
         return [
@@ -23,6 +26,9 @@ class ConfigurationFactory
         ];
     }
 
+    /**
+     * @return array{default: array{frontend: int, backend: int}, key: string, beAdmin: string}
+     */
     public function buildRoles(string $key, int $defaultFrontendUserGroup, string $adminRole, int $defaultBackendUserGroup): array
     {
         return [

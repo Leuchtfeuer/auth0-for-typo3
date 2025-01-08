@@ -32,17 +32,26 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
+    /**
+     * @var array<string>
+     */
     protected array $allowedMethods = [
         'disable',
         'delete',
         'deleteIrrevocable',
     ];
 
+    /**
+     * @var array{users: string, sessions: string}
+     */
     protected array $tableNames = [
         'users' => 'be_users',
         'sessions' => 'be_sessions',
     ];
 
+    /**
+     * @var array<array<string, mixed>>
+     */
     protected array $users = [];
 
     protected string $method = '';
@@ -140,6 +149,9 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
         return !empty($this->users);
     }
 
+    /**
+     * @param array<string, mixed> $user
+     */
     protected function handleUser(array $user): void
     {
         $queryBuilder = $this->getQueryBuilder('users');
@@ -172,7 +184,7 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
     }
 
     /**
-     * @throws DBALException
+     * @param array<string, mixed> $user
      */
     protected function clearSessionData(array $user): void
     {

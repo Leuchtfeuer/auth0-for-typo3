@@ -28,6 +28,9 @@ class RoutingUtility implements LoggerAwareInterface
 
     protected int $targetPageType = 0;
 
+    /**
+     * @var array<mixed>
+     */
     protected array $arguments = [];
 
     protected bool $createAbsoluteUri = true;
@@ -82,13 +85,16 @@ class RoutingUtility implements LoggerAwareInterface
         $this->targetPageType = $targetPageType;
     }
 
-    public function addArgument(string $key, $value): self
+    public function addArgument(string $key, mixed $value): self
     {
         $this->arguments = array_merge_recursive($this->arguments, [$key => $value]);
 
         return $this;
     }
 
+    /**
+     * @param array<mixed> $arguments
+     */
     public function setArguments(array $arguments): self
     {
         $this->logger->debug('[URI] Set arguments', $arguments);

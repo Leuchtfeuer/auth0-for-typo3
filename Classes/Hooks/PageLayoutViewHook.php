@@ -22,8 +22,14 @@ class PageLayoutViewHook
 {
     protected string $listType = '';
 
+    /**
+     * @var array<string, mixed>
+     */
     protected array $flexFormData = [];
 
+    /**
+     * @param array<string, mixed> $params
+     */
     public function getSummary(array $params): string
     {
         $this->listType = $params['row']['list_type'];

@@ -25,6 +25,9 @@ class TcaUtility
         'auth0_last_application' => 1,
     ];
 
+    /**
+     * @return array<mixed>
+     */
     public function getColumnsFromTable(string $tableName): array
     {
         $columns = [];
@@ -54,6 +57,9 @@ class TcaUtility
         return $columns;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getUnusedColumnsFromTable(string $tableName, ?string $exclude = null): array
     {
         $properties = $this->getColumnsFromTable($tableName);
@@ -68,6 +74,9 @@ class TcaUtility
         return $properties;
     }
 
+    /**
+     * @return array<mixed>
+     */
     protected function getColumnsFromConfiguration(string $tableName): array
     {
         $configuration = GeneralUtility::makeInstance(Auth0Configuration::class)->load();

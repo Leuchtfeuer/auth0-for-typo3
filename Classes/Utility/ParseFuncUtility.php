@@ -24,7 +24,11 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
 
     const NO_AUTH0_VALUE = 'rx63XX7Vq5aCXn4y';
 
-    public function updateWithoutParseFunc(string $configurationType, string $auth0FieldName, array $user)
+    /**
+     * @param array<string, mixed> $user
+     * @return mixed|string
+     */
+    public function updateWithoutParseFunc(string $configurationType, string $auth0FieldName, array $user): mixed
     {
         switch ($configurationType) {
             case Auth0Configuration::CONFIG_TYPE_ROOT:
@@ -52,11 +56,11 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
         return $value ?? self::NO_AUTH0_VALUE;
     }
 
-    public function transformValue(string $processing, $value)
+    public function transformValue(string $processing, mixed $value): mixed
     {
         switch ($processing) {
             case 'strtotime':
-                $value = strtotime((string) $value);
+                $value = strtotime((string)$value);
                 break;
 
             case 'bool':
@@ -75,6 +79,10 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
         return $value;
     }
 
+    /**
+     * @param array<string, mixed> $user
+     * @param array<mixed> $properties
+     */
     protected function getAuth0ValueRecursive(array $user, array $properties): string
     {
         $property = array_shift($properties);

@@ -43,8 +43,14 @@ class AuthenticationService extends BasicAuthenticationService
 
     private const FRONTEND_AUTHENTICATION = 'FE';
 
+    /**
+     * @var array<string, mixed>
+     */
     protected array $user = [];
 
+    /**
+     * @var array<string, mixed>
+     */
     protected array $userInfo = [];
 
     protected string $tableName = 'fe_users';
@@ -68,11 +74,14 @@ class AuthenticationService extends BasicAuthenticationService
 
     /**
      * @inheritDoc
+     * @param array<mixed> $loginData
+     * @param array<string, mixed> $authInfo
      *
      * @throws InvalidPasswordHashException
      */
     public function initAuth($mode, $loginData, $authInfo, $pObj): void
     {
+        parent::initAuth($mode, $loginData, $authInfo, $pObj);
         // Set default values
         $this->setDefaults($authInfo, $mode, $loginData, $pObj);
 
@@ -180,6 +189,10 @@ class AuthenticationService extends BasicAuthenticationService
         return (int)$dataSet->get('application');
     }
 
+    /**
+     * @param array<string, mixed> $authInfo
+     * @param array<mixed> $loginData
+     */
     protected function setDefaults(array $authInfo, string $mode, array $loginData, AbstractUserAuthentication $pObj): void
     {
         $authInfo['db_user']['check_pid_clause'] = false;

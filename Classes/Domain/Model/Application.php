@@ -160,6 +160,9 @@ class Application extends AbstractEntity
         return $this;
     }
 
+    /**
+     * @param array{title: string, id: string, secret: string, domain: string, audience: string, single_log_out: bool, signature_algorithm: string|null, api: bool} $data
+     */
     public static function fromArray(array $data): self
     {
         return (new self())

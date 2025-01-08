@@ -31,8 +31,14 @@ class UpdateUtility implements LoggerAwareInterface
 
     protected EmAuth0Configuration $configuration;
 
-    protected $yamlConfiguration = [];
+    /**
+     * @var array<mixed>
+     */
+    protected array $yamlConfiguration = [];
 
+    /**
+     * @param array<string, mixed> $user
+     */
     public function __construct(
         protected string $tableName,
         protected array $user,
@@ -84,6 +90,9 @@ class UpdateUtility implements LoggerAwareInterface
         $this->performUserUpdate($mappingConfiguration, $reactivateUser);
     }
 
+    /**
+     * @return array<mixed>
+     */
     protected function getGroupMappingFromDatabase(): array
     {
         $groupMapping = [];
@@ -110,6 +119,9 @@ class UpdateUtility implements LoggerAwareInterface
         };
     }
 
+    /**
+     * @param array<mixed> $groupMapping
+     */
     protected function addDefaultGroup(array &$groupMapping): void
     {
         $key = 'frontend';
@@ -129,6 +141,10 @@ class UpdateUtility implements LoggerAwareInterface
         }
     }
 
+    /**
+     * @param array<mixed> $groupMapping
+     * @param array<string> $groupsToAssign
+     */
     protected function mapRoles(array $groupMapping, array &$groupsToAssign, bool &$isBeAdmin, bool &$shouldUpdate): void
     {
         $rolesKey = $this->yamlConfiguration['roles']['key'] ?? 'roles';
@@ -154,6 +170,9 @@ class UpdateUtility implements LoggerAwareInterface
         }
     }
 
+    /**
+     * @param array<string> $groupsToAssign
+     */
     protected function performGroupUpdate(array $groupsToAssign, bool $isBeAdmin): void
     {
         $updates = [];
@@ -175,6 +194,9 @@ class UpdateUtility implements LoggerAwareInterface
         }
     }
 
+    /**
+     * @param array<mixed> $mappingConfiguration
+     */
     protected function performUserUpdate(array $mappingConfiguration, bool $reactivateUser): void
     {
         $this->logger->debug(
@@ -225,6 +247,10 @@ class UpdateUtility implements LoggerAwareInterface
         }
     }
 
+    /**
+     * @param array<mixed> $updates
+     * @param array<mixed> $mappingConfiguration
+     */
     protected function mapUserData(array &$updates, array $mappingConfiguration): void
     {
         $parseFuncUtility = GeneralUtility::makeInstance(ParseFuncUtility::class);

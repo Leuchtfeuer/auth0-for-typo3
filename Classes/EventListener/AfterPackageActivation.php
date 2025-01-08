@@ -19,6 +19,9 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class AfterPackageActivation
 {
+    /**
+     * @var array<string>
+     */
     protected array $excludedParameters = [
         'code',
         'state',
@@ -38,6 +41,9 @@ class AfterPackageActivation
         }
     }
 
+    /**
+     * @param array<string> $excludeParameters
+     */
     protected function setValues(array &$excludeParameters): void
     {
         foreach ($this->excludedParameters as $excludedParameter) {

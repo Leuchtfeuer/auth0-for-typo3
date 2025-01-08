@@ -61,6 +61,9 @@ class EmAuth0Configuration implements SingletonInterface
         }
     }
 
+    /**
+     * @param array<string, mixed> $configuration
+     */
     protected function setPropertiesFromConfiguration(array $configuration): void
     {
         foreach ($configuration as $key => $value) {
@@ -110,6 +113,9 @@ class EmAuth0Configuration implements SingletonInterface
         return $this->softLogout;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getAdditionalAuthorizeParameters(): array
     {
         return ParametersUtility::transformUrlParameters($this->additionalAuthorizeParameters);

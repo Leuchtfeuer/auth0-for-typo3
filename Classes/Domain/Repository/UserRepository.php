@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Leuchtfeuer\Auth0\Domain\Repository;
 
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\ParameterType;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Psr\Http\Message\ServerRequestInterface;
@@ -46,6 +47,9 @@ class UserRepository implements LoggerAwareInterface
 
     /**
      * Gets a user by given auth0 user ID.
+     *
+     * @return array<string, mixed>|null
+     * @throws Exception
      */
     public function getUserByAuth0Id(string $auth0UserId): ?array
     {
@@ -166,6 +170,8 @@ class UserRepository implements LoggerAwareInterface
 
     /**
      * Updates a backend or frontend user by given uid.
+     *
+     * @param array<string, int|string> $sets
      */
     public function updateUserByUid(array $sets, int $uid): void
     {
@@ -181,6 +187,8 @@ class UserRepository implements LoggerAwareInterface
 
     /**
      * Updates a backend or frontend user by given auth0_user_id.
+     *
+     * @param array<string, int|string> $sets
      */
     public function updateUserByAuth0Id(array $sets, string $auth0Id): void
     {
@@ -193,6 +201,8 @@ class UserRepository implements LoggerAwareInterface
 
     /**
      * Resolves the set array.
+     *
+     * @param array<string, string|int> $sets
      */
     protected function resolveSets(array $sets): void
     {
@@ -226,6 +236,8 @@ class UserRepository implements LoggerAwareInterface
 
     /**
      * Inserts a backend or frontend user by given value array.
+     *
+     * @param array<string, mixed> $values
      */
     public function insertUser(array $values): void
     {

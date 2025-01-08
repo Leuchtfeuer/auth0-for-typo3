@@ -52,12 +52,18 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     protected Auth0 $auth0;
 
+    /**
+     * @var array<string, mixed>|null
+     */
     protected ?array $userInfo = [];
 
     protected EmAuth0Configuration $configuration;
 
     protected ?string $action = null;
 
+    /**
+     * @var array<mixed>
+     */
     protected array $frameworkConfiguration;
 
     protected RenderingContextInterface $renderingContext;

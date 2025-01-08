@@ -11,9 +11,9 @@
 
 namespace Leuchtfeuer\Auth0\Domain\Repository\UserGroup;
 
+use Doctrine\DBAL\Exception;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 abstract class AbstractUserGroupRepository
 {
@@ -33,6 +33,10 @@ abstract class AbstractUserGroupRepository
         return $this->connectionPool->getQueryBuilderForTable($this->tableName);
     }
 
+    /**
+     * @return array<array<string, mixed>>
+     * @throws Exception
+     */
     public function findAll(): array
     {
         return $this->getQueryBuilder()

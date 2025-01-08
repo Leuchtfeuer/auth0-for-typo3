@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Leuchtfeuer\Auth0\Service;
 
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\ParameterType;
 use Leuchtfeuer\Auth0\Event\RedirectPreProcessingEvent;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -35,6 +36,9 @@ class RedirectService implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
+    /**
+     * @param array<mixed> $settings
+     */
     public function __construct(protected array $settings)
     {
         if (!$this->logger instanceof Logger) {
@@ -42,6 +46,12 @@ class RedirectService implements LoggerAwareInterface
         }
     }
 
+    /**
+     * @param array<string> $allowedMethods
+     * @param array<mixed> $additionalParameters
+     * @throws DBALException
+     * @throws SiteNotFoundException
+     */
     public function handleRedirect(array $allowedMethods, array $additionalParameters = []): void
     {
         if ((bool)$this->settings['redirectDisable'] === false && !empty($this->settings['redirectMode'])) {
@@ -63,13 +73,22 @@ class RedirectService implements LoggerAwareInterface
         }
     }
 
-    public function forceRedirectByReferrer($additionalParameters = []): void
+    /**
+     * @param array<mixed> $additionalParameters
+     */
+    public function forceRedirectByReferrer(array $additionalParameters = []): void
     {
         $this->setRedirectDisable(false);
         $this->setRedirectMode('referrer');
         $this->handleRedirect(['referrer'], $additionalParameters);
     }
 
+    /**
+     * @param array<string> $allowedRedirects
+     * @return array<string>
+     * @throws SiteNotFoundException
+     * @throws DBALException
+     */
     public function getRedirectUri(array $allowedRedirects): array
     {
         $redirect_url = [];
@@ -107,7 +126,7 @@ class RedirectService implements LoggerAwareInterface
                                     ->executeQuery()
                                     ->fetchAssociative();
                                 if ($row) {
-                                    $redirect_url[] = $this->pi_getPageLink($row['felogin_redirectPid']);
+                                    $redirect_url[] = $this->pi_getPageLink((int)$row['felogin_redirectPid']);
                                 }
                             }
                             break;
@@ -136,7 +155,7 @@ class RedirectService implements LoggerAwareInterface
                                 ->fetchAssociative();
 
                             if ($row) {
-                                $redirect_url[] = $this->pi_getPageLink($row['felogin_redirectPid']);
+                                $redirect_url[] = $this->pi_getPageLink((int)$row['felogin_redirectPid']);
                             }
                             break;
 
@@ -182,6 +201,10 @@ class RedirectService implements LoggerAwareInterface
         return [];
     }
 
+    /**
+     * @param array<string> $redirectUris
+     * @return string
+     */
     public function getUri(array $redirectUris): string
     {
         return $this->settings['redirectFirstMethod'] ? array_shift($redirectUris) : array_pop($redirectUris);
@@ -197,6 +220,9 @@ class RedirectService implements LoggerAwareInterface
         $this->settings['redirectMode'] = $value;
     }
 
+    /**
+     * @param array<mixed> $additionalParams
+     */
     protected function addAdditionalParamsToRedirectUri(string $uri, array $additionalParams): string
     {
         if ($additionalParams !== []) {
@@ -211,10 +237,10 @@ class RedirectService implements LoggerAwareInterface
     }
 
     /**
-     * @param $id
+     * @param array<mixed> $urlParameters
      * @throws SiteNotFoundException
      */
-    protected function pi_getPageLink($id, string $target = '', array $urlParameters = []): string
+    protected function pi_getPageLink(int $id, string $target = '', array $urlParameters = []): string
     {
         $cObj = $this->getRequest()->getAttribute('currentContentObject');
         if ($cObj instanceof ContentObjectRenderer) {
@@ -225,7 +251,10 @@ class RedirectService implements LoggerAwareInterface
             ->getSiteByPageId($id)->getRouter()->generateUri($id);
     }
 
-    protected function getTypoLinkUrlFromCObj(ContentObjectRenderer $cObj, $id, string $target, array $urlParameters): string
+    /**
+     * @param array<mixed> $urlParameters
+     */
+    protected function getTypoLinkUrlFromCObj(ContentObjectRenderer $cObj, int $id, string $target, array $urlParameters): string
     {
         $conf = [];
         $conf['parameter'] = $id;
