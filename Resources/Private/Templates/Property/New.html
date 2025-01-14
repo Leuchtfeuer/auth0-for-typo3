@@ -1,8 +1,8 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
 	  data-namespace-typo3-fluid="true">
-<f:layout name="Backend" />
+<f:layout name="Module" />
 
-<f:section name="content">
+<f:section name="Content">
 	<h1><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.title.add" /></h1>
 
 	<f:render partial="Backend/Property/Form" arguments="{table: table, type: type, properties: properties, action: 'create'}" />

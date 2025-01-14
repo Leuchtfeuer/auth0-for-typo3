@@ -68,6 +68,13 @@ class EmAuth0Configuration implements SingletonInterface
     {
         foreach ($configuration as $key => $value) {
             if (property_exists(self::class, $key)) {
+                $value = match (gettype($this->$key)) {
+                    'string' => (string)$value,
+                    'integer' => (int)$value,
+                    'boolean' => (bool)$value,
+                    'array' => (array)$value,
+                    default => $value,
+                };
                 $this->$key = $value;
             }
         }

@@ -1,0 +1,20 @@
+plugin.tx_auth0 {
+    view {
+        templateRootPath = EXT:auth0/Resources/Private/Templates/
+        partialRootPath = EXT:auth0/Resources/Private/Partials/
+        layoutRootPath = EXT:auth0/Resources/Private/Layouts/
+    }
+
+    persistence {
+        storagePid =
+    }
+}
+
+module.tx_auth0 {
+    view {
+        templateRootPath = EXT:auth0/Resources/Private/Templates/
+        layoutRootPath = EXT:auth0/Resources/Private/Layouts/
+    }
+    persistence.storagePid = 1
+    settings.stylesheet = EXT:auth0/Resources/Public/Styles/backend.css
+}

@@ -18,6 +18,7 @@ use Auth0\SDK\Utility\HttpResponse;
 use GuzzleHttp\Utils;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use Leuchtfeuer\Auth0\Domain\Repository\UserRepository;
+use Leuchtfeuer\Auth0\Domain\Repository\UserRepositoryFactory;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\Utility\Database\UpdateUtility;
 use Leuchtfeuer\Auth0\Utility\Database\UpdateUtilityFactory;
@@ -47,7 +48,8 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      */
     public function checkIfUserExists(string $tableName, string $auth0UserId): array
     {
-        $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
+        $userRepositoryFactory = GeneralUtility::makeInstance(UserRepositoryFactory::class);
+        $userRepository = $userRepositoryFactory->create($tableName);
         $user = $userRepository->getUserByAuth0Id($auth0UserId);
 
         return $user ?? $this->findUserWithoutRestrictions($tableName, $auth0UserId);
@@ -59,14 +61,15 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     protected function findUserWithoutRestrictions(string $tableName, string $auth0UserId): array
     {
         $this->logger?->notice('Try to find user without restrictions.');
-        $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
+        $userRepositoryFactory = GeneralUtility::makeInstance(UserRepositoryFactory::class);
+        $userRepository = $userRepositoryFactory->create($tableName);
         $userRepository->removeRestrictions();
         $userRepository->setOrdering('uid', 'DESC');
         $userRepository->setMaxResults(1);
         $user = $userRepository->getUserByAuth0Id($auth0UserId);
 
         if (!empty($user)) {
-            $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
+            $userRepository = $userRepositoryFactory->create($tableName);
             $userRepository->updateUserByUid(['disable' => 0, 'deleted' => 0], (int)$user['uid']);
 
             $this->logger?->notice(sprintf('Reactivated user with ID %s.', $user['uid']));
@@ -145,7 +148,8 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             'auth0_user_id' => $user[$userIdentifier],
         ]);
 
-        GeneralUtility::makeInstance(UserRepository::class, $tableName)->insertUser($values);
+        $userRepositoryFactory = GeneralUtility::makeInstance(UserRepositoryFactory::class);
+        $userRepositoryFactory->create($tableName)->insertUser($values);
     }
 
     /**
@@ -216,7 +220,8 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
 
     public function setLastUsedApplication(string $auth0UserId, int $application): void
     {
-        $userRepository = GeneralUtility::makeInstance(UserRepository::class, 'fe_users');
+        $userRepositoryFactory = GeneralUtility::makeInstance(UserRepositoryFactory::class);
+        $userRepository = $userRepositoryFactory->create('fe_users');
         $userRepository->updateUserByAuth0Id(['auth0_last_application' => $application], $auth0UserId);
     }
 }

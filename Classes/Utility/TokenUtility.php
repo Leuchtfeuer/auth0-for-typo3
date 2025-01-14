@@ -15,13 +15,14 @@ namespace Leuchtfeuer\Auth0\Utility;
 
 use DateTimeImmutable;
 use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Encoding\ChainedFormatter;
+use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Hmac;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
-use Lcobucci\JWT\Token\Plain;
 use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
@@ -102,15 +103,15 @@ class TokenUtility implements LoggerAwareInterface
         }
 
         $builder = $this->config->builder();
-        $builder->issuedBy($issuer);
-        $builder->permittedFor(CallbackMiddleware::PATH);
-        $builder->issuedAt($this->time);
-        $builder->canOnlyBeUsedAfter($this->time);
-        $builder->expiresAt($this->time->modify('+1 hour'));
+        $builder = $builder->issuedBy($issuer)
+            ->permittedFor(CallbackMiddleware::PATH)
+            ->issuedAt($this->time)
+            ->canOnlyBeUsedAfter($this->time)
+            ->expiresAt($this->time->modify('+1 hour'));
 
         foreach ($this->payload as $key => $value) {
             if (is_string($key) && $key !== '') {
-                $builder->withClaim($key, $value);
+                $builder = $builder->withClaim($key, $value);
             }
         }
 

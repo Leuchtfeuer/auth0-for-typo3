@@ -65,6 +65,8 @@ class AuthenticationService extends BasicAuthenticationService
 
     private bool $auth0Authentication = false;
 
+    private ?ServerRequestInterface $request = null;
+
     public function __construct(
         protected readonly ConnectionPool $connectionPool,
         protected readonly TokenUtility $tokenUtility,
@@ -81,11 +83,12 @@ class AuthenticationService extends BasicAuthenticationService
      */
     public function initAuth($mode, $loginData, $authInfo, $pObj): void
     {
+        $this->request = $authInfo['request'] ?? null;
         parent::initAuth($mode, $loginData, $authInfo, $pObj);
         // Set default values
         $this->setDefaults($authInfo, $mode, $loginData, $pObj);
 
-        if ($loginData['status'] !== LoginType::LOGIN) {
+        if ($loginData['status'] !== LoginType::LOGIN->value) {
             return;
         }
 
@@ -115,14 +118,14 @@ class AuthenticationService extends BasicAuthenticationService
 
     private function isAuth0LoginProvider(string $loginType): bool
     {
-        $loginProvider = (int)($this->getRequest()->getQueryParams()['loginProvider'] ?? $this->getRequest()->getQueryParams()['loginProvider'] ?? null);
+        $loginProvider = (int)($this->request?->getQueryParams()['loginProvider'] ?? $this->request?->getQueryParams()['loginProvider'] ?? null);
         return $loginType === self::BACKEND_AUTHENTICATION && $loginProvider === Auth0Provider::LOGIN_PROVIDER;
     }
 
     private function hasAuth0Error(): bool
     {
         $validErrorCodes = (new \ReflectionClass(ErrorCode::class))->getConstants();
-        $auth0ErrorCode = $this->getRequest()->getQueryParams()['error'] ?? '';
+        $auth0ErrorCode = $this->request?->getQueryParams()['error'] ?? '';
         if ($auth0ErrorCode && in_array($auth0ErrorCode, $validErrorCodes)) {
             $this->logger?->notice('Access denied. Skip.');
             return true;
@@ -165,13 +168,13 @@ class AuthenticationService extends BasicAuthenticationService
 
     protected function retrieveApplicationFromUrlQuery(): int
     {
-        $application = (int)($this->getRequest()->getQueryParams()['application'] ?? 0);
+        $application = (int)($this->request?->getQueryParams()['application'] ?? 0);
 
         if ($application !== 0) {
             return $application;
         }
 
-        $tokenParameter = (string)($this->getRequest()->getQueryParams()[CallbackMiddleware::TOKEN_PARAMETER] ?? '');
+        $tokenParameter = (string)($this->request?->getQueryParams()[CallbackMiddleware::TOKEN_PARAMETER] ?? '');
         if (!$this->tokenUtility->verifyToken($tokenParameter)) {
             return 0;
         }
@@ -236,8 +239,8 @@ class AuthenticationService extends BasicAuthenticationService
     {
         if ($this->auth0Authentication) {
             match ($this->mode) {
-                'getUserFE', 'getUserBE' => $this->insertOrUpdateUser(),
-                'authUserFE', 'authUserBE' => $this->logger?->debug(sprintf('Skip auth mode "%s".', $this->mode)),
+                'getUserBE' => $this->insertOrUpdateUser(),
+                'authUserBE' => $this->logger?->debug(sprintf('Skip auth mode "%s".', $this->mode)),
                 default => $this->logger?->notice(sprintf('Undefined mode "%s". Skip.', $this->mode)),
             };
         }
@@ -372,10 +375,5 @@ class AuthenticationService extends BasicAuthenticationService
         // Success
         $this->logger?->notice(sprintf('Auth0 User %s (UID: %s) successfully logged in.', $user['auth0_user_id'], $user['uid']));
         return 200;
-    }
-
-    public function getRequest(): ServerRequestInterface
-    {
-        return $GLOBALS['TYPO3_REQUEST'];
     }
 }

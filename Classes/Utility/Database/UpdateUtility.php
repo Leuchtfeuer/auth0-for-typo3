@@ -18,6 +18,7 @@ use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\AbstractUserGroupRepository;
 use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
 use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
 use Leuchtfeuer\Auth0\Domain\Repository\UserRepository;
+use Leuchtfeuer\Auth0\Domain\Repository\UserRepositoryFactory;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\Utility\ParseFuncUtility;
 use Psr\Log\LoggerAwareInterface;
@@ -40,11 +41,12 @@ class UpdateUtility implements LoggerAwareInterface
      * @param array<string, mixed> $user
      */
     public function __construct(
-        protected string $tableName,
-        protected array $user,
         protected readonly Auth0Configuration $auth0Configuration,
         protected readonly BackendUserGroupRepository $backendUserGroupRepository,
         protected readonly FrontendUserGroupRepository $frontendUserGroupRepository,
+        protected readonly UserRepositoryFactory $userRepositoryFactory,
+        protected string $tableName,
+        protected array $user,
     ) {
         $this->configuration = new EmAuth0Configuration();
         $this->yamlConfiguration = $this->auth0Configuration->load();
@@ -189,7 +191,7 @@ class UpdateUtility implements LoggerAwareInterface
         }
 
         if (!empty($updates)) {
-            $userRepository = GeneralUtility::makeInstance(UserRepository::class, $this->tableName);
+            $userRepository = $this->userRepositoryFactory->create($this->tableName);
             $userRepository->updateUserByAuth0Id($updates, $this->user[$this->configuration->getUserIdentifier()]);
         }
     }
@@ -208,7 +210,7 @@ class UpdateUtility implements LoggerAwareInterface
         );
 
         $updates = [];
-        $userRepository = GeneralUtility::makeInstance(UserRepository::class, $this->tableName);
+        $userRepository = $this->userRepositoryFactory->create($this->tableName);
 
         $this->mapUserData($updates, $mappingConfiguration);
 

@@ -29,7 +29,7 @@ class PropertyController extends BackendController
             'extensionConfiguration' => new EmAuth0Configuration(),
             'yamlConfiguration' => $this->auth0Configuration->load(),
         ]);
-        return $moduleTemplate->renderResponse();
+        return $moduleTemplate->renderResponse('Property/List');
     }
 
     public function newAction(string $table, string $type): ResponseInterface
@@ -47,7 +47,7 @@ class PropertyController extends BackendController
             'type' => $type,
             'properties' => (new TcaUtility())->getUnusedColumnsFromTable($table),
         ]);
-        return $moduleTemplate->renderResponse();
+        return $moduleTemplate->renderResponse('Property/New');
     }
 
     /**
@@ -111,7 +111,7 @@ class PropertyController extends BackendController
             'type' => $type,
             'properties' => (new TcaUtility())->getUnusedColumnsFromTable($table, $property['databaseField']),
         ]);
-        return $moduleTemplate->renderResponse();
+        return $moduleTemplate->renderResponse('Property/Edit');
     }
 
     /**

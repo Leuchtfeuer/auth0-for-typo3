@@ -41,7 +41,7 @@ class BackendController extends ActionController
     public function listAction(): ResponseInterface
     {
         $moduleTemplate = $this->initView();
-        return $moduleTemplate->renderResponse();
+        return $moduleTemplate->renderResponse('Backend/List');
     }
 
     public function initView(): ModuleTemplate

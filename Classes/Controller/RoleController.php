@@ -26,7 +26,7 @@ class RoleController extends BackendController
             'extensionConfiguration' => new EmAuth0Configuration(),
             'yamlConfiguration' => $this->auth0Configuration->load(),
         ]);
-        return $moduleTemplate->renderResponse();
+        return $moduleTemplate->renderResponse('Role/List');
     }
 
     public function updateAction(

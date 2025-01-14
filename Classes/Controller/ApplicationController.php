@@ -28,7 +28,7 @@ class ApplicationController extends BackendController
             'pid' => $pid,
             'directory' => BackendUtility::getRecord('pages', $pid),
         ]);
-        return $moduleTemplate->renderResponse();
+        return $moduleTemplate->renderResponse('Application/List');
     }
 
     public function deleteAction(Application $application): ResponseInterface

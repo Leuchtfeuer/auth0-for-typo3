@@ -34,6 +34,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\View\ViewInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+use TYPO3\CMS\Fluid\View\FluidViewAdapter;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\View\AbstractTemplateView as FluidStandaloneAbstractTemplateView;
@@ -135,7 +136,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
             $this->auth0 = ApplicationFactory::build($this->configuration->getBackendConnection());
         } catch (\Exception|GuzzleException $exception) {
             $this->logger?->critical($exception->getMessage());
-            return false;
+            throw $exception;
         }
 
         return true;
@@ -247,7 +248,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     protected function getRenderingContext(ViewInterface $view): RenderingContextInterface
     {
-        if ($view instanceof FluidStandaloneAbstractTemplateView) {
+        if ($view instanceof FluidStandaloneAbstractTemplateView|| $view instanceof FluidViewAdapter) {
             return $view->getRenderingContext();
         }
         throw new \RuntimeException('view must be an instance of ext:fluid \TYPO3Fluid\Fluid\View\AbstractTemplateView', 1721889095);
