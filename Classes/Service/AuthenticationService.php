@@ -312,14 +312,16 @@ class AuthenticationService extends BasicAuthenticationService
     }
 
     /**
-     * @return bool|mixed
+     * @return array<string, mixed>|false User array or FALSE
      */
     public function getUser()
     {
+        parent::getUser();
         if ($this->auth0Authentication === false || !isset($this->userInfo[$this->userIdentifier])) {
             return false;
         }
 
+        /** @extensionScannerIgnoreLine */
         $user = $this->fetchUserRecord($this->login['uname'], 'auth0_user_id = "' . $this->userInfo[$this->userIdentifier] . '"');
 
         if (!is_array($user)) {
