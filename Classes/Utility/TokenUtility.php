@@ -15,8 +15,6 @@ namespace Leuchtfeuer\Auth0\Utility;
 
 use DateTimeImmutable;
 use Lcobucci\JWT\Configuration;
-use Lcobucci\JWT\Encoding\ChainedFormatter;
-use Lcobucci\JWT\Encoding\JoseEncoder;
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Hmac;
 use Lcobucci\JWT\Signer\Key;
@@ -33,9 +31,7 @@ use Leuchtfeuer\Auth0\Exception\TokenException;
 use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Site\SiteFinder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Frontend\Page\PageInformation;
 
 class TokenUtility implements LoggerAwareInterface
 {
@@ -44,8 +40,6 @@ class TokenUtility implements LoggerAwareInterface
     protected const KEY_TYPE_PRIVATE = 'private';
 
     protected const KEY_TYPE_PUBLIC = 'public';
-
-    public const ENVIRONMENT_FRONTEND = 'FE';
 
     public const ENVIRONMENT_BACKEND = 'BE';
 
@@ -178,22 +172,6 @@ class TokenUtility implements LoggerAwareInterface
 
     public function setIssuer(): void
     {
-        if (!ModeUtility::isBackend()) {
-            try {
-                /** @var PageInformation|null $pageInformation */
-                $pageInformation = $GLOBALS['TYPO3_REQUEST']?->getAttribute('frontend.page.information');
-                $pageId = $pageInformation?->getId();
-                if (!isset($pageId)) {
-                    $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
-                    return;
-                }
-                $base = GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId($pageId)->getBase();
-
-                $this->issuer = sprintf('%s://%s', $base->getScheme(), $base->getHost());
-                return;
-            } catch (\Exception) {}
-        }
-
         $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
     }
 

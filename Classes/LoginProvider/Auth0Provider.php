@@ -256,9 +256,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     private function getTemplateName(): string
     {
-        $templateName = ModeUtility::isTYPO3V12() ? 'BackendV12' : 'BackendV11';
-
-        return 'LoginProvider/' . $templateName;
+        return 'LoginProvider/Backend';
     }
 
     private function getRequest(): ServerRequestInterface

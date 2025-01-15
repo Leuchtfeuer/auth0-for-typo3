@@ -24,7 +24,6 @@ class PropertyController extends BackendController
         $tcaUtility = new TcaUtility();
         $moduleTemplate = $this->initView();
         $moduleTemplate->assignMultiple([
-            'frontendUserColumns' => $tcaUtility->getColumnsFromTable('fe_users'),
             'backendUserColumns' => $tcaUtility->getColumnsFromTable('be_users'),
             'extensionConfiguration' => new EmAuth0Configuration(),
             'yamlConfiguration' => $this->auth0Configuration->load(),

@@ -35,11 +35,11 @@ use TYPO3\CMS\Core\Http\Response;
 
 class CallbackMiddleware implements MiddlewareInterface
 {
-    const PATH = '/auth0/callback';
+    public const PATH = '/auth0/callback';
 
-    const TOKEN_PARAMETER = 'token';
+    public const TOKEN_PARAMETER = 'token';
 
-    const BACKEND_URI = '%s/typo3/?loginProvider=%d&code=%s&state=%s';
+    private const BACKEND_URI = '%s/typo3/?loginProvider=%d&code=%s&state=%s';
 
     public function __construct(
         protected readonly UpdateUtilityFactory $updateUtilityFactory,

@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace Leuchtfeuer\Auth0\Utility\Database;
 
+use Doctrine\DBAL\Exception as DBALException;
 use Leuchtfeuer\Auth0\Configuration\Auth0Configuration;
 use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\AbstractUserGroupRepository;
 use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
-use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
 use Leuchtfeuer\Auth0\Domain\Repository\UserRepository;
 use Leuchtfeuer\Auth0\Domain\Repository\UserRepositoryFactory;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
@@ -43,7 +43,6 @@ class UpdateUtility implements LoggerAwareInterface
     public function __construct(
         protected readonly Auth0Configuration $auth0Configuration,
         protected readonly BackendUserGroupRepository $backendUserGroupRepository,
-        protected readonly FrontendUserGroupRepository $frontendUserGroupRepository,
         protected readonly UserRepositoryFactory $userRepositoryFactory,
         protected string $tableName,
         protected array $user,
@@ -94,6 +93,7 @@ class UpdateUtility implements LoggerAwareInterface
 
     /**
      * @return array<mixed>
+     * @throws DBALException
      */
     protected function getGroupMappingFromDatabase(): array
     {
@@ -115,7 +115,6 @@ class UpdateUtility implements LoggerAwareInterface
     protected function getUserGroupRepository(): ?AbstractUserGroupRepository
     {
         return match ($this->tableName) {
-            'fe_users' => $this->frontendUserGroupRepository,
             'be_users' => $this->backendUserGroupRepository,
             default => null,
         };
@@ -126,13 +125,8 @@ class UpdateUtility implements LoggerAwareInterface
      */
     protected function addDefaultGroup(array &$groupMapping): void
     {
-        $key = 'frontend';
-        $userGroupTableName = 'fe_groups';
-
-        if ($this->tableName === 'be_users') {
-            $key = 'backend';
-            $userGroupTableName = 'be_groups';
-        }
+        $key = 'backend';
+        $userGroupTableName = 'be_groups';
 
         $defaultGroup = (int)($this->yamlConfiguration['roles']['default'][$key] ?? 0);
         $userGroup = BackendUtility::getRecord($userGroupTableName, $defaultGroup);
@@ -230,10 +224,7 @@ class UpdateUtility implements LoggerAwareInterface
         $reactivateDeleted = false;
         $reactivateDisabled = false;
 
-        if ($this->tableName === 'fe_users') {
-            $reactivateDeleted = $this->configuration->isReactivateDeletedFrontendUsers();
-            $reactivateDisabled = $this->configuration->isReactivateDisabledFrontendUsers();
-        } elseif ($this->tableName === 'be_users') {
+        if ($this->tableName === 'be_users') {
             $reactivateDeleted = $this->configuration->isReactivateDeletedBackendUsers();
             $reactivateDisabled = $this->configuration->isReactivateDisabledBackendUsers();
         } else {

@@ -15,6 +15,7 @@ use Leuchtfeuer\Auth0\Domain\Model\Application;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
 class ApplicationController extends BackendController
@@ -25,6 +26,7 @@ class ApplicationController extends BackendController
         $pid = $this->getStoragePage();
         $moduleTemplate->assignMultiple([
             'applications' => $this->applicationRepository->findAll(),
+            'settings' => $this->getSettings(),
             'pid' => $pid,
             'directory' => BackendUtility::getRecord('pages', $pid),
         ]);
@@ -61,5 +63,15 @@ class ApplicationController extends BackendController
     protected function pageExists(int $storagePage): bool
     {
         return $storagePage > 0 && BackendUtility::getRecord('pages', $storagePage) !== null;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getSettings(): array
+    {
+        return GeneralUtility::removeDotsFromTS(
+            $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS)
+        );
     }
 }

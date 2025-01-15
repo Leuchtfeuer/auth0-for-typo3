@@ -10,24 +10,6 @@
 		<p>{f:translate(key: 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.infobox.api.content')}</p>
 	</f:be.infobox>
 
-	<f:if condition="{extensionConfiguration.enableFrontendLogin}">
-		<h2>
-			<core:icon identifier="status-user-frontend" size="large"/>
-			<f:translate key="LLL:EXT:frontend/Resources/Private/Language/locallang_tca.xlf:fe_users" />
-		</h2>
-
-		<h3><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.title.root"/></h3>
-		<f:render partial="Backend/PropertyTable" arguments="{configuration: yamlConfiguration.properties.fe_users.root, table: 'fe_users', type: 'root'}"/>
-
-		<h3><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.title.user"/></h3>
-		<f:render partial="Backend/PropertyTable" arguments="{configuration: yamlConfiguration.properties.fe_users.user_metadata, table: 'fe_users', type: 'user_metadata'}"/>
-
-		<h3><f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf:properties.title.app"/></h3>
-		<f:render partial="Backend/PropertyTable" arguments="{configuration: yamlConfiguration.properties.fe_users.app_metadata, table: 'fe_users', type: 'app_metadata'}"/>
-
-		<hr>
-	</f:if>
-
 	<f:if condition="{extensionConfiguration.enableBackendLogin}">
 		<h2>
 			<core:icon identifier="status-user-backend" size="large"/>

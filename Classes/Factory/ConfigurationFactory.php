@@ -27,13 +27,12 @@ class ConfigurationFactory
     }
 
     /**
-     * @return array{default: array{frontend: int, backend: int}, key: string, beAdmin: string}
+     * @return array{default: array{backend: int}, key: string, beAdmin: string}
      */
-    public function buildRoles(string $key, int $defaultFrontendUserGroup, string $adminRole, int $defaultBackendUserGroup): array
+    public function buildRoles(string $key, string $adminRole, int $defaultBackendUserGroup): array
     {
         return [
             'default' => [
-                'frontend' => $defaultFrontendUserGroup,
                 'backend' => $defaultBackendUserGroup,
             ],
             'key' => $key,

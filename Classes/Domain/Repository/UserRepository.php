@@ -84,22 +84,7 @@ class UserRepository implements LoggerAwareInterface
     {
         $configuration = new EmAuth0Configuration();
 
-        $request = $GLOBALS['TYPO3_REQUEST'] ?? null;
-        if ($request instanceof ServerRequestInterface && ApplicationType::fromRequest($request)->isFrontend()) {
-            $this->removeFrontendRestrictions($configuration);
-        } else {
-            $this->removeBackendRestrictions($configuration);
-        }
-    }
-
-    protected function removeFrontendRestrictions(EmAuth0Configuration $emConfiguration): void
-    {
-        if ($emConfiguration->isReactivateDeletedFrontendUsers()) {
-            $this->removeDeletedRestriction();
-        }
-        if ($emConfiguration->isReactivateDisabledFrontendUsers()) {
-            $this->removeHiddenRestriction();
-        }
+        $this->removeBackendRestrictions($configuration);
     }
 
     protected function removeBackendRestrictions(EmAuth0Configuration $emConfiguration): void

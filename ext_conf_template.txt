@@ -16,18 +16,6 @@ softLogout = 0
 # cat=Backend/60; type=string; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.additional_authorize_parameters
 additionalAuthorizeParameters =
 
-# cat=Frontend/10; type=boolean; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:frontend.enable_frontend_login
-enableFrontendLogin = 1
-
-# cat=Frontend/20; type=int+; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:frontend.user_storage_page
-userStoragePage = 0
-
-# cat=Frontend/30; type=boolean; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:frontend.reactivate_disabled_frontend_users
-reactivateDisabledFrontendUsers = 1
-
-# cat=Frontend/40; type=boolean; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:frontend.reactivate_deleted_frontend_users
-reactivateDeletedFrontendUsers = 1
-
 # cat=Token/20; type=string; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:token.private_key_file
 privateKeyFile =
 

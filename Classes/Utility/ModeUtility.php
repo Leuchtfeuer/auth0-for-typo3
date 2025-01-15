@@ -19,7 +19,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class ModeUtility
 {
     public const BACKEND_MODE = 'BE';
-    public const FRONTEND_MODE = 'FE';
+    public const UNKONWN_MODE = 'UNKNOWN';
 
     public static function isBackend(?string $mode=null): bool
     {
@@ -32,10 +32,10 @@ class ModeUtility
 
     public static function getModeFromRequest(): string
     {
-        return ($GLOBALS['TYPO3_REQUEST'] ?? null) instanceof ServerRequestInterface
-            && ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()
-            ? self::FRONTEND_MODE
-            : self::BACKEND_MODE;
+        $request = self::getRequest();
+        return $request instanceof ServerRequestInterface && ApplicationType::fromRequest($request)->isBackend()
+            ? self::BACKEND_MODE
+            : self::UNKONWN_MODE;
     }
 
     public static function isTYPO3V12(): bool
@@ -45,5 +45,10 @@ class ModeUtility
             '12.0',
             '>='
         );
+    }
+
+    private static function getRequest(): ?ServerRequestInterface
+    {
+        return $GLOBALS['TYPO3_REQUEST'] ?? null;
     }
 }

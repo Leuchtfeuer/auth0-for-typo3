@@ -21,7 +21,6 @@ class RoleController extends BackendController
     {
         $moduleTemplate = $this->initView();
         $moduleTemplate->assignMultiple([
-            'frontendUserGroupMapping' => $this->frontendUserGroupRepository->findAll(),
             'backendUserGroupMapping' => $this->backendUserGroupRepository->findAll(),
             'extensionConfiguration' => new EmAuth0Configuration(),
             'yamlConfiguration' => $this->auth0Configuration->load(),
@@ -31,7 +30,6 @@ class RoleController extends BackendController
 
     public function updateAction(
         string $key = 'roles',
-        int $defaultFrontendUserGroup = 0,
         string $adminRole = '',
         int $defaultBackendUserGroup = 0
     ): ResponseInterface {
@@ -39,7 +37,6 @@ class RoleController extends BackendController
 
         $configuration['roles'] = (new ConfigurationFactory())->buildRoles(
             $key,
-            $defaultFrontendUserGroup,
             $adminRole,
             $defaultBackendUserGroup
         );

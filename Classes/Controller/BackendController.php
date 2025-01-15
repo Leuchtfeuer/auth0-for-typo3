@@ -14,7 +14,6 @@ namespace Leuchtfeuer\Auth0\Controller;
 use Leuchtfeuer\Auth0\Configuration\Auth0Configuration;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
-use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\FrontendUserGroupRepository;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
@@ -32,7 +31,6 @@ class BackendController extends ActionController
         protected readonly ApplicationRepository $applicationRepository,
         protected readonly Auth0Configuration $auth0Configuration,
         protected readonly BackendUserGroupRepository $backendUserGroupRepository,
-        protected readonly FrontendUserGroupRepository $frontendUserGroupRepository,
         protected readonly ModuleTemplateFactory $moduleTemplateFactory,
         protected readonly IconFactory $iconFactory,
         protected readonly BackendUriBuilder $backendUriBuilder

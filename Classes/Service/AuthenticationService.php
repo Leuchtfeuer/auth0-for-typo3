@@ -41,8 +41,6 @@ class AuthenticationService extends BasicAuthenticationService
 {
     private const BACKEND_AUTHENTICATION = 'BE';
 
-    private const FRONTEND_AUTHENTICATION = 'FE';
-
     /**
      * @var array<string, mixed>
      */
@@ -53,7 +51,7 @@ class AuthenticationService extends BasicAuthenticationService
      */
     protected array $userInfo = [];
 
-    protected string $tableName = 'fe_users';
+    protected string $tableName = 'be_users';
 
     protected Auth0 $auth0;
 
@@ -139,21 +137,14 @@ class AuthenticationService extends BasicAuthenticationService
         $this->userIdentifier = $configuration->getUserIdentifier();
 
         switch ($loginType) {
-            case self::FRONTEND_AUTHENTICATION:
-                $this->logger?->info('Handle frontend login.');
-                $this->application = $this->retrieveApplicationFromUrlQuery();
-                $this->tableName = 'fe_users';
-                break;
-
             case self::BACKEND_AUTHENTICATION:
                 $this->logger?->info('Handle backend login.');
                 $this->application = $configuration->getBackendConnection();
-                $this->tableName = 'be_users';
                 break;
 
             default:
                 /** @extensionScannerIgnoreLine */
-                $this->logger?->error('Environment is neither in frontend nor in backend mode.');
+                $this->logger?->error('Environment is not in backend mode.');
         }
 
         if ($this->application === 0 && $this->initSessionStore($loginType) === false) {
@@ -164,32 +155,6 @@ class AuthenticationService extends BasicAuthenticationService
         }
 
         return true;
-    }
-
-    protected function retrieveApplicationFromUrlQuery(): int
-    {
-        $application = (int)($this->request?->getQueryParams()['application'] ?? 0);
-
-        if ($application !== 0) {
-            return $application;
-        }
-
-        $tokenParameter = (string)($this->request?->getQueryParams()[CallbackMiddleware::TOKEN_PARAMETER] ?? '');
-        if (!$this->tokenUtility->verifyToken($tokenParameter)) {
-            return 0;
-        }
-
-        try {
-            $token = $this->tokenUtility->getToken();
-            if (!$token instanceof UnencryptedToken) {
-                throw new TokenException();
-            }
-            $dataSet = $token->claims();
-        } catch (TokenException) {
-            return 0;
-        }
-
-        return (int)$dataSet->get('application');
     }
 
     /**
@@ -216,20 +181,6 @@ class AuthenticationService extends BasicAuthenticationService
     {
         echo 'do not hit';
         die();
-    }
-
-    protected function setApplicationByUser(string $auth0UserId): void
-    {
-        $queryBuilder = $this->connectionPool->getQueryBuilderForTable($this->tableName);
-        $application = $queryBuilder
-            ->select('auth0_last_application')
-            ->from($this->tableName)
-            ->where($queryBuilder->expr()->eq('auth0_user_id', $queryBuilder->createNamedParameter($auth0UserId)))
-            ->executeQuery()
-            ->fetchOne();
-
-        $this->logger?->debug(sprintf('Found application (ID: %s) for active Auth0 session.', $application));
-        $this->application = (int)$application;
     }
 
     /**
@@ -279,9 +230,6 @@ class AuthenticationService extends BasicAuthenticationService
         // Update existing user on every login when we are in BE context (since TypoScript is loaded).
         if ($this->authInfo['loginType'] === self::BACKEND_AUTHENTICATION) {
             $updateUtility->updateUser();
-        } else {
-            // Update last used application (no TypoScript loaded in Frontend Requests)
-            $this->userUtility->setLastUsedApplication($this->userInfo[$this->userIdentifier], $this->application);
         }
     }
 

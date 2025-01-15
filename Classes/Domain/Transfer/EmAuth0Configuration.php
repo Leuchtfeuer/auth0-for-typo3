@@ -32,15 +32,9 @@ class EmAuth0Configuration implements SingletonInterface
 
     protected bool $reactivateDeletedBackendUsers = false;
 
-    protected bool $reactivateDisabledFrontendUsers = true;
-
-    protected bool $reactivateDeletedFrontendUsers = true;
-
     protected bool $softLogout = false;
 
     protected string $additionalAuthorizeParameters = '';
-
-    protected bool $enableFrontendLogin = true;
 
     protected string $privateKeyFile = '';
 
@@ -105,16 +99,6 @@ class EmAuth0Configuration implements SingletonInterface
         return $this->reactivateDeletedBackendUsers;
     }
 
-    public function isReactivateDisabledFrontendUsers(): bool
-    {
-        return $this->reactivateDisabledFrontendUsers;
-    }
-
-    public function isReactivateDeletedFrontendUsers(): bool
-    {
-        return $this->reactivateDeletedFrontendUsers;
-    }
-
     public function isSoftLogout(): bool
     {
         return $this->softLogout;
@@ -126,11 +110,6 @@ class EmAuth0Configuration implements SingletonInterface
     public function getAdditionalAuthorizeParameters(): array
     {
         return ParametersUtility::transformUrlParameters($this->additionalAuthorizeParameters);
-    }
-
-    public function isEnableFrontendLogin(): bool
-    {
-        return $this->enableFrontendLogin;
     }
 
     /**

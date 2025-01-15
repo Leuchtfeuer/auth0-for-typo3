@@ -90,23 +90,6 @@ class Auth0Configuration implements SingletonInterface
     {
         $configuration = [
             'properties' => [
-                'fe_users' => [
-                    self::CONFIG_TYPE_ROOT => [
-                        [
-                            'auth0Property' => 'created_at',
-                            'databaseField' => 'crdate',
-                            'readOnly' => true,
-                            'processing' => 'strtotime',
-                        ], [
-                            'auth0Property' => 'updated_at',
-                            'databaseField' => 'tstamp',
-                            'readOnly' => true,
-                            'processing' => 'strtotime',
-                        ],
-                    ],
-                    self::CONFIG_TYPE_USER => [],
-                    self::CONFIG_TYPE_APP => [],
-                ],
                 'be_users' => [
                     self::CONFIG_TYPE_ROOT => [
                         [
