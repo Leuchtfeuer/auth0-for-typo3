@@ -8,7 +8,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  *
- * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
+ * (c) Leuchtfeuer Digital Marketing <dev@Leuchtfeuer.com>
  */
 
 namespace Leuchtfeuer\Auth0\Service;
@@ -18,14 +18,10 @@ use Auth0\SDK\Exception\ArgumentException;
 use Auth0\SDK\Exception\NetworkException;
 use Auth0\SDK\Utility\HttpResponse;
 use GuzzleHttp\Exception\GuzzleException;
-use JsonException;
-use Lcobucci\JWT\UnencryptedToken;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\ErrorCode;
-use Leuchtfeuer\Auth0\Exception\TokenException;
 use Leuchtfeuer\Auth0\Factory\ApplicationFactory;
 use Leuchtfeuer\Auth0\LoginProvider\Auth0Provider;
-use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
 use Leuchtfeuer\Auth0\Utility\Database\UpdateUtilityFactory;
 use Leuchtfeuer\Auth0\Utility\TokenUtility;
 use Leuchtfeuer\Auth0\Utility\UserUtility;
@@ -202,7 +198,7 @@ class AuthenticationService extends BasicAuthenticationService
         try {
             $managementUser = HttpResponse::decodeContent($this->auth0->management()->users()->get($this->userInfo[$this->userIdentifier]));
             $this->userInfo = $this->userUtility->enrichManagementUser($managementUser);
-        } catch (ArgumentException|NetworkException|JsonException $e) {
+        } catch (ArgumentException|NetworkException|\JsonException $e) {
             $this->logger?->error($e->getMessage());
             return false;
         }

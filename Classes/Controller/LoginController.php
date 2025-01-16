@@ -8,7 +8,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  *
- * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
+ * (c) Leuchtfeuer Digital Marketing <dev@Leuchtfeuer.com>
  */
 
 namespace Leuchtfeuer\Auth0\Controller;
@@ -139,7 +139,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
             $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class, $this->request, $this->uriBuilder);
             $routingUtility->addArgument('logintype', 'logout');
 
-            if (str_contains((string) $this->settings['redirectMode'], 'logout') && (bool)$this->settings['redirectDisable'] === false) {
+            if (str_contains((string)$this->settings['redirectMode'], 'logout') && (bool)$this->settings['redirectDisable'] === false) {
                 $routingUtility->addArgument('referrer', $this->addLogoutRedirect());
             }
             return $this->redirectToUri($routingUtility->getUri());

@@ -8,7 +8,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  *
- * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
+ * (c) Leuchtfeuer Digital Marketing <dev@Leuchtfeuer.com>
  */
 
 namespace Leuchtfeuer\Auth0\Domain\Repository;
@@ -16,7 +16,6 @@ namespace Leuchtfeuer\Auth0\Domain\Repository;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\ParameterType;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -24,7 +23,6 @@ use TYPO3\CMS\Core\Database\Query\Expression\ExpressionBuilder;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
-use TYPO3\CMS\Core\Http\ApplicationType;
 
 class UserRepository implements LoggerAwareInterface
 {

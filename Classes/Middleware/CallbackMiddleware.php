@@ -8,20 +8,14 @@ declare(strict_types=1);
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  *
- * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
+ * (c) Leuchtfeuer Digital Marketing <dev@Leuchtfeuer.com>
  */
 
 namespace Leuchtfeuer\Auth0\Middleware;
 
-use Auth0\SDK\Exception\ArgumentException;
-use Auth0\SDK\Exception\ConfigurationException;
-use Auth0\SDK\Exception\NetworkException;
-use Auth0\SDK\Exception\StateException;
-use GuzzleHttp\Exception\GuzzleException;
 use Lcobucci\JWT\Token\DataSet;
 use Lcobucci\JWT\UnencryptedToken;
 use Leuchtfeuer\Auth0\Exception\TokenException;
-use Leuchtfeuer\Auth0\Exception\UnknownErrorCodeException;
 use Leuchtfeuer\Auth0\LoginProvider\Auth0Provider;
 use Leuchtfeuer\Auth0\Utility\Database\UpdateUtilityFactory;
 use Leuchtfeuer\Auth0\Utility\TokenUtility;

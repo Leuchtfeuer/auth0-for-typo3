@@ -6,7 +6,7 @@
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  *
- * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
+ * (c) Leuchtfeuer Digital Marketing <dev@Leuchtfeuer.com>
  */
 
 namespace Leuchtfeuer\Auth0\Controller;
@@ -47,7 +47,8 @@ class ApplicationController extends BackendController
     protected function getStoragePage(): int
     {
         $configuration = $this->configurationManager->getConfiguration(
-            ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK, 'auth0'
+            ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK,
+            'auth0'
         );
         $storagePage = (int)($configuration['persistence']['storagePid'] ?? 0);
 

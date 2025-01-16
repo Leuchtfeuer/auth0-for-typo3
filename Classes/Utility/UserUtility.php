@@ -8,7 +8,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  *
- * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
+ * (c) Leuchtfeuer Digital Marketing <dev@Leuchtfeuer.com>
  */
 
 namespace Leuchtfeuer\Auth0\Utility;
@@ -23,7 +23,6 @@ use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Crypto\Random;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class UserUtility implements SingletonInterface, LoggerAwareInterface
 {
@@ -35,8 +34,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         protected readonly PasswordHashFactory $passwordHashFactory,
         protected readonly Random $random,
         protected readonly UserRepositoryFactory $userRepositoryFactory,
-    )
-    {
+    ) {
         $this->configuration = new EmAuth0Configuration();
     }
 

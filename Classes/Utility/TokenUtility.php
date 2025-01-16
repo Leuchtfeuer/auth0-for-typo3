@@ -8,12 +8,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  *
- * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
+ * (c) Leuchtfeuer Digital Marketing <dev@Leuchtfeuer.com>
  */
 
 namespace Leuchtfeuer\Auth0\Utility;
 
-use DateTimeImmutable;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Hmac;
@@ -45,7 +44,7 @@ class TokenUtility implements LoggerAwareInterface
 
     protected EmAuth0Configuration $configuration;
 
-    protected DateTimeImmutable $time;
+    protected \DateTimeImmutable $time;
 
     protected string $issuer = '';
 
@@ -63,7 +62,7 @@ class TokenUtility implements LoggerAwareInterface
     public function __construct()
     {
         $this->configuration = new EmAuth0Configuration();
-        $this->time = new DateTimeImmutable();
+        $this->time = new \DateTimeImmutable();
         $this->setIssuer();
         $this->config = Configuration::forAsymmetricSigner(
             $this->getSigner(),

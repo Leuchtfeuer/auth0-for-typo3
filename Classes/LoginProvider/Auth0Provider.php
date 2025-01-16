@@ -8,7 +8,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  *
- * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
+ * (c) Leuchtfeuer Digital Marketing <dev@Leuchtfeuer.com>
  */
 
 namespace Leuchtfeuer\Auth0\LoginProvider;
@@ -248,7 +248,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     protected function getRenderingContext(ViewInterface $view): RenderingContextInterface
     {
-        if ($view instanceof FluidStandaloneAbstractTemplateView|| $view instanceof FluidViewAdapter) {
+        if ($view instanceof FluidStandaloneAbstractTemplateView || $view instanceof FluidViewAdapter) {
             return $view->getRenderingContext();
         }
         throw new \RuntimeException('view must be an instance of ext:fluid \TYPO3Fluid\Fluid\View\AbstractTemplateView', 1721889095);

@@ -8,7 +8,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please read the
  * LICENSE.txt file that was distributed with this source code.
  *
- * Florian Wessels <f.wessels@Leuchtfeuer.com>, Leuchtfeuer Digital Marketing
+ * (c) Leuchtfeuer Digital Marketing <dev@Leuchtfeuer.com>
  */
 
 namespace Leuchtfeuer\Auth0\Utility;
@@ -22,7 +22,7 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    const NO_AUTH0_VALUE = 'rx63XX7Vq5aCXn4y';
+    public const NO_AUTH0_VALUE = 'rx63XX7Vq5aCXn4y';
 
     /**
      * @param array<string, mixed> $user
@@ -37,8 +37,8 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
 
             case Auth0Configuration::CONFIG_TYPE_USER:
                 $value = $this->getAuth0ValueRecursive(
-                    $user[Auth0Configuration::CONFIG_TYPE_USER], explode
-                    ('.', $auth0FieldName)
+                    $user[Auth0Configuration::CONFIG_TYPE_USER],
+                    explode('.', $auth0FieldName)
                 );
                 break;
 
