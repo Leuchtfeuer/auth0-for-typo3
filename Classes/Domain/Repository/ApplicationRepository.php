@@ -18,6 +18,9 @@ use Doctrine\DBAL\ParameterType;
 use Leuchtfeuer\Auth0\Domain\Model\Application;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 
+/**
+ * @phpstan-type ApplicationQueryResult array<array{title: string, id: string, secret: string, domain: string, audience: string, single_log_out: bool, signature_algorithm: string|null, api: bool}>
+ */
 class ApplicationRepository
 {
     public const TABLE_NAME = 'tx_auth0_domain_model_application';
@@ -27,7 +30,7 @@ class ApplicationRepository
     public function findByUid(int $uid): ?Application
     {
         $queryBuilder = $this->connectionPool->getQueryBuilderForTable(self::TABLE_NAME);
-        /** @var array<array{title: string, id: string, secret: string, domain: string, audience: string, single_log_out: bool, signature_algorithm: string|null, api: bool}> $applicationArray */
+        /** @var ApplicationQueryResult $applicationArray */
         $applicationArray = $queryBuilder
             ->select('*')
             ->from(self::TABLE_NAME)
