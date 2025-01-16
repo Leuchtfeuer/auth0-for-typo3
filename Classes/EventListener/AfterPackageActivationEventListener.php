@@ -16,7 +16,7 @@ namespace Leuchtfeuer\Auth0\EventListener;
 use TYPO3\CMS\Core\Configuration\ConfigurationManager;
 use TYPO3\CMS\Core\Package\Event\AfterPackageActivationEvent;
 
-class AfterPackageActivation
+class AfterPackageActivationEventListener
 {
     /**
      * @var array<string>

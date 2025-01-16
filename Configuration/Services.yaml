@@ -19,7 +19,7 @@ services:
   Leuchtfeuer\Auth0\Domain\Repository\UserRepositoryFactory:
     public: true
 
-  Leuchtfeuer\Auth0\EventListener\AfterPackageActivation:
+  Leuchtfeuer\Auth0\EventListener\AfterPackageActivationEventListener:
     tags:
       - name: event.listener
         identifier: auth0AfterPackageActivationEvent
