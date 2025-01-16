@@ -30,9 +30,6 @@ class UserRepository implements LoggerAwareInterface
 
     protected readonly QueryBuilder $queryBuilder;
 
-    /**
-     * @var ExpressionBuilder
-     */
     protected readonly ExpressionBuilder $expressionBuilder;
 
     public function __construct(
