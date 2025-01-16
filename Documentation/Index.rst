@@ -30,7 +30,7 @@ Auth0 for TYPO3
    `CC BY-NC-SA 4.0 <https://creativecommons.org/licenses/by-nc-sa/4.0/>`__ (Creative Commons)
    license.
 
-This extension allows you to log on to a TYPO3 front- or backend with `Auth0 <https://auth0.com/>`__. Auth0 is the solution you
+This extension allows you to log on to a TYPO3 backend with `Auth0 <https://auth0.com/>`__. Auth0 is the solution you
 need for web, mobile, IoT, and internal applications. Loved by developers and trusted by enterprises.
 `Find out <https://auth0.com/why-auth0>`__ why you should use Auth0. You need access to an `Auth0 <https://auth0.com/>`__
 instance for using this extension.

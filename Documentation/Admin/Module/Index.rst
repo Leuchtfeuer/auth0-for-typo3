@@ -37,7 +37,7 @@ folder containing the users will be used (see: :ref:`admin-extensionConfiguratio
 Roles To Groups
 ===============
 
-Configure `fe_groups` and `be_groups` mappings to match Auth0 roles. Simply edit an existing TYPO3 frontend or backend usergroup
+Configure `be_groups` mappings to match Auth0 roles. Simply edit an existing TYPO3 frontend or backend usergroup
 and add the name of the matching Auth0 role to the data record. By default, the Auth0 roles are stored in the `app_metadata`
 property of the Auth0 user.
 
@@ -76,17 +76,6 @@ Depending on the activated services, there are some special configurations that 
 .. container:: table-row
 
    Property
-         Default Website Usergroup
-   Data type
-         integer
-   Default
-         :code:`0`
-   Description
-         This website usergroup is assigned to an user if none of his Auth0 roles is assigned to a website usergroup.
-
-.. container:: table-row
-
-   Property
          Default Backend Usergroup
    Data type
          integer
@@ -110,7 +99,7 @@ Depending on the activated services, there are some special configurations that 
 
 Property Mapping
 ================
-Auth0 properties can be mapped to existing properties of TYPO3 backend or frontend users. You can configure this mapping in this
+Auth0 properties can be mapped to existing properties of TYPO3 backend users. You can configure this mapping in this
 section of the module. Depending of user's TCA, different options may be available. It is not possible to use a TYPO3 property
 twice. You can access the value of sub properties via dot syntax (e.g. `address.primary.zip`).
 

@@ -30,10 +30,6 @@ Properties
    reactivateDeletedBackendUsers_       Backend                              boolean
    softLogout_                          Backend                              boolean
    additionalAuthorizeParameters_       Backend                              string
-   enableFrontendLogin_                 Frontend                             boolean
-   userStoragePage_                     Frontend                             positive integer
-   reactivateDisabledFrontendUsers_     Frontend                             boolean
-   reactivateDeletedFrontendUsers_      Frontend                             boolean
    genericCallback_                     Token                                boolean
    privateKeyFile_                      Token                                string
    publicKeyFile_                       Token                                string
@@ -131,66 +127,6 @@ additionalAuthorizeParameters
          unset
    Description
          Additional query parameters for backend authentication (e.g. `access_type=offline&connection=google-oauth2`).
-
-.. _admin-extensionConfiguration-properties-enableFrontendLogin:
-
-enableFrontendLogin
--------------------
-.. container:: table-row
-
-   Property
-         enableFrontendLogin
-   Data type
-         boolean
-   Default
-         :code:`true`
-   Description
-         Enable Auth0 log in for TYPO3 frontend.
-
-.. _admin-extensionConfiguration-properties-userStoragePage:
-
-userStoragePage
----------------
-.. container:: table-row
-
-   Property
-         userStoragePage
-   Data type
-         positive integer
-   Default
-         :code:`0`
-   Description
-         Storage page for frontend user.
-
-.. _admin-extensionConfiguration-properties-reactivateDisabledFrontendUsers:
-
-reactivateDisabledFrontendUsers
--------------------------------
-.. container:: table-row
-
-   Property
-         reactivateDisabledFrontendUsers
-   Data type
-         boolean
-   Default
-         :code:`true`
-   Description
-         Allow log in for disabled frontend users.
-
-.. _admin-extensionConfiguration-properties-reactivateDeletedFrontendUsers:
-
-reactivateDeletedFrontendUsers
-------------------------------
-.. container:: table-row
-
-   Property
-         reactivateDeletedFrontendUsers
-   Data type
-         boolean
-   Default
-         :code:`true`
-   Description
-         Allow log in for deleted frontend users.
 
 .. _admin-extensionConfiguration-properties-privateKeyFile:
 

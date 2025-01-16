@@ -95,7 +95,7 @@ example like this:
 
 .. code-block:: php
 
-   $GLOBALS['TYPO3_CONF_VARS']['LOG']['Bitmotion']['Auth0'] = [
+   $GLOBALS['TYPO3_CONF_VARS']['LOG']['Leuchtfeuer']['Auth0'] = [
        'writerConfiguration' => [
            \TYPO3\CMS\Core\Log\LogLevel::DEBUG => [
                \TYPO3\CMS\Core\Log\Writer\FileWriter::class => [
