@@ -37,8 +37,8 @@ folder containing the users will be used (see: :ref:`admin-extensionConfiguratio
 Roles To Groups
 ===============
 
-Configure `be_groups` mappings to match Auth0 roles. Simply edit an existing TYPO3 frontend or backend usergroup
-and add the name of the matching Auth0 role to the data record. By default, the Auth0 roles are stored in the `app_metadata`
+Configure `be_groups` mappings to match Auth0 roles. Simply edit an existing TYPO3 backend usergroup and add the
+name of the matching Auth0 role to the data record. By default, the Auth0 roles are stored in the `app_metadata`
 property of the Auth0 user.
 
 .. figure:: ../../Images/module-roles.png
@@ -49,8 +49,8 @@ property of the Auth0 user.
 
 .. note::
 
-   Please note that only the configuration for activated services is shown. For example, if you have disabled the backend logon in
-   the extension configuration, no role assignment for backend groups will be available.
+   Please note that only the configuration for activated services is shown. For example, if you have disabled the
+   backend logon in the extension configuration, no role assignment for backend groups will be available.
 
 .. _admin-backendModule-rolesToGroups-specialConfiguration:
 

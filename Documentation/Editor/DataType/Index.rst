@@ -19,7 +19,7 @@ Application Record
 
 You can easily connect your TYPO3 instance with an Auth0 tenant by creating an :ref:`application <editor-dataTypes-application>`
 record. It contains all the necessary Auth0 server authorization configuration and is used to establish a connection with your
-Auth0 server in frontend or backend context.
+Auth0 server in backend context.
 
 .. toctree::
     :maxdepth: 3

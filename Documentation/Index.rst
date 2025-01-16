@@ -16,11 +16,13 @@ Auth0 for TYPO3
    en
 
 :Copyright:
-   2018-2022
+   2018-2025
 
 :Authors:
    Florian Wessels,
-   Max Rösch, Leuchtfeuer Digital Marketing
+   Max Rösch,
+   Oliver Heins,
+   Leuchtfeuer Digital Marketing
 
 :Email:
    dev@Leuchtfeuer.com
