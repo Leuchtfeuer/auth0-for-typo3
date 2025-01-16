@@ -9,7 +9,7 @@ Auth0 for TYPO3
 [![Code Climate](https://codeclimate.com/github/Leuchtfeuer/auth0-for-typo3/badges/gpa.svg)](https://codeclimate.com/github/Leuchtfeuer/auth0-for-typo3)
 [![Code Coverage](https://codecov.io/gh/Leuchtfeuer/auth0-for-typo3/branch/master/graph/badge.svg?token=pclJ2SpboL)](https://codecov.io/gh/Leuchtfeuer/auth0-for-typo3)
 
-This extension allows you to log into a TYPO3 backend or frontend via Auth0.  
+This extension allows you to log into a TYPO3 backend via Auth0.  
 The full documentation for the latest releases can be found [here](https://docs.typo3.org/p/leuchtfeuer/auth0/master/en-us/).
 
 *If you are searching for the documentation for version 3.2.1 and below, you can take a look at the former
@@ -20,15 +20,18 @@ The full documentation for the latest releases can be found [here](https://docs.
 You need access to an [Auth0](https://auth0.com/) instance.  
 We are currently supporting following TYPO3 versions:<br><br>
 
-| Extension Version | TYPO3 v12 Support | TYPO3 v11 Support | TYPO3 v10 Support | TYPO3 v9 Support | TYPO3 v8 Support |
-|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:----------------:|:----------------:|
-|        5.x        |         x         |         x         |         -         |        -         |        -         |
-|        4.x        |         -         |         x         |         x         |        -         |        -         |
-|        3.x        |         -         |         -         |         x         |        x         |                  |
-|        2.x        |         -         |         -         |         -         |        x         |                  |
-|        1.x        |         -         |         -         |         -         |        -         |        x         |
+| Extension Version | TYPO3 v13 Support | TYPO3 v12 Support | TYPO3 v11 Support | TYPO3 v10 Support | TYPO3 v9 Support | TYPO3 v8 Support |
+|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:----------------:|:----------------:|
+|       13.x        |         x         |         -         |         -         |         -         |        -         |         -        |
+|        5.x        |         -         |         x         |         x         |         -         |        -         |        -         |
+|        4.x        |         -         |         -         |         x         |         x         |        -         |        -         |
+|        3.x        |         -         |         -         |         -         |         x         |        x         |                  |
+|        2.x        |         -         |         -         |         -         |         -         |        x         |                  |
+|        1.x        |         -         |         -         |         -         |         -         |        -         |        x         |
 
 _Alpha support for TYPO3 v12.4 is available since version 5.0.0-alpha._
+
+_Please note that support for frontend login was dropped with version 13.0.0._
 
 ## About Auth0
 Auth0 helps you to:
