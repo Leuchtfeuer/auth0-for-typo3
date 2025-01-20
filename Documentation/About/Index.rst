@@ -6,7 +6,7 @@
 About
 =====
 
-This extension allows you to log in to a TYPO3 front- or backend with `Auth0 <https://auth0.com/>`__. It also allows you to create
+This extension allows you to log in to a TYPO3 backend with `Auth0 <https://auth0.com/>`__. It also allows you to create
 login links to any existing Auth0 application, no matter if your TYPO3 instance is connected to an Auth0 tenant or not.
 
 .. _about-compatibility:
@@ -17,13 +17,15 @@ Compatibility
 You need access to an Auth0 instance. We are currently supporting following TYPO3 versions:
 
 .. csv-table:: Version Matrix
-   :header: "Extension Version", "TYPO3 v11 Support", "TYPO3 v10 Support", "TYPO3 v9 Support", "TYPO3 v8 Support"
+   :header: "Extension Version", "TYPO3 V13 Support", "TYPO3 V12 Support", "TYPO3 v11 Support", "TYPO3 v10 Support", "TYPO3 v9 Support", "TYPO3 v8 Support"
    :align: center
 
-        "4.x", "🙋‍♂️", "🙋‍♂️", "🙅‍♀️", "🙅‍♀️"
-        "3.x", "🙅‍♀️", "🙋‍♂️", "🙋‍♂️", "🙅‍♀️"
-        "2.x", "🙅‍♀️", "🙅‍♀️", "🙋‍♂️", "🙅‍♀️"
-        "1.x", "🙅‍♀️", "🙅‍♀️", "🙅‍♀️", "🙋‍♂️"
+       "13.x", "🙋‍♂️", "🙅‍♀️", "🙅‍♀️", "🙅‍♀️", "🙅‍♀️", "🙅‍♀️"
+        "5.x", "🙅‍♀️", "🙋‍♂️", "🙋‍♂️", "🙅‍♀️", "🙅‍♀️", "🙅‍♀️"
+        "4.x", "🙅‍♀️", "🙅‍♀️", "🙋‍♂️", "🙋‍♂️", "🙅‍♀️", "🙅‍♀️"
+        "3.x", "🙅‍♀️", "🙅‍♀️", "🙅‍♀️", "🙋‍♂️", "🙋‍♂️", "🙅‍♀️"
+        "2.x", "🙅‍♀️", "🙅‍♀️", "🙅‍♀️", "🙅‍♀️", "🙋‍♂️", "🙅‍♀️"
+        "1.x", "🙅‍♀️", "🙅‍♀️", "🙅‍♀️", "🙅‍♀️", "🙅‍♀️", "🙋‍♂️"
 
 *Beta support for TYPO3 v11.0 is available since version 3.4.0.*
 

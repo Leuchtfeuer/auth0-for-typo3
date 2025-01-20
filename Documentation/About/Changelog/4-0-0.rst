@@ -164,4 +164,3 @@ This is a list of all changes in this release::
     2021-08-03 Merge pull request #9 from Leuchtfeuer/Bugfix (Commit a16fc65 by Max Rösch)
     2021-08-02 [BUGFIX] Require autoload only when environment is not in composer mode (Commit 22e2c7a by Fabian Martin) 
 
-s

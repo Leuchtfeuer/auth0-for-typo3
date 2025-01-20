@@ -1,0 +1,63 @@
+.. include:: ../../Includes.txt
+
+===========================
+Version 13.0.0 - 2025/01/16
+===========================
+
+This release is a major release, which will likely be breaking.
+It introduces TYPO3 13.4 support as well as support for PHP 8.2+ and drops support for TYPO3 <= 12 and PHP <= 8.1.
+We first concentrated on the functionality of the backend login with the help of Auth0 and refactored and restructured
+most of it. Support for frontend login was dropped, as it didn't worked with TYPO3 12.
+
+Breaking
+========
+
+Support for frontend login was removed. If you rely on this feature, please don't hesitate to contact us for sponsoring!
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v13.0.0>`__.
+
+Added
+=====
+
+* Support for TYPO3 v13.4, PHP >= 8.2
+
+Removed
+=======
+
+* Support for TYPO3 <= v12
+* Code for frontend login (defunctional in TYPO3 v12)
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2025-01-20 Merge branch 'feature/YODA-2033' into v13 (Commit 4c5e2a9 by Oliver Heins)
+    2025-01-20 [TASK] Remove github outdated workflow (Commit 944efcb by Oliver Heins)
+    2025-01-20 [TASK] Remove github outdated workflow (Commit 510d748 by Oliver Heins)
+    2025-01-16 [DOC] Update documentation (Commit 28caeab by Oliver Heins)
+    2025-01-16 [TASK] Remove redundant annotation (Commit c7025cf by Oliver Heins)
+    2025-01-16 [TASK] Update README.md (Commit 57b195f by Oliver Heins)
+    2025-01-16 [TASK] Move inline doc block type declaration to phpstan-type (Commit b759479 by Oliver Heins)
+    2025-01-16 [TASK] Rename AfterPackageActivation event listener (Commit bc9797a by Oliver Heins)
+    2025-01-16 [DOC] Update documentation (Commit 640e1a4 by Oliver Heins)
+    2025-01-16 [TASK] Remove content element wizard configuration (Commit 97835d6 by Oliver Heins)
+    2025-01-16 [TASK] Code style fixes (Commit 97fd406 by Oliver Heins)
+    2025-01-15 [TASK] Remove frontend related stuff (Commit f1a0467 by Oliver Heins)
+    2025-01-15 [TASK] Remove unused files; cleanup TCA; extension scanner changes (Commit b06e565 by Oliver Heins)
+    2025-01-14 [TASK] Make auth0 login basically work (Commit 07f65fe by Oliver Heins)
+    2025-01-08 [TASK] PHPStan Level 8 (Commit 3e55374 by Oliver Heins)
+    2025-01-08 [TASK] PHPStan Level 7 (Commit bb353d6 by Oliver Heins)
+    2025-01-08 [TASK] PHPStan Level 6 (Commit b169a48 by Oliver Heins)
+    2025-01-07 [TASK] PHPStan Level 5 (Commit e01e511 by Oliver Heins)
+    2025-01-07 [TASK] PHPStan Level 4 (Commit fe2c7d6 by Oliver Heins)
+    2025-01-07 [TASK] PHPStan Level 3 (Commit 7936b47 by Oliver Heins)
+    2025-01-07 [TASK] PHPStan Level 2 (Commit d76c5a5 by Oliver Heins)
+    2025-01-07 [TASK] PHPStan Level 1 (Commit 1982e63 by Oliver Heins)
+    2025-01-07 [TASK] PHPStan Level 0 (Commit 2467bf4 by Oliver Heins)
+    2025-01-07 [TASK] Make code TYPO3v13 ready (Commit e31ab6f by Oliver Heins)
+    2025-01-06 [TASK] Make code TYPO3v13 ready (WIP) (Commit eb576b7 by Oliver Heins)

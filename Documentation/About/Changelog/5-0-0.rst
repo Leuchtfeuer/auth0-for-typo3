@@ -44,4 +44,3 @@ This is a list of all changes in this release::
     2023-09-06 [TASK]Process ext with rector for typo3 v11 and php74 (Commit fdb1685 by Yassine Abid)
     2023-09-06 [TASK]Make required libraries compatible for TYPO3 12; Require rector for dev environement (Commit 266ac14 by Yassine Abid)
 
-s
