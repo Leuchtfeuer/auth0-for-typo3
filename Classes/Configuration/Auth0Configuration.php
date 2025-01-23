@@ -116,7 +116,7 @@ class Auth0Configuration implements SingletonInterface
                     self::CONFIG_TYPE_APP => [],
                 ]
             ],
-            'roles' => (new ConfigurationFactory())->buildRoles('roles', 0, '', 0),
+            'roles' => (new ConfigurationFactory())->buildRoles('roles', '', 0),
         ];
 
         $this->write($configuration);
