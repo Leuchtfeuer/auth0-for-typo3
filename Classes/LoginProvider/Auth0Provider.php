@@ -125,9 +125,22 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
             'auth0ErrorDescription' => $this->getRequest()->getQueryParams()['error_description'] ?? null,
             'code' => $this->getRequest()->getQueryParams()['code'] ?? null,
             'userInfo' => $this->userInfo,
+            'logo' => $this->getLogo(),
+            'logoAlt' => $this->getLogoAlt(),
         ]);
 
         return $templateName;
+    }
+
+    protected function getLogo(): string
+    {
+        return $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['backend']['loginLogo'] ?? '';
+    }
+
+    protected function getLogoAlt(): string
+    {
+        $loginLogoAlt = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['backend']['loginLogoAlt'] ?? '';
+        return $loginLogoAlt === '' ? 'TYPO3-CMS-Logo' : $loginLogoAlt;
     }
 
     protected function setAuth0(): bool
