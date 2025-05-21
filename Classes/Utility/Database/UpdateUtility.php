@@ -92,7 +92,7 @@ class UpdateUtility implements LoggerAwareInterface
     }
 
     /**
-     * @return array<mixed>
+     * @return array<string, array<int, int>>
      * @throws DBALException
      */
     protected function getGroupMappingFromDatabase(): array
@@ -102,7 +102,7 @@ class UpdateUtility implements LoggerAwareInterface
 
         if ($userGroupRepository instanceof AbstractUserGroupRepository) {
             foreach ($userGroupRepository->findAll() as $userGroup) {
-                if (!empty($userGroup['auth0_user_group'])) {
+                if (!empty($userGroup[AbstractUserGroupRepository::USER_GROUP_FIELD])) {
                     $groupMapping[$userGroup[AbstractUserGroupRepository::USER_GROUP_FIELD]] ??= [];
                     $groupMapping[$userGroup[AbstractUserGroupRepository::USER_GROUP_FIELD]][] = $userGroup['uid'];
                 }
@@ -138,8 +138,8 @@ class UpdateUtility implements LoggerAwareInterface
     }
 
     /**
-     * @param array<mixed> $groupMapping
-     * @param array<string> $groupsToAssign
+     * @param array<string, array<int, int>> $groupMapping
+     * @param array<int, int> $groupsToAssign
      */
     protected function mapRoles(array $groupMapping, array &$groupsToAssign, bool &$isBeAdmin, bool &$shouldUpdate): void
     {
@@ -148,7 +148,7 @@ class UpdateUtility implements LoggerAwareInterface
 
         foreach ($roles as $role) {
             if (isset($groupMapping[$role])) {
-                $this->logger?->notice(sprintf('Assign group "%s" to user.', $groupMapping[$role]));
+                $this->logger?->notice(sprintf('Assign group "%s" to user.', $role));
                 $groupsToAssign = array_merge($groupsToAssign, $groupMapping[$role]);
                 $shouldUpdate = true;
             } elseif (!empty($this->yamlConfiguration['roles']['beAdmin']) && $role === $this->yamlConfiguration['roles']['beAdmin']) {
@@ -167,7 +167,7 @@ class UpdateUtility implements LoggerAwareInterface
     }
 
     /**
-     * @param array<string> $groupsToAssign
+     * @param array<int|string> $groupsToAssign
      */
     protected function performGroupUpdate(array $groupsToAssign, bool $isBeAdmin): void
     {

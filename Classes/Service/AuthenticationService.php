@@ -276,7 +276,7 @@ class AuthenticationService extends BasicAuthenticationService
                 // ignore this...
             }
 
-            $this->writelog(255, 3, 3, 2, 'Login-attempt from ###IP###, username \'%s\' not found!!', [$this->login['uname']]);
+            $this->writelog(255, 3, 3, null, 'Login-attempt from ###IP###, username \'%s\' not found!!', [$this->login['uname']]);
             $this->logger?->info(
                 sprintf('Login-attempt from username "%s" not found!', $this->login['uname']),
                 [
