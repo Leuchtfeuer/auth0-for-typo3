@@ -1,0 +1,22 @@
+.. include:: ../../Includes.txt
+
+===========================
+Version 13.0.2 - 2025/05/22
+===========================
+
+This release is a bug fix release which raises the required auth0/auth0-php minimum to 8.14.0 and fixes a regression.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v13.0.2>`__.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+2025-05-21 [TASK] Fix phpstan reported errors [TER-301] (Commit 38b1992 by Oliver Heins)
+2025-05-21 [SECURITY] Set minimum auth0/auth0-php version to 8.14.0 [TER-301] (Commit f68d98c by Oliver Heins)
+2025-05-21 [BUGFIX] Regression fix for call to old ConfigurationFactory::buildRoles() syntax. Resolves #50 (thanks to Oliver Hader) [TER-301] (Commit 2ddf9a9 by Oliver Heins)
