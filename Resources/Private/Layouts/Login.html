@@ -1,5 +1,6 @@
 <html
         xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+        xmlns:backend="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
         xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
         data-namespace-typo3-fluid="true"
 >
@@ -11,7 +12,7 @@
                 <div class="card card-login">
                     <header class="card-heading">
                         <div class="typo3-login-logo">
-                            <f:image src="{logo}" class="typo3-login-image" alt="{logoAlt}" />
+                            <backend:loginLogo />
                         </div>
                     </header>
                     <main class="card-body">
