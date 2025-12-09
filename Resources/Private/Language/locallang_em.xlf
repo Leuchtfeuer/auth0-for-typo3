@@ -21,6 +21,9 @@
 			<trans-unit id="backend.additional_authorize_parameters" resname="backend.additional_authorize_parameters">
 				<source><![CDATA[Additional Query Parameters: Additional query parameters for backend authentication (e.g. "access_type=offline&connection=google-oauth2")]]></source>
 			</trans-unit>
+            <trans-unit id="backend.disable_sudo_mode_bypass" resname="backend.disable_sudo_mode_bypass">
+                <source>Disable Sudo Mode Bypassing: If set, a password confirmation dialog is shown on accessing modules in the Admin Tools section</source>
+            </trans-unit>
 			<trans-unit id="frontend.enable_frontend_login" resname="frontend.enable_frontend_login">
 				<source>Frontend Log In: Enable Auth0 log in for TYPO3 frontend</source>
 			</trans-unit>

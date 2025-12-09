@@ -16,6 +16,9 @@ softLogout = 0
 # cat=Backend/60; type=string; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.additional_authorize_parameters
 additionalAuthorizeParameters =
 
+# cat=Backend/60; type=boolean; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.disable_sudo_mode_bypass
+disableSudoModeBypass = 0
+
 # cat=Token/20; type=string; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:token.private_key_file
 privateKeyFile =
 
