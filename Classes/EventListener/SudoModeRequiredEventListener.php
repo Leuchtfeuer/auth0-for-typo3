@@ -16,6 +16,7 @@ namespace Leuchtfeuer\Auth0\EventListener;
 use Leuchtfeuer\Auth0\Service\Auth0SessionValidator;
 use TYPO3\CMS\Backend\Security\SudoMode\Event\SudoModeRequiredEvent;
 use TYPO3\CMS\Core\Attribute\AsEventListener;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
 /**
  * Event listener for sudo mode required events.
@@ -27,13 +28,19 @@ use TYPO3\CMS\Core\Attribute\AsEventListener;
 readonly class SudoModeRequiredEventListener
 {
     public function __construct(
-        protected Auth0SessionValidator $auth0SessionValidator
+        protected Auth0SessionValidator $auth0SessionValidator,
+        protected ExtensionConfiguration $extensionConfiguration,
     ) {}
 
     public function __invoke(SudoModeRequiredEvent $event): void
     {
         if ($event->isVerificationRequired() === false) {
             // Already denied, no action needed
+            return;
+        }
+
+        if ($this->extensionConfiguration->get('auth0', 'disableSudoModeBypass')) {
+            // Sudo mode bypass disabled
             return;
         }
 

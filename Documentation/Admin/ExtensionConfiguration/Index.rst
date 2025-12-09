@@ -30,6 +30,7 @@ Properties
    reactivateDeletedBackendUsers_       Backend                              boolean
    softLogout_                          Backend                              boolean
    additionalAuthorizeParameters_       Backend                              string
+   disableSudoModeBypass_               Backend                              boolean
    enableFrontendLogin_                 Frontend                             boolean
    userStoragePage_                     Frontend                             positive integer
    reactivateDisabledFrontendUsers_     Frontend                             boolean
@@ -131,6 +132,32 @@ additionalAuthorizeParameters
          unset
    Description
          Additional query parameters for backend authentication (e.g. `access_type=offline&connection=google-oauth2`).
+
+.. _admin-extensionConfiguration-properties-disableSudoModeBypass:
+
+disableSudoModeBypass
+---------------------
+.. container:: table-row
+
+   Property
+         disableSudoModeBypass
+   Data type
+         boolean
+   Default
+         :code:`false`
+   Description
+         Controls whether Auth0-authenticated users with a valid session can bypass TYPO3's sudo mode password
+         confirmation dialog when accessing Admin Tools modules.
+
+         When disabled (default), Auth0 users with a valid session will not be prompted for password confirmation
+         when accessing protected Admin Tools modules, providing a smoother user experience for externally
+         authenticated users.
+
+         When enabled, the standard TYPO3 sudo mode behavior is enforced, requiring password confirmation
+         regardless of Auth0 session status.
+
+         .. note::
+            This setting only applies to TYPO3 13.4.13 and higher, where sudo mode bypassing is available.
 
 .. _admin-extensionConfiguration-properties-enableFrontendLogin:
 
