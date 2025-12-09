@@ -25,7 +25,7 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
  * Authorization checks are handled by TYPO3's core authorization system.
  */
 #[AsEventListener]
-readonly class SudoModeRequiredEventListener
+class SudoModeRequiredEventListener
 {
     public function __construct(
         protected Auth0SessionValidator $auth0SessionValidator,
