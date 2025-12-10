@@ -44,12 +44,12 @@
         "symfony/property-access": "^6.2 || ^7.1.4",
         "symfony/property-info": "^6.3 || ^7.1",
         "symfony/serializer": "^6.4 || ^7.0",
-        "typo3/cms-backend": "^13.4",
-        "typo3/cms-core": "^13.4",
-        "typo3/cms-extbase": "^13.4",
-        "typo3/cms-extensionmanager": "^13.4",
-        "typo3/cms-fluid": "^13.4",
-        "typo3/cms-frontend": "^13.4"
+        "typo3/cms-backend": "^13.4.13",
+        "typo3/cms-core": "^13.4.13",
+        "typo3/cms-extbase": "^13.4.13",
+        "typo3/cms-extensionmanager": "^13.4.13",
+        "typo3/cms-fluid": "^13.4.13",
+        "typo3/cms-frontend": "^13.4.13"
     },
     "suggest": {
         "typo3/cms-scheduler": "TYPO3 Scheduler"
