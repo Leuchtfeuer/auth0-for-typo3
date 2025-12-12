@@ -15,7 +15,6 @@ namespace Leuchtfeuer\Auth0\EventListener;
 
 use Leuchtfeuer\Auth0\Service\Auth0SessionValidator;
 use TYPO3\CMS\Backend\Security\SudoMode\Event\SudoModeRequiredEvent;
-use TYPO3\CMS\Core\Attribute\AsEventListener;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
 /**
@@ -24,7 +23,6 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
  * Allows Auth0-authenticated users to bypass sudo mode for all authorized operations.
  * Authorization checks are handled by TYPO3's core authorization system.
  */
-#[AsEventListener]
 class SudoModeRequiredEventListener
 {
     public function __construct(
