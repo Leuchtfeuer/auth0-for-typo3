@@ -18,6 +18,7 @@ use Leuchtfeuer\Auth0\Service\Auth0SessionValidator;
 use PHPUnit\Framework\TestCase;
 use TYPO3\CMS\Backend\Security\SudoMode\Access\AccessClaim;
 use TYPO3\CMS\Backend\Security\SudoMode\Event\SudoModeRequiredEvent;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
 /**
  * Test case for SudoModeRequiredEventListener
@@ -26,13 +27,24 @@ class SudoModeRequiredEventListenerTest extends TestCase
 {
     protected SudoModeRequiredEventListener $subject;
     protected Auth0SessionValidator $sessionValidator;
+    protected ExtensionConfiguration $extensionConfiguration;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->sessionValidator = $this->createMock(Auth0SessionValidator::class);
-        $this->subject = new SudoModeRequiredEventListener($this->sessionValidator);
+        $this->extensionConfiguration = $this->createMock(ExtensionConfiguration::class);
+
+        // Configure extension configuration to not disable sudo mode bypass
+        $this->extensionConfiguration->method('get')
+            ->with('auth0', 'disableSudoModeBypass')
+            ->willReturn(false);
+
+        $this->subject = new SudoModeRequiredEventListener(
+            $this->sessionValidator,
+            $this->extensionConfiguration
+        );
     }
 
     /**
