@@ -28,7 +28,8 @@ class SudoModeRequiredEventListener
     public function __construct(
         protected Auth0SessionValidator $auth0SessionValidator,
         protected ExtensionConfiguration $extensionConfiguration,
-    ) {}
+    ) {
+    }
 
     public function __invoke(SudoModeRequiredEvent $event): void
     {

@@ -32,7 +32,8 @@ class Auth0SessionValidator implements LoggerAwareInterface
 
     public function __construct(
         protected readonly EmAuth0Configuration $configuration
-    ) {}
+    ) {
+    }
 
     /**
      * Check if current user has a valid Auth0 session.
