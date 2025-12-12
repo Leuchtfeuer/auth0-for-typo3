@@ -157,7 +157,7 @@ disableSudoModeBypass
          regardless of Auth0 session status.
 
          .. note::
-            This setting only applies to TYPO3 13.4.13 and higher, where sudo mode bypassing is available.
+            This setting only applies to TYPO3 12.4.32 and higher, where sudo mode bypassing is available.
 
 .. _admin-extensionConfiguration-properties-enableFrontendLogin:
 
