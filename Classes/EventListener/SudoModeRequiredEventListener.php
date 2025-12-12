@@ -25,10 +25,15 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
  */
 class SudoModeRequiredEventListener
 {
+    protected Auth0SessionValidator $auth0SessionValidator;
+    protected ExtensionConfiguration $extensionConfiguration;
+
     public function __construct(
-        protected Auth0SessionValidator $auth0SessionValidator,
-        protected ExtensionConfiguration $extensionConfiguration,
+        Auth0SessionValidator $auth0SessionValidator,
+        ExtensionConfiguration $extensionConfiguration,
     ) {
+        $this->auth0SessionValidator = $auth0SessionValidator;
+        $this->extensionConfiguration = $extensionConfiguration;
     }
 
     public function __invoke(SudoModeRequiredEvent $event): void

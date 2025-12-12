@@ -30,9 +30,12 @@ class Auth0SessionValidator implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
+    protected EmAuth0Configuration $configuration;
+
     public function __construct(
-        protected readonly EmAuth0Configuration $configuration
+        EmAuth0Configuration $configuration
     ) {
+        $this->configuration = $configuration;
     }
 
     /**
