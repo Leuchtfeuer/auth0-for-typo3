@@ -119,7 +119,10 @@ class Auth0SessionValidator implements LoggerAwareInterface
     {
         try {
             $auth0 = ApplicationFactory::build($applicationUid, ApplicationFactory::SESSION_PREFIX_BACKEND);
-            $userInfo = $auth0->configuration()->getSessionStorage()?->get('user') ?? [];
+            $userInfo = [];
+            if ($auth0->configuration()->getSessionStorage() !== null) {
+                $userInfo = $auth0->configuration()->getSessionStorage()->get('user') ?? [];
+            }
 
             if (!is_array($userInfo) || empty($userInfo)) {
                 if ($this->logger instanceof LoggerInterface) {
