@@ -18,6 +18,7 @@ use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\Factory\ApplicationFactory;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 
 /**
@@ -52,28 +53,36 @@ class Auth0SessionValidator implements LoggerAwareInterface
         // 1. Get current backend user
         $backendUser = $this->getCurrentBackendUser();
         if (!$backendUser instanceof BackendUserAuthentication) {
-            $this->logger?->debug('No backend user found in session.');
+            if ($this->logger instanceof LoggerInterface) {
+                $this->logger->debug('No backend user found in session.');
+            }
             return false;
         }
 
         // 2. Check if current user is Auth0 user
         $currentUserRecord = $backendUser->user;
         if (!$this->isAuth0User($currentUserRecord)) {
-            $this->logger?->debug('Current user is not an Auth0 user.');
+            if ($this->logger instanceof LoggerInterface) {
+                $this->logger->debug('Current user is not an Auth0 user.');
+            }
             return false;
         }
 
         // 3. Verify Auth0 session is valid
         $applicationUid = $this->configuration->getBackendConnection();
         if (!$this->hasAuth0Session($applicationUid)) {
-            $this->logger?->warning('No valid Auth0 session found.');
+            if ($this->logger instanceof LoggerInterface) {
+                $this->logger->warning('No valid Auth0 session found.');
+            }
             return false;
         }
 
-        $this->logger?->info(sprintf(
-            'Auth0 user %s bypassing sudo mode (valid Auth0 session).',
-            $currentUserRecord['username']
-        ));
+        if ($this->logger instanceof LoggerInterface) {
+            $this->logger->info(sprintf(
+                'Auth0 user %s bypassing sudo mode (valid Auth0 session).',
+                $currentUserRecord['username']
+            ));
+        }
 
         return true;
     }
@@ -113,23 +122,29 @@ class Auth0SessionValidator implements LoggerAwareInterface
             $userInfo = $auth0->configuration()->getSessionStorage()?->get('user') ?? [];
 
             if (!is_array($userInfo) || empty($userInfo)) {
-                $this->logger?->debug('Auth0 session storage is empty.');
+                if ($this->logger instanceof LoggerInterface) {
+                    $this->logger->debug('Auth0 session storage is empty.');
+                }
                 return false;
             }
 
             // Check if session has required identifier (e.g., 'sub')
             $userIdentifier = $this->configuration->getUserIdentifier();
             if (!isset($userInfo[$userIdentifier])) {
-                $this->logger?->debug('Auth0 session missing user identifier.');
+                if ($this->logger instanceof LoggerInterface) {
+                    $this->logger->debug('Auth0 session missing user identifier.');
+                }
                 return false;
             }
 
             return true;
         } catch (\Exception $exception) {
-            $this->logger?->error(sprintf(
-                'Error checking Auth0 session: %s',
-                $exception->getMessage()
-            ));
+            if ($this->logger instanceof LoggerInterface) {
+                $this->logger->error(sprintf(
+                    'Error checking Auth0 session: %s',
+                    $exception->getMessage()
+                ));
+            }
             return false;
         }
     }

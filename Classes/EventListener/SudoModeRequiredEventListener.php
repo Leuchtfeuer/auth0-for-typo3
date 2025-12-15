@@ -30,7 +30,7 @@ class SudoModeRequiredEventListener
 
     public function __construct(
         Auth0SessionValidator $auth0SessionValidator,
-        ExtensionConfiguration $extensionConfiguration,
+        ExtensionConfiguration $extensionConfiguration
     ) {
         $this->auth0SessionValidator = $auth0SessionValidator;
         $this->extensionConfiguration = $extensionConfiguration;
