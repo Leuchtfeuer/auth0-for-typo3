@@ -1,0 +1,35 @@
+.. include:: ../../Includes.txt
+
+===========================
+Version 13.0.3 - 2026/01/07
+===========================
+
+This is a Feature Release with security updates, new configuration for sudo mode bypass,
+password change functionality for Auth0 users, TYPO3 version requirement update, global
+TypoScript provision, and login logo bug fixes.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v13.0.3>`__.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+2025-12-15 Merge pull request #57 from Leuchtfeuer/feature/TER-305 (Commit 3566d66 by bmheins)
+2025-12-12 [TASK] Update copyright headers in PHP files [TER-305] (Commit 35dfd32 by Oliver Heins)
+2025-12-12 [TASK] Update test for sudo mode listener with extension configuration [TER-305] (Commit c576c9e by Oliver Heins)
+2025-12-10 Merge pull request #55 from Leuchtfeuer/feature/TER-305 (Commit 7abfda4 by bmheins)
+2025-12-10 Merge pull request #56 from Leuchtfeuer/security/20251209 (Commit 1c5e8ce by bmheins)
+2025-12-09 [SECURITY] Update dependencies to fix vulnerabilities (Commit ad9c263 by Oliver Heins)
+2025-12-09 [FEATURE] Add configuration option to disable sudo mode bypass [TER-305] (Commit cc9bd95 by Oliver Heins)
+2025-12-02 [FEATURE] Allow password changes for Auth0 users with valid session [TER-305] (Commit 31eb0b2 by Oliver Heins)
+2025-12-02 [TASK] Require TYPO3 13.4.13 or higher [TER-305] (Commit 2557f3d by Oliver Heins)
+2025-12-02 Merge pull request #53 from Leuchtfeuer/bugfix/login-logo (Commit 4dfc6a2 by Niklas Grieger)
+2025-12-02 Merge pull request #54 from Leuchtfeuer/feature/typoscript-globally (Commit fd13a86 by Niklas Grieger)
+2025-07-31 [BUGFIX] Fix typo (Commit fa6b43f by Niklas Grieger)
+2025-07-31 [TASK] Provide TypoScript globally (Commit fc1636a by Niklas Grieger)
+2025-07-22 [BUGFIX] Fix login logo (Commit 0a40fd6 by Niklas Grieger)
