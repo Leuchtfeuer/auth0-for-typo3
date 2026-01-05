@@ -1,0 +1,34 @@
+.. include:: ../../Includes.txt
+
+==========================
+Version 5.0.6 - 2026/01/07
+==========================
+
+This release is a feature release that adds sudo mode configuration options and password change support for Auth0 users,
+while also introducing PHP 7.4 backward compatibility and updating the minimum TYPO3 version requirement to 12.4.32
+when using TYPO3 v12.
+
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v5.0.6>`__.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2025-12-15 Merge pull request #58 from Leuchtfeuer/feature/TER-305-v5 (Commit 0e2af7e by bmheins)
+    2025-12-15 [TASK] Replace str_starts_with() with strpos() for PHP 7.4 compatibility [TER-305] (Commit 1e7d346 by Oliver Heins)
+    2025-12-15 [TASK] Replace nullsafe operator with explicit null check for PHP 7.4 compatibility [TER-305] (Commit 27f99dc by Oliver Heins)
+    2025-12-15 [TASK] Remove PHP 8.0 syntax for PHP 7.4 compatibility [TER-305] (Commit 263ba81 by Oliver Heins)
+    2025-12-12 [TASK] Update TYPO3 version requirement to 12.4.32 for sudo mode [TER-305] (Commit 740792a by Oliver Heins)
+    2025-12-12 [TASK] Replace constructor property promotion for PHP 7.4 compatibility [TER-305] (Commit 982c084 by Oliver Heins)
+    2025-12-12 [TASK] Update copyright headers to company format [TER-305] (Commit d53eba0 by Oliver Heins)
+    2025-12-12 [TASK] Move event listener registration to Services.yaml [TER-305] (Commit 083ec01 by Oliver Heins)
+    2025-12-12 [TASK] Update test for sudo mode listener with extension configuration [TER-305] (Commit 7d63c8f by Oliver Heins)
+    2025-12-09 [TASK] Remove readonly modifier from SudoModeRequiredEventListener [TER-305] (Commit f42f9c6 by Oliver Heins)
+    2025-12-09 [FEATURE] Add configuration option to disable sudo mode bypass [TER-305] (Commit 2f1f4e6 by Oliver Heins)
+    2025-12-02 [FEATURE] Allow password changes for Auth0 users with valid session [TER-305] (Commit d31eac9 by Oliver Heins)
