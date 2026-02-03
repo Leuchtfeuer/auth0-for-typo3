@@ -1,0 +1,52 @@
+.. include:: ../../Includes.txt
+
+==========================
+Version 5.0.7 - 2026/02/04
+==========================
+
+Breaking change: Updated dependency requirements by raising the minimum supported PHP version from 7.4 to 8.1 and bumping auth0/auth0-php and symfony/http-foundation to their secure releases.
+
+This change is required to address security issues fixed upstream (see Security) and may affect projects running on PHP < 8.1.
+
+
+Breaking Changes
+================
+
+* Raised the minimum required PHP version from **7.4** to **8.1**.
+  This is required by updated dependency versions that include important
+  security fixes.
+
+
+Security
+========
+
+* Updated ``auth0/auth0-php`` to a secure version addressing multiple
+  vulnerabilities:
+
+  * GHSA-j2vm-wrq3-f7gf — Improper Audience Validation in Auth0 PHP SDK
+    https://github.com/auth0/auth0-PHP/security/advisories/GHSA-j2vm-wrq3-f7gf
+
+  * GHSA-9mh6-g99m-ppcw — Improper File Type Handling in Bulk User Import in auth0-PHP SDK
+    https://github.com/auth0/auth0-PHP/security/advisories/GHSA-9mh6-g99m-ppcw
+
+* Updated ``symfony/http-foundation`` to a version resolving multiple issues:
+
+  * GHSA-3rg7-wf37-54rm — Incorrect parsing of PATH_INFO can lead to limited authorization bypass
+    https://github.com/advisories/GHSA-3rg7-wf37-54rm
+
+  * GHSA-mrqx-rp3w-jpjp — Open redirect via browser-sanitized URLs
+    https://github.com/advisories/GHSA-mrqx-rp3w-jpjp
+
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v5.0.7>`__.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2026-02-03 [BREAKING] Bump auth0/auth0-php to 8.18.0 and PHP minimal version to 8.1 (Commit b312be0 by Oliver Heins)
