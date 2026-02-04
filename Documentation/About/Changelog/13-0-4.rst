@@ -1,0 +1,20 @@
+.. include:: ../../Includes.txt
+
+===========================
+Version 13.0.4 - 2026/02/04
+===========================
+
+This is a Security Release with a security updates.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v13.0.4>`__.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2026-02-03 Bump auth0/auth0-php from 8.14.0 to 8.18.0 in /Libraries and from 8.17.0 to 8.18.0 in / (Commit 62a33fb by Oliver Heins)
