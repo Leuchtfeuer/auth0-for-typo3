@@ -7,7 +7,7 @@
                project-contact="mailto:dev@Leuchtfeuer.com"
                project-repository="https://github.com/Leuchtfeuer/auth0-for-typo3"
                project-issues="https://github.com/Leuchtfeuer/auth0-for-typo3/issues"
-               edit-on-github-branch="master"
+               edit-on-github-branch="main"
                edit-on-github="Leuchtfeuer/auth0-for-typo3"
                interlink-shortcode="leuchtfeuer/auth0"
                typo3-core-preferred="stable"/>
