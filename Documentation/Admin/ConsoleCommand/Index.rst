@@ -17,6 +17,7 @@ Method            Description
 disable           Disables the user (sets the disabled flag to true). This is the default value.
 delete            Deletes the user (sets the deleted flag to true). The record still exists in the database.
 deleteIrrevocable Removes the user irrevocable from the database.
+================= ==========================================================================================
 
 You can execute the command controller via CLI:
 
