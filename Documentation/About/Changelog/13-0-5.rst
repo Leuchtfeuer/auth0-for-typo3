@@ -1,0 +1,23 @@
+.. include:: ../../Includes.txt
+
+===========================
+Version 13.0.5 - 2026/04/08
+===========================
+
+This is a Maintenance Release with a security update and a fix for the documentation build chain.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v13.0.5>`__.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2026-04-01 Bump auth0/auth0-php from 8.18.0 to 8.19.0 in /Libraries (Commit 3159adb by dependabot[bot])
+    2026-04-01 Merge pull request #64 from Leuchtfeuer/feature/TER-417 (Commit 934708d by Ines Willenbrock)
+    2026-03-31 [TASK] Fix branch in guides.xml [TER-417][TER-421] (Commit 421b4aa by Ines Willenbrock)
+    2026-03-31 [TASK] Change rendering to PHP based rendering [TER-417][TER-421] (Commit 7c54a54 by Ines Willenbrock)
