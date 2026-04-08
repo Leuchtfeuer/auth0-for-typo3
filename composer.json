@@ -38,7 +38,7 @@
     ],
     "homepage": "https://www.Leuchtfeuer.com",
     "require": {
-        "auth0/auth0-php": "^8.18.0",
+        "auth0/auth0-php": "^8.19.0",
         "lcobucci/jwt": "^5.1",
         "symfony/http-foundation": "^6.2 || ^v7.3.7",
         "symfony/property-access": "^6.2 || ^7.1.4",
