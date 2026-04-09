@@ -1,0 +1,39 @@
+.. include:: ../../Includes.txt
+
+==========================
+Version 5.2.0 - 2026/04/09
+==========================
+
+Breaking change: Updated dependency requirements by raising the minimum supported PHP version from 8.1 to 8.2 and bumping auth0/auth0-php to its secure release.
+
+This change is required to address security issues fixed upstream (see Security) and may affect projects running on PHP < 8.2.
+
+
+Breaking Changes
+================
+
+* Raised the minimum required PHP version from **8.1** to **8.2**.
+  This is required by updated dependency versions that include important
+  security fixes.
+
+
+Security
+========
+
+* Updated ``auth0/auth0-php`` to a secure version addressing this vulnerability:
+
+  * GHSA-w3wc-44p4-m4j7 — Auth0 PHP SDK has Insufficient Entropy in Cookie Encryption
+    https://github.com/advisories/GHSA-w3wc-44p4-m4j7
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v5.2.0>`__.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2026-04-09 [BREAKING] Fix CVE-2026-34236: bump auth0/auth0-php to 8.19.0 [TER-427] (Commit 244e411 by Oliver Heins)
