@@ -4,27 +4,27 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "385bbc7e09790b77121cfb7b7e070cc4",
+    "content-hash": "bb29f55500d5c582a61ea12fcdeaf370",
     "packages": [
         {
             "name": "auth0/auth0-php",
-            "version": "8.18.0",
+            "version": "8.19.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/auth0/auth0-PHP.git",
-                "reference": "0d78289d9ed0028e8832aca664d3c25d164972a1"
+                "reference": "043ddd31e75ce383c6060c30c683cfa3b5dd8c3b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/auth0/auth0-PHP/zipball/0d78289d9ed0028e8832aca664d3c25d164972a1",
-                "reference": "0d78289d9ed0028e8832aca664d3c25d164972a1",
+                "url": "https://api.github.com/repos/auth0/auth0-PHP/zipball/043ddd31e75ce383c6060c30c683cfa3b5dd8c3b",
+                "reference": "043ddd31e75ce383c6060c30c683cfa3b5dd8c3b",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-mbstring": "*",
                 "ext-openssl": "*",
-                "php": "^8.1",
+                "php": "^8.2",
                 "php-http/multipart-stream-builder": "^1",
                 "psr-discovery/all": "^1",
                 "psr/http-client-implementation": "^1",
@@ -35,7 +35,7 @@
                 "ergebnis/composer-normalize": "~2.43.0",
                 "friendsofphp/php-cs-fixer": "~3.59.0",
                 "mockery/mockery": "~1.6.0",
-                "pestphp/pest": "~2.34.0",
+                "pestphp/pest": "~2.36.0",
                 "phpstan/phpstan": "~1.11.0",
                 "phpstan/phpstan-strict-rules": "~1.6.0",
                 "psr-mock/http": "~1.0.0",
@@ -101,9 +101,9 @@
             ],
             "support": {
                 "issues": "https://github.com/auth0/auth0-PHP/issues",
-                "source": "https://github.com/auth0/auth0-PHP/tree/8.18.0"
+                "source": "https://github.com/auth0/auth0-PHP/tree/8.19.0"
             },
-            "time": "2025-12-16T12:30:04+00:00"
+            "time": "2026-04-01T10:26:14+00:00"
         },
         {
             "name": "composer/semver",
@@ -2473,7 +2473,7 @@
     "platform": [],
     "platform-dev": [],
     "platform-overrides": {
-        "php": "8.1.0"
+        "php": "8.2.0"
     },
     "plugin-api-version": "2.6.0"
 }
