@@ -18,6 +18,7 @@ use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
 use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
+use TYPO3\CMS\Backend\Template\Components\ComponentFactory;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\Imaging\IconFactory;
@@ -33,7 +34,8 @@ class BackendController extends ActionController
         protected readonly BackendUserGroupRepository $backendUserGroupRepository,
         protected readonly ModuleTemplateFactory $moduleTemplateFactory,
         protected readonly IconFactory $iconFactory,
-        protected readonly BackendUriBuilder $backendUriBuilder
+        protected readonly BackendUriBuilder $backendUriBuilder,
+        protected readonly ComponentFactory $componentFactory
     ) {}
 
     public function listAction(): ResponseInterface
@@ -53,7 +55,7 @@ class BackendController extends ActionController
 
     protected function createMenu(ModuleTemplate $moduleTemplate): void
     {
-        $menu = $moduleTemplate->getDocHeaderComponent()->getMenuRegistry()->makeMenu();
+        $menu = $this->componentFactory->createMenu();
         $menu->setIdentifier('auth0');
 
         $actions = [
@@ -77,7 +79,7 @@ class BackendController extends ActionController
         foreach ($actions as $action) {
             $isActive = $this->request->getControllerName() === $action['controller'];
             $menu->addMenuItem(
-                $menu->makeMenuItem()
+                $this->componentFactory->createMenuItem()
                     ->setTitle($this->getTranslation($action['label']))
                     ->setHref(
                         $this->uriBuilder->reset()->uriFor(
@@ -96,7 +98,7 @@ class BackendController extends ActionController
     {
         $buttonBar = $moduleTemplate->getDocHeaderComponent()->getButtonBar();
 
-        $listButton = $buttonBar->makeLinkButton()
+        $listButton = $this->componentFactory->createLinkButton()
             ->setTitle($this->getTranslation('menu.button.overview'))
             ->setHref($this->uriBuilder->reset()->uriFor('list', [], 'Backend'))
             ->setIcon($this->iconFactory->getIcon('actions-viewmode-tiles', IconSize::SMALL));
@@ -112,7 +114,7 @@ class BackendController extends ActionController
     ): void {
         $buttonBar = $moduleTemplate->getDocHeaderComponent()->getButtonBar();
 
-        $linkButton = $buttonBar->makeLinkButton()
+        $linkButton = $this->componentFactory->createLinkButton()
             ->setTitle($this->getTranslation($label))
             ->setHref($this->uriBuilder->reset()->uriFor($actionName, [], $controllerName))
             ->setIcon($this->iconFactory->getIcon($icon, IconSize::SMALL));
