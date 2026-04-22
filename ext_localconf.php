@@ -63,3 +63,14 @@ if ($subtypes !== []) {
     );
 }
 
+ExtensionManagementUtility::addTypoScript(
+    'auth0',
+    'constants',
+    "@import 'EXT:auth0/Configuration/TypoScript/constants.typoscript'",
+);
+
+ExtensionManagementUtility::addTypoScript(
+    'auth0',
+    'setup',
+    "@import 'EXT:auth0/Configuration/TypoScript/setup.typoscript'",
+);
