@@ -13,9 +13,11 @@ declare(strict_types=1);
 
 namespace Leuchtfeuer\Auth0\EventListener;
 
+use TYPO3\CMS\Core\Attribute\AsEventListener;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\Authentication\Event\BeforeUserLogoutEvent;
 
+#[AsEventListener(identifier: 'auth0BeforeUserLogoutEvent')]
 class BeforeUserLogoutEventListener
 {
     public function __construct(protected Responsibility $responsibility) {}

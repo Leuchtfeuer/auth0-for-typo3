@@ -14,9 +14,11 @@ declare(strict_types=1);
 namespace Leuchtfeuer\Auth0\EventListener;
 
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
+use TYPO3\CMS\Core\Attribute\AsEventListener;
 use TYPO3\CMS\Core\Authentication\Event\AfterUserLoggedOutEvent;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+#[AsEventListener(identifier: 'auth0AfterUserLoggedOutEvent')]
 class AfterUserLoggedOutEventListener
 {
     public function __construct(protected Responsibility $responsibility) {}

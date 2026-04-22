@@ -54,7 +54,7 @@ class Auth0SessionValidator implements LoggerAwareInterface
 
         // 2. Check if current user is Auth0 user
         $currentUserRecord = $backendUser->user;
-        if (!$this->isAuth0User($currentUserRecord)) {
+        if ($currentUserRecord === null || !$this->isAuth0User($currentUserRecord)) {
             $this->logger?->debug('Current user is not an Auth0 user.');
             return false;
         }

@@ -278,7 +278,6 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     }
 
     /**
-     * @deprecated
      * @extensionScannerIgnoreLine
      */
     public function render(StandaloneView $view, PageRenderer $pageRenderer, LoginController $loginController): void
