@@ -1,0 +1,22 @@
+.. include:: ../../Includes.txt
+
+===========================
+Version 13.0.6 - 2026/04/22
+===========================
+
+This is a maintenance release.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v13.0.6>`__.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2026-04-22 [TASK] Update symfony/* dependencies to v7.4.8 and polyfills to v1.36.0 [TER-453] [TER-432] (Commit ddb68d4 by Oliver Heins)
+    2026-04-22 [TASK] Apply Rector/Fractor for TYPO3 13 [TER-453] [TER-449] (Commit 48592eb by Oliver Heins)
+    2026-04-22 [TASK] TYPO3 13 Phase 1 cleanup [TER-453] [TER-449] (Commit 529c89a by Oliver Heins)
