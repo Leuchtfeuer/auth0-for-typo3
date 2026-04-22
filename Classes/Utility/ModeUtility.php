@@ -19,25 +19,19 @@ class ModeUtility
     public const BACKEND_MODE = 'BE';
     public const UNKONWN_MODE = 'UNKNOWN';
 
-    public static function isBackend(?string $mode = null): bool
+    public static function isBackend(?string $mode = null, ?ServerRequestInterface $request = null): bool
     {
         if (!$mode) {
-            $mode = self::getModeFromRequest();
+            $mode = $request !== null ? self::getModeFromRequest($request) : self::UNKONWN_MODE;
         }
 
         return $mode === self::BACKEND_MODE;
     }
 
-    public static function getModeFromRequest(): string
+    public static function getModeFromRequest(ServerRequestInterface $request): string
     {
-        $request = self::getRequest();
-        return $request instanceof ServerRequestInterface && ApplicationType::fromRequest($request)->isBackend()
+        return ApplicationType::fromRequest($request)->isBackend()
             ? self::BACKEND_MODE
             : self::UNKONWN_MODE;
-    }
-
-    private static function getRequest(): ?ServerRequestInterface
-    {
-        return $GLOBALS['TYPO3_REQUEST'] ?? null;
     }
 }

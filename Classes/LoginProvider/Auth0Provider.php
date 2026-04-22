@@ -67,6 +67,8 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     protected RenderingContextInterface $renderingContext;
 
+    protected ServerRequestInterface $currentRequest;
+
     public function __construct(
         protected readonly ApplicationRepository $applicationRepository,
         protected readonly PageRenderer $pageRenderer,
@@ -88,6 +90,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
      */
     public function modifyView(ServerRequestInterface $request, ViewInterface $view): string
     {
+        $this->currentRequest = $request;
         $this->initialize();
 
         $this->logger?->notice('Auth0 login is used.');
@@ -272,7 +275,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     private function getRequest(): ServerRequestInterface
     {
-        return $GLOBALS['TYPO3_REQUEST'];
+        return $this->currentRequest;
     }
 
 }
