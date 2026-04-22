@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the "Auth0" extension for TYPO3 CMS.
  *

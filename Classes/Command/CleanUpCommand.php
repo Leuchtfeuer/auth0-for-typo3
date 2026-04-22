@@ -149,7 +149,7 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
             ->executeQuery()
             ->fetchAllAssociative();
 
-        return !empty($this->users);
+        return $this->users !== [];
     }
 
     /**

@@ -76,8 +76,6 @@ class Auth0SessionValidator implements LoggerAwareInterface
 
     /**
      * Get the current backend user from global context.
-     *
-     * @return BackendUserAuthentication|null
      */
     protected function getCurrentBackendUser(): ?BackendUserAuthentication
     {
@@ -108,7 +106,7 @@ class Auth0SessionValidator implements LoggerAwareInterface
             $auth0 = ApplicationFactory::build($applicationUid, ApplicationFactory::SESSION_PREFIX_BACKEND);
             $userInfo = $auth0->configuration()->getSessionStorage()?->get('user') ?? [];
 
-            if (!is_array($userInfo) || empty($userInfo)) {
+            if (!is_array($userInfo) || $userInfo === []) {
                 $this->logger?->debug('Auth0 session storage is empty.');
                 return false;
             }

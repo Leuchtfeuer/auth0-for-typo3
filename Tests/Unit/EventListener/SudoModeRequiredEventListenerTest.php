@@ -15,6 +15,7 @@ namespace Leuchtfeuer\Auth0\Tests\Unit\EventListener;
 
 use Leuchtfeuer\Auth0\EventListener\SudoModeRequiredEventListener;
 use Leuchtfeuer\Auth0\Service\Auth0SessionValidator;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use TYPO3\CMS\Backend\Security\SudoMode\Access\AccessClaim;
 use TYPO3\CMS\Backend\Security\SudoMode\Event\SudoModeRequiredEvent;
@@ -47,9 +48,7 @@ class SudoModeRequiredEventListenerTest extends TestCase
         );
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testBypassesWhenValidAuth0Session(): void
     {
         // Create real event with mocked claim
@@ -66,9 +65,7 @@ class SudoModeRequiredEventListenerTest extends TestCase
         self::assertFalse($event->isVerificationRequired());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testDoesNotBypassWhenNoValidSession(): void
     {
         // Create real event with mocked claim
@@ -85,9 +82,7 @@ class SudoModeRequiredEventListenerTest extends TestCase
         self::assertTrue($event->isVerificationRequired());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testDoesNothingWhenVerificationAlreadyDenied(): void
     {
         // Create real event with verification already denied

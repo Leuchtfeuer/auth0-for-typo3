@@ -63,7 +63,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         $userRepository->setMaxResults(1);
         $user = $userRepository->getUserByAuth0Id($auth0UserId);
 
-        if (!empty($user)) {
+        if ($user !== null && $user !== []) {
             $userRepository = $this->userRepositoryFactory->create($tableName);
             $userRepository->updateUserByUid(['disable' => 0, 'deleted' => 0], (int)$user['uid']);
 

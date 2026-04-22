@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Leuchtfeuer\Auth0\Controller\ApplicationController;
 use Leuchtfeuer\Auth0\Controller\BackendController;
 use Leuchtfeuer\Auth0\Controller\PropertyController;
