@@ -126,13 +126,13 @@ class BackendController extends ActionController
     protected function getModuleUrl(bool $encoded = true, string $referenceType = BackendUriBuilder::ABSOLUTE_PATH): string
     {
         $parameters = [
-            'tx_auth0_tools_auth0auth0' => [
+            'tx_auth0_auth0' => [
                 'action' => $this->request->getControllerActionName(),
                 'controller' => $this->request->getControllerName(),
             ],
         ];
 
-        $uri = $this->backendUriBuilder->buildUriFromRoute('tools_Auth0Auth0', $parameters, $referenceType);
+        $uri = $this->backendUriBuilder->buildUriFromRoute('Auth0', $parameters, $referenceType);
 
         return $encoded ? rawurlencode($uri) : $uri;
     }
