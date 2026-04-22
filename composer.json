@@ -1,6 +1,6 @@
 {
     "name": "leuchtfeuer/auth0",
-    "description": "Auth0 is the solution you need for web, mobile, IoT, and internal applications. Loved by developers and trusted by enterprises.",
+    "description": "Auth0 for TYPO3 - Auth0 is the solution you need for web, mobile, IoT, and internal applications. Loved by developers and trusted by enterprises.",
     "license": "GPL-2.0-or-later",
     "type": "typo3-cms-extension",
     "keywords": [
