@@ -20,14 +20,15 @@ The full documentation for the latest releases can be found [here](https://docs.
 You need access to an [Auth0](https://auth0.com/) instance.  
 We are currently supporting following TYPO3 versions:<br><br>
 
-| Extension Version | TYPO3 v13 Support | TYPO3 v12 Support | TYPO3 v11 Support | TYPO3 v10 Support | TYPO3 v9 Support | TYPO3 v8 Support |
-|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:----------------:|:----------------:|
-|       13.x        |         x         |         -         |         -         |         -         |        -         |         -        |
-|        5.x        |         -         |         x         |         x         |         -         |        -         |        -         |
-|        4.x        |         -         |         -         |         x         |         x         |        -         |        -         |
-|        3.x        |         -         |         -         |         -         |         x         |        x         |                  |
-|        2.x        |         -         |         -         |         -         |         -         |        x         |                  |
-|        1.x        |         -         |         -         |         -         |         -         |        -         |        x         |
+| Extension Version | TYPO3 v14 Support | TYPO3 v13 Support | TYPO3 v12 Support | TYPO3 v11 Support | TYPO3 v10 Support | TYPO3 v9 Support | TYPO3 v8 Support |
+|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:-----------------:|:----------------:|:----------------:|
+|       14.x        |         x         |         -         |         -         |         -         |         -         |        -         |        -         |
+|       13.x        |         -         |         x         |         -         |         -         |         -         |        -         |        -         |
+|        5.x        |         -         |         -         |         x         |         x         |         -         |        -         |        -         |
+|        4.x        |         -         |         -         |         -         |         x         |         x         |        -         |        -         |
+|        3.x        |         -         |         -         |         -         |         -         |         x         |        x         |        -         |
+|        2.x        |         -         |         -         |         -         |         -         |         -         |        x         |        -         |
+|        1.x        |         -         |         -         |         -         |         -         |         -         |        -         |        x         |
 
 _Alpha support for TYPO3 v12.4 is available since version 5.0.0-alpha._
 

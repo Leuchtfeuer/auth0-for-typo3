@@ -56,7 +56,7 @@ class UpdateUtility implements LoggerAwareInterface
         $groupMapping = $this->getGroupMappingFromDatabase();
         $this->addDefaultGroup($groupMapping);
 
-        if (empty($groupMapping)) {
+        if ($groupMapping === []) {
             /** @extensionScannerIgnoreLine */
             $this->logger?->error(sprintf('Cannot update user groups: No role mapping for %s found', $this->tableName));
 
@@ -71,7 +71,7 @@ class UpdateUtility implements LoggerAwareInterface
         $this->mapRoles($groupMapping, $groupsToAssign, $isBackendAdmin, $shouldUpdate);
 
         // Update user only if necessary
-        if ($shouldUpdate === true) {
+        if ($shouldUpdate) {
             $this->logger?->notice('Update user groups.');
             $this->performGroupUpdate($groupsToAssign, $isBackendAdmin);
         }

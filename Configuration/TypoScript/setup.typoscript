@@ -1,27 +1,3 @@
-plugin.tx_auth0 {
-    view {
-        layoutRootPaths {
-            0 = EXT:auth0/Resources/Private/Layouts/
-            10 = {$plugin.tx_auth0.view.layoutRootPath}
-        }
-
-        templateRootPaths {
-            0 = EXT:auth0/Resources/Private/Templates/
-            10 = {$plugin.tx_auth0.view.templateRootPath}
-        }
-
-        partialRootPaths {
-            0 = EXT:auth0/Resources/Private/Partials/
-            10 = {$plugin.tx_auth0.view.partialRootPath}
-        }
-    }
-
-    persistence.storagePid = {$plugin.tx_auth0.persistence.storagePid}
-
-    settings {
-    }
-}
-
 module.tx_auth0 {
     view {
         layoutRootPaths {

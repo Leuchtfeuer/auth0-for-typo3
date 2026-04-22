@@ -20,7 +20,7 @@ class ParametersUtility
      */
     public static function transformUrlParameters(?string $url): array
     {
-        if ($url === null || $url === '' || $url === '0') {
+        if (in_array($url, [null, '', '0'], true)) {
             return [];
         }
 

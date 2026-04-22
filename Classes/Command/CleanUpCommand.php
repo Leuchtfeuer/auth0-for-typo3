@@ -21,6 +21,7 @@ use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\Factory\ApplicationFactory;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -29,6 +30,7 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 
+#[AsCommand(name: 'auth0:cleanupusers', description: 'Disable or remove obsolete website users.')]
 class CleanUpCommand extends Command implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
@@ -147,7 +149,7 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
             ->executeQuery()
             ->fetchAllAssociative();
 
-        return !empty($this->users);
+        return $this->users !== [];
     }
 
     /**

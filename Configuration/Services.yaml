@@ -7,29 +7,11 @@ services:
   Leuchtfeuer\Auth0\:
     resource: '../Classes/*'
 
-  Leuchtfeuer\Auth0\Command\CleanUpCommand:
-    tags:
-      - name: 'console.command'
-        command: 'auth0:cleanupusers'
-        description: 'Disable or remove obsolete website users.'
-
   Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository:
     public: true
 
   Leuchtfeuer\Auth0\Domain\Repository\UserRepositoryFactory:
     public: true
-
-  Leuchtfeuer\Auth0\EventListener\AfterPackageActivationEventListener:
-    tags:
-      - name: event.listener
-        identifier: auth0AfterPackageActivationEvent
-        event: TYPO3\CMS\Core\Package\Event\AfterPackageActivationEvent
-
-  Leuchtfeuer\Auth0\EventListener\BeforeUserLogoutEventListener:
-    tags:
-      - name: event.listener
-        identifier: auth0BeforePackageActivationEvent
-        event: Leuchtfeuer\Auth0\EventListener\BeforeUserLogoutEvent
 
   Leuchtfeuer\Auth0\Service\AuthenticationService:
     public: true

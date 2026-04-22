@@ -130,7 +130,7 @@ class EmAuth0Configuration implements SingletonInterface
 
     public function useKeyFiles(): bool
     {
-        return !empty($this->publicKeyFile) && !empty($this->privateKeyFile);
+        return $this->publicKeyFile !== '' && $this->publicKeyFile !== '0' && ($this->privateKeyFile !== '' && $this->privateKeyFile !== '0');
     }
 
     public function getUserIdentifier(): string

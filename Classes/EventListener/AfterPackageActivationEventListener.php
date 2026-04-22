@@ -13,9 +13,11 @@ declare(strict_types=1);
 
 namespace Leuchtfeuer\Auth0\EventListener;
 
+use TYPO3\CMS\Core\Attribute\AsEventListener;
 use TYPO3\CMS\Core\Configuration\ConfigurationManager;
 use TYPO3\CMS\Core\Package\Event\AfterPackageActivationEvent;
 
+#[AsEventListener(identifier: 'auth0AfterPackageActivationEvent')]
 class AfterPackageActivationEventListener
 {
     /**

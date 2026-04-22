@@ -15,6 +15,7 @@ namespace Leuchtfeuer\Auth0\Tests\Unit\Service;
 
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\Service\Auth0SessionValidator;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 
@@ -54,9 +55,7 @@ class Auth0SessionValidatorTest extends TestCase
         parent::tearDown();
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testReturnsFalseWhenNoBackendUser(): void
     {
         unset($GLOBALS['BE_USER']);
@@ -66,9 +65,7 @@ class Auth0SessionValidatorTest extends TestCase
         self::assertFalse($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testReturnsFalseWhenUserNotAuth0User(): void
     {
         $backendUser = $this->createMock(BackendUserAuthentication::class);
@@ -85,9 +82,7 @@ class Auth0SessionValidatorTest extends TestCase
         self::assertFalse($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testReturnsFalseWhenAuth0UserIdIsNull(): void
     {
         $backendUser = $this->createMock(BackendUserAuthentication::class);
@@ -104,9 +99,7 @@ class Auth0SessionValidatorTest extends TestCase
         self::assertFalse($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testReturnsTrueWhenAuth0SessionIsValid(): void
     {
         // Setup backend user with Auth0 authentication
@@ -137,9 +130,7 @@ class Auth0SessionValidatorTest extends TestCase
         self::assertTrue($result);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function testReturnsFalseWhenAuth0SessionCheckFails(): void
     {
         // Setup backend user with Auth0 authentication
