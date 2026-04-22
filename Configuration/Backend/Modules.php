@@ -9,12 +9,11 @@ use Leuchtfeuer\Auth0\Controller\RoleController;
 
 return [
     'Auth0' => [
-        'parent' => 'system',
-        'position' => ['after' => 'web_info'],
+        'parent' => 'admin',
         'access' => 'admin',
         'workspaces' => 'live',
         'iconIdentifier' => 'moduleAuth0',
-        'path' => '/module/system/auth0',
+        'path' => '/module/admin/auth0',
         'labels' => 'LLL:EXT:auth0/Resources/Private/Language/locallang_mod.xlf',
         'extensionName' => 'auth0',
         'controllerActions' => [
