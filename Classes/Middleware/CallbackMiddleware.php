@@ -24,6 +24,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Http\RedirectResponse;
 use TYPO3\CMS\Core\Http\Response;
 
@@ -48,7 +49,7 @@ class CallbackMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        $this->tokenUtility->setIssuer($request->getAttribute('normalizedParams')->getRequestHost());
+        $this->tokenUtility->setIssuer(($request->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getRequestHost());
 
         if (!$this->tokenUtility->verifyToken((string)($request->getQueryParams()[self::TOKEN_PARAMETER] ?? null))) {
             return new Response('php://temp', 400);

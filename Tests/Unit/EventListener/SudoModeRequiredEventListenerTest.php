@@ -27,77 +27,56 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 class SudoModeRequiredEventListenerTest extends TestCase
 {
     protected SudoModeRequiredEventListener $subject;
-    protected Auth0SessionValidator $sessionValidator;
     protected ExtensionConfiguration $extensionConfiguration;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->sessionValidator = $this->createMock(Auth0SessionValidator::class);
-        $this->extensionConfiguration = $this->createMock(ExtensionConfiguration::class);
-
-        // Configure extension configuration to not disable sudo mode bypass
-        $this->extensionConfiguration->method('get')
-            ->with('auth0', 'disableSudoModeBypass')
-            ->willReturn(false);
-
-        $this->subject = new SudoModeRequiredEventListener(
-            $this->sessionValidator,
-            $this->extensionConfiguration
-        );
+        $this->extensionConfiguration = self::createStub(ExtensionConfiguration::class);
+        $this->extensionConfiguration->method('get')->willReturn(false);
     }
 
     #[Test]
     public function testBypassesWhenValidAuth0Session(): void
     {
-        // Create real event with mocked claim
-        $claim = $this->createMock(AccessClaim::class);
-        $event = new SudoModeRequiredEvent($claim);
+        $sessionValidator = self::createStub(Auth0SessionValidator::class);
+        $sessionValidator->method('hasValidAuth0Session')->willReturn(true);
 
-        // Configure session validator to allow bypass
-        $this->sessionValidator->method('hasValidAuth0Session')->willReturn(true);
+        $this->subject = new SudoModeRequiredEventListener($sessionValidator, $this->extensionConfiguration);
 
-        // Invoke event listener
+        $event = new SudoModeRequiredEvent(self::createStub(AccessClaim::class));
         ($this->subject)($event);
 
-        // Verify sudo mode was bypassed (state verification instead of mock expectation)
         self::assertFalse($event->isVerificationRequired());
     }
 
     #[Test]
     public function testDoesNotBypassWhenNoValidSession(): void
     {
-        // Create real event with mocked claim
-        $claim = $this->createMock(AccessClaim::class);
-        $event = new SudoModeRequiredEvent($claim);
+        $sessionValidator = self::createStub(Auth0SessionValidator::class);
+        $sessionValidator->method('hasValidAuth0Session')->willReturn(false);
 
-        // Configure session validator to reject
-        $this->sessionValidator->method('hasValidAuth0Session')->willReturn(false);
+        $this->subject = new SudoModeRequiredEventListener($sessionValidator, $this->extensionConfiguration);
 
-        // Invoke event listener
+        $event = new SudoModeRequiredEvent(self::createStub(AccessClaim::class));
         ($this->subject)($event);
 
-        // Verify sudo mode was NOT bypassed (still required)
         self::assertTrue($event->isVerificationRequired());
     }
 
     #[Test]
     public function testDoesNothingWhenVerificationAlreadyDenied(): void
     {
-        // Create real event with verification already denied
-        $claim = $this->createMock(AccessClaim::class);
-        $event = new SudoModeRequiredEvent($claim);
-        $event->setVerificationRequired(false); // Pre-set to denied
+        $sessionValidator = $this->createMock(Auth0SessionValidator::class);
+        $sessionValidator->expects(self::never())->method('hasValidAuth0Session');
 
-        // Expect session validator NOT to be called (early return in listener)
-        $this->sessionValidator->expects(self::never())
-            ->method('hasValidAuth0Session');
+        $this->subject = new SudoModeRequiredEventListener($sessionValidator, $this->extensionConfiguration);
 
-        // Invoke event listener
+        $event = new SudoModeRequiredEvent(self::createStub(AccessClaim::class));
+        $event->setVerificationRequired(false);
         ($this->subject)($event);
 
-        // Verify verification requirement unchanged (still false)
         self::assertFalse($event->isVerificationRequired());
     }
 }

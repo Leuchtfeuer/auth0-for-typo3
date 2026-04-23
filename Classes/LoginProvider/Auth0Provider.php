@@ -27,6 +27,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\LoginProvider\LoginProviderInterface;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\View\ViewInterface;
@@ -158,7 +159,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     protected function getCallback(?string $redirectUri = ''): string
     {
         $tokenUtility = new TokenUtility();
-        $tokenUtility->setIssuer($this->currentRequest->getAttribute('normalizedParams')->getRequestHost());
+        $tokenUtility->setIssuer(($this->currentRequest->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getRequestHost());
         $tokenUtility->withPayload('environment', ModeUtility::BACKEND_MODE);
         $tokenUtility->withPayload('application', $this->configuration->getBackendConnection());
 
@@ -251,7 +252,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
      */
     protected function logoutFromAuth0(): void
     {
-        $redirectUri = $this->currentRequest->getAttribute('normalizedParams')->getSiteUrl() . 'typo3/logout';
+        $redirectUri = ($this->currentRequest->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getSiteUrl() . 'typo3/logout';
         if ($this->application?->isSingleLogOut() && $this->configuration->isSoftLogout()) {
             $this->auth0->clear();
             header('Location: ' . $redirectUri);

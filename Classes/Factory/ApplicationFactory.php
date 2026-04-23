@@ -67,10 +67,7 @@ class ApplicationFactory
             'domain' => $application->getDomain(),
             'id_token_alg' => $application->getSignatureAlgorithm(),
             'managementToken' => $managementToken ?? null,
-            'redirectUri' => ($request !== null
-                ? $request->getAttribute('normalizedParams')
-                : NormalizedParams::createFromServerParams($_SERVER)
-            )->getRequestHost() . CallbackMiddleware::PATH,
+            'redirectUri' => ($request?->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getRequestHost() . CallbackMiddleware::PATH,
             'scope' => $scope,
             'sessionStorageId' => sprintf('auth0_session_%s', $context),
         ]);

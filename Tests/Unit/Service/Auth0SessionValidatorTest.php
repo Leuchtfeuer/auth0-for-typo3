@@ -35,7 +35,7 @@ class Auth0SessionValidatorTest extends TestCase
     {
         parent::setUp();
 
-        $this->configuration = $this->createMock(EmAuth0Configuration::class);
+        $this->configuration = self::createStub(EmAuth0Configuration::class);
 
         $this->subject = new Auth0SessionValidator($this->configuration);
 
@@ -68,7 +68,7 @@ class Auth0SessionValidatorTest extends TestCase
     #[Test]
     public function testReturnsFalseWhenUserNotAuth0User(): void
     {
-        $backendUser = $this->createMock(BackendUserAuthentication::class);
+        $backendUser = self::createStub(BackendUserAuthentication::class);
         $backendUser->user = [
             'uid' => 1,
             'username' => 'admin',
@@ -85,7 +85,7 @@ class Auth0SessionValidatorTest extends TestCase
     #[Test]
     public function testReturnsFalseWhenAuth0UserIdIsNull(): void
     {
-        $backendUser = $this->createMock(BackendUserAuthentication::class);
+        $backendUser = self::createStub(BackendUserAuthentication::class);
         $backendUser->user = [
             'uid' => 1,
             'username' => 'regular_user',
@@ -103,7 +103,7 @@ class Auth0SessionValidatorTest extends TestCase
     public function testReturnsTrueWhenAuth0SessionIsValid(): void
     {
         // Setup backend user with Auth0 authentication
-        $backendUser = $this->createMock(BackendUserAuthentication::class);
+        $backendUser = self::createStub(BackendUserAuthentication::class);
         $backendUser->user = [
             'uid' => 2,
             'username' => 'auth0_user',
@@ -134,7 +134,7 @@ class Auth0SessionValidatorTest extends TestCase
     public function testReturnsFalseWhenAuth0SessionCheckFails(): void
     {
         // Setup backend user with Auth0 authentication
-        $backendUser = $this->createMock(BackendUserAuthentication::class);
+        $backendUser = self::createStub(BackendUserAuthentication::class);
         $backendUser->user = [
             'uid' => 3,
             'username' => 'auth0_session_fail_user',

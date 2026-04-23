@@ -313,9 +313,7 @@ class AuthenticationService extends BasicAuthenticationService
             $this->logger?->warning('Could not login user via session as it has no group assigned.');
 
             // TODO: Pass error message for clarification
-            $siteUrl = $this->request !== null
-                ? $this->request->getAttribute('normalizedParams')->getSiteUrl()
-                : NormalizedParams::createFromServerParams($_SERVER)->getSiteUrl();
+            $siteUrl = ($this->request?->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getSiteUrl();
             $this->auth0->logout($siteUrl . 'typo3/logout');
             // Responsible, authentication failed, do NOT check other services
             return 0;

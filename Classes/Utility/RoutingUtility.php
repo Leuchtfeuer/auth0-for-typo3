@@ -16,6 +16,7 @@ namespace Leuchtfeuer\Auth0\Utility;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Routing\PageArguments;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 
@@ -64,7 +65,7 @@ class RoutingUtility implements LoggerAwareInterface
 
             // Base of site configuration might be "/" so we have to prepend the domain
             if (str_starts_with($uri, '/')) {
-                $uri = $this->request->getAttribute('normalizedParams')->getSiteUrl() . ltrim($uri, '/');
+                $uri = ($this->request->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getSiteUrl() . ltrim($uri, '/');
             }
 
             return $uri;
