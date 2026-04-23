@@ -30,17 +30,17 @@ use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;
 use TYPO3\CMS\Core\Authentication\AuthenticationService as BasicAuthenticationService;
 use TYPO3\CMS\Core\Authentication\LoginType;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
+use TYPO3\CMS\Core\Crypto\Random;
 use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Http\NormalizedParams;
 
 class AuthenticationService extends BasicAuthenticationService
 {
     private const BACKEND_AUTHENTICATION = 'BE';
 
     /**
-     * @var array<string, mixed>
+     * @var array<string, mixed>|false
      */
-    protected array $user = [];
+    protected array|false $user = false;
 
     /**
      * @var array<string, mixed>
@@ -51,18 +51,19 @@ class AuthenticationService extends BasicAuthenticationService
 
     protected Auth0 $auth0;
 
-    protected bool $loginViaSession = false;
-
     protected int $application = 0;
 
     protected string $userIdentifier = '';
 
     private bool $auth0Authentication = false;
 
+    protected bool $loginViaSession = false;
+
     private ?ServerRequestInterface $request = null;
 
     public function __construct(
         protected readonly ConnectionPool $connectionPool,
+        protected readonly Random $random,
         protected readonly TokenUtility $tokenUtility,
         protected readonly UpdateUtilityFactory $updateUtilityFactory,
         protected readonly UserUtility $userUtility,
@@ -82,12 +83,7 @@ class AuthenticationService extends BasicAuthenticationService
         // Set default values
         $this->setDefaults($authInfo, $mode, $loginData, $pObj);
 
-        if ($loginData['status'] !== LoginType::LOGIN->value) {
-            return;
-        }
-
-        if (!$this->isAuth0LoginProvider($authInfo['loginType'])) {
-            $this->logger?->debug('Auth0 authentication is not responsible for this request.');
+        if (!$this->isAuth0LoginProvider($authInfo['loginType'] ?? '')) {
             return;
         }
 
@@ -95,24 +91,53 @@ class AuthenticationService extends BasicAuthenticationService
             return;
         }
 
-        if ($this->initApplication($authInfo['loginType']) === false) {
+        if ($this->initApplication($authInfo['loginType'] ?? '') === false) {
             $this->logger?->debug('Initialization of Auth0 application failed.');
             return;
         }
 
         $this->auth0Authentication = true;
 
-        if ($this->loginViaSession) {
-            $this->login['status'] = 'login';
-            $this->handleLogin();
-        } elseif ($this->initializeAuth0Connection()) {
+        if ($this->initializeAuth0Connection()) {
+            if ($this->userInfo !== []) {
+                $this->login['status'] = LoginType::LOGIN->value;
+                $this->loginViaSession = true;
+                if (empty($this->login['uname'])) {
+                    $this->login['uname'] = $this->userInfo['email'] ?? $this->userInfo[$this->userIdentifier] ?? '';
+                }
+            }
             $this->handleLogin();
         }
     }
 
+    /**
+     * @param array<string, mixed> $loginData
+     */
+    public function processLoginData(array &$loginData): bool|int
+    {
+        /**
+         * Note: processLoginData() is called before initAuth() in the TYPO3 lifecycle.
+         * At this point, $this->authInfo and $this->request might not be initialized yet,
+         * which can cause isAuth0LoginProvider() to return false.
+         */
+        $loginType = $this->authInfo['loginType'] ?? '';
+
+        if ($this->isAuth0LoginProvider($loginType)) {
+            // Set username and dummy password to satisfy Core
+            if (empty($loginData['uname'])) {
+                $loginData['uname'] = $this->userInfo['email'] ?? $this->userInfo[$this->userIdentifier] ?? '';
+            }
+            if (empty($loginData['uident_text'])) {
+                $loginData['uident_text'] = $this->random->generateRandomHexString(32);
+            }
+        }
+        return true;
+    }
+
     private function isAuth0LoginProvider(string $loginType): bool
     {
-        $loginProvider = (int)($this->request?->getQueryParams()['loginProvider'] ?? $this->request?->getQueryParams()['loginProvider'] ?? null);
+        $parsedBody = $this->request?->getParsedBody();
+        $loginProvider = (int)($this->request?->getQueryParams()['loginProvider'] ?? (is_array($parsedBody) ? ($parsedBody['loginProvider'] ?? 0) : 0));
         return $loginType === self::BACKEND_AUTHENTICATION && $loginProvider === Auth0Provider::LOGIN_PROVIDER;
     }
 
@@ -238,6 +263,7 @@ class AuthenticationService extends BasicAuthenticationService
             $this->auth0 = ApplicationFactory::build($this->application, $this->authInfo['loginType'], $this->request);
 
             $this->userInfo = $this->auth0->getUser() ?? [];
+            $this->logger?->debug('Auth0 user info in AuthenticationService: ' . (empty($this->userInfo) ? 'empty' : 'found'));
 
             if (!isset($this->userInfo[$this->userIdentifier]) || $this->getAuth0User() === false) {
                 return false;
@@ -265,6 +291,10 @@ class AuthenticationService extends BasicAuthenticationService
             return false;
         }
 
+        if (is_array($this->user) && $this->user !== []) {
+            return $this->user;
+        }
+
         /** @extensionScannerIgnoreLine */
         $user = $this->fetchUserRecord($this->login['uname'], 'auth0_user_id = "' . $this->userInfo[$this->userIdentifier] . '"');
 
@@ -276,16 +306,20 @@ class AuthenticationService extends BasicAuthenticationService
                 // ignore this...
             }
 
-            $this->writelog(255, 3, 3, null, 'Login-attempt from ###IP###, username \'%s\' not found!!', [$this->login['uname']]);
-            $this->logger?->info(
-                sprintf('Login-attempt from username "%s" not found!', $this->login['uname']),
-                [
-                    'REMOTE_ADDR' => $this->authInfo['REMOTE_ADDR'],
-                ]
-            );
+            if (!$this->loginViaSession) {
+                $this->writelog(255, 3, 3, null, 'Login-attempt from ###IP###, username \'%s\' not found!!', [$this->login['uname']]);
+                $this->logger?->info(
+                    sprintf('Login-attempt from username "%s" not found!', $this->login['uname']),
+                    [
+                        'REMOTE_ADDR' => $this->authInfo['REMOTE_ADDR'],
+                    ]
+                );
+            }
         }
 
-        return $user;
+        $this->user = is_array($user) ? $user : false;
+
+        return $this->user;
     }
 
     public function authUser(array $user): int
@@ -300,6 +334,10 @@ class AuthenticationService extends BasicAuthenticationService
             return 100;
         }
 
+        if ($this->loginViaSession) {
+            return 200;
+        }
+
         //        // Do not login if email address is not verified (only available if API is enabled)
         //        // TODO:: Support this even API is disabled
         //        if ($this->auth0User !== null && !$this->auth0User->isEmailVerified()) {
@@ -307,17 +345,6 @@ class AuthenticationService extends BasicAuthenticationService
         //            // Responsible, authentication failed, do NOT check other services
         //            return 0;
         //        }
-
-        // Skip when there is an Auth0 session but the corresponding TYPO3 user has no user group assigned.
-        if (empty($user['usergroup']) && $this->loginViaSession) {
-            $this->logger?->warning('Could not login user via session as it has no group assigned.');
-
-            // TODO: Pass error message for clarification
-            $siteUrl = ($this->request?->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getSiteUrl();
-            $this->auth0->logout($siteUrl . 'typo3/logout');
-            // Responsible, authentication failed, do NOT check other services
-            return 0;
-        }
 
         // Success
         $this->logger?->notice(sprintf('Auth0 User %s (UID: %s) successfully logged in.', $user['auth0_user_id'], $user['uid']));
