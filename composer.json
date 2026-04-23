@@ -37,7 +37,6 @@
         }
     ],
     "homepage": "https://www.Leuchtfeuer.com",
-    "version": "14.0.0",
     "require": {
         "auth0/auth0-php": "^8.19.0",
         "lcobucci/jwt": "^5.1",
@@ -75,6 +74,7 @@
     "extra": {
         "typo3/cms": {
             "extension-key": "auth0",
+            "version": "14.0.0",
             "web-dir": ".Build/web"
         }
     },
