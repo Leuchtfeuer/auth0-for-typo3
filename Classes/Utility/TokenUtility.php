@@ -67,7 +67,6 @@ class TokenUtility implements LoggerAwareInterface
             $this->getKey(self::KEY_TYPE_PRIVATE),
             $this->getKey(self::KEY_TYPE_PUBLIC)
         );
-        $this->config->setValidationConstraints(...$this->getConstraints());
     }
 
     /**
@@ -142,6 +141,8 @@ class TokenUtility implements LoggerAwareInterface
             $this->logger?->warning('Could not parse token.');
             return false;
         }
+
+        $this->config->setValidationConstraints(...$this->getConstraints());
 
         if (!$this->config->validator()->validate($this->token, ...$this->config->validationConstraints())) {
             $this->logger?->warning('Token validation failed.');
