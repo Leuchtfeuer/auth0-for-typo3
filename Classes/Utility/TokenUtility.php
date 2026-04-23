@@ -62,6 +62,7 @@ class TokenUtility implements LoggerAwareInterface
     {
         $this->configuration = new EmAuth0Configuration();
         $this->time = new \DateTimeImmutable();
+        /** @extensionScannerIgnoreLine */
         $this->config = Configuration::forAsymmetricSigner(
             $this->getSigner(),
             $this->getKey(self::KEY_TYPE_PRIVATE),
@@ -92,6 +93,7 @@ class TokenUtility implements LoggerAwareInterface
             throw new \RuntimeException('Issuer must not be empty');
         }
 
+        /** @extensionScannerIgnoreLine */
         $builder = $this->config->builder();
         $builder = $builder->issuedBy($issuer)
             ->permittedFor(CallbackMiddleware::PATH)
@@ -105,7 +107,10 @@ class TokenUtility implements LoggerAwareInterface
             }
         }
 
-        return $builder->getToken($this->getSigner(), $this->getKey(self::KEY_TYPE_PRIVATE));
+        $token = $builder->getToken($this->getSigner(), $this->getKey(self::KEY_TYPE_PRIVATE));
+        $this->payload = [];
+
+        return $token;
     }
 
     public function getIssuer(): string
@@ -134,6 +139,7 @@ class TokenUtility implements LoggerAwareInterface
         }
 
         try {
+            /** @extensionScannerIgnoreLine */
             $this->token = $this->config->parser()->parse($token);
         } catch (\Exception $exception) {
             /** @extensionScannerIgnoreLine */
@@ -142,8 +148,10 @@ class TokenUtility implements LoggerAwareInterface
             return false;
         }
 
-        $this->config->setValidationConstraints(...$this->getConstraints());
+        /** @extensionScannerIgnoreLine */
+        $this->config = $this->config->withValidationConstraints(...$this->getConstraints());
 
+        /** @extensionScannerIgnoreLine */
         if (!$this->config->validator()->validate($this->token, ...$this->config->validationConstraints())) {
             $this->logger?->warning('Token validation failed.');
             return false;
