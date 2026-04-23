@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the "Auth0" extension for TYPO3 CMS.
  *
@@ -22,7 +24,7 @@ class ModeUtility
     public static function isBackend(?string $mode = null, ?ServerRequestInterface $request = null): bool
     {
         if (!$mode) {
-            $mode = $request !== null ? self::getModeFromRequest($request) : self::UNKONWN_MODE;
+            $mode = $request instanceof ServerRequestInterface ? self::getModeFromRequest($request) : self::UNKONWN_MODE;
         }
 
         return $mode === self::BACKEND_MODE;
