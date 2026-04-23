@@ -14,6 +14,7 @@ namespace Leuchtfeuer\Auth0\Factory;
 use Auth0\SDK\Auth0;
 use Auth0\SDK\Configuration\SdkConfiguration;
 use Auth0\SDK\Exception\ConfigurationException;
+use Auth0\SDK\Store\SessionStore;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Leuchtfeuer\Auth0\Domain\Model\Application;
@@ -37,6 +38,7 @@ class ApplicationFactory
      */
     public static function build(int $applicationId, string $context = self::SESSION_PREFIX_BACKEND, ?ServerRequestInterface $request = null): Auth0
     {
+        $sessionStorageId = sprintf('auth0_session_%s', $context);
         $scope = ['openid', 'profile', 'read:current_user'];
         $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationId);
         if ($application === null) {
@@ -69,8 +71,11 @@ class ApplicationFactory
             'managementToken' => $managementToken ?? null,
             'redirectUri' => ($request?->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getRequestHost() . CallbackMiddleware::PATH,
             'scope' => $scope,
-            'sessionStorageId' => sprintf('auth0_session_%s', $context),
         ]);
-        return new Auth0($sdkConfiguration);
+        $auth0 = new Auth0($sdkConfiguration);
+        $auth0->configuration()->setSessionStorage(new SessionStore($auth0->configuration(), $sessionStorageId));
+        $auth0->configuration()->setTransientStorage(new SessionStore($auth0->configuration(), $sessionStorageId . '_transient'));
+
+        return $auth0;
     }
 }
