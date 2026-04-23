@@ -183,9 +183,10 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         $this->setAuth0();
         $userInfo = $this->auth0->configuration()->getSessionStorage()?->get('user') ?? [];
         if (!is_array($userInfo) || $userInfo === []) {
+            $queryParams = $this->getRequest()->getQueryParams();
             try {
                 $this->logger?->notice('Try to get user via Auth0 API');
-                if ($this->auth0->exchange($this->getCallback(), $this->getRequest()->getQueryParams()['code'] ?? null, $this->getRequest()->getQueryParams()['state'] ?? null)) {
+                if (isset($queryParams['code']) && $this->auth0->exchange($this->getCallback(), $queryParams['code'], $queryParams['state'] ?? null)) {
                     $userInfo = $this->auth0->getUser() ?? [];
                 }
             } catch (\Exception $exception) {
