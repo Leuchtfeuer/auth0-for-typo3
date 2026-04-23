@@ -72,7 +72,8 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     public function __construct(
         protected readonly ApplicationRepository $applicationRepository,
         protected readonly PageRenderer $pageRenderer,
-        protected readonly ConfigurationManager $configurationManager
+        protected readonly ConfigurationManager $configurationManager,
+        protected readonly TokenUtility $tokenUtility,
     ) {}
 
     protected function initialize(): void
@@ -92,6 +93,8 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     {
         $this->currentRequest = $request;
         $this->initialize();
+
+        $this->tokenUtility->setIssuer(($request->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getRequestHost());
 
         $this->logger?->notice('Auth0 login is used.');
         $this->renderingContext = $this->getRenderingContext($view);
@@ -122,6 +125,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
         // Assign variables and Auth0 response to view
         $view->assignMultiple([
+            'loginProviderIdentifier' => self::LOGIN_PROVIDER,
             'auth0Error' => $this->getRequest()->getQueryParams()['error'] ?? null,
             'auth0ErrorDescription' => $this->getRequest()->getQueryParams()['error_description'] ?? null,
             'code' => $this->getRequest()->getQueryParams()['code'] ?? null,
@@ -158,21 +162,19 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     protected function getCallback(?string $redirectUri = ''): string
     {
-        $tokenUtility = new TokenUtility();
-        $tokenUtility->setIssuer(($this->currentRequest->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getRequestHost());
-        $tokenUtility->withPayload('environment', ModeUtility::BACKEND_MODE);
-        $tokenUtility->withPayload('application', $this->configuration->getBackendConnection());
+        $this->tokenUtility->withPayload('environment', ModeUtility::BACKEND_MODE);
+        $this->tokenUtility->withPayload('application', $this->configuration->getBackendConnection());
 
         if ($redirectUri !== '') {
-            $tokenUtility->withPayload('redirectUri', $redirectUri);
+            $this->tokenUtility->withPayload('redirectUri', $redirectUri);
         }
 
         return sprintf(
             '%s%s?%s=%s',
-            $tokenUtility->getIssuer(),
+            $this->tokenUtility->getIssuer(),
             CallbackMiddleware::PATH,
             CallbackMiddleware::TOKEN_PARAMETER,
-            $tokenUtility->buildToken()->toString()
+            $this->tokenUtility->buildToken()->toString()
         );
     }
 
@@ -189,6 +191,8 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
                 $this->logger?->notice('Try to get user via Auth0 API');
                 if (isset($queryParams['code']) && $this->auth0->exchange($this->getCallback(), $queryParams['code'], $queryParams['state'] ?? null)) {
                     $userInfo = $this->auth0->getUser() ?? [];
+                } else {
+                    $this->logger?->notice('Exchange failed or no code present');
                 }
             } catch (\Exception $exception) {
                 $this->logger?->critical($exception->getMessage());

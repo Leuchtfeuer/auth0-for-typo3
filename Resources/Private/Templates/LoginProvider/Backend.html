@@ -25,6 +25,7 @@
 						<strong>{userInfo.nickname}</strong> 👋
 					</p>
 					<div class="form-group" id="t3-login-submit-section">
+						<input type="hidden" name="loginProvider" value="{loginProviderIdentifier}" />
 						<button class="btn btn-block btn-login t3js-login-submit" id="t3-login-submit" type="submit" name="commandLI" data-loading-text="<i class='fa fa-circle-o-notch fa-spin'></i> {f:translate(key: 'LLL:EXT:backend/Resources/Private/Language/locallang.xlf:login.process')}">
 							<f:translate key="LLL:EXT:auth0/Resources/Private/Language/locallang_be.xlf:form.login.typo3" />
 						</button>
