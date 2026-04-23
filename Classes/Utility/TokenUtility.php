@@ -30,7 +30,6 @@ use Leuchtfeuer\Auth0\Exception\TokenException;
 use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TokenUtility implements LoggerAwareInterface
 {
@@ -63,7 +62,6 @@ class TokenUtility implements LoggerAwareInterface
     {
         $this->configuration = new EmAuth0Configuration();
         $this->time = new \DateTimeImmutable();
-        $this->setIssuer();
         $this->config = Configuration::forAsymmetricSigner(
             $this->getSigner(),
             $this->getKey(self::KEY_TYPE_PRIVATE),
@@ -169,9 +167,9 @@ class TokenUtility implements LoggerAwareInterface
         return $this->token;
     }
 
-    public function setIssuer(): void
+    public function setIssuer(string $requestHost): void
     {
-        $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
+        $this->issuer = $requestHost;
     }
 
     protected function getSigner(): Signer

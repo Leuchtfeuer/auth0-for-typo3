@@ -19,6 +19,8 @@ use GuzzleHttp\Exception\GuzzleException;
 use Leuchtfeuer\Auth0\Domain\Model\Application;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ApplicationFactory
@@ -33,7 +35,7 @@ class ApplicationFactory
      * @throws ConfigurationException
      * @throws GuzzleException
      */
-    public static function build(int $applicationId, string $context = self::SESSION_PREFIX_BACKEND): Auth0
+    public static function build(int $applicationId, string $context = self::SESSION_PREFIX_BACKEND, ?ServerRequestInterface $request = null): Auth0
     {
         $scope = ['openid', 'profile', 'read:current_user'];
         $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationId);
@@ -65,7 +67,10 @@ class ApplicationFactory
             'domain' => $application->getDomain(),
             'id_token_alg' => $application->getSignatureAlgorithm(),
             'managementToken' => $managementToken ?? null,
-            'redirectUri' => GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . CallbackMiddleware::PATH,
+            'redirectUri' => ($request !== null
+                ? $request->getAttribute('normalizedParams')
+                : NormalizedParams::createFromServerParams($_SERVER)
+            )->getRequestHost() . CallbackMiddleware::PATH,
             'scope' => $scope,
             'sessionStorageId' => sprintf('auth0_session_%s', $context),
         ]);

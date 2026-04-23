@@ -17,7 +17,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Routing\PageArguments;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 
 class RoutingUtility implements LoggerAwareInterface
@@ -65,7 +64,7 @@ class RoutingUtility implements LoggerAwareInterface
 
             // Base of site configuration might be "/" so we have to prepend the domain
             if (str_starts_with($uri, '/')) {
-                $uri = GeneralUtility::getIndpEnv('TYPO3_SITE_URL') . ltrim($uri, '/');
+                $uri = $this->request->getAttribute('normalizedParams')->getSiteUrl() . ltrim($uri, '/');
             }
 
             return $uri;

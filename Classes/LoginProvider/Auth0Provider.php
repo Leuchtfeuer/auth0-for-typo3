@@ -29,7 +29,6 @@ use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\LoginProvider\LoginProviderInterface;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\View\ViewInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
@@ -147,7 +146,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     protected function setAuth0(): bool
     {
         try {
-            $this->auth0 = ApplicationFactory::build($this->configuration->getBackendConnection());
+            $this->auth0 = ApplicationFactory::build($this->configuration->getBackendConnection(), ApplicationFactory::SESSION_PREFIX_BACKEND, $this->currentRequest);
         } catch (\Exception|GuzzleException $exception) {
             $this->logger?->critical($exception->getMessage());
             throw $exception;
@@ -159,6 +158,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     protected function getCallback(?string $redirectUri = ''): string
     {
         $tokenUtility = new TokenUtility();
+        $tokenUtility->setIssuer($this->currentRequest->getAttribute('normalizedParams')->getRequestHost());
         $tokenUtility->withPayload('environment', ModeUtility::BACKEND_MODE);
         $tokenUtility->withPayload('application', $this->configuration->getBackendConnection());
 
@@ -250,7 +250,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
      */
     protected function logoutFromAuth0(): void
     {
-        $redirectUri = GeneralUtility::getIndpEnv('TYPO3_SITE_URL') . 'typo3/logout';
+        $redirectUri = $this->currentRequest->getAttribute('normalizedParams')->getSiteUrl() . 'typo3/logout';
         if ($this->application?->isSingleLogOut() && $this->configuration->isSoftLogout()) {
             $this->auth0->clear();
             header('Location: ' . $redirectUri);

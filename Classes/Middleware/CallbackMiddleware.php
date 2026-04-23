@@ -48,6 +48,8 @@ class CallbackMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
+        $this->tokenUtility->setIssuer($request->getAttribute('normalizedParams')->getRequestHost());
+
         if (!$this->tokenUtility->verifyToken((string)($request->getQueryParams()[self::TOKEN_PARAMETER] ?? null))) {
             return new Response('php://temp', 400);
         }

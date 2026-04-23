@@ -31,7 +31,7 @@ use TYPO3\CMS\Core\Authentication\AuthenticationService as BasicAuthenticationSe
 use TYPO3\CMS\Core\Authentication\LoginType;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 
 class AuthenticationService extends BasicAuthenticationService
 {
@@ -235,7 +235,7 @@ class AuthenticationService extends BasicAuthenticationService
     protected function initializeAuth0Connection(): bool
     {
         try {
-            $this->auth0 = ApplicationFactory::build($this->application, $this->authInfo['loginType']);
+            $this->auth0 = ApplicationFactory::build($this->application, $this->authInfo['loginType'], $this->request);
 
             $this->userInfo = $this->auth0->getUser() ?? [];
 
@@ -313,7 +313,10 @@ class AuthenticationService extends BasicAuthenticationService
             $this->logger?->warning('Could not login user via session as it has no group assigned.');
 
             // TODO: Pass error message for clarification
-            $this->auth0->logout(GeneralUtility::getIndpEnv('TYPO3_SITE_URL') . 'typo3/logout');
+            $siteUrl = $this->request !== null
+                ? $this->request->getAttribute('normalizedParams')->getSiteUrl()
+                : NormalizedParams::createFromServerParams($_SERVER)->getSiteUrl();
+            $this->auth0->logout($siteUrl . 'typo3/logout');
             // Responsible, authentication failed, do NOT check other services
             return 0;
         }
