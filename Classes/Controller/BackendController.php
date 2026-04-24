@@ -15,8 +15,6 @@ use Leuchtfeuer\Auth0\Configuration\Auth0Configuration;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use Leuchtfeuer\Auth0\Domain\Repository\UserGroup\BackendUserGroupRepository;
 use Psr\Http\Message\ResponseInterface;
-use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
-use TYPO3\CMS\Backend\Routing\UriBuilder as BackendUriBuilder;
 use TYPO3\CMS\Backend\Template\Components\ButtonBar;
 use TYPO3\CMS\Backend\Template\Components\ComponentFactory;
 use TYPO3\CMS\Backend\Template\ModuleTemplate;
@@ -34,7 +32,6 @@ class BackendController extends ActionController
         protected readonly BackendUserGroupRepository $backendUserGroupRepository,
         protected readonly ModuleTemplateFactory $moduleTemplateFactory,
         protected readonly IconFactory $iconFactory,
-        protected readonly BackendUriBuilder $backendUriBuilder,
         protected readonly ComponentFactory $componentFactory
     ) {}
 
@@ -120,23 +117,6 @@ class BackendController extends ActionController
             ->setIcon($this->iconFactory->getIcon($icon, IconSize::SMALL));
 
         $buttonBar->addButton($linkButton, ButtonBar::BUTTON_POSITION_RIGHT);
-    }
-
-    /**
-     * @throws RouteNotFoundException
-     */
-    protected function getModuleUrl(bool $encoded = true, string $referenceType = BackendUriBuilder::ABSOLUTE_PATH): string
-    {
-        $parameters = [
-            'tx_auth0_auth0' => [
-                'action' => $this->request->getControllerActionName(),
-                'controller' => $this->request->getControllerName(),
-            ],
-        ];
-
-        $uri = $this->backendUriBuilder->buildUriFromRoute('Auth0', $parameters, $referenceType);
-
-        return $encoded ? rawurlencode($uri) : $uri;
     }
 
     protected function getTranslation(string $key): string
