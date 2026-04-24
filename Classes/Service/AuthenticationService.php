@@ -31,6 +31,8 @@ use TYPO3\CMS\Core\Authentication\LoginType;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
 use TYPO3\CMS\Core\Crypto\Random;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\QueryHelper;
+use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 
 class AuthenticationService extends BasicAuthenticationService
 {
@@ -283,8 +285,7 @@ class AuthenticationService extends BasicAuthenticationService
             return $this->user;
         }
 
-        /** @extensionScannerIgnoreLine */
-        $user = $this->fetchUserRecord($this->login['uname'], 'auth0_user_id = "' . $this->userInfo[$this->userIdentifier] . '"');
+        $user = $this->fetchUserByAuth0Id($this->login['uname']);
 
         if (!is_array($user)) {
             // Delete persistent Auth0 user data
@@ -308,6 +309,38 @@ class AuthenticationService extends BasicAuthenticationService
         $this->user = is_array($user) ? $user : false;
 
         return $this->user;
+    }
+
+    /**
+     * fetchUserRecord() passes $extraWhere as a raw SQL fragment with no parameterization
+     * API, making a safe auth0_user_id lookup impossible through that method. This dedicated
+     * method uses named parameters instead.
+     *
+     * @return array<string, mixed>|false
+     */
+    private function fetchUserByAuth0Id(string $username): array|false
+    {
+        $queryBuilder = $this->connectionPool->getQueryBuilderForTable($this->db_user['table']);
+        $queryBuilder->getRestrictions()->removeAll()->add(new DeletedRestriction());
+        $constraints = array_filter([
+            QueryHelper::stripLogicalOperatorPrefix($this->db_user['enable_clause'] ?? ''),
+        ]);
+        if (!empty($username)) {
+            array_unshift($constraints, $queryBuilder->expr()->eq(
+                $this->db_user['username_column'],
+                $queryBuilder->createNamedParameter($username)
+            ));
+        }
+        $constraints[] = $queryBuilder->expr()->eq(
+            'auth0_user_id',
+            $queryBuilder->createNamedParameter($this->userInfo[$this->userIdentifier])
+        );
+
+        return $queryBuilder->select('*')
+            ->from($this->db_user['table'])
+            ->where(...$constraints)
+            ->executeQuery()
+            ->fetchAssociative() ?: false;
     }
 
     public function authUser(array $user): int
