@@ -189,6 +189,6 @@ class TokenUtility implements LoggerAwareInterface
             $this->logger?->warning(sprintf('Type %s is not allowed. Using encryption key.', $type));
         }
 
-        return InMemory::plainText($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
+        return InMemory::plainText($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] ?? '');
     }
 }
