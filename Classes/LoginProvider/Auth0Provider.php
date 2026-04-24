@@ -94,8 +94,6 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         $this->currentRequest = $request;
         $this->initialize();
 
-        $this->tokenUtility->setIssuer(($request->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getRequestHost());
-
         $this->logger?->notice('Auth0 login is used.');
         $this->renderingContext = $this->getRenderingContext($view);
 
@@ -169,12 +167,14 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
             $this->tokenUtility->withPayload('redirectUri', $redirectUri);
         }
 
+        $issuer = ($this->currentRequest->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getRequestHost();
+
         return sprintf(
             '%s%s?%s=%s',
-            $this->tokenUtility->getIssuer(),
+            $issuer,
             CallbackMiddleware::PATH,
             CallbackMiddleware::TOKEN_PARAMETER,
-            $this->tokenUtility->buildToken()->toString()
+            $this->tokenUtility->buildToken($issuer)->toString()
         );
     }
 

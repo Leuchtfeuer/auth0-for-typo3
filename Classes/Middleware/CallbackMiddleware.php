@@ -49,9 +49,9 @@ class CallbackMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        $this->tokenUtility->setIssuer(($request->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getRequestHost());
+        $issuer = ($request->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getRequestHost();
 
-        if (!$this->tokenUtility->verifyToken((string)($request->getQueryParams()[self::TOKEN_PARAMETER] ?? null))) {
+        if (!$this->tokenUtility->verifyToken((string)($request->getQueryParams()[self::TOKEN_PARAMETER] ?? null), $issuer)) {
             return new Response('php://temp', 400);
         }
 
@@ -65,12 +65,13 @@ class CallbackMiddleware implements MiddlewareInterface
             return new Response('php://temp', 400);
         }
 
-        return $this->handleBackendCallback($request, $dataSet);
+        return $this->handleBackendCallback($request, $dataSet, $issuer);
     }
 
     protected function handleBackendCallback(
         ServerRequestInterface $request,
-        DataSet $dataSet
+        DataSet $dataSet,
+        string $issuer,
     ): RedirectResponse {
         if ($dataSet->get('redirectUri') !== null) {
             return new RedirectResponse($dataSet->get('redirectUri'), 302);
@@ -79,7 +80,7 @@ class CallbackMiddleware implements MiddlewareInterface
         $queryParams = $request->getQueryParams();
         $redirectUri = sprintf(
             self::BACKEND_URI,
-            $this->tokenUtility->getIssuer(),
+            $issuer,
             Auth0Provider::LOGIN_PROVIDER,
             $queryParams['code'],
             $queryParams['state']

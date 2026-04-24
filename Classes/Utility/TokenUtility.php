@@ -45,8 +45,6 @@ class TokenUtility implements LoggerAwareInterface
 
     protected \DateTimeImmutable $time;
 
-    protected string $issuer = '';
-
     /**
      * @var array<mixed>
      */
@@ -73,9 +71,8 @@ class TokenUtility implements LoggerAwareInterface
     /**
      * @return Constraint[]
      */
-    private function getConstraints(): array
+    private function getConstraints(string $issuer): array
     {
-        $issuer = $this->getIssuer();
         if ($issuer === '') {
             throw new \RuntimeException('Issuer must not be empty');
         }
@@ -86,9 +83,8 @@ class TokenUtility implements LoggerAwareInterface
         return $contraints;
     }
 
-    public function buildToken(): UnencryptedToken
+    public function buildToken(string $issuer): UnencryptedToken
     {
-        $issuer = $this->getIssuer();
         if ($issuer === '') {
             throw new \RuntimeException('Issuer must not be empty');
         }
@@ -113,11 +109,6 @@ class TokenUtility implements LoggerAwareInterface
         return $token;
     }
 
-    public function getIssuer(): string
-    {
-        return $this->issuer;
-    }
-
     /**
      * @param array<mixed> $payload
      */
@@ -131,7 +122,7 @@ class TokenUtility implements LoggerAwareInterface
         $this->payload[$key] = $value;
     }
 
-    public function verifyToken(string $token): bool
+    public function verifyToken(string $token, string $issuer): bool
     {
         if ($token === '' || $token === '0') {
             $this->logger?->warning('Given token is empty.');
@@ -149,7 +140,7 @@ class TokenUtility implements LoggerAwareInterface
         }
 
         /** @extensionScannerIgnoreLine */
-        $this->config = $this->config->withValidationConstraints(...$this->getConstraints());
+        $this->config = $this->config->withValidationConstraints(...$this->getConstraints($issuer));
 
         /** @extensionScannerIgnoreLine */
         if (!$this->config->validator()->validate($this->token, ...$this->config->validationConstraints())) {
@@ -174,11 +165,6 @@ class TokenUtility implements LoggerAwareInterface
         }
 
         return $this->token;
-    }
-
-    public function setIssuer(string $requestHost): void
-    {
-        $this->issuer = $requestHost;
     }
 
     protected function getSigner(): Signer

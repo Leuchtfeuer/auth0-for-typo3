@@ -23,7 +23,6 @@ use Leuchtfeuer\Auth0\ErrorCode;
 use Leuchtfeuer\Auth0\Factory\ApplicationFactory;
 use Leuchtfeuer\Auth0\LoginProvider\Auth0Provider;
 use Leuchtfeuer\Auth0\Utility\Database\UpdateUtilityFactory;
-use Leuchtfeuer\Auth0\Utility\TokenUtility;
 use Leuchtfeuer\Auth0\Utility\UserUtility;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;
@@ -64,7 +63,6 @@ class AuthenticationService extends BasicAuthenticationService
     public function __construct(
         protected readonly ConnectionPool $connectionPool,
         protected readonly Random $random,
-        protected readonly TokenUtility $tokenUtility,
         protected readonly UpdateUtilityFactory $updateUtilityFactory,
         protected readonly UserUtility $userUtility,
     ) {}
