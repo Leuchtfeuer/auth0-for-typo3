@@ -239,7 +239,6 @@ class AuthenticationService extends BasicAuthenticationService
             $this->auth0 = ApplicationFactory::build($this->application, $this->authInfo['loginType'], $this->request);
 
             $this->userInfo = $this->auth0->getUser() ?? [];
-            $this->logger?->debug('Auth0 user info in AuthenticationService: ' . (empty($this->userInfo) ? 'empty' : 'found'));
 
             if (!isset($this->userInfo[$this->userIdentifier]) || $this->getAuth0User() === false) {
                 return false;
