@@ -29,7 +29,6 @@ use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;
 use TYPO3\CMS\Core\Authentication\AuthenticationService as BasicAuthenticationService;
 use TYPO3\CMS\Core\Authentication\LoginType;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
-use TYPO3\CMS\Core\Crypto\Random;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryHelper;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
@@ -64,7 +63,6 @@ class AuthenticationService extends BasicAuthenticationService
 
     public function __construct(
         protected readonly ConnectionPool $connectionPool,
-        protected readonly Random $random,
         protected readonly UpdateUtilityFactory $updateUtilityFactory,
         protected readonly UserUtility $userUtility,
     ) {}
@@ -115,22 +113,10 @@ class AuthenticationService extends BasicAuthenticationService
      */
     public function processLoginData(array &$loginData): bool|int
     {
-        /**
-         * Note: processLoginData() is called before initAuth() in the TYPO3 lifecycle.
-         * At this point, $this->authInfo and $this->request might not be initialized yet,
-         * which can cause isAuth0LoginProvider() to return false.
-         */
-        $loginType = $this->authInfo['loginType'] ?? '';
-
-        if ($this->isAuth0LoginProvider($loginType)) {
-            // Set username and dummy password to satisfy Core
-            if (empty($loginData['uname'])) {
-                $loginData['uname'] = $this->userInfo['email'] ?? $this->userInfo[$this->userIdentifier] ?? '';
-            }
-            if (empty($loginData['uident_text'])) {
-                $loginData['uident_text'] = $this->random->generateRandomHexString(32);
-            }
-        }
+        // processLoginData() is called before initAuth() in the TYPO3 lifecycle, at which point
+        // neither $this->request nor $this->authInfo are initialised. isAuth0LoginProvider() would
+        // always return false here, making any Auth0-specific processing unreachable. uname and
+        // uident_text are set in initAuth() and authUser() bypasses password checking entirely.
         return true;
     }
 
