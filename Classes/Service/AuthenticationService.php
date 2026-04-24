@@ -168,7 +168,7 @@ class AuthenticationService extends BasicAuthenticationService
                 $this->logger?->error('Environment is not in backend mode.');
         }
 
-        if ($this->application === 0 && $this->initSessionStore($loginType) === false) {
+        if ($this->application === 0) {
             /** @extensionScannerIgnoreLine */
             $this->logger?->error('No Auth0 application UID given.');
 
@@ -192,16 +192,6 @@ class AuthenticationService extends BasicAuthenticationService
         $this->mode = $mode;
         $this->login = $loginData;
         $this->pObj = $pObj;
-    }
-
-    /**
-     * TODO: Maybe deprecate this as the user might not be logged in into Auth0 (Single Log Out).
-     * TODO: Or check whether there is a valid Auth0 session.
-     */
-    protected function initSessionStore(string $loginType): bool
-    {
-        echo 'do not hit';
-        die();
     }
 
     /**
