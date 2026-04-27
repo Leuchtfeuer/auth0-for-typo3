@@ -78,20 +78,27 @@ class CallbackMiddleware implements MiddlewareInterface
         }
 
         $queryParams = $request->getQueryParams();
-        $redirectUri = sprintf(
-            self::BACKEND_URI,
-            $issuer,
-            Auth0Provider::LOGIN_PROVIDER,
-            $queryParams['code'],
-            $queryParams['state']
-        );
+        $code = $queryParams['code'] ?? null;
+        $state = $queryParams['state'] ?? null;
+
+        if ($code === null || $code === '') {
+            $redirectUri = sprintf('%s/typo3/?loginProvider=%d', $issuer, Auth0Provider::LOGIN_PROVIDER);
+        } else {
+            $redirectUri = sprintf(
+                self::BACKEND_URI,
+                $issuer,
+                Auth0Provider::LOGIN_PROVIDER,
+                rawurlencode($code),
+                rawurlencode((string)$state)
+            );
+        }
 
         // Add error parameters to backend uri if exists
-        if (!empty($request->getQueryParams()['error'] ?? null) && !empty($request->getQueryParams()['error_description'] ?? null)) {
+        if (!empty($queryParams['error'] ?? null) && !empty($queryParams['error_description'] ?? null)) {
             $redirectUri .= sprintf(
                 '&error=%s&error_description=%s',
-                $request->getQueryParams()['error'],
-                $request->getQueryParams()['error_description']
+                rawurlencode($queryParams['error']),
+                rawurlencode($queryParams['error_description'])
             );
         }
 
