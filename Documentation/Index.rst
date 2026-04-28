@@ -16,7 +16,7 @@ Auth0 for TYPO3
    en
 
 :Copyright:
-   2018-2025
+   2018-2026
 
 :Authors:
    Florian Wessels,

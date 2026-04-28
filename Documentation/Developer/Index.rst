@@ -65,3 +65,14 @@ When neither is provided, the method returns ``false`` (unknown mode is not back
 .. note::
 
    The constant ``UNKONWN_MODE`` (typo) was renamed to ``UNKNOWN_MODE`` in version 14.0.0.
+
+.. _developer-api-userRepository:
+
+UserRepository
+--------------
+
+``UserRepository::insertUser(array $values): int``
+
+Inserts a user record into the database. Starting with version 14.0.0, this method returns the
+``uid`` of the newly created record. Custom implementations overriding this method must update
+their return type to ``int``.

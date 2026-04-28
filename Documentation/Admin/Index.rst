@@ -27,12 +27,12 @@ If your TYPO3 instance is running in composer mode, you can simply require the e
 
 .. _admin-installation-extensionManager:
 
-Via Extension Manager
----------------------
+Via Extension Management
+------------------------
 
-Open the extension manager module of your TYPO3 instance and select "Get Extensions" in the select menu above the upload
-button. There you can search for `auth0` and simply install the extension. Please make sure you are using the latest
-version of the extension by updating the extension list before installing the Auth0 extension.
+Open the "Extensions" module of your TYPO3 instance. There you can upload the ZIP file of the extension.
+Note that the traditional "Get Extensions" online repository browser has been removed in newer TYPO3 versions;
+using composer is the recommended way to manage extensions.
 
 .. _admin-installation-zipFile:
 
