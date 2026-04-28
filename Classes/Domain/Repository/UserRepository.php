@@ -72,6 +72,47 @@ class UserRepository implements LoggerAwareInterface
     }
 
     /**
+     * Find user by email AND username. Used for OAuth provider migration:
+     * matches an existing user whose auth0_user_id was issued by a previous provider.
+     *
+     * The QueryBuilder applies the default restriction set (DeletedRestriction,
+     * HiddenRestriction, StartTime/EndTime) automatically, so disabled or deleted
+     * users are NOT returned by default. Callers that need to match such records
+     * must invoke removeRestrictions() on this repository beforehand.
+     *
+     * @return array<string, mixed>|null
+     * @throws Exception
+     */
+    public function getUserByEmailAndUsername(string $email, string $username): ?array
+    {
+        $this->queryBuilder
+            ->select('*')
+            ->from($this->tableName)
+            ->where(
+                $this->expressionBuilder->eq(
+                    'email',
+                    $this->queryBuilder->createNamedParameter($email)
+                ),
+                $this->expressionBuilder->eq(
+                    'username',
+                    $this->queryBuilder->createNamedParameter($username)
+                )
+            );
+        $this->logger?->debug(
+            sprintf(
+                '[%s] Executed SELECT query: %s',
+                $this->tableName,
+                $this->queryBuilder->getSQL()
+            )
+        );
+        $user = $this->queryBuilder
+            ->executeQuery()
+            ->fetchAssociative();
+
+        return ($user !== false) ? $user : null;
+    }
+
+    /**
      * Removes DeletedRestriction and / or HiddenRestriction from QueryBuilder.
      * Depends on extension configuration.
      */
