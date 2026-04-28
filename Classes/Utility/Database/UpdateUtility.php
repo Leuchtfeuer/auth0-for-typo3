@@ -40,15 +40,22 @@ class UpdateUtility implements LoggerAwareInterface
     /**
      * @param array<string, mixed> $user
      */
+    protected array $performedUpdates = [];
+
     public function __construct(
         protected readonly Auth0Configuration $auth0Configuration,
         protected readonly BackendUserGroupRepository $backendUserGroupRepository,
         protected readonly UserRepositoryFactory $userRepositoryFactory,
-        protected string $tableName,
-        protected array $user,
+        protected readonly string $tableName,
+        protected array $user
     ) {
         $this->configuration = new EmAuth0Configuration();
         $this->yamlConfiguration = $this->auth0Configuration->load();
+    }
+
+    public function getPerformedUpdates(): array
+    {
+        return $this->performedUpdates;
     }
 
     public function updateGroups(): void
@@ -185,6 +192,7 @@ class UpdateUtility implements LoggerAwareInterface
         }
 
         if (!empty($updates)) {
+            $this->performedUpdates = array_merge($this->performedUpdates, $updates);
             $userRepository = $this->userRepositoryFactory->create($this->tableName);
             $userRepository->updateUserByAuth0Id($updates, $this->user[$this->configuration->getUserIdentifier()]);
         }
@@ -215,8 +223,11 @@ class UpdateUtility implements LoggerAwareInterface
             $updates['deleted'] = 0;
         }
 
-        $this->addRestrictions($userRepository);
-        $userRepository->updateUserByAuth0Id($updates, $this->user[$this->configuration->getUserIdentifier()]);
+        if (!empty($updates)) {
+            $this->performedUpdates = array_merge($this->performedUpdates, $updates);
+            $this->addRestrictions($userRepository);
+            $userRepository->updateUserByAuth0Id($updates, $this->user[$this->configuration->getUserIdentifier()]);
+        }
     }
 
     protected function addRestrictions(UserRepository &$userRepository): void

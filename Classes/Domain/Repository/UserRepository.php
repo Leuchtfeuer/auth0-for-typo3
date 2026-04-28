@@ -218,8 +218,9 @@ class UserRepository implements LoggerAwareInterface
      * Inserts a backend or frontend user by given value array.
      *
      * @param array<string, mixed> $values
+     * @return int The UID of the inserted user
      */
-    public function insertUser(array $values): void
+    public function insertUser(array $values): int
     {
         $this->queryBuilder->insert($this->tableName)->values($values);
         $this->logger?->debug(
@@ -230,5 +231,6 @@ class UserRepository implements LoggerAwareInterface
             )
         );
         $this->queryBuilder->executeStatement();
+        return (int)$this->queryBuilder->getConnection()->lastInsertId();
     }
 }

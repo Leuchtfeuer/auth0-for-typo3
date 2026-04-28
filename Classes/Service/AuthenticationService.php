@@ -30,6 +30,7 @@ use TYPO3\CMS\Core\Authentication\AuthenticationService as BasicAuthenticationSe
 use TYPO3\CMS\Core\Authentication\LoginType;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\Expression\CompositeExpression;
 use TYPO3\CMS\Core\Database\Query\QueryHelper;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 
@@ -219,7 +220,7 @@ class AuthenticationService extends BasicAuthenticationService
         // Insert a new user into database
         if ($this->user === []) {
             $this->logger?->notice('Insert new user.');
-            $this->userUtility->insertUser($this->tableName, $this->userInfo);
+            $this->user = $this->userUtility->insertUser($this->tableName, $this->userInfo);
         }
         $updateUtility = $this->updateUtilityFactory->create($this->tableName, $this->userInfo);
         $updateUtility->updateGroups();
@@ -227,6 +228,11 @@ class AuthenticationService extends BasicAuthenticationService
         // Update existing user on every login when we are in BE context (since TypoScript is loaded).
         if ($this->authInfo['loginType'] === self::BACKEND_AUTHENTICATION) {
             $updateUtility->updateUser();
+        }
+
+        // Sync updates back to in-memory user object
+        if (is_array($this->user)) {
+            $this->user = array_merge($this->user, $updateUtility->getPerformedUpdates());
         }
     }
 
@@ -273,7 +279,6 @@ class AuthenticationService extends BasicAuthenticationService
         $user = $this->fetchUserByAuth0Id($this->login['uname']);
 
         if (!is_array($user)) {
-            // Delete persistent Auth0 user data
             try {
                 $this->auth0->clear();
             } catch (\Exception) {
@@ -307,9 +312,12 @@ class AuthenticationService extends BasicAuthenticationService
     {
         $queryBuilder = $this->connectionPool->getQueryBuilderForTable($this->db_user['table']);
         $queryBuilder->getRestrictions()->removeAll()->add(new DeletedRestriction());
-        $constraints = array_filter([
-            QueryHelper::stripLogicalOperatorPrefix($this->db_user['enable_clause'] ?? ''),
-        ]);
+        $enableClause = $this->db_user['enable_clause'] ?? '';
+        $constraints = array_filter(
+            $enableClause instanceof CompositeExpression
+                ? [$enableClause]
+                : [QueryHelper::stripLogicalOperatorPrefix($enableClause)]
+        );
         if (!empty($username)) {
             array_unshift($constraints, $queryBuilder->expr()->eq(
                 $this->db_user['username_column'],

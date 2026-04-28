@@ -75,14 +75,18 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
 
     /**
      * @param array<string, mixed> $user
+     * @return array<string, mixed> The complete inserted user record
      * @throws InvalidPasswordHashException
      */
-    public function insertUser(string $tableName, array $user): void
+    public function insertUser(string $tableName, array $user): array
     {
-        match ($tableName) {
+        return match ($tableName) {
             'be_users' => $this->insertBeUser($tableName, $user),
             /** @extensionScannerIgnoreLine */
-            default => $this->logger?->error(sprintf('"%s" is not a valid table name.', $tableName)),
+            default => (function() use ($tableName) {
+                $this->logger?->error(sprintf('"%s" is not a valid table name.', $tableName));
+                return [];
+            })(),
         };
     }
 
@@ -100,9 +104,10 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      * Inserts a new backend user
      *
      * @param array<string, mixed> $user
+     * @return array<string, mixed> The complete inserted user record
      * @throws InvalidPasswordHashException
      */
-    public function insertBeUser(string $tableName, array $user): void
+    public function insertBeUser(string $tableName, array $user): array
     {
         $values = $this->getTcaDefaults($tableName);
         $userIdentifier = $this->configuration->getUserIdentifier();
@@ -113,11 +118,15 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             'username' => $user['email'] ?? $user[$userIdentifier],
             'password' => $this->getPassword('BE'),
             'email' => $user['email'] ?? '',
+            'disable' => 0,
+            'admin' => 0,
             'crdate' => time(),
             'auth0_user_id' => $user[$userIdentifier],
         ]);
 
-        $this->userRepositoryFactory->create($tableName)->insertUser($values);
+        $values['uid'] = $this->userRepositoryFactory->create($tableName)->insertUser($values);
+
+        return $values;
     }
 
     /**
@@ -125,7 +134,18 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      */
     protected function getTcaDefaults(string $tableName): array
     {
-        $defaults = [];
+        $defaults = [
+            'workspace_id' => 0,
+            'usergroup' => '',
+            'admin' => 0,
+            'disable' => 0,
+            'deleted' => 0,
+            'starttime' => 0,
+            'endtime' => 0,
+            'lang' => '',
+            'db_mountpoints' => '',
+            'file_mountpoints' => '',
+        ];
         $columns = $GLOBALS['TCA'][$tableName]['columns'] ?? [];
 
         foreach ($columns as $fieldName => $field) {
