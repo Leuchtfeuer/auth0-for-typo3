@@ -26,16 +26,14 @@ use Leuchtfeuer\Auth0\Utility\TokenUtility;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Backend\Controller\LoginController;
 use TYPO3\CMS\Backend\LoginProvider\LoginProviderInterface;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\View\ViewInterface;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Fluid\View\FluidViewAdapter;
-use TYPO3\CMS\Fluid\View\StandaloneView;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\View\AbstractTemplateView as FluidStandaloneAbstractTemplateView;
 
@@ -69,10 +67,13 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     protected RenderingContextInterface $renderingContext;
 
+    protected ServerRequestInterface $currentRequest;
+
     public function __construct(
         protected readonly ApplicationRepository $applicationRepository,
         protected readonly PageRenderer $pageRenderer,
-        protected readonly ConfigurationManager $configurationManager
+        protected readonly ConfigurationManager $configurationManager,
+        protected readonly TokenUtility $tokenUtility,
     ) {}
 
     protected function initialize(): void
@@ -90,6 +91,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
      */
     public function modifyView(ServerRequestInterface $request, ViewInterface $view): string
     {
+        $this->currentRequest = $request;
         $this->initialize();
 
         $this->logger?->notice('Auth0 login is used.');
@@ -121,6 +123,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
         // Assign variables and Auth0 response to view
         $view->assignMultiple([
+            'loginProviderIdentifier' => self::LOGIN_PROVIDER,
             'auth0Error' => $this->getRequest()->getQueryParams()['error'] ?? null,
             'auth0ErrorDescription' => $this->getRequest()->getQueryParams()['error_description'] ?? null,
             'code' => $this->getRequest()->getQueryParams()['code'] ?? null,
@@ -146,7 +149,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     protected function setAuth0(): bool
     {
         try {
-            $this->auth0 = ApplicationFactory::build($this->configuration->getBackendConnection());
+            $this->auth0 = ApplicationFactory::build($this->configuration->getBackendConnection(), ApplicationFactory::SESSION_PREFIX_BACKEND, $this->currentRequest);
         } catch (\Exception|GuzzleException $exception) {
             $this->logger?->critical($exception->getMessage());
             throw $exception;
@@ -157,20 +160,21 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     protected function getCallback(?string $redirectUri = ''): string
     {
-        $tokenUtility = new TokenUtility();
-        $tokenUtility->withPayload('environment', ModeUtility::BACKEND_MODE);
-        $tokenUtility->withPayload('application', $this->configuration->getBackendConnection());
+        $this->tokenUtility->withPayload('environment', ModeUtility::BACKEND_MODE);
+        $this->tokenUtility->withPayload('application', $this->configuration->getBackendConnection());
 
         if ($redirectUri !== '') {
-            $tokenUtility->withPayload('redirectUri', $redirectUri);
+            $this->tokenUtility->withPayload('redirectUri', $redirectUri);
         }
+
+        $issuer = ($this->currentRequest->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getRequestHost();
 
         return sprintf(
             '%s%s?%s=%s',
-            $tokenUtility->getIssuer(),
+            $issuer,
             CallbackMiddleware::PATH,
             CallbackMiddleware::TOKEN_PARAMETER,
-            $tokenUtility->buildToken()->toString()
+            $this->tokenUtility->buildToken($issuer)->toString()
         );
     }
 
@@ -182,10 +186,13 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         $this->setAuth0();
         $userInfo = $this->auth0->configuration()->getSessionStorage()?->get('user') ?? [];
         if (!is_array($userInfo) || $userInfo === []) {
+            $queryParams = $this->getRequest()->getQueryParams();
             try {
                 $this->logger?->notice('Try to get user via Auth0 API');
-                if ($this->auth0->exchange($this->getCallback(), $this->getRequest()->getQueryParams()['code'] ?? null, $this->getRequest()->getQueryParams()['state'] ?? null)) {
+                if (isset($queryParams['code']) && $this->auth0->exchange($this->getCallback(), $queryParams['code'], $queryParams['state'] ?? null)) {
                     $userInfo = $this->auth0->getUser() ?? [];
+                } else {
+                    $this->logger?->notice('Exchange failed or no code present');
                 }
             } catch (\Exception $exception) {
                 $this->logger?->critical($exception->getMessage());
@@ -249,7 +256,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
      */
     protected function logoutFromAuth0(): void
     {
-        $redirectUri = GeneralUtility::getIndpEnv('TYPO3_SITE_URL') . 'typo3/logout';
+        $redirectUri = ($this->currentRequest->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getSiteUrl() . 'typo3/logout';
         if ($this->application?->isSingleLogOut() && $this->configuration->isSoftLogout()) {
             $this->auth0->clear();
             header('Location: ' . $redirectUri);
@@ -274,14 +281,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     private function getRequest(): ServerRequestInterface
     {
-        return $GLOBALS['TYPO3_REQUEST'];
+        return $this->currentRequest;
     }
 
-    /**
-     * @extensionScannerIgnoreLine
-     */
-    public function render(StandaloneView $view, PageRenderer $pageRenderer, LoginController $loginController): void
-    {
-        throw new \RuntimeException('Should not be called in TYPO3v13');
-    }
 }

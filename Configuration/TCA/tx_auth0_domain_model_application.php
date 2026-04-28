@@ -17,7 +17,6 @@ return [
         'security' => [
             'ignorePageTypeRestriction' => true,
         ],
-        'searchFields' => 'title,id,domain,audience',
         'iconfile' => 'EXT:auth0/Resources/Public/Icons/auth0.svg',
     ],
     'types' => [

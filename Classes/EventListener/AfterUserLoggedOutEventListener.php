@@ -16,7 +16,9 @@ namespace Leuchtfeuer\Auth0\EventListener;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use TYPO3\CMS\Core\Attribute\AsEventListener;
 use TYPO3\CMS\Core\Authentication\Event\AfterUserLoggedOutEvent;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Http\NormalizedParams;
+use TYPO3\CMS\Core\Http\PropagateResponseException;
+use TYPO3\CMS\Core\Http\RedirectResponse;
 
 #[AsEventListener(identifier: 'auth0AfterUserLoggedOutEvent')]
 class AfterUserLoggedOutEventListener
@@ -30,9 +32,8 @@ class AfterUserLoggedOutEventListener
         }
         $configuration = new EmAuth0Configuration();
         if ($configuration->isEnableBackendLogin() && !$configuration->isSoftLogout()) {
-            $backendRoot = sprintf('%s/typo3/?%s', GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST'), 'auth0[action]=logout');
-            header('Location: ' . $backendRoot);
-            exit;
+            $backendRoot = sprintf('%s/typo3/?%s', NormalizedParams::createFromServerParams($_SERVER)->getRequestHost(), 'auth0[action]=logout');
+            throw new PropagateResponseException(new RedirectResponse($backendRoot, 303));
         }
     }
 }

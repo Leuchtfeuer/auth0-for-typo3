@@ -1,0 +1,117 @@
+.. include:: ../../Includes.txt
+
+===========================
+Version 14.0.0 - 2026/04/28
+===========================
+
+This release is a major release. It introduces TYPO3 14 support and drops support for TYPO3 13.x.
+Several internal APIs have been refactored to remove deprecated TYPO3 13 patterns and to improve
+correctness and security.
+
+Breaking
+========
+
+* **TYPO3 version:** Requires TYPO3 ^14.3.0. TYPO3 13.x is no longer supported.
+* **Backend module location:** The Auth0 backend module has been moved from the *System* section to
+  the *Admin Tools* section. The route path changed from ``/module/system/auth0`` to
+  ``/module/admin/auth0``. Any hardcoded links to the old path must be updated.
+* **TokenUtility:** ``buildToken()`` now requires an explicit ``string $issuer`` parameter.
+  ``verifyToken()`` now requires an explicit ``string $issuer`` parameter as a second argument.
+  The methods ``getIssuer()`` and ``setIssuer()`` have been removed. Callers must derive the issuer
+  from the current request (e.g. via ``NormalizedParams::getRequestHost()``) and pass it directly.
+* **ModeUtility:** ``getModeFromRequest()`` now requires an explicit ``ServerRequestInterface``
+  argument instead of reading from ``$GLOBALS['TYPO3_REQUEST']``. The signature of ``isBackend()``
+  gained an optional ``?ServerRequestInterface $request`` parameter; callers that relied on the
+  global request fallback must pass the request explicitly.
+* **ModeUtility constant:** The constant ``UNKONWN_MODE`` (typo) has been renamed to
+  ``UNKNOWN_MODE``. Update any references in custom code.
+* **ApplicationFactory:** ``build()`` accepts a new optional third parameter
+  ``?ServerRequestInterface $request``. Pass the current request so the factory can derive the
+  redirect URI from the correct host instead of falling back to ``$_SERVER``.
+* **Auth0Provider:** The legacy ``render()`` method (deprecated since TYPO3 13 era) has been
+  removed. Extensions that override ``Auth0Provider`` must remove any override of this method.
+  ``TokenUtility`` is now a required constructor-injected dependency; any custom subclass must
+  accept it.
+* **AuthenticationService:** ``TokenUtility`` has been removed from the constructor. The
+  ``initSessionStore()`` method has been removed. Custom subclasses must be updated accordingly.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v14.0.0>`__.
+
+Added
+=====
+
+* Support for TYPO3 v14.3
+
+Changed
+=======
+
+* ``GeneralUtility::getIndpEnv()`` calls throughout the extension have been replaced with
+  ``NormalizedParams`` (PSR-7 compatible, TYPO3 14 recommended approach).
+* ``$GLOBALS['TYPO3_REQUEST']`` access has been removed; the current request is now passed
+  explicitly through the call chain.
+* ``header()`` / ``exit`` in ``AfterUserLoggedOutEventListener`` replaced with a PSR-7
+  ``PropagateResponseException`` carrying a ``RedirectResponse``.
+* ``SessionStore`` and transient storage are now configured explicitly after ``Auth0`` construction
+  in ``ApplicationFactory``, fixing session isolation between backend and transient state.
+* Token validation constraints in ``TokenUtility`` are now applied lazily at verification time,
+  removing the need for the issuer to be set at construction time.
+* TypoScript registration uses ``addTypoScriptConstants()`` / ``addTypoScriptSetup()`` instead of
+  the removed ``addTypoScript()`` API.
+* Module icon uses CSS custom properties for colors instead of hardcoded hex values.
+
+Removed
+=======
+
+* Support for TYPO3 13.x
+* ``TokenUtility::getIssuer()``
+* ``TokenUtility::setIssuer()``
+* ``AuthenticationService::initSessionStore()``
+* ``Auth0Provider::render()`` (deprecated compatibility shim for TYPO3 < 13)
+* ``BackendController::getModuleUrl()``
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2026-04-28 [TASK] Update extension documentation [TER-431] (Commit 58ef4e2 by Oliver Heins)
+    2026-04-28 [TASK] Fix PHPStan issues [TER-431] (Commit 5b98055 by Oliver Heins)
+    2026-04-28 [TASK] Improve user record synchronization and security [TER-431] (Commit 666c7f4 by Oliver Heins)
+    2026-04-27 [BUGFIX] CallbackMiddleware: Sanitize URL params and handle missing code [TER-431] (Commit 22ba9e2 by Oliver Heins)
+    2026-04-24 [TASK] BackendController: Remove unused getModuleUrl() [TER-431] [TER-451] (Commit 12fcbc7 by Oliver Heins)
+    2026-04-24 [TASK] Document developer-facing API changes for v14 [TER-431] [TER-451] (Commit 66d9c26 by Oliver Heins)
+    2026-04-24 [BUGFIX] AuthenticationService: Remove developer debug log from initializeAuth0Connection() [TER-431] [TER-451] (Commit 2597c23 by Oliver Heins)
+    2026-04-24 [BUGFIX] ModeUtility: Fix typo in constant name UNKONWN_MODE -> UNKNOWN_MODE [TER-431] [TER-451] (Commit 7445e72 by Oliver Heins)
+    2026-04-24 [BUGFIX] TokenUtility: Add null-coalescing for encryptionKey access [TER-431] [TER-451] (Commit 33954e5 by Oliver Heins)
+    2026-04-24 [BUGFIX] AuthenticationService: Remove unreachable processLoginData() body [TER-431] [TER-451] (Commit 27694a7 by Oliver Heins)
+    2026-04-24 [TASK] ApplicationFactory: Document why $_SERVER is used as NormalizedParams fallback [TER-431] [TER-451] (Commit 0c28255 by Oliver Heins)
+    2026-04-24 [BUGFIX] AuthenticationService: Replace raw SQL concat with parameterized auth0_user_id lookup [TER-431] [TER-451] (Commit 860fe7f by Oliver Heins)
+    2026-04-24 [BUGFIX] AfterUserLoggedOutEventListener: Replace exit/header() with PSR-7 redirect [TER-431] [TER-451] (Commit fa38587 by Oliver Heins)
+    2026-04-24 [BUGFIX] TokenUtility: Replace mutable issuer state with explicit parameter passing [TER-431] [TER-451] (Commit 0818a9e by Oliver Heins)
+    2026-04-24 [BUGFIX] AuthenticationService: Remove dead initSessionStore stub and simplify application check [TER-431] [TER-451] (Commit a6dc661 by Oliver Heins)
+    2026-04-23 [TASK] AuthenticationService: Overhaul authentication flow for session and form-based login [TER-431] [TER-451] (Commit 1447747 by Oliver Heins)
+    2026-04-23 [TASK] Auth0Provider: Inject TokenUtility via DI and pass loginProvider identifier to form [TER-431] [TER-451] (Commit e394859 by Oliver Heins)
+    2026-04-23 [BUGFIX] ApplicationFactory: Explicitly configure SessionStore instances after Auth0 construction [TER-431] [TER-451] (Commit 6aa63e6 by Oliver Heins)
+    2026-04-23 [BUGFIX] TokenUtility: Fix lcobucci/jwt immutable API and reset payload after token build [TER-431] [TER-451] (Commit 9300e18 by Oliver Heins)
+    2026-04-23 [TASK] Module.svg: Use CSS variables for icon colors instead of hardcoded values [TER-431] [TER-451] (Commit 379ad40 by Oliver Heins)
+    2026-04-23 [BUGFIX] TokenUtility: Defer validation constraints setup until token verification [TER-431] (Commit 19f25ea by Oliver Heins)
+    2026-04-23 [BUGFIX] Fix PHPStan nullability errors and PHPUnit 12 mock/stub misuse [TER-431] (Commit 480f6b1 by Oliver Heins)
+    2026-04-23 [BUGFIX] Auth0Provider: Guard exchange() call against missing OAuth code [TER-431] (Commit 7d90401 by Oliver Heins)
+    2026-04-23 [TASK] Deprecation #108345: Move version field to typo3/cms extra section in composer.json [TER-431] [TER-451] (Commit 7b6022f by Oliver Heins)
+    2026-04-23 [TASK] Deprecation #108345: Add version field to composer.json for ext_emconf.php migration [TER-431] [TER-451] (Commit e9c842e by Oliver Heins)
+    2026-04-23 [TASK] Deprecation #109551: Replace GeneralUtility::getIndpEnv() with NormalizedParams [TER-431] [TER-451] (Commit 3e57182 by Oliver Heins)
+    2026-04-23 [TASK] Rector/Fractor fixes [TER-431] [TER-452] (Commit e585790 by Oliver Heins)
+    2026-04-22 [TASK] Breaking #105728: Register backend module TypoScript globally [TER-431] [TER-451] (Commit 6201352 by Oliver Heins)
+    2026-04-22 [TASK] Deprecation #107823: Replace make*() methods with ComponentFactory [TER-431] [TER-451] (Commit 8438b62 by Oliver Heins)
+    2026-04-22 [TASK] Breaking #108113: Replace GLOBALS TYPO3_REQUEST with explicit request injection [TER-431] [TER-451] (Commit 168c899 by Oliver Heins)
+    2026-04-22 [TASK] Breaking #105377: Remove deprecated render() method and obsolete imports [TER-431] [TER-451] (Commit 3c79f38 by Oliver Heins)
+    2026-04-22 [TASK] Feature #107628: Update route identifier to match renamed module path [TER-431] [TER-451] (Commit 5b1d1ab by Oliver Heins)
+    2026-04-22 [TASK] Feature #107628: Update backend module parent from system to admin [TER-431] [TER-451] (Commit f5a0188 by Oliver Heins)
+    2026-04-22 [TASK] Breaking #108304: Add title delimiter to composer.json description [TER-431] [TER-451] (Commit a00c4e0 by Oliver Heins)
+    2026-04-22 [TASK] Breaking #106972 / T-22: Update TYPO3 version constraints to 14.3.0 [TER-431] [TER-451] (Commit ebc1cd7 by Oliver Heins)
+    2026-04-22 [TASK] Breaking #106972: Remove ctrl.searchFields from TCA [TER-431] [TER-451] (Commit 1560d60 by Oliver Heins)
+    2026-04-22 [TASK] Breaking #106972: Remove ctrl.searchFields from TCA [TER-431] [TER-451] (Commit 1560d60 by Oliver Heins)king #106972: Remove ctrl.searchFields from TCA [TER-431] [TER-451] (Commit 1560d60 by Oliver Heins)

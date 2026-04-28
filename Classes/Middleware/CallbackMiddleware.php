@@ -24,6 +24,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Http\RedirectResponse;
 use TYPO3\CMS\Core\Http\Response;
 
@@ -48,7 +49,9 @@ class CallbackMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        if (!$this->tokenUtility->verifyToken((string)($request->getQueryParams()[self::TOKEN_PARAMETER] ?? null))) {
+        $issuer = ($request->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getRequestHost();
+
+        if (!$this->tokenUtility->verifyToken((string)($request->getQueryParams()[self::TOKEN_PARAMETER] ?? null), $issuer)) {
             return new Response('php://temp', 400);
         }
 
@@ -62,32 +65,40 @@ class CallbackMiddleware implements MiddlewareInterface
             return new Response('php://temp', 400);
         }
 
-        return $this->handleBackendCallback($request, $dataSet);
+        return $this->handleBackendCallback($request, $dataSet, $issuer);
     }
 
     protected function handleBackendCallback(
         ServerRequestInterface $request,
-        DataSet $dataSet
+        DataSet $dataSet,
+        string $issuer,
     ): RedirectResponse {
         if ($dataSet->get('redirectUri') !== null) {
             return new RedirectResponse($dataSet->get('redirectUri'), 302);
         }
 
         $queryParams = $request->getQueryParams();
-        $redirectUri = sprintf(
-            self::BACKEND_URI,
-            $this->tokenUtility->getIssuer(),
-            Auth0Provider::LOGIN_PROVIDER,
-            $queryParams['code'],
-            $queryParams['state']
-        );
+        $code = $queryParams['code'] ?? null;
+        $state = $queryParams['state'] ?? null;
+
+        if ($code === null || $code === '') {
+            $redirectUri = sprintf('%s/typo3/?loginProvider=%d', $issuer, Auth0Provider::LOGIN_PROVIDER);
+        } else {
+            $redirectUri = sprintf(
+                self::BACKEND_URI,
+                $issuer,
+                Auth0Provider::LOGIN_PROVIDER,
+                rawurlencode($code),
+                rawurlencode((string)$state)
+            );
+        }
 
         // Add error parameters to backend uri if exists
-        if (!empty($request->getQueryParams()['error'] ?? null) && !empty($request->getQueryParams()['error_description'] ?? null)) {
+        if (!empty($queryParams['error'] ?? null) && !empty($queryParams['error_description'] ?? null)) {
             $redirectUri .= sprintf(
                 '&error=%s&error_description=%s',
-                $request->getQueryParams()['error'],
-                $request->getQueryParams()['error_description']
+                rawurlencode($queryParams['error']),
+                rawurlencode($queryParams['error_description'])
             );
         }
 

@@ -23,4 +23,4 @@ You can execute the command controller via CLI:
 
 .. code-block:: bash
 
-   path/to/php bin/typo3 auth:cleanupusers disable
+   path/to/php bin/typo3 auth0:cleanupusers disable

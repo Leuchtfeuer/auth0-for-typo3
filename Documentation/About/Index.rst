@@ -17,15 +17,16 @@ Compatibility
 You need access to an Auth0 instance. We are currently supporting following TYPO3 versions:
 
 .. csv-table:: Version Matrix
-   :header: "Extension Version", "TYPO3 V13 Support", "TYPO3 V12 Support", "TYPO3 v11 Support", "TYPO3 v10 Support", "TYPO3 v9 Support", "TYPO3 v8 Support"
+   :header: "Extension Version", "TYPO3 V14 Support", "TYPO3 V13 Support", "TYPO3 V12 Support", "TYPO3 v11 Support", "TYPO3 v10 Support", "TYPO3 v9 Support", "TYPO3 v8 Support"
    :align: center
 
-       "13.x", "yes", "no", "no", "no", "no", "no"
-        "5.x", "no", "yes", "yes", "no", "no", "no"
-        "4.x", "no", "no", "yes", "yes", "no", "no"
-        "3.x", "no", "no", "no", "yes", "yes", "no"
-        "2.x", "no", "no", "no", "no", "yes", "no"
-        "1.x", "no", "no", "no", "no", "no", "yes"
+       "14.x", "yes", "no", "no", "no", "no", "no", "no"
+       "13.x", "no", "yes", "no", "no", "no", "no", "no"
+        "5.x", "no", "no", "yes", "yes", "no", "no", "no"
+        "4.x", "no", "no", "no", "yes", "yes", "no", "no"
+        "3.x", "no", "no", "no", "no", "yes", "yes", "no"
+        "2.x", "no", "no", "no", "no", "no", "yes", "no"
+        "1.x", "no", "no", "no", "no", "no", "no", "yes"
 
 *Beta support for TYPO3 v11.0 is available since version 3.4.0.*
 

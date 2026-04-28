@@ -3,11 +3,11 @@
 $EM_CONF['auth0'] = [
     'title' => 'Auth0 for TYPO3',
     'description' => 'This extension allows you to log into a TYPO3 backend via Auth0. Auth0 is the solution you need for web, mobile, IoT, and internal applications. Loved by developers and trusted by enterprises.',
-    'version' => '13.0.6',
+    'version' => '14.0.0',
     'category' => 'misc',
     'constraints' => [
         'depends' => [
-            'typo3' => '13.4.0-13.4.99',
+            'typo3' => '14.3.0-14.3.99',
         ],
         'conflicts' => [],
         'suggests' => [],

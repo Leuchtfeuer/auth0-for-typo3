@@ -30,7 +30,6 @@ use Leuchtfeuer\Auth0\Exception\TokenException;
 use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class TokenUtility implements LoggerAwareInterface
 {
@@ -45,8 +44,6 @@ class TokenUtility implements LoggerAwareInterface
     protected EmAuth0Configuration $configuration;
 
     protected \DateTimeImmutable $time;
-
-    protected string $issuer = '';
 
     /**
      * @var array<mixed>
@@ -63,21 +60,19 @@ class TokenUtility implements LoggerAwareInterface
     {
         $this->configuration = new EmAuth0Configuration();
         $this->time = new \DateTimeImmutable();
-        $this->setIssuer();
+        /** @extensionScannerIgnoreLine */
         $this->config = Configuration::forAsymmetricSigner(
             $this->getSigner(),
             $this->getKey(self::KEY_TYPE_PRIVATE),
             $this->getKey(self::KEY_TYPE_PUBLIC)
         );
-        $this->config->setValidationConstraints(...$this->getConstraints());
     }
 
     /**
      * @return Constraint[]
      */
-    private function getConstraints(): array
+    private function getConstraints(string $issuer): array
     {
-        $issuer = $this->getIssuer();
         if ($issuer === '') {
             throw new \RuntimeException('Issuer must not be empty');
         }
@@ -88,13 +83,13 @@ class TokenUtility implements LoggerAwareInterface
         return $contraints;
     }
 
-    public function buildToken(): UnencryptedToken
+    public function buildToken(string $issuer): UnencryptedToken
     {
-        $issuer = $this->getIssuer();
         if ($issuer === '') {
             throw new \RuntimeException('Issuer must not be empty');
         }
 
+        /** @extensionScannerIgnoreLine */
         $builder = $this->config->builder();
         $builder = $builder->issuedBy($issuer)
             ->permittedFor(CallbackMiddleware::PATH)
@@ -108,12 +103,10 @@ class TokenUtility implements LoggerAwareInterface
             }
         }
 
-        return $builder->getToken($this->getSigner(), $this->getKey(self::KEY_TYPE_PRIVATE));
-    }
+        $token = $builder->getToken($this->getSigner(), $this->getKey(self::KEY_TYPE_PRIVATE));
+        $this->payload = [];
 
-    public function getIssuer(): string
-    {
-        return $this->issuer;
+        return $token;
     }
 
     /**
@@ -129,7 +122,7 @@ class TokenUtility implements LoggerAwareInterface
         $this->payload[$key] = $value;
     }
 
-    public function verifyToken(string $token): bool
+    public function verifyToken(string $token, string $issuer): bool
     {
         if ($token === '' || $token === '0') {
             $this->logger?->warning('Given token is empty.');
@@ -137,6 +130,7 @@ class TokenUtility implements LoggerAwareInterface
         }
 
         try {
+            /** @extensionScannerIgnoreLine */
             $this->token = $this->config->parser()->parse($token);
         } catch (\Exception $exception) {
             /** @extensionScannerIgnoreLine */
@@ -145,6 +139,10 @@ class TokenUtility implements LoggerAwareInterface
             return false;
         }
 
+        /** @extensionScannerIgnoreLine */
+        $this->config = $this->config->withValidationConstraints(...$this->getConstraints($issuer));
+
+        /** @extensionScannerIgnoreLine */
         if (!$this->config->validator()->validate($this->token, ...$this->config->validationConstraints())) {
             $this->logger?->warning('Token validation failed.');
             return false;
@@ -169,11 +167,6 @@ class TokenUtility implements LoggerAwareInterface
         return $this->token;
     }
 
-    public function setIssuer(): void
-    {
-        $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
-    }
-
     protected function getSigner(): Signer
     {
         if ($this->configuration->useKeyFiles()) {
@@ -196,6 +189,6 @@ class TokenUtility implements LoggerAwareInterface
             $this->logger?->warning(sprintf('Type %s is not allowed. Using encryption key.', $type));
         }
 
-        return InMemory::plainText($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']);
+        return InMemory::plainText($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] ?? '');
     }
 }

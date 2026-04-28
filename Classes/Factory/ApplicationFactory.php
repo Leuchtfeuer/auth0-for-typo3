@@ -14,11 +14,14 @@ namespace Leuchtfeuer\Auth0\Factory;
 use Auth0\SDK\Auth0;
 use Auth0\SDK\Configuration\SdkConfiguration;
 use Auth0\SDK\Exception\ConfigurationException;
+use Auth0\SDK\Store\SessionStore;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Leuchtfeuer\Auth0\Domain\Model\Application;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
+use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ApplicationFactory
@@ -33,8 +36,9 @@ class ApplicationFactory
      * @throws ConfigurationException
      * @throws GuzzleException
      */
-    public static function build(int $applicationId, string $context = self::SESSION_PREFIX_BACKEND): Auth0
+    public static function build(int $applicationId, string $context = self::SESSION_PREFIX_BACKEND, ?ServerRequestInterface $request = null): Auth0
     {
+        $sessionStorageId = sprintf('auth0_session_%s', $context);
         $scope = ['openid', 'profile', 'read:current_user'];
         $application = GeneralUtility::makeInstance(ApplicationRepository::class)->findByUid($applicationId);
         if ($application === null) {
@@ -65,10 +69,17 @@ class ApplicationFactory
             'domain' => $application->getDomain(),
             'id_token_alg' => $application->getSignatureAlgorithm(),
             'managementToken' => $managementToken ?? null,
-            'redirectUri' => GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . CallbackMiddleware::PATH,
+            // $GLOBALS['TYPO3_REQUEST'] is intentionally not used as fallback: TYPO3 14 no longer
+            // guarantees its availability in all contexts (e.g. CLI, early middlewares). $_SERVER
+            // is the last resort for callers without a request (CleanUpCommand, Auth0SessionValidator)
+            // where redirectUri is constructed but never actually used in an OAuth flow.
+            'redirectUri' => ($request?->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getRequestHost() . CallbackMiddleware::PATH,
             'scope' => $scope,
-            'sessionStorageId' => sprintf('auth0_session_%s', $context),
         ]);
-        return new Auth0($sdkConfiguration);
+        $auth0 = new Auth0($sdkConfiguration);
+        $auth0->configuration()->setSessionStorage(new SessionStore($auth0->configuration(), $sessionStorageId));
+        $auth0->configuration()->setTransientStorage(new SessionStore($auth0->configuration(), $sessionStorageId . '_transient'));
+
+        return $auth0;
     }
 }
