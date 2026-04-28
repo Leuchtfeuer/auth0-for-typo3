@@ -231,9 +231,7 @@ class AuthenticationService extends BasicAuthenticationService
         }
 
         // Sync updates back to in-memory user object
-        if (is_array($this->user)) {
-            $this->user = array_merge($this->user, $updateUtility->getPerformedUpdates());
-        }
+        $this->user = array_merge($this->user, $updateUtility->getPerformedUpdates());
     }
 
     /**

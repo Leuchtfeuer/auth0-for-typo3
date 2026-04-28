@@ -83,7 +83,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         return match ($tableName) {
             'be_users' => $this->insertBeUser($tableName, $user),
             /** @extensionScannerIgnoreLine */
-            default => (function() use ($tableName) {
+            default => (function () use ($tableName) {
                 $this->logger?->error(sprintf('"%s" is not a valid table name.', $tableName));
                 return [];
             })(),

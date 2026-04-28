@@ -38,10 +38,13 @@ class UpdateUtility implements LoggerAwareInterface
     protected array $yamlConfiguration = [];
 
     /**
-     * @param array<string, mixed> $user
+     * @var array<string, mixed>
      */
     protected array $performedUpdates = [];
 
+    /**
+     * @param array<string, mixed> $user
+     */
     public function __construct(
         protected readonly Auth0Configuration $auth0Configuration,
         protected readonly BackendUserGroupRepository $backendUserGroupRepository,
@@ -53,6 +56,9 @@ class UpdateUtility implements LoggerAwareInterface
         $this->yamlConfiguration = $this->auth0Configuration->load();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getPerformedUpdates(): array
     {
         return $this->performedUpdates;
