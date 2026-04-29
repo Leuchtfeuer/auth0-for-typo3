@@ -52,6 +52,26 @@ class Auth0Configuration implements SingletonInterface
         }
     }
 
+    /**
+     * Resolves the Auth0 source property mapped onto a given TYPO3 database field
+     * by inspecting the YAML property mapping. Returns null if no mapping exists.
+     */
+    public function getAuth0PropertyForDatabaseField(string $tableName, string $databaseField): ?string
+    {
+        $mapping = $this->load()['properties'][$tableName] ?? [];
+        foreach ($mapping as $properties) {
+            if (!is_array($properties)) {
+                continue;
+            }
+            foreach ($properties as $property) {
+                if (($property['databaseField'] ?? null) === $databaseField) {
+                    return $property['auth0Property'] ?? null;
+                }
+            }
+        }
+        return null;
+    }
+
     public function write(array $configuration): void
     {
         if (!file_exists($this->configPath)) {

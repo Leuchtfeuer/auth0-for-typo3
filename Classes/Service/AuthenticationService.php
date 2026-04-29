@@ -213,7 +213,7 @@ class AuthenticationService extends BasicAuthenticationService
      */
     protected function insertOrUpdateUser(): void
     {
-        $this->user = $this->userUtility->checkIfUserExists($this->tableName, $this->userInfo[$this->userIdentifier]);
+        $this->user = $this->userUtility->checkIfUserExists($this->tableName, $this->userInfo);
 
         // Insert a new user into database
         if ($this->user === []) {
