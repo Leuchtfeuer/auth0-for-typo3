@@ -21,25 +21,26 @@ Properties
 
 .. container:: ts-properties
 
-   ==================================== ==================================== ==================
-   Property                             Tab                                  Type
-   ==================================== ==================================== ==================
-   enableBackendLogin_                  Backend                              boolean
-   backendConnection_                   Backend                              positive integer
-   reactivateDisabledBackendUsers_      Backend                              boolean
-   reactivateDeletedBackendUsers_       Backend                              boolean
-   softLogout_                          Backend                              boolean
-   additionalAuthorizeParameters_       Backend                              string
-   disableSudoModeBypass_               Backend                              boolean
-   enableFrontendLogin_                 Frontend                             boolean
-   userStoragePage_                     Frontend                             positive integer
-   reactivateDisabledFrontendUsers_     Frontend                             boolean
-   reactivateDeletedFrontendUsers_      Frontend                             boolean
-   genericCallback_                     Token                                boolean
-   privateKeyFile_                      Token                                string
-   publicKeyFile_                       Token                                string
-   userIdentifier_                      Token                                string
-   ==================================== ==================================== ==================
+   ======================================= ==================================== ==================
+   Property                                Tab                                  Type
+   ======================================= ==================================== ==================
+   enableBackendLogin_                     Backend                              boolean
+   backendConnection_                      Backend                              positive integer
+   reactivateDisabledBackendUsers_         Backend                              boolean
+   reactivateDeletedBackendUsers_          Backend                              boolean
+   softLogout_                             Backend                              boolean
+   additionalAuthorizeParameters_          Backend                              string
+   disableSudoModeBypass_                  Backend                              boolean
+   mergeUsersByEmailAndUsername_           Backend                              boolean
+   enableFrontendLogin_                    Frontend                             boolean
+   userStoragePage_                        Frontend                             positive integer
+   reactivateDisabledFrontendUsers_        Frontend                             boolean
+   reactivateDeletedFrontendUsers_         Frontend                             boolean
+   genericCallback_                        Token                                boolean
+   privateKeyFile_                         Token                                string
+   publicKeyFile_                          Token                                string
+   userIdentifier_                         Token                                string
+   ======================================= ==================================== ==================
 
 .. ### BEGIN~OF~TABLE ###
 
@@ -158,6 +159,38 @@ disableSudoModeBypass
 
          .. note::
             This setting only applies to TYPO3 12.4.32 and higher, where sudo mode bypassing is available.
+
+.. _admin-extensionConfiguration-properties-mergeUsersByEmailAndUsername:
+
+mergeUsersByEmailAndUsername
+----------------------------
+.. container:: table-row
+
+   Property
+         mergeUsersByEmailAndUsername
+   Data type
+         boolean
+   Default
+         :code:`false`
+   Description
+         When enabled and no backend user with a matching ``auth0_user_id`` is found, the extension
+         attempts to locate an existing user by email address and username. If a match is found,
+         the stored ``auth0_user_id`` is updated to the new value so subsequent logins use the
+         standard lookup path.
+
+         This is useful when a user switches their **login method within Auth0** — for example from
+         a Google social connection to an email/password account. Even within the same Auth0 tenant,
+         each connection type produces a different ``sub`` claim (e.g. ``google-oauth2|…`` vs.
+         ``auth0|…``). Without this option, TYPO3 would create a second backend user record,
+         severing the original user's edit history and permissions.
+
+         The username is resolved via the YAML property mapping (``databaseField: username``).
+         If no such mapping is configured, Auth0's ``nickname`` claim is used as a fallback.
+
+         .. note::
+            Disable this option again once all affected users have logged in at least once, to
+            avoid unintended account merges. The option has no effect if either the email or the
+            username cannot be determined from the Auth0 token.
 
 .. _admin-extensionConfiguration-properties-enableFrontendLogin:
 
