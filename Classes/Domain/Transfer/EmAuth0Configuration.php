@@ -38,6 +38,8 @@ class EmAuth0Configuration implements SingletonInterface
 
     protected $softLogout = false;
 
+    protected $mergeUsersByEmailAndUsername = false;
+
     protected $additionalAuthorizeParameters = '';
 
     protected $enableFrontendLogin = true;
@@ -108,6 +110,11 @@ class EmAuth0Configuration implements SingletonInterface
     public function isSoftLogout(): bool
     {
         return (bool)$this->softLogout;
+    }
+
+    public function isMergeUsersByEmailAndUsername(): bool
+    {
+        return (bool)$this->mergeUsersByEmailAndUsername;
     }
 
     public function getAdditionalAuthorizeParameters(): array
