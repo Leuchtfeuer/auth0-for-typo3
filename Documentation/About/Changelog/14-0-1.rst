@@ -1,0 +1,40 @@
+.. include:: ../../Includes.txt
+
+===========================
+Version 14.0.1 - 2026/04/29
+===========================
+
+This release adds a new opt-in feature for merging existing backend users when their Auth0
+login method changes.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v14.0.1>`__.
+
+Added
+=====
+
+* New extension configuration option **mergeUsersByEmailAndUsername**: when no ``auth0_user_id``
+  match is found during login, the extension can now fall back to looking up an existing backend
+  user by email address and username. If a match is found, the stored ``auth0_user_id`` is
+  rewritten to the new value so subsequent logins follow the standard path.
+
+  **Background:** Even within the same Auth0 tenant, switching a user's login method — for
+  example from a Google social connection to an email/password account — causes Auth0 to issue
+  a different ``sub`` claim (e.g. ``google-oauth2|…`` → ``auth0|…``). Without this option,
+  TYPO3 would create a second backend user record for the same person, severing their edit
+  history and permissions.
+
+  The username is resolved through the YAML property mapping (``databaseField: username``). If
+  no such mapping is configured, Auth0's ``nickname`` claim is used as a fallback.
+
+  See :ref:`admin-extensionConfiguration-properties-mergeUsersByEmailAndUsername` for details.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2026-04-28 [FEATURE] Merge existing users by email and username on Auth0 login [TER-459] [TER-460] (Commit 0e4127f by Oliver Heins)
