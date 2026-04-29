@@ -19,6 +19,9 @@ additionalAuthorizeParameters =
 # cat=Backend/60; type=boolean; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.disable_sudo_mode_bypass
 disableSudoModeBypass = 0
 
+# cat=Backend/70; type=boolean; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:backend.merge_users_by_email_and_username
+mergeUsersByEmailAndUsername = 0
+
 # cat=Frontend/10; type=boolean; label=LLL:EXT:auth0/Resources/Private/Language/locallang_em.xlf:frontend.enable_frontend_login
 enableFrontendLogin = 1
 

@@ -141,6 +141,19 @@ class Auth0Configuration implements SingletonInterface
         return $configuration;
     }
 
+    public function getAuth0PropertyForDatabaseField(string $tableName, string $databaseField): ?string
+    {
+        $mapping = $this->load()['properties'][$tableName] ?? [];
+        foreach ($mapping as $properties) {
+            foreach ($properties as $property) {
+                if (($property['databaseField'] ?? null) === $databaseField) {
+                    return $property['auth0Property'] ?? null;
+                }
+            }
+        }
+        return null;
+    }
+
     protected function getYamlFileLoader(): YamlFileLoader
     {
         return GeneralUtility::makeInstance(YamlFileLoader::class);
