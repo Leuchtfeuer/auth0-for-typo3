@@ -16,6 +16,7 @@ List of Versions
     :maxdepth: 3
     :titlesonly:
 
+    5-2-1
     5-2-0
     5-1-0
     5-0-6
