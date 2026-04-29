@@ -42,6 +42,8 @@ class EmAuth0Configuration implements SingletonInterface
 
     protected string $userIdentifier = 'sub';
 
+    protected bool $mergeUsersByEmailAndUsername = false;
+
     /**
      * @throws ExtensionConfigurationExtensionNotConfiguredException
      * @throws ExtensionConfigurationPathDoesNotExistException
@@ -136,5 +138,10 @@ class EmAuth0Configuration implements SingletonInterface
     public function getUserIdentifier(): string
     {
         return $this->userIdentifier;
+    }
+
+    public function isMergeUsersByEmailAndUsername(): bool
+    {
+        return $this->mergeUsersByEmailAndUsername;
     }
 }
