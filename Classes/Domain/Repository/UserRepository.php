@@ -72,6 +72,23 @@ class UserRepository implements LoggerAwareInterface
     }
 
     /**
+     * Find user by email AND username. Used for OAuth provider migration.
+     */
+    public function getUserByEmailAndUsername(string $email, string $username): ?array
+    {
+        $this->queryBuilder
+            ->select('*')
+            ->from($this->tableName)
+            ->where(
+                $this->expressionBuilder->eq('email', $this->queryBuilder->createNamedParameter($email)),
+                $this->expressionBuilder->eq('username', $this->queryBuilder->createNamedParameter($username))
+            );
+        $user = $this->queryBuilder->execute()->fetchAssociative();
+
+        return ($user !== false) ? $user : null;
+    }
+
+    /**
      * Removes DeletedRestriction and / or HiddenRestriction from QueryBuilder.
      * Depends on extension configuration.
      */

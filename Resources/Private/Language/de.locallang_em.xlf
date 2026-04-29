@@ -27,6 +27,10 @@
 				<source><![CDATA[Additional Query Parameters: Additional query parameters for backend authentication (e.g. "access_type=offline&connection=google-oauth2")]]></source>
 				<target><![CDATA[Zusätzliche Query Parameter: Zusätzliche query Parameter für die Backend-Authentifizierung (z.B.: "access_type=offline&connection=google-oauth2")]]></target>
 			</trans-unit>
+			<trans-unit id="backend.merge_users_by_email_and_username" resname="backend.merge_users_by_email_and_username">
+				<source>Merge with existing user by email + username when no Auth0 ID match. Used for OAuth provider migration.</source>
+				<target>Mit bestehendem Benutzer anhand E-Mail + Loginname zusammenführen, wenn kein Auth0-ID-Match besteht. Für Wechsel des OAuth-Providers.</target>
+			</trans-unit>
 			<trans-unit id="frontend.enable_frontend_login" resname="frontend.enable_frontend_login">
 				<source>Frontend Log In: Enable Auth0 log in for TYPO3 frontend</source>
 				<target>Webseiten Login: Aktiviere Auth0 zur Anmeldung auf deiner Webseite</target>

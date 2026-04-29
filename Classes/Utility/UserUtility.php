@@ -16,16 +16,19 @@ namespace Leuchtfeuer\Auth0\Utility;
 use Auth0\SDK\Auth0;
 use Auth0\SDK\Utility\HttpResponse;
 use GuzzleHttp\Utils;
+use Leuchtfeuer\Auth0\Configuration\Auth0Configuration;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use Leuchtfeuer\Auth0\Domain\Repository\UserRepository;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\Utility\Database\UpdateUtility;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\InvalidPasswordHashException;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Crypto\Random;
+use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -41,12 +44,76 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         $this->configuration = new EmAuth0Configuration();
     }
 
-    public function checkIfUserExists(string $tableName, string $auth0UserId): array
+    public function checkIfUserExists(string $tableName, array $userInfo): array
     {
+        $auth0UserId = $userInfo[$this->configuration->getUserIdentifier()] ?? '';
         $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
         $user = $userRepository->getUserByAuth0Id($auth0UserId);
 
+        if ($user === null && $this->configuration->isMergeUsersByEmailAndUsername()) {
+            $user = $this->findExistingUserByEmailAndUsername($tableName, $userInfo);
+        }
+
         return $user ?? $this->findUserWithoutRestrictions($tableName, $auth0UserId);
+    }
+
+    protected function findExistingUserByEmailAndUsername(string $tableName, array $userInfo): ?array
+    {
+        $email = $userInfo['email'] ?? '';
+        $auth0Configuration = GeneralUtility::makeInstance(Auth0Configuration::class);
+        $usernameAuth0Property = $auth0Configuration->getAuth0PropertyForDatabaseField($tableName, 'username') ?? 'nickname';
+        $username = $userInfo[$usernameAuth0Property] ?? '';
+
+        if ($email === '' || $username === '') {
+            return null;
+        }
+
+        $userRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
+        $userRepository->removeRestrictions();
+        $userRepository->setOrdering('uid', 'ASC');
+        $userRepository->setMaxResults(1);
+        $user = $userRepository->getUserByEmailAndUsername($email, $username);
+
+        if ($user === null) {
+            return null;
+        }
+
+        $newAuth0UserId = $userInfo[$this->configuration->getUserIdentifier()] ?? '';
+        if ($newAuth0UserId === '') {
+            return null;
+        }
+
+        $sets = ['auth0_user_id' => $newAuth0UserId];
+
+        $isFrontend = ($GLOBALS['TYPO3_REQUEST'] ?? null) instanceof ServerRequestInterface
+            && ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend();
+
+        if ($isFrontend) {
+            if ($this->configuration->isReactivateDisabledFrontendUsers() && (int)($user['disable'] ?? 0) === 1) {
+                $sets['disable'] = 0;
+            }
+            if ($this->configuration->isReactivateDeletedFrontendUsers() && (int)($user['deleted'] ?? 0) === 1) {
+                $sets['deleted'] = 0;
+            }
+        } else {
+            if ($this->configuration->isReactivateDisabledBackendUsers() && (int)($user['disable'] ?? 0) === 1) {
+                $sets['disable'] = 0;
+            }
+            if ($this->configuration->isReactivateDeletedBackendUsers() && (int)($user['deleted'] ?? 0) === 1) {
+                $sets['deleted'] = 0;
+            }
+        }
+
+        $updateRepository = GeneralUtility::makeInstance(UserRepository::class, $tableName);
+        $updateRepository->updateUserByUid($sets, (int)$user['uid']);
+
+        $this->logger->notice(sprintf(
+            'Merged existing user (uid=%d) with new auth0_user_id "%s" via email+username match.',
+            (int)$user['uid'],
+            $newAuth0UserId
+        ));
+
+        return array_merge($user, $sets);
     }
 
     protected function findUserWithoutRestrictions(string $tableName, string $auth0UserId): array

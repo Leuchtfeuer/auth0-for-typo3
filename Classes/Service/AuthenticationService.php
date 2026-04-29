@@ -272,7 +272,7 @@ class AuthenticationService extends BasicAuthenticationService
     protected function insertOrUpdateUser(): void
     {
         $userUtility = GeneralUtility::makeInstance(UserUtility::class);
-        $this->user = $userUtility->checkIfUserExists($this->tableName, $this->userInfo[$this->userIdentifier]);
+        $this->user = $userUtility->checkIfUserExists($this->tableName, $this->userInfo);
 
         // Insert a new user into database
         if (empty($this->user)) {
