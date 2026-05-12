@@ -1,0 +1,43 @@
+.. include:: ../../Includes.txt
+
+==========================
+Version 5.1.4 - 2026/05/12
+==========================
+
+This release fixes a regression in the ``mergeUsersByEmailAndUsername`` feature introduced in
+5.1.3 that prevented existing backend users from being matched when their Auth0 login method
+changed.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v5.1.4>`__.
+
+Fixed
+=====
+
+* **Merge-by-email+username lookup honours configuration type:** When the YAML property mapping
+  placed the username inside ``user_metadata`` or ``app_metadata`` (instead of the root payload),
+  the lookup silently skipped the existing backend user and Auth0 then created a duplicate
+  ``be_users`` record. The lookup now resolves the username through the configured property
+  mapping — including its ``configurationType`` — and falls back to Auth0's ``nickname`` claim only
+  when no mapping is configured.
+
+Added
+=====
+
+* ``UserRepository::updateUserByAuth0Id()`` now logs a warning when more than one ``be_users`` row
+  matches the given ``auth0_user_id``. ``UPDATE`` has no implicit row limit, so a duplicate
+  identifier would otherwise mutate every matching record in lockstep and mask the duplication.
+
+* ``UserUtility::findExistingUserByEmailAndUsername()`` now emits a notice when the merge-by-
+  email+username path is skipped because ``email``, ``username``, or the new ``auth0_user_id`` is
+  missing from the Auth0 payload. This makes silent skips diagnosable in the TYPO3 log.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2026-05-12 [BUGFIX] Resolve merge-by-email+username lookup via configuration type [TER-477] [TER-478] (Commit 9979305 by Oliver Heins)
