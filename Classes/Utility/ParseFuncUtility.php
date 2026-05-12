@@ -36,17 +36,17 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
                 break;
 
             case Auth0Configuration::CONFIG_TYPE_USER:
-                $value = $this->getAuth0ValueRecursive(
-                    $user[Auth0Configuration::CONFIG_TYPE_USER],
-                    explode('.', $auth0FieldName)
-                );
+                $bucket = $user[Auth0Configuration::CONFIG_TYPE_USER] ?? null;
+                $value = is_array($bucket)
+                    ? $this->getAuth0ValueRecursive($bucket, explode('.', $auth0FieldName))
+                    : null;
                 break;
 
             case Auth0Configuration::CONFIG_TYPE_APP:
-                $value = $this->getAuth0ValueRecursive(
-                    $user[Auth0Configuration::CONFIG_TYPE_APP],
-                    explode('.', $auth0FieldName)
-                );
+                $bucket = $user[Auth0Configuration::CONFIG_TYPE_APP] ?? null;
+                $value = is_array($bucket)
+                    ? $this->getAuth0ValueRecursive($bucket, explode('.', $auth0FieldName))
+                    : null;
                 break;
 
             default:

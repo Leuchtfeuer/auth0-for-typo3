@@ -17,6 +17,7 @@ use Leuchtfeuer\Auth0\Configuration\Auth0Configuration;
 use Leuchtfeuer\Auth0\Domain\Repository\UserRepository;
 use Leuchtfeuer\Auth0\Domain\Repository\UserRepositoryFactory;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Leuchtfeuer\Auth0\Utility\ParseFuncUtility;
 use Leuchtfeuer\Auth0\Utility\UserUtility;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\Stub;
@@ -28,11 +29,22 @@ class UserUtilityTest extends TestCase
 {
     private const TABLE = 'be_users';
 
+    private const ROOT_NICKNAME_MAPPING = [
+        'configurationType' => 'root',
+        'auth0Property' => 'nickname',
+    ];
+
+    private const USER_METADATA_LOGIN_NAME_MAPPING = [
+        'configurationType' => 'user_metadata',
+        'auth0Property' => 'login_name',
+    ];
+
     private PasswordHashFactory&Stub $passwordHashFactory;
     private Random&Stub $random;
     private UserRepositoryFactory $userRepositoryFactory;
     private Auth0Configuration&Stub $auth0Configuration;
     private EmAuth0Configuration&Stub $emConfiguration;
+    private ParseFuncUtility $parseFuncUtility;
 
     protected function setUp(): void
     {
@@ -43,6 +55,7 @@ class UserUtilityTest extends TestCase
         $this->auth0Configuration = self::createStub(Auth0Configuration::class);
         $this->emConfiguration = self::createStub(EmAuth0Configuration::class);
         $this->emConfiguration->method('getUserIdentifier')->willReturn('sub');
+        $this->parseFuncUtility = new ParseFuncUtility();
     }
 
     #[Test]
@@ -118,7 +131,7 @@ class UserUtilityTest extends TestCase
         $this->emConfiguration->method('isMergeUsersByEmailAndUsername')->willReturn(true);
         $this->emConfiguration->method('isReactivateDisabledBackendUsers')->willReturn(false);
         $this->emConfiguration->method('isReactivateDeletedBackendUsers')->willReturn(false);
-        $this->auth0Configuration->method('getAuth0PropertyForDatabaseField')->willReturn('nickname');
+        $this->auth0Configuration->method('getAuth0MappingForDatabaseField')->willReturn(self::ROOT_NICKNAME_MAPPING);
 
         $subject = $this->createSubject();
 
@@ -130,6 +143,42 @@ class UserUtilityTest extends TestCase
 
         self::assertSame(99, $result['uid']);
         self::assertSame('auth0|new', $result['auth0_user_id']);
+    }
+
+    #[Test]
+    public function checkIfUserExistsResolvesUsernameFromUserMetadataBucket(): void
+    {
+        $existing = ['uid' => 99, 'auth0_user_id' => 'google-oauth2|old', 'disable' => 0, 'deleted' => 0];
+
+        $primaryRepo = self::createStub(UserRepository::class);
+        $primaryRepo->method('getUserByAuth0Id')->willReturn(null);
+
+        $mergeRepo = $this->createMock(UserRepository::class);
+        $mergeRepo->expects(self::once())
+            ->method('getUserByEmailAndUsername')
+            ->with('user@example.com', 'lf_o.heins')
+            ->willReturn($existing);
+
+        $updateRepo = $this->createMock(UserRepository::class);
+        $updateRepo->expects(self::once())
+            ->method('updateUserByUid')
+            ->with(['auth0_user_id' => 'auth0|new'], 99);
+
+        $this->userRepositoryFactory->method('create')
+            ->willReturnOnConsecutiveCalls($primaryRepo, $mergeRepo, $updateRepo);
+
+        $this->emConfiguration->method('isMergeUsersByEmailAndUsername')->willReturn(true);
+        $this->emConfiguration->method('isReactivateDisabledBackendUsers')->willReturn(false);
+        $this->emConfiguration->method('isReactivateDeletedBackendUsers')->willReturn(false);
+        $this->auth0Configuration->method('getAuth0MappingForDatabaseField')
+            ->willReturn(self::USER_METADATA_LOGIN_NAME_MAPPING);
+
+        $subject = $this->createSubject();
+        $subject->checkIfUserExists(self::TABLE, [
+            'sub' => 'auth0|new',
+            'email' => 'user@example.com',
+            'user_metadata' => ['login_name' => 'lf_o.heins'],
+        ]);
     }
 
     #[Test]
@@ -161,7 +210,7 @@ class UserUtilityTest extends TestCase
         $this->emConfiguration->method('isMergeUsersByEmailAndUsername')->willReturn(true);
         $this->emConfiguration->method('isReactivateDisabledBackendUsers')->willReturn(true);
         $this->emConfiguration->method('isReactivateDeletedBackendUsers')->willReturn(true);
-        $this->auth0Configuration->method('getAuth0PropertyForDatabaseField')->willReturn('nickname');
+        $this->auth0Configuration->method('getAuth0MappingForDatabaseField')->willReturn(self::ROOT_NICKNAME_MAPPING);
 
         $subject = $this->createSubject();
         $subject->checkIfUserExists(self::TABLE, [
@@ -188,7 +237,7 @@ class UserUtilityTest extends TestCase
         $this->userRepositoryFactory = $factory;
 
         $this->emConfiguration->method('isMergeUsersByEmailAndUsername')->willReturn(true);
-        $this->auth0Configuration->method('getAuth0PropertyForDatabaseField')->willReturn('nickname');
+        $this->auth0Configuration->method('getAuth0MappingForDatabaseField')->willReturn(self::ROOT_NICKNAME_MAPPING);
 
         $subject = $this->createSubject();
 
@@ -220,7 +269,7 @@ class UserUtilityTest extends TestCase
             ->willReturnOnConsecutiveCalls($primaryRepo, $mergeRepo, $updateRepo);
 
         $this->emConfiguration->method('isMergeUsersByEmailAndUsername')->willReturn(true);
-        $this->auth0Configuration->method('getAuth0PropertyForDatabaseField')->willReturn(null);
+        $this->auth0Configuration->method('getAuth0MappingForDatabaseField')->willReturn(null);
 
         $subject = $this->createSubject();
         $subject->checkIfUserExists(self::TABLE, [
@@ -240,6 +289,7 @@ class UserUtilityTest extends TestCase
             'random' => $this->random,
             'userRepositoryFactory' => $this->userRepositoryFactory,
             'auth0Configuration' => $this->auth0Configuration,
+            'parseFuncUtility' => $this->parseFuncUtility,
             'configuration' => $this->emConfiguration,
         ] as $name => $value) {
             $property = $reflection->getProperty($name);
