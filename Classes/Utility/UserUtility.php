@@ -48,7 +48,7 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
      */
     public function checkIfUserExists(string $tableName, array $userInfo): array
     {
-        $auth0UserId = 'foobar';//(string)($userInfo[$this->configuration->getUserIdentifier()] ?? '');
+        $auth0UserId = (string)($userInfo[$this->configuration->getUserIdentifier()] ?? '');
 
         $userRepository = $this->userRepositoryFactory->create($tableName);
         $user = $userRepository->getUserByAuth0Id($auth0UserId);
