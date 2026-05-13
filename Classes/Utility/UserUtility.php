@@ -59,12 +59,22 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
 
     protected function findExistingUserByEmailAndUsername(string $tableName, array $userInfo): ?array
     {
-        $email = $userInfo['email'] ?? '';
-        $auth0Configuration = GeneralUtility::makeInstance(Auth0Configuration::class);
-        $usernameAuth0Property = $auth0Configuration->getAuth0PropertyForDatabaseField($tableName, 'username') ?? 'nickname';
-        $username = $userInfo[$usernameAuth0Property] ?? '';
+        $email = (string)($userInfo['email'] ?? '');
+        $username = $this->resolveUserInfoValue(
+            $tableName,
+            'username',
+            $userInfo,
+            ['configurationType' => Auth0Configuration::CONFIG_TYPE_ROOT, 'auth0Property' => 'nickname']
+        );
+        $newAuth0UserId = (string)($userInfo[$this->configuration->getUserIdentifier()] ?? '');
 
-        if ($email === '' || $username === '') {
+        if ($email === '' || $username === '' || $newAuth0UserId === '') {
+            $this->logger->notice(sprintf(
+                'Skip merge by email+username: missing values (email="%s", username="%s", auth0_user_id="%s").',
+                $email,
+                $username,
+                $newAuth0UserId
+            ));
             return null;
         }
 
@@ -75,11 +85,6 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         $user = $userRepository->getUserByEmailAndUsername($email, $username);
 
         if ($user === null) {
-            return null;
-        }
-
-        $newAuth0UserId = $userInfo[$this->configuration->getUserIdentifier()] ?? '';
-        if ($newAuth0UserId === '') {
             return null;
         }
 
@@ -114,6 +119,35 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
         ));
 
         return array_merge($user, $sets);
+    }
+
+    /**
+     * Looks up a value in the Auth0 userInfo payload using the YAML property
+     * mapping for the given TYPO3 database field. Honours the configuration
+     * type (root, user_metadata, app_metadata) so nested properties resolve
+     * correctly. Falls back to the provided default mapping when the YAML
+     * does not declare one.
+     */
+    protected function resolveUserInfoValue(
+        string $tableName,
+        string $databaseField,
+        array $userInfo,
+        ?array $fallback = null
+    ): string {
+        $auth0Configuration = GeneralUtility::makeInstance(Auth0Configuration::class);
+        $mapping = $auth0Configuration->getAuth0MappingForDatabaseField($tableName, $databaseField) ?? $fallback;
+        if ($mapping === null) {
+            return '';
+        }
+
+        $parseFuncUtility = GeneralUtility::makeInstance(ParseFuncUtility::class);
+        $value = $parseFuncUtility->updateWithoutParseFunc(
+            $mapping['configurationType'],
+            $mapping['auth0Property'],
+            $userInfo
+        );
+
+        return $value === ParseFuncUtility::NO_AUTH0_VALUE ? '' : (string)$value;
     }
 
     protected function findUserWithoutRestrictions(string $tableName, string $auth0UserId): array

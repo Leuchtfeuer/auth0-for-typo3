@@ -154,6 +154,35 @@ class Auth0Configuration implements SingletonInterface
         return null;
     }
 
+    /**
+     * Resolves the Auth0 source property mapped onto a given TYPO3 database field
+     * including its configuration type bucket (root | user_metadata | app_metadata).
+     * Required to look up nested properties — a plain top-level lookup would miss
+     * mappings declared inside user_metadata or app_metadata.
+     *
+     * @return array{configurationType: string, auth0Property: string}|null
+     */
+    public function getAuth0MappingForDatabaseField(string $tableName, string $databaseField): ?array
+    {
+        $mapping = $this->load()['properties'][$tableName] ?? [];
+        foreach ($mapping as $configurationType => $properties) {
+            if (!is_array($properties)) {
+                continue;
+            }
+            foreach ($properties as $property) {
+                if (($property['databaseField'] ?? null) === $databaseField
+                    && isset($property['auth0Property'])
+                ) {
+                    return [
+                        'configurationType' => (string)$configurationType,
+                        'auth0Property' => (string)$property['auth0Property'],
+                    ];
+                }
+            }
+        }
+        return null;
+    }
+
     protected function getYamlFileLoader(): YamlFileLoader
     {
         return GeneralUtility::makeInstance(YamlFileLoader::class);
