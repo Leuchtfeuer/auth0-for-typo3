@@ -213,11 +213,43 @@ class UserRepository implements LoggerAwareInterface
      */
     public function updateUserByAuth0Id(array $sets, string $auth0Id): void
     {
+        $this->warnIfAmbiguousAuth0Id($auth0Id);
         $this->resolveSets($sets);
         $this->queryBuilder->where(
             $this->expressionBuilder->eq('auth0_user_id', $this->queryBuilder->createNamedParameter($auth0Id))
         );
         $this->updateUser();
+    }
+
+    /**
+     * UPDATE statements have no row limit, so a duplicate auth0_user_id would
+     * silently mutate every matching record in lockstep — masking the duplicate
+     * instead of surfacing it. A warning here makes the situation visible.
+     */
+    protected function warnIfAmbiguousAuth0Id(string $auth0Id): void
+    {
+        $countQueryBuilder = $this->connectionPool->getQueryBuilderForTable($this->tableName);
+        $countQueryBuilder->getRestrictions()->removeAll();
+        $count = (int)$countQueryBuilder
+            ->count('uid')
+            ->from($this->tableName)
+            ->where(
+                $countQueryBuilder->expr()->eq(
+                    'auth0_user_id',
+                    $countQueryBuilder->createNamedParameter($auth0Id)
+                )
+            )
+            ->executeQuery()
+            ->fetchOne();
+
+        if ($count > 1) {
+            $this->logger?->warning(sprintf(
+                '[%s] %d rows match auth0_user_id "%s" — possible duplicate user records.',
+                $this->tableName,
+                $count,
+                $auth0Id
+            ));
+        }
     }
 
     /**

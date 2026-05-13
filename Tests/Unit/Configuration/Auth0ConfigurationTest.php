@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 class Auth0ConfigurationTest extends TestCase
 {
     #[Test]
-    public function getAuth0PropertyForDatabaseFieldReturnsMappedAuth0Property(): void
+    public function getAuth0MappingForDatabaseFieldReturnsMappingWithRootConfigurationType(): void
     {
         $subject = $this->createSubjectWithMapping([
             'properties' => [
@@ -35,12 +35,38 @@ class Auth0ConfigurationTest extends TestCase
             ],
         ]);
 
-        self::assertSame('nickname', $subject->getAuth0PropertyForDatabaseField('be_users', 'username'));
-        self::assertSame('email_verified', $subject->getAuth0PropertyForDatabaseField('be_users', 'disable'));
+        self::assertSame(
+            ['configurationType' => 'root', 'auth0Property' => 'nickname'],
+            $subject->getAuth0MappingForDatabaseField('be_users', 'username')
+        );
+        self::assertSame(
+            ['configurationType' => 'root', 'auth0Property' => 'email_verified'],
+            $subject->getAuth0MappingForDatabaseField('be_users', 'disable')
+        );
     }
 
     #[Test]
-    public function getAuth0PropertyForDatabaseFieldHonoursOverriddenMapping(): void
+    public function getAuth0MappingForDatabaseFieldExposesUserMetadataBucket(): void
+    {
+        $subject = $this->createSubjectWithMapping([
+            'properties' => [
+                'be_users' => [
+                    'root' => [],
+                    'user_metadata' => [
+                        ['auth0Property' => 'login_name', 'databaseField' => 'username'],
+                    ],
+                ],
+            ],
+        ]);
+
+        self::assertSame(
+            ['configurationType' => 'user_metadata', 'auth0Property' => 'login_name'],
+            $subject->getAuth0MappingForDatabaseField('be_users', 'username')
+        );
+    }
+
+    #[Test]
+    public function getAuth0MappingForDatabaseFieldHonoursOverriddenMapping(): void
     {
         $subject = $this->createSubjectWithMapping([
             'properties' => [
@@ -52,11 +78,14 @@ class Auth0ConfigurationTest extends TestCase
             ],
         ]);
 
-        self::assertSame('preferred_username', $subject->getAuth0PropertyForDatabaseField('be_users', 'username'));
+        self::assertSame(
+            ['configurationType' => 'root', 'auth0Property' => 'preferred_username'],
+            $subject->getAuth0MappingForDatabaseField('be_users', 'username')
+        );
     }
 
     #[Test]
-    public function getAuth0PropertyForDatabaseFieldReturnsNullWhenNoMappingExists(): void
+    public function getAuth0MappingForDatabaseFieldReturnsNullWhenNoMappingExists(): void
     {
         $subject = $this->createSubjectWithMapping([
             'properties' => [
@@ -68,8 +97,8 @@ class Auth0ConfigurationTest extends TestCase
             ],
         ]);
 
-        self::assertNull($subject->getAuth0PropertyForDatabaseField('be_users', 'email'));
-        self::assertNull($subject->getAuth0PropertyForDatabaseField('unknown_table', 'username'));
+        self::assertNull($subject->getAuth0MappingForDatabaseField('be_users', 'email'));
+        self::assertNull($subject->getAuth0MappingForDatabaseField('unknown_table', 'username'));
     }
 
     /**
