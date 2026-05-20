@@ -1,0 +1,35 @@
+.. include:: ../../Includes.txt
+
+===========================
+Version 14.0.3 - 2026/05/20
+===========================
+
+This release closes the remaining gap in the ``mergeUsersByEmailAndUsername`` lookup: when two
+property mappings target the same database column, the lookup now reproduces the value that
+``UpdateUtility`` would have persisted, instead of relying on the first declared mapping.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v14.0.3>`__.
+
+Fixed
+=====
+
+* **Merge-by-email+username lookup mirrors mapUserData write order:** When the YAML declared two
+  mappings on the same column — for example ``root.nickname → username`` *and*
+  ``user_metadata.login_name → username`` — ``UpdateUtility::mapUserData`` persisted the later
+  mapping (last-wins), but the merge lookup returned the first mapping only. The stored value
+  and the lookup value disagreed, the existing user was never matched, and Auth0 created a
+  duplicate ``be_users`` row on every login with a changed ``auth0_user_id``. The lookup now
+  walks every mapping declared for the column, resolves each via ``ParseFuncUtility`` (honouring
+  ``processing`` directives), and uses the last non-empty value — the same value
+  ``UpdateUtility`` would have written.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2026-05-20 [TASK] Reproduce mapUserData write order in merge-by-email+username lookup [YODA-2871] (Commit a39b84e by Oliver Heins)
