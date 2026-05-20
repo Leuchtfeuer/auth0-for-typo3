@@ -155,32 +155,39 @@ class Auth0Configuration implements SingletonInterface
     }
 
     /**
-     * Resolves the Auth0 source property mapped onto a given TYPO3 database field
-     * including its configuration type bucket (root | user_metadata | app_metadata).
-     * Required to look up nested properties — a plain top-level lookup would miss
-     * mappings declared inside user_metadata or app_metadata.
+     * Returns every Auth0 source mapping declared for a given TYPO3 database
+     * field, in YAML declaration order, including configuration type bucket
+     * and processing directive.
      *
-     * @return array{configurationType: string, auth0Property: string}|null
+     * Why a list: UpdateUtility::mapUserData iterates every mapping and lets
+     * the last non-empty value overwrite earlier ones. Lookups that try to
+     * reproduce the stored value must walk the same sequence — picking only
+     * the first match diverges from what is actually persisted whenever two
+     * mappings target the same column.
+     *
+     * @return list<array{configurationType: string, auth0Property: string, processing: string}>
      */
-    public function getAuth0MappingForDatabaseField(string $tableName, string $databaseField): ?array
+    public function getAuth0MappingsForDatabaseField(string $tableName, string $databaseField): array
     {
-        $mapping = $this->load()['properties'][$tableName] ?? [];
-        foreach ($mapping as $configurationType => $properties) {
-            if (!is_array($properties)) {
+        $mappings = [];
+        $properties = $this->load()['properties'][$tableName] ?? [];
+        foreach ($properties as $configurationType => $configProperties) {
+            if (!is_array($configProperties)) {
                 continue;
             }
-            foreach ($properties as $property) {
+            foreach ($configProperties as $property) {
                 if (($property['databaseField'] ?? null) === $databaseField
                     && isset($property['auth0Property'])
                 ) {
-                    return [
+                    $mappings[] = [
                         'configurationType' => (string)$configurationType,
                         'auth0Property' => (string)$property['auth0Property'],
+                        'processing' => (string)($property['processing'] ?? ''),
                     ];
                 }
             }
         }
-        return null;
+        return $mappings;
     }
 
     protected function getYamlFileLoader(): YamlFileLoader
