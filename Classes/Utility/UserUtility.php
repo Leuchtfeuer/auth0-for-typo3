@@ -120,29 +120,54 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
     }
 
     /**
-     * Looks up a value in the Auth0 userInfo payload using the YAML property
-     * mapping for the given TYPO3 database field. Honours the configuration
-     * type (root, user_metadata, app_metadata) so nested properties resolve
-     * correctly. Falls back to the provided default mapping when the YAML
-     * does not declare one.
+     * Resolves the value that UpdateUtility would have written into the given
+     * TYPO3 column for this userInfo payload. Walks every YAML mapping that
+     * targets the field, in declaration order, and returns the last
+     * non-empty resolution — mirroring UpdateUtility::mapUserData, where each
+     * subsequent mapping overwrites the previous. A first-match lookup would
+     * silently disagree with the persisted value whenever two mappings point
+     * at the same column (e.g. root.nickname *and* user_metadata.login_name
+     * → username), reintroducing the duplicate-user bug this method exists
+     * to prevent.
+     *
+     * The fallback mapping is only consulted when the YAML declares nothing
+     * at all for the field.
      *
      * @param array<string, mixed> $userInfo
-     * @param array{configurationType: string, auth0Property: string}|null $fallback
+     * @param array{configurationType: string, auth0Property: string, processing?: string}|null $fallback
      */
     protected function resolveUserInfoValue(string $tableName, string $databaseField, array $userInfo, ?array $fallback = null): string
     {
-        $mapping = $this->auth0Configuration->getAuth0MappingForDatabaseField($tableName, $databaseField) ?? $fallback;
-        if ($mapping === null) {
+        $mappings = $this->auth0Configuration->getAuth0MappingsForDatabaseField($tableName, $databaseField);
+        if ($mappings === [] && $fallback !== null) {
+            $mappings = [[
+                'configurationType' => (string)$fallback['configurationType'],
+                'auth0Property' => (string)$fallback['auth0Property'],
+                'processing' => (string)($fallback['processing'] ?? ''),
+            ]];
+        }
+        if ($mappings === []) {
             return '';
         }
 
-        $value = $this->parseFuncUtility->updateWithoutParseFunc(
-            $mapping['configurationType'],
-            $mapping['auth0Property'],
-            $userInfo
-        );
+        $resolvedValue = null;
+        foreach ($mappings as $mapping) {
+            $value = $this->parseFuncUtility->updateWithoutParseFunc(
+                $mapping['configurationType'],
+                $mapping['auth0Property'],
+                $userInfo
+            );
+            if ($value === ParseFuncUtility::NO_AUTH0_VALUE) {
+                continue;
+            }
+            $processing = $mapping['processing'];
+            if ($processing !== '' && $processing !== 'null') {
+                $value = $this->parseFuncUtility->transformValue($processing, $value);
+            }
+            $resolvedValue = $value;
+        }
 
-        return $value === ParseFuncUtility::NO_AUTH0_VALUE ? '' : (string)$value;
+        return $resolvedValue === null ? '' : (string)$resolvedValue;
     }
 
     /**
