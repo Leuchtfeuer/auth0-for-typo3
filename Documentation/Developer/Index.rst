@@ -27,6 +27,13 @@ the request to derive the OAuth redirect URI via ``NormalizedParams``. If no req
 in CLI commands or early-boot contexts), ``$_SERVER`` is used as a last resort — the redirect URI
 is constructed but never used in an actual OAuth flow in those contexts.
 
+The returned :php:`Auth0` instance is wired with :php:`Auth0\SDK\Store\CookieStore` for both
+session and transient storage. ``cookieSecret`` defaults to TYPO3's encryption key, ``cookieSecure``
+follows :php:`$GLOBALS['TYPO3_CONF_VARS']['BE']['lockSSL']`, and ``cookieSameSite`` is ``Lax``.
+Subclasses overriding ``build()`` to provide a custom :php:`Auth0\SDK\Contract\StoreInterface` must
+not call :php:`session_start()` directly or indirectly — doing so re-introduces the conflict with
+the TYPO3 Install Tool's :php:`FileSessionHandler` (see :ref:`admin-sessionStorage`).
+
 .. _developer-api-tokenUtility:
 
 TokenUtility
