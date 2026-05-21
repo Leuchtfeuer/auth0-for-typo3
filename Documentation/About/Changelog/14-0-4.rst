@@ -54,5 +54,6 @@ All Changes
 
 This is a list of all changes in this release::
 
+    2026-05-21 [TASK] Harden Auth0 backend callback flow [TER-482] [TER-483] (Commit 6fc3693 by Oliver Heins)
     2026-05-21 [DOCS] Document cookie-based Auth0 session storage [TER-482] [TER-483] (Commit d0b8f6e by Oliver Heins)
     2026-05-21 [BUGFIX] Switch storage to cookies; perform exchange in middleware [TER-482] [TER-483] (Commit c0e227e by Oliver Heins)
