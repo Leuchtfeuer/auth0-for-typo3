@@ -14,7 +14,7 @@ namespace Leuchtfeuer\Auth0\Factory;
 use Auth0\SDK\Auth0;
 use Auth0\SDK\Configuration\SdkConfiguration;
 use Auth0\SDK\Exception\ConfigurationException;
-use Auth0\SDK\Store\SessionStore;
+use Auth0\SDK\Store\CookieStore;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Leuchtfeuer\Auth0\Domain\Model\Application;
@@ -66,6 +66,14 @@ class ApplicationFactory
             'clientId' => $application->getClientId(),
             'clientSecret' => $application->getClientSecret(),
             'cookieSecret' => $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'],
+            // Storage is cookie-based: the SDK's PHP-session-backed store would
+            // call session_start() during backend requests and break the TYPO3
+            // Install Tool's FileSessionHandler, whose session_save_path() call
+            // throws when a PHP session is already active.
+            'cookiePath' => '/',
+            'cookieSecure' => (bool)($GLOBALS['TYPO3_CONF_VARS']['BE']['lockSSL'] ?? false),
+            'cookieSameSite' => 'Lax',
+            'cookieExpires' => 0,
             'domain' => $application->getDomain(),
             'id_token_alg' => $application->getSignatureAlgorithm(),
             'managementToken' => $managementToken ?? null,
@@ -77,8 +85,8 @@ class ApplicationFactory
             'scope' => $scope,
         ]);
         $auth0 = new Auth0($sdkConfiguration);
-        $auth0->configuration()->setSessionStorage(new SessionStore($auth0->configuration(), $sessionStorageId));
-        $auth0->configuration()->setTransientStorage(new SessionStore($auth0->configuration(), $sessionStorageId . '_transient'));
+        $auth0->configuration()->setSessionStorage(new CookieStore($auth0->configuration(), $sessionStorageId));
+        $auth0->configuration()->setTransientStorage(new CookieStore($auth0->configuration(), $sessionStorageId . '_transient'));
 
         return $auth0;
     }
