@@ -25,12 +25,16 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Http\RedirectResponse;
 use TYPO3\CMS\Core\Http\Response;
 
-class CallbackMiddleware implements MiddlewareInterface
+class CallbackMiddleware implements MiddlewareInterface, LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     public const PATH = '/auth0/callback';
 
     public const TOKEN_PARAMETER = 'token';
@@ -93,7 +97,7 @@ class CallbackMiddleware implements MiddlewareInterface
         $state = $queryParams['state'] ?? null;
         $applicationId = (int)($dataSet->get('application') ?? 0);
 
-        if ($code === null || $code === '' || $state === null || $applicationId === 0) {
+        if ($code === null || $code === '' || $state === null || $state === '' || $applicationId === 0) {
             return new RedirectResponse($redirectUri, 302);
         }
 
@@ -106,6 +110,7 @@ class CallbackMiddleware implements MiddlewareInterface
         // added by RequestTokenMiddleware) and wipes the buffer. Doing the OAuth
         // code exchange here and migrating the buffered cookies into the PSR-7
         // response keeps the emitter from discarding them.
+        $preExchangeCookies = $this->captureBufferedSetCookieHeaders();
         try {
             $auth0 = ApplicationFactory::build(
                 $applicationId,
@@ -113,30 +118,62 @@ class CallbackMiddleware implements MiddlewareInterface
                 $request
             );
             $auth0->exchange($issuer . self::PATH, $code, $state);
-            $response = $this->migrateBufferedCookiesToResponse($response);
-        } catch (\Throwable) {
-            // Exchange failed; let Auth0Provider report a missing session as login failure.
+            $response = $this->migrateBufferedCookiesToResponse($response, $preExchangeCookies);
+        } catch (\Throwable $throwable) {
+            $this->logger?->warning(
+                'Auth0 OAuth code exchange failed in CallbackMiddleware.',
+                ['exception' => $throwable]
+            );
         }
 
         return $response;
     }
 
     /**
-     * Pulls Set-Cookie headers that were placed into PHP's header buffer (via
-     * setrawcookie() from inside the Auth0 SDK) into the PSR-7 response and
-     * removes them from the buffer, so the response emitter can manage them
-     * alongside Set-Cookie headers added by other middlewares.
+     * @return list<string>
      */
-    private function migrateBufferedCookiesToResponse(ResponseInterface $response): ResponseInterface
+    private function captureBufferedSetCookieHeaders(): array
     {
         $prefix = 'set-cookie:';
+        $cookies = [];
+        foreach (headers_list() as $header) {
+            if (stripos($header, $prefix) === 0) {
+                $cookies[] = $header;
+            }
+        }
+        return $cookies;
+    }
+
+    /**
+     * Moves Set-Cookie headers that were queued in PHP's header buffer since
+     * $preExchangeCookies was captured into the PSR-7 response. Cookies that
+     * were already present before the exchange stay in the header buffer.
+     *
+     * @param list<string> $preExchangeCookies
+     */
+    private function migrateBufferedCookiesToResponse(
+        ResponseInterface $response,
+        array $preExchangeCookies,
+    ): ResponseInterface {
+        $prefix = 'set-cookie:';
+        $remaining = array_count_values($preExchangeCookies);
         foreach (headers_list() as $header) {
             if (stripos($header, $prefix) !== 0) {
+                continue;
+            }
+            if (($remaining[$header] ?? 0) > 0) {
+                $remaining[$header]--;
                 continue;
             }
             $response = $response->withAddedHeader('Set-Cookie', trim(substr($header, strlen($prefix))));
         }
         header_remove('Set-Cookie');
+        // Re-emit pre-existing Set-Cookie headers with replace=false. The original
+        // replace semantics are not preserved because the preceding TYPO3 middlewares
+        // queue distinct, additive cookies; no same-name overwrite is expected here.
+        foreach ($preExchangeCookies as $header) {
+            header($header, false);
+        }
         return $response;
     }
 }

@@ -28,6 +28,7 @@ class ApplicationFactory
 {
     public const SESSION_PREFIX_BACKEND = 'BE';
 
+    /** @deprecated since v14, will be removed in v15 */
     public const SESSION_PREFIX_FRONTEND = 'FE';
 
     protected ?Application $application = null;
@@ -71,6 +72,8 @@ class ApplicationFactory
             // Install Tool's FileSessionHandler, whose session_save_path() call
             // throws when a PHP session is already active.
             'cookiePath' => '/',
+            // Intentionally tied to BE.lockSSL: the frontend session prefix is deprecated and
+            // the only caller of this factory is the backend login provider / callback middleware.
             'cookieSecure' => (bool)($GLOBALS['TYPO3_CONF_VARS']['BE']['lockSSL'] ?? false),
             'cookieSameSite' => 'Lax',
             'cookieExpires' => 0,

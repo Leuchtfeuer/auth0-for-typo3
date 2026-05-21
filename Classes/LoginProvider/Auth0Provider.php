@@ -184,23 +184,11 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     protected function getUserInfo(): array
     {
         $this->setAuth0();
+        // The OAuth code exchange is performed by CallbackMiddleware before
+        // this provider runs, so user info is read directly from the Auth0
+        // SDK's cookie-backed session storage.
         $userInfo = $this->auth0->configuration()->getSessionStorage()?->get('user') ?? [];
-        if (!is_array($userInfo) || $userInfo === []) {
-            $queryParams = $this->getRequest()->getQueryParams();
-            try {
-                $this->logger?->notice('Try to get user via Auth0 API');
-                if (isset($queryParams['code']) && $this->auth0->exchange($this->getCallback(), $queryParams['code'], $queryParams['state'] ?? null)) {
-                    $userInfo = $this->auth0->getUser() ?? [];
-                } else {
-                    $this->logger?->notice('Exchange failed or no code present');
-                }
-            } catch (\Exception $exception) {
-                $this->logger?->critical($exception->getMessage());
-                $this->auth0->clear();
-            }
-        }
-
-        return $userInfo;
+        return is_array($userInfo) ? $userInfo : [];
     }
 
     /**
