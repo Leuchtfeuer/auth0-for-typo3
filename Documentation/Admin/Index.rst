@@ -84,6 +84,37 @@ only TYPO3 backend users (for now).
 Please take a look at the :ref:`command <admin-command>` section.
 
 
+.. _admin-sessionStorage:
+
+Session Storage
+===============
+
+The Auth0 OAuth session (``id_token``, access token, user info) is held in
+encrypted, HTTP-only cookies named ``auth0_session_BE_*`` (and short-lived
+``auth0_session_BE_transient_*`` cookies during the login round trip). Payloads
+are encrypted with the TYPO3 encryption key
+(:php:`$GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey']`) using AES-256-GCM,
+so no Auth0 data is readable client-side.
+
+Because Auth0 tokens can grow beyond the per-cookie size limit (~4 KB),
+the underlying SDK splits a single payload across several numbered cookies
+(``_0``, ``_1``, ``_2``, ...). Three to five cookies for a typical backend
+login are normal and well within the per-domain limit enforced by browsers.
+
+The ``Secure`` flag is derived from
+:php:`$GLOBALS['TYPO3_CONF_VARS']['BE']['lockSSL']`, so cookies are only sent
+over HTTPS when the backend is configured for SSL. ``SameSite=Lax`` is used to
+let the OAuth callback round trip succeed.
+
+.. important::
+
+   Earlier versions persisted the OAuth session in PHP's native session storage.
+   That triggered :php:`session_start()` during backend requests and conflicted
+   with the TYPO3 Install Tool, whose :php:`FileSessionHandler` calls
+   :php:`session_save_path()` and fails when a PHP session is already active.
+   Updating from such a version invalidates any existing Auth0 sessions — users
+   need to log in once after the update.
+
 .. _admin-logging:
 
 Logging

@@ -1,0 +1,59 @@
+.. include:: ../../Includes.txt
+
+===========================
+Version 14.0.4 - 2026/05/21
+===========================
+
+This release resolves a conflict between the Auth0 OAuth session and the TYPO3
+Install Tool. Auth0 session state is no longer stored in PHP sessions but in
+encrypted cookies managed by the Auth0 SDK ``CookieStore``.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v14.0.4>`__.
+
+Fixed
+=====
+
+* **Install Tool no longer crashes for Auth0-authenticated backend users:**
+  ``ApplicationFactory`` previously wired the Auth0 SDK with
+  :php:`Auth0\SDK\Store\SessionStore`, which calls :php:`session_start()` on the
+  first storage access. Once the Auth0 ``SudoModeRequiredEvent`` listener probed
+  that storage during a backend request, the PHP session stayed active. The
+  Install Tool's :php:`FileSessionHandler::__construct()` then called
+  :php:`session_save_path()` and PHP raised a warning that TYPO3's error handler
+  promoted to :php:`Exception` 1476107295, taking down the Maintenance, Upgrade,
+  Environment, and Settings modules. The session and transient stores are now
+  :php:`Auth0\SDK\Store\CookieStore` instances and never touch the PHP session.
+
+Changed
+=======
+
+* **OAuth code exchange moved into the callback middleware:** the exchange used
+  to run inside :php:`Auth0Provider::modifyView()` during view rendering. The
+  Auth0 SDK persists cookies via :php:`setrawcookie()`, but TYPO3's response
+  emitter calls :php:`header('Set-Cookie: ...', replace=true)` for the first
+  PSR-7 Set-Cookie header (e.g. ``__Secure-typo3nonce`` from
+  ``RequestTokenMiddleware``), wiping any Set-Cookie headers already queued in
+  PHP's header buffer. The callback middleware now runs the exchange itself and
+  migrates the buffered Auth0 cookies into the PSR-7 response so the emitter
+  carries them through alongside cookies added by other middlewares.
+
+Upgrade Notes
+=============
+
+* No database migration is required.
+
+* Existing Auth0 sessions are invalidated by the storage switch — backend users
+  authenticated via Auth0 need to log in once after the update.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2026-05-21 [TASK] Harden Auth0 backend callback flow [TER-482] [TER-483] (Commit 6fc3693 by Oliver Heins)
+    2026-05-21 [DOCS] Document cookie-based Auth0 session storage [TER-482] [TER-483] (Commit d0b8f6e by Oliver Heins)
+    2026-05-21 [BUGFIX] Switch storage to cookies; perform exchange in middleware [TER-482] [TER-483] (Commit c0e227e by Oliver Heins)
