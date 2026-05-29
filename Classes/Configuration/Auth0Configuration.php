@@ -35,12 +35,15 @@ class Auth0Configuration implements SingletonInterface
 
     protected string $filePath;
 
-    public function __construct(string $configPath = null)
+    public function __construct(?string $configPath = null)
     {
         $this->configPath = $configPath ?? sprintf('%s/%s', Environment::getConfigPath(), self::CONFIG_FOLDER_NAME);
         $this->filePath = sprintf('%s/%s', $this->configPath, self::CONFIG_FILE_NAME);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function load(): array
     {
         $loader = $this->getYamlFileLoader();
@@ -88,6 +91,10 @@ class Auth0Configuration implements SingletonInterface
         return $mappings;
     }
 
+    /**
+     * @param array<string, mixed> $configuration
+     * @return void
+     */
     public function write(array $configuration): void
     {
         if (!file_exists($this->configPath)) {
@@ -122,6 +129,9 @@ class Auth0Configuration implements SingletonInterface
         GeneralUtility::writeFile($this->filePath, $yamlFileContents);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function buildDefaultConfiguration(): array
     {
         $configuration = [
@@ -165,6 +175,11 @@ class Auth0Configuration implements SingletonInterface
         return GeneralUtility::makeInstance(YamlFileLoader::class);
     }
 
+    /**
+     * @param array<string, mixed> $currentConfiguration
+     * @param array<string, mixed> $newConfiguration
+     * @return array<string, mixed>
+     */
     protected function findModified(array $currentConfiguration, array $newConfiguration): array
     {
         $differences = [];
@@ -187,6 +202,11 @@ class Auth0Configuration implements SingletonInterface
         return $differences;
     }
 
+    /**
+     * @param array<string, mixed> $currentConfiguration
+     * @param array<string, mixed> $newConfiguration
+     * @return array<string, mixed>
+     */
     protected function findRemoved(array $currentConfiguration, array $newConfiguration): array
     {
         $removed = [];
