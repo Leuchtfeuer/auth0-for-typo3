@@ -20,12 +20,10 @@ You need access to an Auth0 instance. We are currently supporting following TYPO
    :header: "Extension Version", "TYPO3 v11 Support", "TYPO3 v10 Support", "TYPO3 v9 Support", "TYPO3 v8 Support"
    :align: center
 
-        "4.x", "🙋‍♂️", "🙋‍♂️", "🙅‍♀️", "🙅‍♀️"
-        "3.x", "🙅‍♀️", "🙋‍♂️", "🙋‍♂️", "🙅‍♀️"
-        "2.x", "🙅‍♀️", "🙅‍♀️", "🙋‍♂️", "🙅‍♀️"
-        "1.x", "🙅‍♀️", "🙅‍♀️", "🙅‍♀️", "🙋‍♂️"
-
-*Beta support for TYPO3 v11.0 is available since version 3.4.0.*
+        "4.x", "Yes️", "Yes", "No️", "No️"
+        "3.x", "No", "Yes", "Yes", "No"
+        "2.x", "No", "No️", "Yes️", "No"
+        "1.x", "No", "No️", "No", "Yes"
 
 .. _about-aboutAuth0:
 
