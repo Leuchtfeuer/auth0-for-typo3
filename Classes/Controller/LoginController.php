@@ -82,7 +82,6 @@ class LoginController extends ActionController implements LoggerAwareInterface
     /**
      * @param string|null $rawAdditionalAuthorizeParameters
      * @throws AspectNotFoundException
-     * @throws StopActionException
      * @throws ConfigurationException
      */
     public function loginAction(?string $rawAdditionalAuthorizeParameters = null): void
@@ -109,7 +108,6 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
     /**
      * @throws ConfigurationException
-     * @throws StopActionException
      */
     public function logoutAction(): void
     {

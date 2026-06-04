@@ -51,9 +51,6 @@ class PropertyController extends BackendController
         return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
-    /**
-     * @throws StopActionException
-     */
     public function createAction(array $property, string $table, string $type): ResponseInterface
     {
         if (empty($property['databaseField']) || empty($property['auth0Property'])) {
@@ -71,9 +68,6 @@ class PropertyController extends BackendController
         return $this->redirect('list');
     }
 
-    /**
-     * @throws StopActionException
-     */
     public function deleteAction(array $property, string $table, string $type): ResponseInterface
     {
         if ((bool)$property['readOnly'] === false) {
@@ -110,9 +104,6 @@ class PropertyController extends BackendController
         return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
-    /**
-     * @throws StopActionException
-     */
     public function updateAction(array $property, string $table, string $type): ResponseInterface
     {
         $auth0Configuration = GeneralUtility::makeInstance(Auth0Configuration::class);

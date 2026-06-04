@@ -42,9 +42,6 @@ class ApplicationController extends BackendController
         return $this->htmlResponse($moduleTemplate->renderContent());
     }
 
-    /**
-     * @throws StopActionException
-     */
     public function deleteAction(Application $application): ResponseInterface
     {
         $this->applicationRepository->remove($application);
