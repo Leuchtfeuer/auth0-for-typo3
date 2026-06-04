@@ -267,7 +267,7 @@ class RedirectService implements LoggerAwareInterface
         if ($parsedUrl !== false && !isset($parsedUrl['scheme']) && !isset($parsedUrl['host'])) {
             // If the relative URL starts with a slash, we need to check if it's within the current site path
             $sitePath = GeneralUtility::getIndpEnv('TYPO3_SITE_PATH');
-            return $parsedUrl['path'][0] !== '/' || strpos($parsedUrl['path'], $sitePath) === 0;
+            return $parsedUrl['path'][0] !== '/' || str_starts_with($parsedUrl['path'], $sitePath);
         }
 
         return false;
@@ -285,8 +285,8 @@ class RedirectService implements LoggerAwareInterface
         $urlWithoutSchema = preg_replace('#^https?://#', '', $url);
         $siteUrlWithoutSchema = preg_replace('#^https?://#', '', GeneralUtility::getIndpEnv('TYPO3_SITE_URL'));
 
-        return strpos($urlWithoutSchema . '/', GeneralUtility::getIndpEnv('HTTP_HOST') . '/') === 0
-            && strpos($urlWithoutSchema, $siteUrlWithoutSchema) === 0;
+        return str_starts_with($urlWithoutSchema . '/', GeneralUtility::getIndpEnv('HTTP_HOST') . '/')
+            && str_starts_with($urlWithoutSchema, $siteUrlWithoutSchema);
     }
 
     /**
@@ -316,7 +316,7 @@ class RedirectService implements LoggerAwareInterface
                     foreach ($localDomains as $localDomain) {
                         // strip trailing slashes (if given)
                         $domainName = rtrim($localDomain['domainName'], '/');
-                        if (strpos($host . $path . '/', $domainName . '/') === 0) {
+                        if (str_starts_with($host . $path . '/', $domainName . '/')) {
                             return true;
                         }
                     }

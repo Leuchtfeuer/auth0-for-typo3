@@ -43,11 +43,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class CallbackMiddleware implements MiddlewareInterface
 {
-    const PATH = '/auth0/callback';
+    public const PATH = '/auth0/callback';
 
-    const TOKEN_PARAMETER = 'token';
+    public const TOKEN_PARAMETER = 'token';
 
-    const BACKEND_URI = '%s/typo3/?loginProvider=%d&code=%s&state=%s';
+    public const BACKEND_URI = '%s/typo3/?loginProvider=%d&code=%s&state=%s';
 
     /**
      * @throws NetworkException
@@ -56,7 +56,7 @@ class CallbackMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (strpos($request->getUri()->getPath(), self::PATH) === false) {
+        if (!str_contains($request->getUri()->getPath(), self::PATH)) {
             // Middleware is not responsible for given request
             return $handler->handle($request);
         }

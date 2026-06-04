@@ -19,7 +19,6 @@ use Auth0\SDK\Exception\NetworkException;
 use Auth0\SDK\Utility\HttpResponse;
 
 use GuzzleHttp\Exception\GuzzleException;
-use JsonException;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\ErrorCode;
 use Leuchtfeuer\Auth0\Exception\TokenException;
@@ -256,7 +255,7 @@ class AuthenticationService extends BasicAuthenticationService
             $userUtility = GeneralUtility::makeInstance(UserUtility::class);
             $managementUser = HttpResponse::decodeContent($this->auth0->management()->users()->get($this->userInfo[$this->userIdentifier]));
             $this->userInfo = $userUtility->enrichManagementUser($managementUser);
-        } catch (ArgumentException|NetworkException|JsonException $e) {
+        } catch (ArgumentException|NetworkException|\JsonException $e) {
             $this->logger->error($e->getMessage());
             return false;
         }

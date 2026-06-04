@@ -19,7 +19,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ApplicationRepository
 {
-    const TABLE_NAME = 'tx_auth0_domain_model_application';
+    public const TABLE_NAME = 'tx_auth0_domain_model_application';
 
     public function findByUid(int $uid): ?Application
     {
