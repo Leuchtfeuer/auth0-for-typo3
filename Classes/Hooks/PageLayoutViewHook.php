@@ -78,7 +78,7 @@ class PageLayoutViewHook
 
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_auth0_domain_model_application');
 
-        $title = $queryBuilder
+        $result = $queryBuilder
             ->select('title')
             ->from('tx_auth0_domain_model_application')
             ->where(
@@ -89,7 +89,7 @@ class PageLayoutViewHook
             )->executeQuery()
             ->fetchFirstColumn();
 
-        return is_string($title) ? $title : 'Not defined';
+        return is_string($result[0]) ? $result[0] : 'Not defined';
     }
 
     protected function getFieldFromFlexForm(string $key, string $sheet = 'sDEF'): string

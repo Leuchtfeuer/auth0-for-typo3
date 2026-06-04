@@ -32,9 +32,9 @@ class ApplicationRepository
                 $queryBuilder->expr()->eq('uid', $uid)
             )
             ->setMaxResults(1)
-            ->executeQuery()->fetchAllAssociative() ?? [];
+            ->executeQuery()->fetchAllAssociative();
 
-        if (empty($applicationArray)) {
+        if (!is_array($applicationArray)) {
             return null;
         }
 

@@ -169,12 +169,11 @@ class TokenUtility implements LoggerAwareInterface
                     $this->issuer = sprintf('%s://%s', $base->getScheme(), $base->getHost());
                     return;
                 }
-
                 // Base of site configuration might be "/" so we have to retrieve the domain from the ENV
-                $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
             } catch (\Exception $exception) {
-                $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
             }
+
+            $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
 
             return;
         }
