@@ -98,7 +98,7 @@ class CallbackMiddleware implements MiddlewareInterface
         // Add error parameters to backend uri if exists
         if (!empty(GeneralUtility::_GET('error')) && !empty(GeneralUtility::_GET('error_description'))) {
             $redirectUri .= sprintf(
-                '&error=%s&error_description=%',
+                '&error=%s&error_description=%s',
                 GeneralUtility::_GET('error'),
                 GeneralUtility::_GET('error_description')
             );
