@@ -117,7 +117,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
             $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
             $routingUtility->addArgument('logintype', 'logout');
 
-            if (str_contains($this->settings['redirectMode'], 'logout')   && (bool)$this->settings['redirectDisable'] === false) {
+            if (str_contains($this->settings['redirectMode'], 'logout') && (bool)$this->settings['redirectDisable'] === false) {
                 $routingUtility->addArgument('referrer', $this->addLogoutRedirect());
             }
             $this->redirectToUri($routingUtility->getUri());
