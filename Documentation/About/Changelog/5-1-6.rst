@@ -1,0 +1,33 @@
+.. include:: ../../Includes.txt
+
+==========================
+Version 5.1.6 - 2026/06/05
+==========================
+
+Bugfix and maintenance
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v5.1.6>`__.
+
+Fixed
+=====
+
+* Fix error in `updateUserByAuth0Id` with new users
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2026-06-05 [TASK] Remove CI workflow and funding configuration files (Commit cb2e6b7 by Marcus Balasch)
+    2026-06-05 [TASK] Refactor query handling, improve null checks, and adjust code formatting (Commit 5101f65 by Marcus Balasch)
+    2026-06-04 [RELEASE] Bump version to 5.1.6, update changelog and fix `updateUserByAuth0Id` error (Commit 2b6e982 by Marcus Balasch)
+    2026-06-04 [TASK] Refactor redirect URL filtering and improve user repository update logic (Commit 3625f47 by Marcus Balasch)
+    2026-06-04 [TASK] Refactor variable naming, cleanup unused imports, and improve query result handling (Commit 39613af by Marcus Balasch)
+    2026-06-04 [TASK] Improve exception handling and query execution (Commit 830e232 by Marcus Balasch)
+    2026-06-04 [CODE] Code style fixes (Commit 5f9b26c by Marcus Balasch)
+    2026-06-04 [TASK] set correct sprintf parameter (Commit c81b8c6 by Marcus Balasch)
+

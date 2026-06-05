@@ -22,7 +22,7 @@ class ParseFuncUtility implements SingletonInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    const NO_AUTH0_VALUE = 'rx63XX7Vq5aCXn4y';
+    public const NO_AUTH0_VALUE = 'rx63XX7Vq5aCXn4y';
 
     public function updateWithoutParseFunc(string $configurationType, string $auth0FieldName, array $user)
     {

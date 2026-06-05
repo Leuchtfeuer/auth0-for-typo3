@@ -13,14 +13,18 @@ declare(strict_types=1);
 
 namespace Leuchtfeuer\Auth0\Domain\Repository;
 
+use Doctrine\DBAL\Exception;
 use Leuchtfeuer\Auth0\Domain\Model\Application;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ApplicationRepository
 {
-    const TABLE_NAME = 'tx_auth0_domain_model_application';
+    public const TABLE_NAME = 'tx_auth0_domain_model_application';
 
+    /**
+     * @throws Exception
+     */
     public function findByUid(int $uid): ?Application
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
@@ -32,7 +36,7 @@ class ApplicationRepository
                 $queryBuilder->expr()->eq('uid', $uid)
             )
             ->setMaxResults(1)
-            ->executeQuery()->fetchAllAssociative() ?? [];
+            ->executeQuery()->fetchAllAssociative();
 
         if (empty($applicationArray)) {
             return null;

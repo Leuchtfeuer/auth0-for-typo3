@@ -29,7 +29,6 @@ use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\CMS\Extbase\Mvc\Exception\StopActionException;
 
 class LoginController extends ActionController implements LoggerAwareInterface
 {
@@ -82,7 +81,6 @@ class LoginController extends ActionController implements LoggerAwareInterface
     /**
      * @param string|null $rawAdditionalAuthorizeParameters
      * @throws AspectNotFoundException
-     * @throws StopActionException
      * @throws ConfigurationException
      */
     public function loginAction(?string $rawAdditionalAuthorizeParameters = null): void
@@ -109,7 +107,6 @@ class LoginController extends ActionController implements LoggerAwareInterface
 
     /**
      * @throws ConfigurationException
-     * @throws StopActionException
      */
     public function logoutAction(): void
     {
@@ -120,7 +117,7 @@ class LoginController extends ActionController implements LoggerAwareInterface
             $routingUtility = GeneralUtility::makeInstance(RoutingUtility::class);
             $routingUtility->addArgument('logintype', 'logout');
 
-            if (strpos($this->settings['redirectMode'], 'logout') !== false && (bool)$this->settings['redirectDisable'] === false) {
+            if (str_contains($this->settings['redirectMode'], 'logout') && (bool)$this->settings['redirectDisable'] === false) {
                 $routingUtility->addArgument('referrer', $this->addLogoutRedirect());
             }
             $this->redirectToUri($routingUtility->getUri());

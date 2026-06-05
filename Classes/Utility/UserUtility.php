@@ -295,6 +295,8 @@ class UserUtility implements SingletonInterface, LoggerAwareInterface
             $this->logger->notice('Try to update user.');
             if ($auth0->exchange()) {
                 $user = $auth0->getUser();
+            } else {
+                $user = null;
             }
 
             $application = BackendUtility::getRecord(ApplicationRepository::TABLE_NAME, $application, 'api, uid');

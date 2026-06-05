@@ -13,9 +13,6 @@ declare(strict_types=1);
 
 namespace Leuchtfeuer\Auth0\Command;
 
-use Auth0\SDK\Exception\ArgumentException;
-use Auth0\SDK\Exception\NetworkException;
-use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Driver\Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
@@ -62,10 +59,9 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @throws ArgumentException
-     * @throws NetworkException
-     * @throws DBALException
+     * @return int
      * @throws Exception
+     * @throws \Doctrine\DBAL\Exception
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -90,7 +86,7 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
         $userCount = $this->updateUsers();
 
         if ($userCount > 0) {
-            $output->writeln(sprintf('<info>Removed %i users from %s</info>', $userCount, $this->tableNames['users']));
+            $output->writeln(sprintf('<info>Removed %d users from %s</info>', $userCount, $this->tableNames['users']));
         } else {
             $output->writeln(sprintf('<info>No users removed for table %s.</info>', $this->tableNames['users']));
         }
@@ -123,8 +119,7 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
     }
 
     /**
-     * @throws Exception
-     * @throws DBALException
+     * @throws Exception|\Doctrine\DBAL\Exception
      */
     protected function setUsers(): bool
     {
@@ -138,15 +133,12 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
             ->select('uid', 'auth0_user_id')
             ->from($this->tableNames['users'])
             ->where($queryBuilder->expr()->neq('auth0_user_id', $queryBuilder->createNamedParameter('')))
-            ->execute()
+            ->executeQuery()
             ->fetchAllAssociative();
 
         return !empty($this->users);
     }
 
-    /**
-     * @throws DBALException
-     */
     protected function handleUser(array $user): void
     {
         $queryBuilder = $this->getQueryBuilder('users');
@@ -170,7 +162,7 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
 
         $queryBuilder
             ->where($queryBuilder->expr()->eq('uid', $user['uid']))
-            ->execute();
+            ->executeQuery();
     }
 
     protected function getQueryBuilder(string $type): QueryBuilder
@@ -178,9 +170,6 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
         return GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($this->tableNames[$type]);
     }
 
-    /**
-     * @throws DBALException
-     */
     protected function clearSessionData(array $user): void
     {
         $queryBuilder = $this->getQueryBuilder('sessions');
@@ -191,7 +180,7 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
                     'ses_userid',
                     $queryBuilder->createNamedParameter($user['uid'], \PDO::PARAM_INT)
                 )
-            )->execute();
+            )->executeQuery();
     }
 
     /**

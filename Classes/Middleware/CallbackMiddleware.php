@@ -19,6 +19,7 @@ use Auth0\SDK\Exception\NetworkException;
 use Auth0\SDK\Utility\HttpResponse;
 use GuzzleHttp\Exception\GuzzleException;
 use Lcobucci\JWT\Token\DataSet;
+use Lcobucci\JWT\UnencryptedToken;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\ErrorCode;
@@ -43,11 +44,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class CallbackMiddleware implements MiddlewareInterface
 {
-    const PATH = '/auth0/callback';
+    public const PATH = '/auth0/callback';
 
-    const TOKEN_PARAMETER = 'token';
+    public const TOKEN_PARAMETER = 'token';
 
-    const BACKEND_URI = '%s/typo3/?loginProvider=%d&code=%s&state=%s';
+    public const BACKEND_URI = '%s/typo3/?loginProvider=%d&code=%s&state=%s';
 
     /**
      * @throws NetworkException
@@ -56,7 +57,7 @@ class CallbackMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (strpos($request->getUri()->getPath(), self::PATH) === false) {
+        if (!str_contains($request->getUri()->getPath(), self::PATH)) {
             // Middleware is not responsible for given request
             return $handler->handle($request);
         }
@@ -68,7 +69,12 @@ class CallbackMiddleware implements MiddlewareInterface
         }
 
         try {
-            $dataSet = $tokenUtility->getToken()->claims();
+            $token = $tokenUtility->getToken();
+            if ($token instanceof UnencryptedToken) {
+                $dataSet = $token->claims();
+            } else {
+                return new Response('php://temp', 400);
+            }
         } catch (TokenException $exception) {
             return new Response('php://temp', 400);
         }
@@ -98,7 +104,7 @@ class CallbackMiddleware implements MiddlewareInterface
         // Add error parameters to backend uri if exists
         if (!empty(GeneralUtility::_GET('error')) && !empty(GeneralUtility::_GET('error_description'))) {
             $redirectUri .= sprintf(
-                '&error=%s&error_description=%',
+                '&error=%s&error_description=%s',
                 GeneralUtility::_GET('error'),
                 GeneralUtility::_GET('error_description')
             );
@@ -173,7 +179,7 @@ class CallbackMiddleware implements MiddlewareInterface
     {
         try {
             // This is necessary as group data is not fetched to this time
-            $request->getAttribute('frontend.user')->fetchGroupData();
+            $request->getAttribute('frontend.user')->fetchGroupData($request);
             $context = GeneralUtility::makeInstance(Context::class);
 
             return (bool)$context->getPropertyFromAspect('frontend.user', 'isLoggedIn');

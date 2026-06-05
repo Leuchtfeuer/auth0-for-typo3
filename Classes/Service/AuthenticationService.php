@@ -19,7 +19,7 @@ use Auth0\SDK\Exception\NetworkException;
 use Auth0\SDK\Utility\HttpResponse;
 
 use GuzzleHttp\Exception\GuzzleException;
-use JsonException;
+use Lcobucci\JWT\UnencryptedToken;
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
 use Leuchtfeuer\Auth0\ErrorCode;
 use Leuchtfeuer\Auth0\Exception\TokenException;
@@ -161,12 +161,15 @@ class AuthenticationService extends BasicAuthenticationService
         }
 
         try {
-            $dataSet = $tokenUtility->getToken()->claims();
-        } catch (TokenException $exception) {
-            return 0;
-        }
+            $token = $tokenUtility->getToken();
+            if ($token instanceof UnencryptedToken) {
+                $dataSet = $token->claims();
+                return (int)$dataSet->get('application');
+            }
 
-        return (int)$dataSet->get('application');
+        } catch (TokenException $exception) {
+        }
+        return 0;
     }
 
     protected function setDefaults(array $authInfo, string $mode, array $loginData, AbstractUserAuthentication $pObj): void
@@ -193,26 +196,26 @@ class AuthenticationService extends BasicAuthenticationService
         //        $userInfo = $session->getUserInfo();
 
         // TODO: Check if context needs to be set
-        $userInfo = $this->auth0->configuration()->getSessionStorage()->get('user');
+        /*        $userInfo = $this->auth0->configuration()->getSessionStorage()->get('user');
 
-        if (!empty($userInfo[$this->userIdentifier])) {
-            $this->logger->debug('Try to login user via Auth0 session');
-            try {
-                $this->userInfo = $userInfo;
-                $this->setApplicationByUser($userInfo[$this->userIdentifier]);
-                $this->getAuth0User();
-                $this->loginViaSession = true;
-                var_dump('login via session hit');
-                die();
-                return true;
-            } catch (\Exception $exception) {
-                $this->logger->debug('Could not login user via Auth0 session');
-                $this->userInfo = [];
-                $session->deleteUserInfo();
-            }
-        }
+                if (!empty($userInfo[$this->userIdentifier])) {
+                    $this->logger->debug('Try to login user via Auth0 session');
+                    try {
+                        $this->userInfo = $userInfo;
+                        $this->setApplicationByUser($userInfo[$this->userIdentifier]);
+                        $this->getAuth0User();
+                        $this->loginViaSession = true;
+                        var_dump('login via session hit');
+                        die();
+                        return true;
+                    } catch (\Exception $exception) {
+                        $this->logger->debug('Could not login user via Auth0 session');
+                        $this->userInfo = [];
+                        $session->deleteUserInfo();
+                    }
+                }
 
-        return false;
+                return false;*/
     }
 
     protected function setApplicationByUser(string $auth0UserId): void
@@ -256,7 +259,7 @@ class AuthenticationService extends BasicAuthenticationService
             $userUtility = GeneralUtility::makeInstance(UserUtility::class);
             $managementUser = HttpResponse::decodeContent($this->auth0->management()->users()->get($this->userInfo[$this->userIdentifier]));
             $this->userInfo = $userUtility->enrichManagementUser($managementUser);
-        } catch (ArgumentException|NetworkException|JsonException $e) {
+        } catch (ArgumentException|NetworkException|\JsonException $e) {
             $this->logger->error($e->getMessage());
             return false;
         }

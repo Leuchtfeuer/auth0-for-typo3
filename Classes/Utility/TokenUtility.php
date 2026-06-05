@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Leuchtfeuer\Auth0\Utility;
 
-use DateTimeImmutable;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Hmac;
@@ -38,17 +37,17 @@ class TokenUtility implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    const KEY_TYPE_PRIVATE = 'private';
+    public const KEY_TYPE_PRIVATE = 'private';
 
-    const KEY_TYPE_PUBLIC = 'public';
+    public const KEY_TYPE_PUBLIC = 'public';
 
-    const ENVIRONMENT_FRONTEND = 'FE';
+    public const ENVIRONMENT_FRONTEND = 'FE';
 
-    const ENVIRONMENT_BACKEND = 'BE';
+    public const ENVIRONMENT_BACKEND = 'BE';
 
     protected EmAuth0Configuration $configuration;
 
-    protected DateTimeImmutable $time;
+    protected \DateTimeImmutable $time;
 
     protected string $issuer = '';
 
@@ -63,7 +62,7 @@ class TokenUtility implements LoggerAwareInterface
     public function __construct()
     {
         $this->configuration = new EmAuth0Configuration();
-        $this->time = new DateTimeImmutable();
+        $this->time = new \DateTimeImmutable();
         $this->setIssuer();
         $this->config = Configuration::forAsymmetricSigner(
             $this->getSigner(),
@@ -170,12 +169,11 @@ class TokenUtility implements LoggerAwareInterface
                     $this->issuer = sprintf('%s://%s', $base->getScheme(), $base->getHost());
                     return;
                 }
-
                 // Base of site configuration might be "/" so we have to retrieve the domain from the ENV
-                $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
             } catch (\Exception $exception) {
-                $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
             }
+
+            $this->issuer = GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST');
 
             return;
         }

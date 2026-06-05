@@ -13,7 +13,7 @@ namespace Leuchtfeuer\Auth0\Domain\Repository\UserGroup;
 
 class BackendUserGroupRepository extends AbstractUserGroupRepository
 {
-    const TABLE_NAME = 'be_groups';
+    public const TABLE_NAME = 'be_groups';
 
     protected function setTableName(): void
     {

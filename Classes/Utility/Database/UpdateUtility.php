@@ -135,7 +135,7 @@ class UpdateUtility implements LoggerAwareInterface
     protected function mapRoles(array $groupMapping, array &$groupsToAssign, bool &$isBeAdmin, bool &$shouldUpdate): void
     {
         $rolesKey = $this->yamlConfiguration['roles']['key'] ?? 'roles';
-        $roles = (array)$this->user['app_metadata'][$rolesKey] ?? [];
+        $roles = (array)$this->user['app_metadata'][$rolesKey];
 
         foreach ($roles as $role) {
             if (isset($groupMapping[$role])) {
@@ -173,8 +173,11 @@ class UpdateUtility implements LoggerAwareInterface
         }
 
         if (!empty($updates)) {
-            $userRepository = GeneralUtility::makeInstance(UserRepository::class, $this->tableName);
-            $userRepository->updateUserByAuth0Id($updates, $this->user[$this->configuration->getUserIdentifier()]);
+            $auth0UserId = $this->user[$this->configuration->getUserIdentifier()] ?? '';
+            if ($auth0UserId !== '') {
+                $userRepository = GeneralUtility::makeInstance(UserRepository::class, $this->tableName);
+                $userRepository->updateUserByAuth0Id($updates, $auth0UserId);
+            }
         }
     }
 
@@ -201,7 +204,11 @@ class UpdateUtility implements LoggerAwareInterface
         }
 
         $this->addRestrictions($userRepository);
-        $userRepository->updateUserByAuth0Id($updates, $this->user[$this->configuration->getUserIdentifier()]);
+        $auth0UserId = $this->user[$this->configuration->getUserIdentifier()] ?? '';
+        if ($auth0UserId !== '') {
+            $userRepository = GeneralUtility::makeInstance(UserRepository::class, $this->tableName);
+            $userRepository->updateUserByAuth0Id($updates, $auth0UserId);
+        }
     }
 
     protected function addRestrictions(UserRepository &$userRepository): void
