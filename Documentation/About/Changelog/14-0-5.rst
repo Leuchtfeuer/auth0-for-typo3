@@ -1,0 +1,26 @@
+.. include:: ../../Includes.txt
+
+===========================
+Version 14.0.5 - 2026/05/29
+===========================
+`.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v14.0.5>`__.
+
+Changed
+=======
+
+Minor bugfixes
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2026-05-29 Merge pull request #90 from Leuchtfeuer/bugfix/constructor (Commit c98e5e8 by Marcus Balasch)
+    2026-05-29 [TASK] Add PHPDoc annotations for improved type hinting in Auth0Configuration (Commit eec0e00 by Marcus Balasch)
+
