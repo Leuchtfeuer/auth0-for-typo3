@@ -260,8 +260,11 @@ class AuthenticationService extends BasicAuthenticationService
      */
     public function getUser()
     {
-        parent::getUser();
-        if ($this->auth0Authentication === false || !isset($this->userInfo[$this->userIdentifier])) {
+        if ($this->auth0Authentication === false) {
+            return parent::getUser();
+        }
+
+        if (!isset($this->userInfo[$this->userIdentifier])) {
             return false;
         }
 
