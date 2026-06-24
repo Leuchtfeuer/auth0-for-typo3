@@ -1,0 +1,26 @@
+.. include:: ../../Includes.txt
+
+===========================
+Version 14.0.7 - 2026/06/24
+===========================
+`.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v14.0.7>`__.
+
+Changed
+=======
+
+Minor bugfixes
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2026-06-23 [BUGFIX] Remove typo [TER-491] (Commit 417a00a by dkranz)
+    2026-06-23 [BUGFIX] Fix logout link in backend login template [TER-491] (Commit cd4d459 by dkranz)
+    2026-06-16 Bump symfony/http-foundation from 7.4.8 to 7.4.13 in /Libraries (Commit d79db6b by dependabot[bot])
