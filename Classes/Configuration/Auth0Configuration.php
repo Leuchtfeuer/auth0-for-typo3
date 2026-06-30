@@ -35,7 +35,7 @@ class Auth0Configuration implements SingletonInterface
 
     protected string $filePath;
 
-    public function __construct(string $configPath = null)
+    public function __construct(?string $configPath = null)
     {
         $this->configPath = $configPath ?? sprintf('%s/%s', Environment::getConfigPath(), self::CONFIG_FOLDER_NAME);
         $this->filePath = sprintf('%s/%s', $this->configPath, self::CONFIG_FILE_NAME);
