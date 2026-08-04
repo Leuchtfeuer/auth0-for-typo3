@@ -144,9 +144,15 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
         $this->setAuth0();
         $userInfo = $this->auth0->configuration()->getSessionStorage()->get('user');
         if (empty($userInfo)) {
+            // The authorization code is only present when returning from Auth0. Attempting the
+            // exchange without it makes the SDK throw "Missing code" on every plain login-form load.
+            $code = GeneralUtility::_GET('code');
+            if ($code === null) {
+                return $userInfo;
+            }
             try {
                 $this->logger->notice('Try to get user via Auth0 API');
-                if ($this->auth0->exchange($this->getCallback(), GeneralUtility::_GET('code'), GeneralUtility::_GET('state'))) {
+                if ($this->auth0->exchange($this->getCallback(), $code, GeneralUtility::_GET('state'))) {
                     $userInfo = $this->auth0->getUser();
                 }
             } catch (\Exception $exception) {
