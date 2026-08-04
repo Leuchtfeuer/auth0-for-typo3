@@ -30,13 +30,11 @@ class UserUtilityTest extends TestCase
     private const TABLE = 'be_users';
 
     private const ROOT_NICKNAME_MAPPING = [
-        'configurationType' => 'root',
-        'auth0Property' => 'nickname',
+        ['configurationType' => 'root', 'auth0Property' => 'nickname', 'processing' => ''],
     ];
 
     private const USER_METADATA_LOGIN_NAME_MAPPING = [
-        'configurationType' => 'user_metadata',
-        'auth0Property' => 'login_name',
+        ['configurationType' => 'user_metadata', 'auth0Property' => 'login_name', 'processing' => ''],
     ];
 
     private PasswordHashFactory&Stub $passwordHashFactory;
@@ -131,7 +129,7 @@ class UserUtilityTest extends TestCase
         $this->emConfiguration->method('isMergeUsersByEmailAndUsername')->willReturn(true);
         $this->emConfiguration->method('isReactivateDisabledBackendUsers')->willReturn(false);
         $this->emConfiguration->method('isReactivateDeletedBackendUsers')->willReturn(false);
-        $this->auth0Configuration->method('getAuth0MappingForDatabaseField')->willReturn(self::ROOT_NICKNAME_MAPPING);
+        $this->auth0Configuration->method('getAuth0MappingsForDatabaseField')->willReturn(self::ROOT_NICKNAME_MAPPING);
 
         $subject = $this->createSubject();
 
@@ -170,7 +168,7 @@ class UserUtilityTest extends TestCase
         $this->emConfiguration->method('isMergeUsersByEmailAndUsername')->willReturn(true);
         $this->emConfiguration->method('isReactivateDisabledBackendUsers')->willReturn(false);
         $this->emConfiguration->method('isReactivateDeletedBackendUsers')->willReturn(false);
-        $this->auth0Configuration->method('getAuth0MappingForDatabaseField')
+        $this->auth0Configuration->method('getAuth0MappingsForDatabaseField')
             ->willReturn(self::USER_METADATA_LOGIN_NAME_MAPPING);
 
         $subject = $this->createSubject();
@@ -210,7 +208,7 @@ class UserUtilityTest extends TestCase
         $this->emConfiguration->method('isMergeUsersByEmailAndUsername')->willReturn(true);
         $this->emConfiguration->method('isReactivateDisabledBackendUsers')->willReturn(true);
         $this->emConfiguration->method('isReactivateDeletedBackendUsers')->willReturn(true);
-        $this->auth0Configuration->method('getAuth0MappingForDatabaseField')->willReturn(self::ROOT_NICKNAME_MAPPING);
+        $this->auth0Configuration->method('getAuth0MappingsForDatabaseField')->willReturn(self::ROOT_NICKNAME_MAPPING);
 
         $subject = $this->createSubject();
         $subject->checkIfUserExists(self::TABLE, [
@@ -237,7 +235,7 @@ class UserUtilityTest extends TestCase
         $this->userRepositoryFactory = $factory;
 
         $this->emConfiguration->method('isMergeUsersByEmailAndUsername')->willReturn(true);
-        $this->auth0Configuration->method('getAuth0MappingForDatabaseField')->willReturn(self::ROOT_NICKNAME_MAPPING);
+        $this->auth0Configuration->method('getAuth0MappingsForDatabaseField')->willReturn(self::ROOT_NICKNAME_MAPPING);
 
         $subject = $this->createSubject();
 
@@ -269,7 +267,7 @@ class UserUtilityTest extends TestCase
             ->willReturnOnConsecutiveCalls($primaryRepo, $mergeRepo, $updateRepo);
 
         $this->emConfiguration->method('isMergeUsersByEmailAndUsername')->willReturn(true);
-        $this->auth0Configuration->method('getAuth0MappingForDatabaseField')->willReturn(null);
+        $this->auth0Configuration->method('getAuth0MappingsForDatabaseField')->willReturn([]);
 
         $subject = $this->createSubject();
         $subject->checkIfUserExists(self::TABLE, [
