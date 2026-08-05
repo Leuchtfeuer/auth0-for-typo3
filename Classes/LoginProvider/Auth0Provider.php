@@ -181,19 +181,29 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     {
         $this->setAuth0();
         $userInfo = $this->auth0->configuration()->getSessionStorage()?->get('user') ?? [];
-        if (!is_array($userInfo) || $userInfo === []) {
-            try {
-                $this->logger?->notice('Try to get user via Auth0 API');
-                if ($this->auth0->exchange($this->getCallback(), $this->getRequest()->getQueryParams()['code'] ?? null, $this->getRequest()->getQueryParams()['state'] ?? null)) {
-                    $userInfo = $this->auth0->getUser() ?? [];
-                }
-            } catch (\Exception $exception) {
-                $this->logger?->critical($exception->getMessage());
-                $this->auth0->clear();
-            }
+        if (is_array($userInfo) && $userInfo !== []) {
+            return $userInfo;
         }
 
-        return $userInfo;
+        // The authorization code is only present when returning from Auth0. Attempting the
+        // exchange without it makes the SDK throw "Missing code" on every plain login-form load.
+        $code = $this->getRequest()->getQueryParams()['code'] ?? null;
+        if ($code === null) {
+            return [];
+        }
+
+        try {
+            $this->logger?->notice('Try to get user via Auth0 API');
+            $state = $this->getRequest()->getQueryParams()['state'] ?? null;
+            if ($this->auth0->exchange($this->getCallback(), $code, $state)) {
+                return $this->auth0->getUser() ?? [];
+            }
+        } catch (\Exception $exception) {
+            $this->logger?->critical($exception->getMessage());
+            $this->auth0->clear();
+        }
+
+        return [];
     }
 
     /**

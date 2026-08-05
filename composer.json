@@ -74,7 +74,7 @@
     "extra": {
         "typo3/cms": {
             "extension-key": "auth0",
-            "version": "13.0.10",
+            "version": "13.0.11",
             "web-dir": ".Build/web"
         }
     },

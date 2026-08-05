@@ -1,0 +1,29 @@
+.. include:: ../../Includes.txt
+
+============================
+Version 13.0.11 - 2026/06/30
+============================
+
+This release marks the ``Auth0Configuration`` constructor parameter as explicitly nullable to
+remove the implicit-nullable deprecation introduced with PHP 8.4.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v13.0.11>`__.
+
+Fixed
+=====
+
+* **Explicitly mark nullable constructor parameter:** The ``$configPath`` parameter of
+  ``Auth0Configuration::__construct()`` now uses the explicit ``?string`` type instead of relying
+  on an implicit null default. This silences the implicit-nullable parameter deprecation raised by
+  PHP 8.4.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2026-06-30 [TASK] Explicitely mark nullable parameter [VS-7884] (Commit 3686a59 by Oliver Heins)
