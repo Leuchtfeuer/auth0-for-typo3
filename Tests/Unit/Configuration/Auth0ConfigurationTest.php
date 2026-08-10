@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 class Auth0ConfigurationTest extends TestCase
 {
     #[Test]
-    public function getAuth0MappingForDatabaseFieldReturnsMappingWithRootConfigurationType(): void
+    public function getAuth0MappingsForDatabaseFieldReturnsMappingsWithRootConfigurationType(): void
     {
         $subject = $this->createSubjectWithMapping([
             'properties' => [
@@ -36,17 +36,17 @@ class Auth0ConfigurationTest extends TestCase
         ]);
 
         self::assertSame(
-            ['configurationType' => 'root', 'auth0Property' => 'nickname'],
-            $subject->getAuth0MappingForDatabaseField('be_users', 'username')
+            [['configurationType' => 'root', 'auth0Property' => 'nickname', 'processing' => '']],
+            $subject->getAuth0MappingsForDatabaseField('be_users', 'username')
         );
         self::assertSame(
-            ['configurationType' => 'root', 'auth0Property' => 'email_verified'],
-            $subject->getAuth0MappingForDatabaseField('be_users', 'disable')
+            [['configurationType' => 'root', 'auth0Property' => 'email_verified', 'processing' => '']],
+            $subject->getAuth0MappingsForDatabaseField('be_users', 'disable')
         );
     }
 
     #[Test]
-    public function getAuth0MappingForDatabaseFieldExposesUserMetadataBucket(): void
+    public function getAuth0MappingsForDatabaseFieldExposesUserMetadataBucket(): void
     {
         $subject = $this->createSubjectWithMapping([
             'properties' => [
@@ -60,32 +60,38 @@ class Auth0ConfigurationTest extends TestCase
         ]);
 
         self::assertSame(
-            ['configurationType' => 'user_metadata', 'auth0Property' => 'login_name'],
-            $subject->getAuth0MappingForDatabaseField('be_users', 'username')
+            [['configurationType' => 'user_metadata', 'auth0Property' => 'login_name', 'processing' => '']],
+            $subject->getAuth0MappingsForDatabaseField('be_users', 'username')
         );
     }
 
     #[Test]
-    public function getAuth0MappingForDatabaseFieldHonoursOverriddenMapping(): void
+    public function getAuth0MappingsForDatabaseFieldReturnsEveryMappingTargetingTheField(): void
     {
         $subject = $this->createSubjectWithMapping([
             'properties' => [
                 'be_users' => [
                     'root' => [
-                        ['auth0Property' => 'preferred_username', 'databaseField' => 'username'],
+                        ['auth0Property' => 'nickname', 'databaseField' => 'username'],
+                    ],
+                    'user_metadata' => [
+                        ['auth0Property' => 'login_name', 'databaseField' => 'username'],
                     ],
                 ],
             ],
         ]);
 
         self::assertSame(
-            ['configurationType' => 'root', 'auth0Property' => 'preferred_username'],
-            $subject->getAuth0MappingForDatabaseField('be_users', 'username')
+            [
+                ['configurationType' => 'root', 'auth0Property' => 'nickname', 'processing' => ''],
+                ['configurationType' => 'user_metadata', 'auth0Property' => 'login_name', 'processing' => ''],
+            ],
+            $subject->getAuth0MappingsForDatabaseField('be_users', 'username')
         );
     }
 
     #[Test]
-    public function getAuth0MappingForDatabaseFieldReturnsNullWhenNoMappingExists(): void
+    public function getAuth0MappingsForDatabaseFieldReturnsEmptyListWhenNoMappingExists(): void
     {
         $subject = $this->createSubjectWithMapping([
             'properties' => [
@@ -97,8 +103,8 @@ class Auth0ConfigurationTest extends TestCase
             ],
         ]);
 
-        self::assertNull($subject->getAuth0MappingForDatabaseField('be_users', 'email'));
-        self::assertNull($subject->getAuth0MappingForDatabaseField('unknown_table', 'username'));
+        self::assertSame([], $subject->getAuth0MappingsForDatabaseField('be_users', 'email'));
+        self::assertSame([], $subject->getAuth0MappingsForDatabaseField('unknown_table', 'username'));
     }
 
     /**
