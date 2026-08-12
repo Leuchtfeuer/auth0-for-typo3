@@ -1,11 +1,12 @@
 .. include:: ../../Includes.txt
 
 ============================
-Version 13.0.11 - 2026/06/30
+Version 13.0.11 - 2026/08/13
 ============================
 
 This release marks the ``Auth0Configuration`` constructor parameter as explicitly nullable to
-remove the implicit-nullable deprecation introduced with PHP 8.4.
+remove the implicit-nullable deprecation introduced with PHP 8.4 and prevents a spurious
+"Missing code" error on every backend login form load.
 
 Download
 ========
@@ -21,9 +22,18 @@ Fixed
   on an implicit null default. This silences the implicit-nullable parameter deprecation raised by
   PHP 8.4.
 
+* **Only exchange the Auth0 code when it is present:** The authorization code is only sent back
+  when returning from Auth0. ``Auth0Provider::getUserInfo()`` no longer attempts the token exchange
+  without it, which previously made the SDK throw "Missing code" on every plain login-form load.
+
+* **Aligned unit tests with the plural mapping API:** The unit tests for ``Auth0Configuration`` and
+  ``UserUtility`` were adjusted to the plural mapping API and pass again.
+
 All Changes
 ===========
 
 This is a list of all changes in this release::
 
     2026-06-30 [TASK] Explicitely mark nullable parameter [VS-7884] (Commit 3686a59 by Oliver Heins)
+    2026-08-04 [BUGFIX] Only exchange Auth0 code when present on callback (Commit c9c2f82 by Oliver Heins)
+    2026-08-04 [BUGFIX] Align unit tests with plural mapping API [YODA-2871] (Commit e54b412 by Oliver Heins)
