@@ -1,0 +1,31 @@
+.. include:: ../../Includes.txt
+
+==========================
+Version 5.2.4 - 2026/08/13
+==========================
+
+This release stops the backend login provider from attempting an Auth0 code exchange when no
+authorization code is present in the request.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v5.2.4>`__.
+
+Fixed
+=====
+
+* **Only exchange the Auth0 code when it is present on the callback:** ``Auth0Provider::getUserInfo``
+  called ``Auth0::exchange()`` unconditionally whenever no user was found in the session storage.
+  On a plain backend login-form load there is no ``code`` query parameter, so the SDK threw
+  "Missing code" — logged at ``critical`` level and followed by ``Auth0::clear()`` — on every
+  single request. The provider now returns early when the ``code`` parameter is absent, leaving
+  the exchange to actual callbacks coming back from Auth0.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2026-08-04 [BUGFIX] Only exchange Auth0 code when present on callback (Commit b3cbe8b by Oliver Heins)
