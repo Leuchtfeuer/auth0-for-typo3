@@ -15,7 +15,6 @@ use Auth0\SDK\Auth0;
 use Auth0\SDK\Configuration\SdkConfiguration;
 use Auth0\SDK\Exception\ConfigurationException;
 use Auth0\SDK\Store\CookieStore;
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use Leuchtfeuer\Auth0\Middleware\CallbackMiddleware;
@@ -68,8 +67,7 @@ class ApplicationFactory
 
         // Management API should be used
         if ($application->hasApi()) {
-            $client = new Client();
-            $response = $client->post($application->getManagementTokenDomain(), [
+            $response = $this->requestFactory->request($application->getManagementTokenDomain(), 'POST', [
                 'form_params' => [
                     'grant_type' => 'client_credentials',
                     'client_id' => $application->getClientId(),
