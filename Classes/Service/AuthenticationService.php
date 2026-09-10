@@ -66,6 +66,7 @@ class AuthenticationService extends BasicAuthenticationService
         protected readonly ConnectionPool $connectionPool,
         protected readonly UpdateUtilityFactory $updateUtilityFactory,
         protected readonly UserUtility $userUtility,
+        protected readonly ApplicationFactory $applicationFactory,
     ) {}
 
     /**
@@ -240,7 +241,7 @@ class AuthenticationService extends BasicAuthenticationService
     protected function initializeAuth0Connection(): bool
     {
         try {
-            $this->auth0 = ApplicationFactory::build($this->application, $this->authInfo['loginType'], $this->request);
+            $this->auth0 = $this->applicationFactory->create($this->application, $this->authInfo['loginType'], $this->request);
 
             $this->userInfo = $this->auth0->getUser() ?? [];
 
