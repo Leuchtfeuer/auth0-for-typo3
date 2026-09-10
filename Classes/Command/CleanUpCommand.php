@@ -63,7 +63,7 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
 
     protected EmAuth0Configuration $configuration;
 
-    public function __construct(private readonly ConnectionPool $connectionPool, ?string $name = null)
+    public function __construct(private readonly ConnectionPool $connectionPool, private readonly ApplicationFactory $applicationFactory, ?string $name = null)
     {
         parent::__construct($name);
     }
@@ -207,7 +207,7 @@ class CleanUpCommand extends Command implements LoggerAwareInterface
     {
         $userCount = 0;
         try {
-            $auth0 = ApplicationFactory::build($this->configuration->getBackendConnection());
+            $auth0 = $this->applicationFactory->create($this->configuration->getBackendConnection());
             foreach ($this->users as $user) {
                 $auth0UserResponse = $auth0->management()->users()->get($user['auth0_user_id']);
                 /* TODO: $auth0UserResponse is not an array but ResponseInterface. See https://github.com/auth0/auth0-PHP/blob/8.13.0/docs/Management.md#users . Not sure, if the following solution works. */
