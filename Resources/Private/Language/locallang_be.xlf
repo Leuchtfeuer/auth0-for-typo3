@@ -45,6 +45,12 @@
       <trans-unit id="form.error.no_typoscript.description" resname="form.error.no_typoscript.description">
         <source>No settings for TYPO3 backend found. TypoScript included?</source>
       </trans-unit>
+      <trans-unit id="form.error.exchange_failed.title" resname="form.error.exchange_failed.title">
+        <source>Login failed</source>
+      </trans-unit>
+      <trans-unit id="form.error.exchange_failed.description" resname="form.error.exchange_failed.description">
+        <source>Your Auth0 login could not be completed. Please try again. If this keeps happening, ask your administrator to check the TYPO3 log.</source>
+      </trans-unit>
       <trans-unit id="form.logged-in.success.title" resname="form.logged-in.success.title">
         <source>Well done!</source>
       </trans-unit>
