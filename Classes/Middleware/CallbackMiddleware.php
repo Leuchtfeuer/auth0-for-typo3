@@ -43,6 +43,7 @@ class CallbackMiddleware implements MiddlewareInterface, LoggerAwareInterface
         protected readonly UpdateUtilityFactory $updateUtilityFactory,
         protected readonly UserUtility $userUtility,
         protected readonly TokenUtility $tokenUtility,
+        protected readonly ApplicationFactory $applicationFactory,
     ) {}
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -112,7 +113,7 @@ class CallbackMiddleware implements MiddlewareInterface, LoggerAwareInterface
         // response keeps the emitter from discarding them.
         $preExchangeCookies = $this->captureBufferedSetCookieHeaders();
         try {
-            $auth0 = ApplicationFactory::build(
+            $auth0 = $this->applicationFactory->create(
                 $applicationId,
                 ApplicationFactory::SESSION_PREFIX_BACKEND,
                 $request

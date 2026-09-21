@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Leuchtfeuer\Auth0\Tests\Unit\Service;
 
 use Leuchtfeuer\Auth0\Domain\Transfer\EmAuth0Configuration;
+use Leuchtfeuer\Auth0\Factory\ApplicationFactory;
 use Leuchtfeuer\Auth0\Service\Auth0SessionValidator;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
@@ -23,12 +24,13 @@ use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
  * Test case for Auth0SessionValidator
  *
  * Note: Some test methods require functional testing with real TYPO3 environment
- * due to ApplicationFactory static calls and $GLOBALS['BE_USER'] dependency.
+ * due to the Auth0 connection setup and $GLOBALS['BE_USER'] dependency.
  */
 class Auth0SessionValidatorTest extends TestCase
 {
     protected Auth0SessionValidator $subject;
     protected EmAuth0Configuration $configuration;
+    protected ApplicationFactory $applicationFactory;
     protected ?BackendUserAuthentication $originalBackendUser = null;
 
     protected function setUp(): void
@@ -36,8 +38,9 @@ class Auth0SessionValidatorTest extends TestCase
         parent::setUp();
 
         $this->configuration = self::createStub(EmAuth0Configuration::class);
+        $this->applicationFactory = self::createStub(ApplicationFactory::class);
 
-        $this->subject = new Auth0SessionValidator($this->configuration);
+        $this->subject = new Auth0SessionValidator($this->configuration, $this->applicationFactory);
 
         // Store original BE_USER if exists
         $this->originalBackendUser = $GLOBALS['BE_USER'] ?? null;
@@ -112,9 +115,9 @@ class Auth0SessionValidatorTest extends TestCase
         $GLOBALS['BE_USER'] = $backendUser;
 
         // Create partial mock to stub the hasAuth0Session method
-        // This avoids calling ApplicationFactory::build() which requires functional environment
+        // This avoids establishing a real Auth0 connection, which requires a functional environment
         $validatorMock = $this->getMockBuilder(Auth0SessionValidator::class)
-            ->setConstructorArgs([$this->configuration])
+            ->setConstructorArgs([$this->configuration, $this->applicationFactory])
             ->onlyMethods(['hasAuth0Session'])
             ->getMock();
 
@@ -144,7 +147,7 @@ class Auth0SessionValidatorTest extends TestCase
 
         // Create partial mock to stub the hasAuth0Session method
         $validatorMock = $this->getMockBuilder(Auth0SessionValidator::class)
-            ->setConstructorArgs([$this->configuration])
+            ->setConstructorArgs([$this->configuration, $this->applicationFactory])
             ->onlyMethods(['hasAuth0Session'])
             ->getMock();
 

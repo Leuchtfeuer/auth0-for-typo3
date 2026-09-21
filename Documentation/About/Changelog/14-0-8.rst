@@ -1,0 +1,86 @@
+.. include:: ../../Includes.txt
+
+===========================
+Version 14.0.8 - 2026/09/10
+===========================
+
+This release restores the backend login on installations that have
+``guzzlehttp/psr7`` 3.x. TYPO3 v14.3.7 and v13.4.35 widened the core constraint
+to allow it, and any ``composer update`` picking it up made the Auth0 login
+provider unreachable.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v14.0.8>`__.
+
+Fixed
+=====
+
+* **Backend login no longer breaks with guzzlehttp/psr7 3.x:**
+  ``ApplicationFactory`` built the :php:`Auth0\SDK\Configuration\SdkConfiguration`
+  without the ``httpRequestFactory``, ``httpResponseFactory``, ``httpStreamFactory``
+  and ``httpClient`` options, so the SDK resolved them through
+  :php:`PsrDiscovery\Discover`. That library gates its candidates on hardcoded
+  package constraints instead of on the classes that are actually loadable: it
+  caps ``guzzlehttp/psr7`` at ``^2.0`` and lists TYPO3 under the non-existent
+  package ``typo3/core`` with a constraint capped at ``^12.0``. With psr7 3.x
+  installed all three PSR-17 factories therefore resolved to :php:`null` and
+  :php:`Assert::isInstanceOf()` raised
+  :php:`InvalidArgumentException` — *"Could not find a PSR-17 compatible request
+  factory. Please install one, or provide one using the
+  ``setHttpRequestFactory()`` method."* — on every call of
+  ``/typo3/?loginProvider=1526966635``. All four implementations are now passed
+  in explicitly, using :php:`TYPO3\CMS\Core\Http\RequestFactory`,
+  :php:`TYPO3\CMS\Core\Http\ResponseFactory`,
+  :php:`TYPO3\CMS\Core\Http\StreamFactory` and the
+  :php:`Psr\Http\Client\ClientInterface` TYPO3 registers, which keeps the SDK out
+  of runtime discovery entirely.
+
+Changed
+=======
+
+* **Management-token request runs through the TYPO3 HTTP layer:** the request
+  fetching the Auth0 management token instantiated its own
+  :php:`GuzzleHttp\Client` and therefore ignored
+  :php:`$GLOBALS['TYPO3_CONF_VARS']['HTTP']`. It now uses the injected
+  :php:`TYPO3\CMS\Core\Http\RequestFactory`, so the project's proxy,
+  certificate-verification and timeout settings apply to it like they do to every
+  other HTTP request TYPO3 makes.
+
+* **ApplicationFactory is a dependency-injection service:** it receives the
+  ``ApplicationRepository``, the three PSR-17 factories and the PSR-18 client
+  through its constructor instead of reaching for
+  :php:`GeneralUtility::makeInstance()`. The new instance method
+  ``create()`` carries the previous behaviour of ``build()`` unchanged.
+
+Deprecated
+==========
+
+* :php:`ApplicationFactory::build()` is deprecated and will be removed in v15.
+  It remains fully functional and delegates to ``create()``. Third-party code
+  should inject :php:`Leuchtfeuer\Auth0\Factory\ApplicationFactory` and call
+  ``create()`` with the same arguments.
+
+Upgrade Notes
+=============
+
+* No database migration is required, and existing Auth0 sessions stay valid.
+
+* The constructors of ``Auth0Provider``, ``AuthenticationService``,
+  ``Auth0SessionValidator``, ``CleanUpCommand`` and ``CallbackMiddleware`` gained
+  an ``ApplicationFactory`` argument. Installations that subclass one of them or
+  instantiate them manually need to pass it along; everything wired through the
+  Symfony container is handled automatically.
+
+* Projects that pinned ``"guzzlehttp/psr7": "^2.8"`` to work around the broken
+  login can drop that pin after updating.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2026-09-10 [BUGFIX] ApplicationFactory: Supply PSR-17 factories and PSR-18 client explicitly [TER-509] (Commit 94d73a0 by Oliver Heins)
+    2026-09-10 [TASK] ApplicationFactory: Route management token request through TYPO3 HTTP layer [TER-509] (Commit 22fd29e by Oliver Heins)

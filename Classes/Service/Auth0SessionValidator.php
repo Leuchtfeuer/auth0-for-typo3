@@ -31,7 +31,8 @@ class Auth0SessionValidator implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     public function __construct(
-        protected readonly EmAuth0Configuration $configuration
+        protected readonly EmAuth0Configuration $configuration,
+        protected readonly ApplicationFactory $applicationFactory,
     ) {}
 
     /**
@@ -103,7 +104,7 @@ class Auth0SessionValidator implements LoggerAwareInterface
     protected function hasAuth0Session(int $applicationUid): bool
     {
         try {
-            $auth0 = ApplicationFactory::build($applicationUid, ApplicationFactory::SESSION_PREFIX_BACKEND);
+            $auth0 = $this->applicationFactory->create($applicationUid, ApplicationFactory::SESSION_PREFIX_BACKEND);
             $userInfo = $auth0->configuration()->getSessionStorage()?->get('user') ?? [];
 
             if (!is_array($userInfo) || $userInfo === []) {
