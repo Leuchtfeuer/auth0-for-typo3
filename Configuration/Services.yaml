@@ -10,6 +10,12 @@ services:
   Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository:
     public: true
 
+  # Public only so the deprecated static ApplicationFactory::build() shim can
+  # resolve the service through GeneralUtility::makeInstance(). Drop together
+  # with the shim in v15.
+  Leuchtfeuer\Auth0\Factory\ApplicationFactory:
+    public: true
+
   Leuchtfeuer\Auth0\Domain\Repository\UserRepositoryFactory:
     public: true
 

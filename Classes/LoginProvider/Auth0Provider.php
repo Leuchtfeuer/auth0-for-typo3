@@ -72,7 +72,8 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     public function __construct(
         protected readonly ApplicationRepository $applicationRepository,
         protected readonly PageRenderer $pageRenderer,
-        protected readonly ConfigurationManager $configurationManager
+        protected readonly ConfigurationManager $configurationManager,
+        protected readonly ApplicationFactory $applicationFactory,
     ) {}
 
     protected function initialize(): void
@@ -146,7 +147,7 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     protected function setAuth0(): bool
     {
         try {
-            $this->auth0 = ApplicationFactory::build($this->configuration->getBackendConnection());
+            $this->auth0 = $this->applicationFactory->create($this->configuration->getBackendConnection());
         } catch (\Exception|GuzzleException $exception) {
             $this->logger?->critical($exception->getMessage());
             throw $exception;
