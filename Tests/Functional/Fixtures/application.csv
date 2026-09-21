@@ -1,0 +1,3 @@
+"tx_auth0_domain_model_application",,,,,,,,,,,,
+,"uid","pid","deleted","hidden","title","single_log_out","id","secret","domain","audience","signature_algorithm","api"
+,1,0,0,0,"Functional Test Application",0,"test-client-id","test-client-secret","tenant.example.com","api/v2/","RS256",0

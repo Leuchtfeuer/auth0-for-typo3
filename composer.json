@@ -59,6 +59,11 @@
             "Leuchtfeuer\\Auth0\\": "Classes/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Leuchtfeuer\\Auth0\\Tests\\": "Tests/"
+        }
+    },
     "config": {
         "allow-plugins": {
             "typo3/cms-composer-installers": true,
