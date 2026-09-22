@@ -112,9 +112,6 @@ class ApplicationFactory
             // where redirectUri is constructed but never actually used in an OAuth flow.
             'redirectUri' => ($request?->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getRequestHost() . CallbackMiddleware::PATH,
             'scope' => $scope,
-            // Must be spelled exactly as the SDK names it: SdkConfiguration
-            // skips entries that are not one of its properties without a word,
-            // so a typo here silently pins every installation to the default.
             'tokenAlgorithm' => $application->getSignatureAlgorithm(),
         ]);
         $auth0 = new Auth0($sdkConfiguration);

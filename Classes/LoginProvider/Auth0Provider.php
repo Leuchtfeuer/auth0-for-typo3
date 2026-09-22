@@ -48,8 +48,8 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
     public const LOGIN_PROVIDER = 1526966635;
 
     /**
-     * Error codes raised by the extension itself, as opposed to the ones Auth0
-     * reports. Each resolves to `form.error.<code>.title` / `.description`.
+     * Errors raised by the extension itself, not by Auth0. Each resolves to
+     * `form.error.<code>.title` / `.description`.
      */
     private const EXTENSION_ERROR_CODES = [
         CallbackMiddleware::ERROR_EXCHANGE_FAILED,
@@ -130,9 +130,6 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
             $this->handleRequest();
         }
 
-        // Errors the extension raises itself are resolved to a translated
-        // message, so they are kept apart from the text Auth0 reports, which is
-        // passed through as it arrives.
         $errorCode = $this->getRequest()->getQueryParams()['error'] ?? null;
         $isExtensionError = in_array($errorCode, self::EXTENSION_ERROR_CODES, true);
 

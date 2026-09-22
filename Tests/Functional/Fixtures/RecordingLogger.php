@@ -16,9 +16,8 @@ namespace Leuchtfeuer\Auth0\Tests\Functional\Fixtures;
 use Psr\Log\AbstractLogger;
 
 /**
- * Keeps what was logged, so a test can assert on the severity a failure was
- * reported with and surface the underlying exception in its own failure
- * message instead of leaving it swallowed.
+ * Keeps what was logged, so a test can assert the severity and surface the
+ * swallowed exception in its own failure message.
  */
 final class RecordingLogger extends AbstractLogger
 {

@@ -141,9 +141,8 @@ class Application extends AbstractEntity
     }
 
     /**
-     * Falls back to RS256 for anything the Auth0 SDK would not accept, so that a
-     * record predating this field - or one edited outside the backend form -
-     * still yields a usable connection instead of one that cannot be built.
+     * Falls back to RS256 for anything the SDK would not accept, so an old
+     * record still yields a connection that can be built.
      */
     public function setSignatureAlgorithm(string $signatureAlgorithm): self
     {

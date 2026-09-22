@@ -43,16 +43,12 @@ use TYPO3\CMS\Core\Http\StreamFactory;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
- * Drives the callback against a real database, the real Auth0 SDK and the real
- * cookie encryption. Only the outbound HTTP is stubbed.
+ * Drives the callback against a real database, SDK and cookie encryption; only
+ * the outbound HTTP is stubbed.
  *
- * What this test cannot observe: the SDK persists its session through
- * `setrawcookie()`, and `CallbackMiddleware` migrates those buffered headers
- * into the PSR-7 response. Under the CLI SAPI `setrawcookie()` is a no-op and
- * `headers_list()` stays empty, so the migrated `Set-Cookie` headers never
- * appear on the response inside a test process. Asserted instead is the effect
- * that migration exists to produce: the session state is written, and a
- * following request resolves it.
+ * The migrated `Set-Cookie` headers cannot be asserted: under the CLI SAPI
+ * `setrawcookie()` is a no-op and `headers_list()` stays empty. Asserted
+ * instead is the effect - the session is written and resolves afterwards.
  */
 class CallbackMiddlewareTest extends FunctionalTestCase
 {
@@ -107,9 +103,8 @@ class CallbackMiddlewareTest extends FunctionalTestCase
     }
 
     /**
-     * The algorithm named on the record decides how the identity token is
-     * verified. RS256 is checked against the tenant's published keys, HS256
-     * against the client secret and without consulting them at all.
+     * RS256 is verified against the tenant's published keys, HS256 against the
+     * client secret without consulting them.
      */
     #[Test]
     #[DataProvider('applicationProvider')]
@@ -277,11 +272,7 @@ class CallbackMiddlewareTest extends FunctionalTestCase
         self::assertSame('no-cache', $response->getHeaderLine('Pragma'));
     }
 
-    /**
-     * The middleware reports failures to the log and returns a redirect either
-     * way, so a broken expectation would otherwise surface as a confusing
-     * assertion about a URL. This turns it into the actual cause.
-     */
+    /** Turns a swallowed exception into the failure message, not a URL assertion. */
     private function assertNothingWasSwallowed(): void
     {
         $exception = $this->logger->getLoggedException();
@@ -295,10 +286,7 @@ class CallbackMiddlewareTest extends FunctionalTestCase
         }
     }
 
-    /**
-     * Lets the SDK establish state, nonce and PKCE verifier the way the login
-     * provider does, rather than hand-crafting an encrypted transient cookie.
-     */
+    /** Lets the SDK establish state, nonce and PKCE verifier itself. */
     private function startLoginAndReturnNonce(int $applicationUid = self::APPLICATION_RS256): string
     {
         $authorizeUrl = $this->buildAuth0($applicationUid)->login(self::HOST . CallbackMiddleware::PATH);

@@ -21,10 +21,8 @@ use PHPUnit\Framework\TestCase;
 class ApplicationTest extends TestCase
 {
     /**
-     * The Auth0 SDK accepts RS256 and HS256 and throws for anything else, so a
-     * record that carries neither - one predating the field, or edited outside
-     * the backend form - must not be able to produce a connection that cannot
-     * be built.
+     * The SDK accepts RS256 and HS256 and throws for anything else, so a record
+     * carrying neither must not produce a connection that cannot be built.
      */
     #[Test]
     #[DataProvider('signatureAlgorithmProvider')]
@@ -57,10 +55,7 @@ class ApplicationTest extends TestCase
         self::assertSame(Application::ALG_RS256, (new Application())->getSignatureAlgorithm());
     }
 
-    /**
-     * `fromArray()` passes the raw column through, so an empty column must not
-     * be able to overwrite the default with something unusable.
-     */
+    /** `fromArray()` passes the raw column through, including an empty one. */
     #[Test]
     public function aRecordWithAnEmptyAlgorithmColumnStillYieldsAUsableApplication(): void
     {

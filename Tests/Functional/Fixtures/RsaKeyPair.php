@@ -14,10 +14,8 @@ declare(strict_types=1);
 namespace Leuchtfeuer\Auth0\Tests\Functional\Fixtures;
 
 /**
- * A throwaway RSA key pair with a self-signed certificate, so a test can sign an
- * `id_token` the Auth0 SDK accepts. The SDK verifies RS256 tokens against the
- * `x5c` certificate chain from the tenant's JWKS, not against a raw modulus,
- * which is why a certificate is generated rather than just a key.
+ * A throwaway RSA key pair for signing an `id_token`. A certificate is needed
+ * because the SDK verifies RS256 against the JWKS `x5c` chain, not a raw modulus.
  */
 final class RsaKeyPair
 {

@@ -20,9 +20,8 @@ use TYPO3\CMS\Core\Http\Response;
 use TYPO3\CMS\Core\Http\Stream;
 
 /**
- * Answers the Auth0 endpoints the SDK talks to, so a functional test never
- * reaches the network. Requests are recorded so a test can assert what the SDK
- * actually sent.
+ * Answers the Auth0 endpoints so a test never reaches the network. Requests are
+ * recorded so a test can assert what the SDK sent.
  */
 final class QueuedHttpClient implements ClientInterface
 {

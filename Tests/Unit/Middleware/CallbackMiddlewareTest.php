@@ -194,11 +194,9 @@ class CallbackMiddlewareTest extends TestCase
     }
 
     /**
-     * The successful exchange cannot be driven from a unit test: ApplicationFactory
-     * returns the SDK's final Auth0 class, which cannot be stubbed, and a real one
-     * would talk to the tenant. What matters for that path is that adding the cache
-     * headers leaves the migrated Set-Cookie headers alone, which is asserted here.
-     * The full path is covered functionally.
+     * The successful exchange needs the SDK's final Auth0 class and is covered
+     * functionally. What matters here is that the cache headers leave the
+     * migrated Set-Cookie headers alone.
      */
     #[Test]
     public function addingTheCacheHeadersLeavesSessionCookiesInPlace(): void

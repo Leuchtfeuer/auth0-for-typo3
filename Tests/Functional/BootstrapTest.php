@@ -18,9 +18,8 @@ use PHPUnit\Framework\Attributes\Test;
 use TYPO3\TestingFramework\Core\Functional\FunctionalTestCase;
 
 /**
- * Guards the harness itself: TYPO3 boots, the extension is loaded, and its
- * services can be resolved from the container. A failure here means the test
- * environment is broken, not the extension.
+ * Guards the harness itself. A failure here means the test environment is
+ * broken, not the extension.
  */
 class BootstrapTest extends FunctionalTestCase
 {

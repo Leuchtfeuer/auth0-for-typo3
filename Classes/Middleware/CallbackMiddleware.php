@@ -39,10 +39,6 @@ class CallbackMiddleware implements MiddlewareInterface, LoggerAwareInterface
 
     public const TOKEN_PARAMETER = 'token';
 
-    /**
-     * Error code handed to the login screen when the authorization code
-     * exchange did not complete. Resolved there to a translated message.
-     */
     public const ERROR_EXCHANGE_FAILED = 'exchange_failed';
 
     public function __construct(
@@ -59,12 +55,10 @@ class CallbackMiddleware implements MiddlewareInterface, LoggerAwareInterface
             return $handler->handle($request);
         }
 
-        // Every response the callback produces leaves through this one point, so
-        // that none of them can be stored by a cache or proxy. A stored response
-        // must not carry per-user cookies, so an intermediary drops its
-        // Set-Cookie headers and the Auth0 session with them. All responses are
-        // covered, not just the successful exchange: they share a redirect
-        // target and are indistinguishable to an intermediary.
+        // A cache may store the response only without per-user cookies, so it
+        // would drop the Set-Cookie headers and the Auth0 session with them.
+        // Every response is covered: they share a redirect target and are
+        // indistinguishable to an intermediary.
         return $this->denyCaching($this->handleCallbackRequest($request));
     }
 
@@ -90,9 +84,8 @@ class CallbackMiddleware implements MiddlewareInterface, LoggerAwareInterface
     }
 
     /**
-     * Marks a response as unstorable. `no-store` is what actually forbids
-     * storage; the remaining directives and `Pragma` are carried along because
-     * intermediaries honour them inconsistently.
+     * `no-store` is what forbids storage; the rest and `Pragma` are carried
+     * along because intermediaries honour them inconsistently.
      */
     protected function denyCaching(ResponseInterface $response): ResponseInterface
     {
@@ -152,17 +145,12 @@ class CallbackMiddleware implements MiddlewareInterface, LoggerAwareInterface
                 $preExchangeCookies
             );
         } catch (\Throwable $throwable) {
-            // The exchange failing ends the login, so it is reported as an error
-            // and the user is told. Returning the plain redirect would make a
-            // broken login indistinguishable from one that was never started.
+            // The exchange failing ends the login, so it is reported as an error.
             $this->logger?->error(
                 'Auth0 OAuth code exchange failed in CallbackMiddleware.',
                 ['exception' => $throwable]
             );
 
-            // Only the error code travels, never the exception message: the
-            // message would end up in a URL the user can read, copy and share,
-            // and it cannot be translated.
             return new RedirectResponse(
                 $redirectUri . '&error=' . self::ERROR_EXCHANGE_FAILED,
                 302

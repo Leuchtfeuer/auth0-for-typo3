@@ -89,9 +89,8 @@ class ApplicationFactoryTest extends TestCase
     }
 
     /**
-     * `SdkConfiguration` skips configuration keys that are not one of its
-     * properties without complaining, so a misspelled key leaves the default in
-     * place and nothing points at the cause. This pins the spelling.
+     * `SdkConfiguration` skips keys it does not know without complaining, so a
+     * misspelled one silently leaves the default in place. This pins the spelling.
      */
     #[Test]
     #[DataProvider('signatureAlgorithmProvider')]
