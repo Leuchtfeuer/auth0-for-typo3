@@ -17,6 +17,7 @@ use GuzzleHttp\Client;
 use Leuchtfeuer\Auth0\Domain\Model\Application;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use Leuchtfeuer\Auth0\Factory\ApplicationFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
@@ -87,6 +88,33 @@ class ApplicationFactoryTest extends TestCase
         self::assertTrue($configuration->hasHttpClient());
     }
 
+    /**
+     * `SdkConfiguration` skips configuration keys that are not one of its
+     * properties without complaining, so a misspelled key leaves the default in
+     * place and nothing points at the cause. This pins the spelling.
+     */
+    #[Test]
+    #[DataProvider('signatureAlgorithmProvider')]
+    public function createPassesTheApplicationsSignatureAlgorithmIntoTheSdkConfiguration(string $algorithm): void
+    {
+        $configuration = $this->buildSubject($this->createApplicationRepository($algorithm))
+            ->create(self::APPLICATION_UID, ApplicationFactory::SESSION_PREFIX_BACKEND, $this->createRequest())
+            ->configuration();
+
+        self::assertSame($algorithm, $configuration->getTokenAlgorithm());
+    }
+
+    /**
+     * @return array<string, array{0: string}>
+     */
+    public static function signatureAlgorithmProvider(): array
+    {
+        return [
+            'key pair' => [Application::ALG_RS256],
+            'shared secret' => [Application::ALG_HS256],
+        ];
+    }
+
     #[Test]
     public function deprecatedStaticBuildDelegatesToCreate(): void
     {
@@ -124,7 +152,7 @@ class ApplicationFactoryTest extends TestCase
         );
     }
 
-    private function createApplicationRepository(): ApplicationRepository
+    private function createApplicationRepository(string $algorithm = Application::ALG_RS256): ApplicationRepository
     {
         $application = self::createStub(Application::class);
         $application->method('hasApi')->willReturn(false);
@@ -132,7 +160,7 @@ class ApplicationFactoryTest extends TestCase
         $application->method('getClientId')->willReturn('someClientId');
         $application->method('getClientSecret')->willReturn('someClientSecret');
         $application->method('getDomain')->willReturn('example.eu.auth0.com');
-        $application->method('getSignatureAlgorithm')->willReturn('RS256');
+        $application->method('getSignatureAlgorithm')->willReturn($algorithm);
 
         $repository = self::createStub(ApplicationRepository::class);
         $repository->method('findByUid')->willReturn($application);

@@ -16,8 +16,9 @@ namespace Leuchtfeuer\Auth0\Tests\Functional\Middleware;
 use Auth0\SDK\Auth0;
 use Lcobucci\JWT\Encoding\ChainedFormatter;
 use Lcobucci\JWT\Encoding\JoseEncoder;
+use Lcobucci\JWT\Signer\Hmac\Sha256 as HmacSha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
-use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Lcobucci\JWT\Signer\Rsa\Sha256 as RsaSha256;
 use Lcobucci\JWT\Token\Builder;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use Leuchtfeuer\Auth0\Factory\ApplicationFactory;
@@ -28,6 +29,7 @@ use Leuchtfeuer\Auth0\Tests\Functional\Fixtures\RsaKeyPair;
 use Leuchtfeuer\Auth0\Utility\Database\UpdateUtilityFactory;
 use Leuchtfeuer\Auth0\Utility\TokenUtility;
 use Leuchtfeuer\Auth0\Utility\UserUtility;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -59,6 +61,15 @@ class CallbackMiddlewareTest extends FunctionalTestCase
     private const CLIENT_ID = 'test-client-id';
 
     private const TENANT = 'tenant.example.com';
+
+    // HMAC signing requires at least 256 bits of key material.
+    private const CLIENT_SECRET = 'test-client-secret-with-at-least-256-bits';
+
+    /** Fixture record signing with a key pair. */
+    private const APPLICATION_RS256 = 1;
+
+    /** Fixture record signing with the client secret. */
+    private const APPLICATION_HS256 = 2;
 
     protected array $testExtensionsToLoad = [
         'leuchtfeuer/auth0',
@@ -95,14 +106,22 @@ class CallbackMiddlewareTest extends FunctionalTestCase
         parent::tearDown();
     }
 
+    /**
+     * The algorithm named on the record decides how the identity token is
+     * verified. RS256 is checked against the tenant's published keys, HS256
+     * against the client secret and without consulting them at all.
+     */
     #[Test]
-    public function aSuccessfulExchangeEstablishesTheSessionAndForbidsCaching(): void
-    {
-        $nonce = $this->startLoginAndReturnNonce();
+    #[DataProvider('applicationProvider')]
+    public function aSuccessfulExchangeEstablishesTheSessionAndForbidsCaching(
+        int $applicationUid,
+        bool $expectsJwksLookup,
+    ): void {
+        $nonce = $this->startLoginAndReturnNonce($applicationUid);
 
         $this->httpClient->respondTo('/oauth/token', [
             'access_token' => 'an-access-token',
-            'id_token' => $this->buildIdToken($nonce),
+            'id_token' => $this->buildIdToken($nonce, $applicationUid),
             'token_type' => 'Bearer',
             'expires_in' => 86400,
             'scope' => 'openid profile read:current_user',
@@ -110,8 +129,8 @@ class CallbackMiddlewareTest extends FunctionalTestCase
 
         $response = $this->runCallback([
             'code' => 'an-authorization-code',
-            'state' => $this->stateFromTransientStorage(),
-        ]);
+            'state' => $this->stateFromTransientStorage($applicationUid),
+        ], $applicationUid);
 
         $this->assertNothingWasSwallowed();
         self::assertSame(302, $response->getStatusCode());
@@ -119,12 +138,59 @@ class CallbackMiddlewareTest extends FunctionalTestCase
         self::assertStringNotContainsString('error=', $response->getHeaderLine('Location'));
         $this->assertResponseIsUnstorable($response);
 
-        $user = $this->buildAuth0()->configuration()->getSessionStorage()?->get('user');
+        self::assertSame(
+            $expectsJwksLookup,
+            $this->httpClient->hasRequestedPathSuffix('/.well-known/jwks.json'),
+            'Whether the tenant keys are consulted must follow the configured algorithm.'
+        );
+
+        $user = $this->buildAuth0($applicationUid)->configuration()->getSessionStorage()?->get('user');
         self::assertIsArray($user);
         self::assertSame(
             'auth0|functional-test-user',
             $user['sub'] ?? null,
             'The Auth0 session was not persisted, so a following request would not be authenticated.'
+        );
+    }
+
+    /**
+     * @return array<string, array{0: int, 1: bool}>
+     */
+    public static function applicationProvider(): array
+    {
+        return [
+            'tenant signing with a key pair' => [self::APPLICATION_RS256, true],
+            'tenant signing with a shared secret' => [self::APPLICATION_HS256, false],
+        ];
+    }
+
+    #[Test]
+    public function anIdentityTokenSignedWithTheWrongAlgorithmIsRejected(): void
+    {
+        // The record expects a key pair, the tenant answers with a shared secret.
+        $nonce = $this->startLoginAndReturnNonce(self::APPLICATION_RS256);
+
+        $this->httpClient->respondTo('/oauth/token', [
+            'access_token' => 'an-access-token',
+            'id_token' => $this->buildIdToken($nonce, self::APPLICATION_HS256),
+            'token_type' => 'Bearer',
+            'expires_in' => 86400,
+            'scope' => 'openid profile read:current_user',
+        ]);
+
+        $response = $this->runCallback([
+            'code' => 'an-authorization-code',
+            'state' => $this->stateFromTransientStorage(self::APPLICATION_RS256),
+        ], self::APPLICATION_RS256);
+
+        self::assertStringContainsString(
+            'error=' . CallbackMiddleware::ERROR_EXCHANGE_FAILED,
+            $response->getHeaderLine('Location')
+        );
+        self::assertSame(
+            [],
+            $this->buildAuth0(self::APPLICATION_RS256)->configuration()->getSessionStorage()?->get('user') ?? [],
+            'A token signed with the wrong algorithm must not establish a session.'
         );
     }
 
@@ -233,9 +299,9 @@ class CallbackMiddlewareTest extends FunctionalTestCase
      * Lets the SDK establish state, nonce and PKCE verifier the way the login
      * provider does, rather than hand-crafting an encrypted transient cookie.
      */
-    private function startLoginAndReturnNonce(): string
+    private function startLoginAndReturnNonce(int $applicationUid = self::APPLICATION_RS256): string
     {
-        $authorizeUrl = $this->buildAuth0()->login(self::HOST . CallbackMiddleware::PATH);
+        $authorizeUrl = $this->buildAuth0($applicationUid)->login(self::HOST . CallbackMiddleware::PATH);
         parse_str((string)parse_url($authorizeUrl, PHP_URL_QUERY), $params);
 
         self::assertArrayHasKey('nonce', $params);
@@ -243,17 +309,17 @@ class CallbackMiddlewareTest extends FunctionalTestCase
         return (string)$params['nonce'];
     }
 
-    private function stateFromTransientStorage(): string
+    private function stateFromTransientStorage(int $applicationUid = self::APPLICATION_RS256): string
     {
-        return (string)$this->buildAuth0()->configuration()->getTransientStorage()?->get('state');
+        return (string)$this->buildAuth0($applicationUid)->configuration()->getTransientStorage()?->get('state');
     }
 
-    private function buildIdToken(string $nonce): string
+    private function buildIdToken(string $nonce, int $applicationUid = self::APPLICATION_RS256): string
     {
         $now = new \DateTimeImmutable();
+        $usesSharedSecret = $applicationUid === self::APPLICATION_HS256;
 
-        return (new Builder(new JoseEncoder(), ChainedFormatter::default()))
-            ->withHeader('kid', RsaKeyPair::KEY_ID)
+        $builder = (new Builder(new JoseEncoder(), ChainedFormatter::default()))
             ->issuedBy('https://' . self::TENANT . '/')
             ->permittedFor(self::CLIENT_ID)
             ->relatedTo('auth0|functional-test-user')
@@ -261,19 +327,28 @@ class CallbackMiddlewareTest extends FunctionalTestCase
             ->expiresAt($now->modify('+1 hour'))
             ->withClaim('nonce', $nonce)
             ->withClaim('nickname', 'Functional Test User')
-            ->withClaim('email', 'functional@example.com')
-            ->getToken(new Sha256(), InMemory::plainText($this->keyPair->getPrivateKeyPem()))
+            ->withClaim('email', 'functional@example.com');
+
+        if ($usesSharedSecret) {
+            return $builder
+                ->getToken(new HmacSha256(), InMemory::plainText(self::CLIENT_SECRET))
+                ->toString();
+        }
+
+        return $builder
+            ->withHeader('kid', RsaKeyPair::KEY_ID)
+            ->getToken(new RsaSha256(), InMemory::plainText($this->keyPair->getPrivateKeyPem()))
             ->toString();
     }
 
     /**
      * @param array<string, string> $queryParams
      */
-    private function runCallback(array $queryParams): ResponseInterface
+    private function runCallback(array $queryParams, int $applicationUid = self::APPLICATION_RS256): ResponseInterface
     {
         $tokenUtility = $this->get(TokenUtility::class);
         $tokenUtility->withPayload('environment', TokenUtility::ENVIRONMENT_BACKEND);
-        $tokenUtility->withPayload('application', 1);
+        $tokenUtility->withPayload('application', $applicationUid);
         $token = $tokenUtility->buildToken(self::HOST)->toString();
 
         return $this->buildSubject()->process(
@@ -306,10 +381,10 @@ class CallbackMiddlewareTest extends FunctionalTestCase
         );
     }
 
-    private function buildAuth0(): Auth0
+    private function buildAuth0(int $applicationUid = self::APPLICATION_RS256): Auth0
     {
         return $this->buildApplicationFactory()->create(
-            1,
+            $applicationUid,
             ApplicationFactory::SESSION_PREFIX_BACKEND,
             $this->buildRequest([])
         );

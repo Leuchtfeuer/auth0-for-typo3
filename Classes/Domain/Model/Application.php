@@ -140,9 +140,16 @@ class Application extends AbstractEntity
         return $this->signatureAlgorithm;
     }
 
+    /**
+     * Falls back to RS256 for anything the Auth0 SDK would not accept, so that a
+     * record predating this field - or one edited outside the backend form -
+     * still yields a usable connection instead of one that cannot be built.
+     */
     public function setSignatureAlgorithm(string $signatureAlgorithm): self
     {
-        $this->signatureAlgorithm = $signatureAlgorithm;
+        $this->signatureAlgorithm = in_array($signatureAlgorithm, [self::ALG_RS256, self::ALG_HS256], true)
+            ? $signatureAlgorithm
+            : self::ALG_RS256;
 
         return $this;
     }
