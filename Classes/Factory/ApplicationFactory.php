@@ -90,7 +90,7 @@ class ApplicationFactory
             'httpRequestFactory' => $this->requestFactory,
             'httpResponseFactory' => $this->responseFactory,
             'httpStreamFactory' => $this->streamFactory,
-            'id_token_alg' => $application->getSignatureAlgorithm(),
+            'tokenAlgorithm' => $application->getSignatureAlgorithm(),
             'managementToken' => $managementToken ?? null,
             'redirectUri' => GeneralUtility::getIndpEnv('TYPO3_REQUEST_HOST') . CallbackMiddleware::PATH,
             'scope' => $scope,

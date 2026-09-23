@@ -1,0 +1,44 @@
+.. include:: ../../Includes.txt
+
+============================
+Version 13.0.13 - 2026/09/23
+============================
+
+This release backports two bugfixes from v14 that address critical issues in Auth0 token validation and
+callback response caching.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v13.0.13>`__.
+
+Fixed
+=====
+
+* **Token signature algorithm now correctly passed to Auth0 SDK:** The Auth0 SDK v8 (used since v13.0.0)
+  expects the ``tokenAlgorithm`` configuration key, but the migration from SDK v7 inadvertently kept
+  the old parameter name ``id_token_alg``. Unknown keys are silently ignored by the SDK, so all
+  installations have been verifying tokens with RS256 regardless of the configured algorithm. Tenants
+  signing tokens with a shared secret (HS256) could not log in. The correct parameter name is now used.
+
+* **Callback responses now forbid caching:** The callback returned the Auth0 session as Set-Cookie
+  without any cache directives, allowing intermediaries (proxies, CDNs) to store the response and strip
+  the cookies while doing so. The login then failed silently: back to the login screen, no session, no
+  error. All callback responses now carry ``Cache-Control: no-cache, no-store, must-revalidate, max-age=0``
+  and ``Pragma: no-cache`` headers to prevent storage by intermediaries.
+
+Upgrade Notes
+=============
+
+* No database migration is required, and existing Auth0 sessions stay valid.
+
+* No code changes are required in third-party extensions or custom code.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2026-09-23 [BUGFIX] Forbid caching of callback responses [TER-516] (backport)
+    2026-09-23 [BUGFIX] Honour the configured token signature algorithm [TER-516] (backport)
