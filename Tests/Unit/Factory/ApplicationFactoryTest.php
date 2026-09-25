@@ -17,10 +17,13 @@ use GuzzleHttp\Client;
 use Leuchtfeuer\Auth0\Domain\Model\Application;
 use Leuchtfeuer\Auth0\Domain\Repository\ApplicationRepository;
 use Leuchtfeuer\Auth0\Factory\ApplicationFactory;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Http\Client\GuzzleClientFactory;
+use TYPO3\CMS\Core\Http\NormalizedParams;
 use TYPO3\CMS\Core\Http\RequestFactory;
 use TYPO3\CMS\Core\Http\ResponseFactory;
 use TYPO3\CMS\Core\Http\StreamFactory;
@@ -47,10 +50,8 @@ class ApplicationFactoryTest extends TestCase
         parent::setUp();
 
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] = str_repeat('a', 32);
-        $GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyIP'] = '';
+        $GLOBALS['TYPO3_CONF_VARS']['BE']['lockSSL'] = false;
         $GLOBALS['TYPO3_CONF_VARS']['HTTP'] = ['verify' => true];
-        $_SERVER['HTTP_HOST'] = 'example.org';
-        $_SERVER['HTTPS'] = 'on';
 
         $this->requestFactory = new RequestFactory(new GuzzleClientFactory());
         $this->responseFactory = new ResponseFactory();
@@ -61,7 +62,6 @@ class ApplicationFactoryTest extends TestCase
     protected function tearDown(): void
     {
         GeneralUtility::purgeInstances();
-        GeneralUtility::flushInternalRuntimeCaches();
 
         parent::tearDown();
     }
@@ -69,7 +69,7 @@ class ApplicationFactoryTest extends TestCase
     #[Test]
     public function createPassesAllFourHttpImplementationsIntoTheSdkConfiguration(): void
     {
-        $configuration = $this->buildSubject()->create(self::APPLICATION_UID)->configuration();
+        $configuration = $this->buildSubject()->create(self::APPLICATION_UID, ApplicationFactory::SESSION_PREFIX_BACKEND, $this->createRequest())->configuration();
 
         self::assertSame($this->requestFactory, $configuration->getHttpRequestFactory());
         self::assertSame($this->responseFactory, $configuration->getHttpResponseFactory());
@@ -80,12 +80,38 @@ class ApplicationFactoryTest extends TestCase
     #[Test]
     public function createLeavesNoHttpImplementationToDiscovery(): void
     {
-        $configuration = $this->buildSubject()->create(self::APPLICATION_UID)->configuration();
+        $configuration = $this->buildSubject()->create(self::APPLICATION_UID, ApplicationFactory::SESSION_PREFIX_BACKEND, $this->createRequest())->configuration();
 
         self::assertTrue($configuration->hasHttpRequestFactory());
         self::assertTrue($configuration->hasHttpResponseFactory());
         self::assertTrue($configuration->hasHttpStreamFactory());
         self::assertTrue($configuration->hasHttpClient());
+    }
+
+    /**
+     * `SdkConfiguration` skips keys it does not know without complaining, so a
+     * misspelled one silently leaves the default in place. This pins the spelling.
+     */
+    #[Test]
+    #[DataProvider('signatureAlgorithmProvider')]
+    public function createPassesTheApplicationsSignatureAlgorithmIntoTheSdkConfiguration(string $algorithm): void
+    {
+        $configuration = $this->buildSubject($this->createApplicationRepository($algorithm))
+            ->create(self::APPLICATION_UID, ApplicationFactory::SESSION_PREFIX_BACKEND, $this->createRequest())
+            ->configuration();
+
+        self::assertSame($algorithm, $configuration->getTokenAlgorithm());
+    }
+
+    /**
+     * @return array<string, array{0: string}>
+     */
+    public static function signatureAlgorithmProvider(): array
+    {
+        return [
+            'key pair' => [Application::ALG_RS256],
+            'shared secret' => [Application::ALG_HS256],
+        ];
     }
 
     #[Test]
@@ -94,7 +120,7 @@ class ApplicationFactoryTest extends TestCase
         $subject = $this->buildSubject();
         GeneralUtility::addInstance(ApplicationFactory::class, $subject);
 
-        $configuration = ApplicationFactory::build(self::APPLICATION_UID)->configuration();
+        $configuration = ApplicationFactory::build(self::APPLICATION_UID, ApplicationFactory::SESSION_PREFIX_BACKEND, $this->createRequest())->configuration();
 
         self::assertSame($this->requestFactory, $configuration->getHttpRequestFactory());
         self::assertSame($this->responseFactory, $configuration->getHttpResponseFactory());
@@ -111,7 +137,7 @@ class ApplicationFactoryTest extends TestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Application not found: ' . self::APPLICATION_UID);
 
-        $this->buildSubject($repository)->create(self::APPLICATION_UID);
+        $this->buildSubject($repository)->create(self::APPLICATION_UID, ApplicationFactory::SESSION_PREFIX_BACKEND, $this->createRequest());
     }
 
     private function buildSubject(?ApplicationRepository $repository = null): ApplicationFactory
@@ -125,7 +151,7 @@ class ApplicationFactoryTest extends TestCase
         );
     }
 
-    private function createApplicationRepository(): ApplicationRepository
+    private function createApplicationRepository(string $algorithm = Application::ALG_RS256): ApplicationRepository
     {
         $application = self::createStub(Application::class);
         $application->method('hasApi')->willReturn(false);
@@ -133,11 +159,22 @@ class ApplicationFactoryTest extends TestCase
         $application->method('getClientId')->willReturn('someClientId');
         $application->method('getClientSecret')->willReturn('someClientSecret');
         $application->method('getDomain')->willReturn('example.eu.auth0.com');
-        $application->method('getSignatureAlgorithm')->willReturn('RS256');
+        $application->method('getSignatureAlgorithm')->willReturn($algorithm);
 
         $repository = self::createStub(ApplicationRepository::class);
         $repository->method('findByUid')->willReturn($application);
 
         return $repository;
+    }
+
+    private function createRequest(): ServerRequestInterface
+    {
+        $normalizedParams = self::createStub(NormalizedParams::class);
+        $normalizedParams->method('getRequestHost')->willReturn('https://example.org');
+
+        $request = self::createStub(ServerRequestInterface::class);
+        $request->method('getAttribute')->willReturn($normalizedParams);
+
+        return $request;
     }
 }

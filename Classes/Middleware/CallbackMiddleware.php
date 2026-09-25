@@ -33,6 +33,12 @@ class CallbackMiddleware implements MiddlewareInterface
 
     public const TOKEN_PARAMETER = 'token';
 
+    /**
+     * Error code handed to the login screen when the authorization code
+     * exchange did not complete. Resolved there to a translated message.
+     */
+    public const ERROR_EXCHANGE_FAILED = 'exchange_failed';
+
     private const BACKEND_URI = '%s/typo3/?loginProvider=%d&code=%s&state=%s';
 
     public function __construct(
@@ -49,7 +55,7 @@ class CallbackMiddleware implements MiddlewareInterface
         }
 
         if (!$this->tokenUtility->verifyToken((string)($request->getQueryParams()[self::TOKEN_PARAMETER] ?? null))) {
-            return new Response('php://temp', 400);
+            return $this->denyCaching(new Response('php://temp', 400));
         }
 
         try {
@@ -59,10 +65,10 @@ class CallbackMiddleware implements MiddlewareInterface
             }
             $dataSet = $token->claims();
         } catch (TokenException) {
-            return new Response('php://temp', 400);
+            return $this->denyCaching(new Response('php://temp', 400));
         }
 
-        return $this->handleBackendCallback($request, $dataSet);
+        return $this->denyCaching($this->handleBackendCallback($request, $dataSet));
     }
 
     protected function handleBackendCallback(
@@ -92,5 +98,17 @@ class CallbackMiddleware implements MiddlewareInterface
         }
 
         return new RedirectResponse($redirectUri, 302);
+    }
+
+    /**
+     * Marks a response as unstorable. `no-store` is what actually forbids storage;
+     * remaining directives and `Pragma` are carried along because intermediaries
+     * honour them inconsistently.
+     */
+    protected function denyCaching(ResponseInterface $response): ResponseInterface
+    {
+        return $response
+            ->withHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0')
+            ->withHeader('Pragma', 'no-cache');
     }
 }
