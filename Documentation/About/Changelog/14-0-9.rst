@@ -1,0 +1,86 @@
+.. include:: ../../Includes.txt
+
+===========================
+Version 14.0.9 - 2026/09/22
+===========================
+
+This release fixes two failures of the backend login that both stayed invisible:
+one that hits every installation running behind a caching proxy, and one that
+has kept the per-application signature algorithm from having any effect since
+2022.
+
+Download
+========
+
+Download this version from the `TYPO3 extension repository <https://extensions.typo3.org/extension/auth0/>`__ or from
+`GitHub <https://github.com/Leuchtfeuer/auth0-for-typo3/releases/tag/v14.0.9>`__.
+
+Fixed
+=====
+
+* **The backend login no longer fails behind a caching proxy:** the callback
+  returned the Auth0 session as ``Set-Cookie`` headers but declared no cache
+  directives at all. An intermediary was therefore free to treat the response as
+  storable — and a storable response may not carry per-user cookies, so it
+  stripped them. The browser arrived back at the login screen without a session
+  and was offered the Auth0 button again, with nothing indicating that anything
+  had gone wrong. Every response ``CallbackMiddleware`` returns now declares
+  ``Cache-Control: no-cache, no-store, must-revalidate, max-age=0`` together with
+  ``Pragma: no-cache``. All of them, not just the successful exchange: they share
+  a redirect target and an intermediary cannot tell them apart.
+
+* **The signature algorithm configured on an application takes effect again:**
+  ``ApplicationFactory`` passed it to the SDK as ``id_token_alg``, which was the
+  option's name in Auth0 SDK 7. The migration to SDK 8 in v13.0.0 carried the key
+  over unchanged, but SDK 8 calls it ``tokenAlgorithm`` and skips configuration
+  keys it does not know without a word. Identity tokens have been verified with
+  the default ``RS256`` ever since, whatever the record said, so installations
+  whose tenant signs with a shared secret could not log in at all — the login
+  failed with *"Expected token signed with RS256 algorithm, but token uses
+  HS256"*, an error pointing at the tenant rather than at the extension.
+
+* **A failed authorization code exchange is reported instead of hidden:** it
+  returned the same redirect as a successful one, so a broken login was
+  indistinguishable from one that was never started. The login screen now states
+  that the login failed, and the underlying cause is logged at error level
+  instead of warning. The cause is deliberately not carried in the URL, where the
+  user could read, copy and share it.
+
+Changed
+=======
+
+* **An application without a usable signature algorithm falls back to RS256:**
+  ``Application::setSignatureAlgorithm()`` normalises anything that is neither
+  ``RS256`` nor ``HS256``. A record predating the field, or one edited outside the
+  backend form, would otherwise hand the SDK a value it rejects and the
+  connection could not be built at all.
+
+Upgrade Notes
+=============
+
+* No database migration is required, and existing Auth0 sessions stay valid.
+
+* **Check the signature algorithm on your application records.** The field states
+  how your Auth0 tenant signs identity tokens; it does not switch anything. Since
+  it had no effect, a record may carry a value that does not match the tenant
+  without anyone noticing. A record set to ``HS256`` against a tenant that signs
+  with ``RS256`` worked only because the setting was discarded and will stop
+  working now. The tenant's algorithm is shown in the Auth0 dashboard under the
+  application's advanced settings; the record must name the same one.
+
+* Installations whose tenant signs with ``HS256`` and whose backend login has
+  been failing since v13.0.0 need no change beyond updating — this release is the
+  fix.
+
+* If a caching proxy or CDN sits in front of the installation, ``/auth0/callback``
+  needs no special treatment any more. An intermediary that ignores cache
+  directives still has to be told to pass the path through, the same way
+  ``/typo3/`` usually already is.
+
+All Changes
+===========
+
+This is a list of all changes in this release::
+
+    2026-09-21 [BUGFIX] Forbid caching of callback responses [TER-516] (Commit 876d1a6 by Oliver Heins)
+    2026-09-21 [TASK] Add functional test coverage for the callback [TER-516] (Commit 6ddb6b7 by Oliver Heins)

@@ -105,7 +105,6 @@ class ApplicationFactory
             'httpRequestFactory' => $this->requestFactory,
             'httpResponseFactory' => $this->responseFactory,
             'httpStreamFactory' => $this->streamFactory,
-            'id_token_alg' => $application->getSignatureAlgorithm(),
             'managementToken' => $managementToken ?? null,
             // $GLOBALS['TYPO3_REQUEST'] is intentionally not used as fallback: TYPO3 14 no longer
             // guarantees its availability in all contexts (e.g. CLI, early middlewares). $_SERVER
@@ -113,6 +112,7 @@ class ApplicationFactory
             // where redirectUri is constructed but never actually used in an OAuth flow.
             'redirectUri' => ($request?->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getRequestHost() . CallbackMiddleware::PATH,
             'scope' => $scope,
+            'tokenAlgorithm' => $application->getSignatureAlgorithm(),
         ]);
         $auth0 = new Auth0($sdkConfiguration);
         $auth0->configuration()->setSessionStorage(new CookieStore($auth0->configuration(), $sessionStorageId));

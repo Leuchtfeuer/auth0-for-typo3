@@ -140,9 +140,15 @@ class Application extends AbstractEntity
         return $this->signatureAlgorithm;
     }
 
+    /**
+     * Falls back to RS256 for anything the SDK would not accept, so an old
+     * record still yields a connection that can be built.
+     */
     public function setSignatureAlgorithm(string $signatureAlgorithm): self
     {
-        $this->signatureAlgorithm = $signatureAlgorithm;
+        $this->signatureAlgorithm = in_array($signatureAlgorithm, [self::ALG_RS256, self::ALG_HS256], true)
+            ? $signatureAlgorithm
+            : self::ALG_RS256;
 
         return $this;
     }

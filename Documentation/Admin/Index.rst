@@ -115,6 +115,43 @@ let the OAuth callback round trip succeed.
    Updating from such a version invalidates any existing Auth0 sessions — users
    need to log in once after the update.
 
+.. _admin-cachesAndProxies:
+
+Caches and Reverse Proxies
+==========================
+
+The callback at ``/auth0/callback`` returns the Auth0 session as ``Set-Cookie``
+headers. A cache or reverse proxy that stores such a response must strip those
+headers, because a stored response may not carry cookies belonging to one user.
+The login would then fail without any error: the browser returns to the login
+screen with no session and is offered the Auth0 button again.
+
+The extension therefore declares every callback response unstorable, using
+``Cache-Control: no-cache, no-store, must-revalidate, max-age=0`` together with
+``Pragma: no-cache``. Compliant intermediaries pass the cookies through
+untouched and no further configuration is needed.
+
+.. note::
+
+   If an intermediary ignores these directives, ``/auth0/callback`` has to be
+   excluded from caching in its configuration, the same way the TYPO3 backend
+   under ``/typo3/`` usually already is.
+
+To tell the two layers apart, request the same callback once directly from the
+origin and once through the cache, and compare the ``Set-Cookie`` headers:
+
+.. code-block:: bash
+
+   # on the web server, bypassing everything in front of it
+   curl -sS -o /dev/null -D - -H "Host: www.example.com" \
+        "http://127.0.0.1:8080/auth0/callback?token=...&code=...&state=..."
+
+   # through the public address
+   curl -sS -o /dev/null -D - "https://www.example.com/auth0/callback?token=...&code=...&state=..."
+
+If the origin returns ``auth0_session_BE_*`` cookies and the public request does
+not, they are being removed in front of the web server.
+
 .. _admin-logging:
 
 Logging

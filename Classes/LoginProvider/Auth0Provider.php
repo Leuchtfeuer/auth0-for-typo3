@@ -47,6 +47,14 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
 
     public const LOGIN_PROVIDER = 1526966635;
 
+    /**
+     * Errors raised by the extension itself, not by Auth0. Each resolves to
+     * `form.error.<code>.title` / `.description`.
+     */
+    private const EXTENSION_ERROR_CODES = [
+        CallbackMiddleware::ERROR_EXCHANGE_FAILED,
+    ];
+
     protected ?Application $application = null;
 
     protected Auth0 $auth0;
@@ -122,11 +130,15 @@ class Auth0Provider implements LoginProviderInterface, LoggerAwareInterface, Sin
             $this->handleRequest();
         }
 
+        $errorCode = $this->getRequest()->getQueryParams()['error'] ?? null;
+        $isExtensionError = in_array($errorCode, self::EXTENSION_ERROR_CODES, true);
+
         // Assign variables and Auth0 response to view
         $view->assignMultiple([
             'loginProviderIdentifier' => self::LOGIN_PROVIDER,
-            'auth0Error' => $this->getRequest()->getQueryParams()['error'] ?? null,
-            'auth0ErrorDescription' => $this->getRequest()->getQueryParams()['error_description'] ?? null,
+            'extensionError' => $isExtensionError ? $errorCode : null,
+            'auth0Error' => $isExtensionError ? null : $errorCode,
+            'auth0ErrorDescription' => $isExtensionError ? null : ($this->getRequest()->getQueryParams()['error_description'] ?? null),
             'code' => $this->getRequest()->getQueryParams()['code'] ?? null,
             'userInfo' => $this->userInfo,
             'logo' => $this->getLogo(),

@@ -39,6 +39,8 @@ class CallbackMiddleware implements MiddlewareInterface, LoggerAwareInterface
 
     public const TOKEN_PARAMETER = 'token';
 
+    public const ERROR_EXCHANGE_FAILED = 'exchange_failed';
+
     public function __construct(
         protected readonly UpdateUtilityFactory $updateUtilityFactory,
         protected readonly UserUtility $userUtility,
@@ -53,6 +55,15 @@ class CallbackMiddleware implements MiddlewareInterface, LoggerAwareInterface
             return $handler->handle($request);
         }
 
+        // A cache may store the response only without per-user cookies, so it
+        // would drop the Set-Cookie headers and the Auth0 session with them.
+        // Every response is covered: they share a redirect target and are
+        // indistinguishable to an intermediary.
+        return $this->denyCaching($this->handleCallbackRequest($request));
+    }
+
+    protected function handleCallbackRequest(ServerRequestInterface $request): ResponseInterface
+    {
         $issuer = ($request->getAttribute('normalizedParams') ?? NormalizedParams::createFromServerParams($_SERVER))->getRequestHost();
 
         if (!$this->tokenUtility->verifyToken((string)($request->getQueryParams()[self::TOKEN_PARAMETER] ?? null), $issuer)) {
@@ -70,6 +81,17 @@ class CallbackMiddleware implements MiddlewareInterface, LoggerAwareInterface
         }
 
         return $this->handleBackendCallback($request, $dataSet, $issuer);
+    }
+
+    /**
+     * `no-store` is what forbids storage; the rest and `Pragma` are carried
+     * along because intermediaries honour them inconsistently.
+     */
+    protected function denyCaching(ResponseInterface $response): ResponseInterface
+    {
+        return $response
+            ->withHeader('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0')
+            ->withHeader('Pragma', 'no-cache');
     }
 
     protected function handleBackendCallback(
@@ -102,8 +124,6 @@ class CallbackMiddleware implements MiddlewareInterface, LoggerAwareInterface
             return new RedirectResponse($redirectUri, 302);
         }
 
-        $response = new RedirectResponse($redirectUri, 302);
-
         // The Auth0 SDK persists session state via setrawcookie(), which queues
         // Set-Cookie headers in PHP's global header buffer. TYPO3's response
         // emitter then calls header('Set-Cookie: ...', replace=true) for the
@@ -119,15 +139,23 @@ class CallbackMiddleware implements MiddlewareInterface, LoggerAwareInterface
                 $request
             );
             $auth0->exchange($issuer . self::PATH, $code, $state);
-            $response = $this->migrateBufferedCookiesToResponse($response, $preExchangeCookies);
+
+            return $this->migrateBufferedCookiesToResponse(
+                new RedirectResponse($redirectUri, 302),
+                $preExchangeCookies
+            );
         } catch (\Throwable $throwable) {
-            $this->logger?->warning(
+            // The exchange failing ends the login, so it is reported as an error.
+            $this->logger?->error(
                 'Auth0 OAuth code exchange failed in CallbackMiddleware.',
                 ['exception' => $throwable]
             );
-        }
 
-        return $response;
+            return new RedirectResponse(
+                $redirectUri . '&error=' . self::ERROR_EXCHANGE_FAILED,
+                302
+            );
+        }
     }
 
     /**
